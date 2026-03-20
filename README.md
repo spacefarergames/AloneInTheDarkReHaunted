@@ -361,7 +361,6 @@ Both `backgrounds_hd.hda` and `audio.hda` use the **HDBG** binary archive format
 
 #### Executable
 - **Tatou.exe** — single Windows executable with custom application icon
-- Embedded PAK/ITD data for core initialization (no loose files needed for engine bootstrap)
 - All third-party libraries statically linked
 
 ---
