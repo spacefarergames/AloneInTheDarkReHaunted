@@ -390,6 +390,6 @@ Both `backgrounds_hd.hda` and `audio.hda` use the **HDBG** binary archive format
 
 ---
 -Box Art for Steam
-![Alt text](AITDREHAUNTED(6).png)
+![Alt text](SteamBoxArt.png)
 *Alone In The Dark: Re-Haunted — Because some mansions deserve to be revisited.*
 
