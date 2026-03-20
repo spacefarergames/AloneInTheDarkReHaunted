@@ -71,10 +71,11 @@ powershell -ExecutionPolicy Bypass -File FitdLib/pack_audio.ps1 "path/to/game/fo
 
 Place `Tatou.exe` alongside the original game's data files (PAK, ITD) in the same directory. The game auto-detects which title to run based on the data files present.
 
-### Required Files
+### Required Files (For Accuracy)
 
 - Original game PAK files (e.g., `LISTBOD2.PAK` for AITD1)
 - Original game ITD files (`DEFINES.ITD`, `OBJETS.ITD`)
+- Game can run out-of-box due to clean room reverse engineering and recomp. However, we recommend you use the PAK files from your legal copy of GOG.com or Steam version for best accuracy and stability.
 
 ### Optional Files
 
@@ -386,9 +387,9 @@ Both `backgrounds_hd.hda` and `audio.hda` use the **HDBG** binary archive format
 - Post-processing effects require a GPU with shader model 4.0+ support
 - Audio archive does not support streaming from archive (music is loaded fully into memory before playback)
 - AdLib/OPL music emulation is available but external MP3/OGG tracks are recommended for best quality
-- `Time Gate: Knight's Chase` CVar table support is provisional
 
 ---
-
+-Box Art for Steam
+![Alt text](AITDREHAUNTED(6).png)
 *Alone In The Dark: Re-Haunted — Because some mansions deserve to be revisited.*
 
