@@ -16,7 +16,7 @@
 
 **Alone In The Dark: Re-Haunted** is a modern remaster of the landmark 1992 survival horror game by Infogrames. Built on the reverse-engineered FITD engine, Re-Haunted preserves the original gameplay while adding modern rendering, HD backgrounds, post-processing effects, gamepad support, and quality-of-life improvements.
 
-![Alt text](AITDLOGO.png)
+![Alt text](WidescreenArt.png)
 
 ## System Requirements
 
