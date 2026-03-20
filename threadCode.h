@@ -1,0 +1,11 @@
+///////////////////////////////////////////////////////////////////////////////
+// Alone In The Dark Re-Haunted
+// Copyright (C) 2026 Infogrames / Spacefarer Retro Remasters LLC
+// Author: Jake Jackson (jake@spacefarergames.com)
+//
+// Threading utility declarations
+///////////////////////////////////////////////////////////////////////////////
+
+#ifndef _THREAD_CODE_H_
+#define _THREAD_CODE_H_
+#endif
