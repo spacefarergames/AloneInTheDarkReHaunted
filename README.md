@@ -6,7 +6,7 @@
 *Copyright © 2026 Infogrames / Spacefarer Retro Remasters LLC*
 *Author: Jake Jackson (jake@spacefarergames.com)*
 
-![Alt text](AITDREHAUNTED(11).png)
+![Alt text](AITDREHAUNTED(10).png)
 ![Alt text](AITDREHAUNTED(2).png)
 ![Alt text](AITDREHAUNTED(3).png)
 ![Alt text](AITDREHAUNTED(4).png)
