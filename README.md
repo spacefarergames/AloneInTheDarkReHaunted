@@ -5,7 +5,7 @@
 
 *Copyright © 2026 Infogrames / Spacefarer Retro Remasters LLC*
 *Author: Jake Jackson (jake@spacefarergames.com)*
-
+![Alt text](AITDLOGO.png)
 ---
 
 ## About
