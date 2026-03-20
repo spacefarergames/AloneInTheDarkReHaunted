@@ -5,12 +5,25 @@
 
 *Copyright © 2026 Infogrames / Spacefarer Retro Remasters LLC*
 *Author: Jake Jackson (jake@spacefarergames.com)*
-![Alt text](AITDLOGO.png)
+
+![Alt text](AITDREHAUNTED (1).png)
+![Alt text](AITDREHAUNTED (2).png)
+![Alt text](AITDREHAUNTED (3).png)
+![Alt text](AITDREHAUNTED (4).png)
+![Alt text](AITDREHAUNTED (5).png)
+![Alt text](AITDREHAUNTED (6).png)
+![Alt text](AITDREHAUNTED (7).png)
+![Alt text](AITDREHAUNTED (8).png)
+![Alt text](AITDREHAUNTED (9).png)
+![Alt text](AITDREHAUNTED (10).png)
+
 ---
 
 ## About
 
 **Alone In The Dark: Re-Haunted** is a modern remaster of the landmark 1992 survival horror game by Infogrames. Built on the reverse-engineered FITD engine, Re-Haunted preserves the original gameplay while adding modern rendering, HD backgrounds, post-processing effects, gamepad support, and quality-of-life improvements.
+
+![Alt text](AITDLOGO.png)
 
 ## System Requirements
 
