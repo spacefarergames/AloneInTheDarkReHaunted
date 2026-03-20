@@ -17,9 +17,9 @@ void pixel(int x, int y, unsigned char c);
 #include <math.h>
 
 #define SCREENHEIGHT 200
-#define MAXPTS 10
+#define MAXPTS 20
 
-#define putdot(x,y) if ((y >= 0) && (y < SCREENHEIGHT)) dots[y][counters[y]++] = x;
+#define putdot(x,y) if ((y >= 0) && (y < SCREENHEIGHT) && counters[y] < MAXPTS) dots[y][counters[y]++] = x;
 
 void swapFunc(int* a, int* b);
 #define swap(a,b) (swapFunc(&a,&b))

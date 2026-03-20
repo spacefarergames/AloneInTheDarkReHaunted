@@ -158,10 +158,10 @@ void updateBackgroundTextureHD(unsigned char* data, int width, int height, int c
         
         if (channels == 3)
         {
-            unsigned char* rgbaData = (unsigned char*)SAFE_MALLOC(width * height * 4, __FILE__, __LINE__);
+            unsigned char* rgbaData = (unsigned char*)SAFE_MALLOC((size_t)width * height * 4, __FILE__, __LINE__);
             if (rgbaData)
             {
-                for (int i = 0; i < width * height; i++)
+                for (size_t i = 0; i < (size_t)width * height; i++)
                 {
                     rgbaData[i * 4 + 0] = data[i * 3 + 0];
                     rgbaData[i * 4 + 1] = data[i * 3 + 1];
@@ -170,7 +170,7 @@ void updateBackgroundTextureHD(unsigned char* data, int width, int height, int c
                 }
                 
                 bgfx::updateTexture2D(g_hdBackgroundTexture, 0, 0, 0, 0, width, height, 
-                                      bgfx::copy(rgbaData, width * height * 4));
+                                      bgfx::copy(rgbaData, (uint32_t)((size_t)width * height * 4)));
                 
                 // Store copy for menu preview
                 g_hdBackgroundPreviewData = rgbaData;
@@ -181,13 +181,13 @@ void updateBackgroundTextureHD(unsigned char* data, int width, int height, int c
         else if (channels == 4)
         {
             bgfx::updateTexture2D(g_hdBackgroundTexture, 0, 0, 0, 0, width, height, 
-                                  bgfx::copy(data, width * height * 4));
-            
+                                  bgfx::copy(data, (uint32_t)((size_t)width * height * 4)));
+
             // Store copy for menu preview
-            g_hdBackgroundPreviewData = (unsigned char*)SAFE_MALLOC(width * height * 4, __FILE__, __LINE__);
+            g_hdBackgroundPreviewData = (unsigned char*)SAFE_MALLOC((size_t)width * height * 4, __FILE__, __LINE__);
             if (g_hdBackgroundPreviewData)
             {
-                memcpy(g_hdBackgroundPreviewData, data, width * height * 4);
+                memcpy(g_hdBackgroundPreviewData, data, (size_t)width * height * 4);
                 g_hdBackgroundPreviewWidth = width;
                 g_hdBackgroundPreviewHeight = height;
             }

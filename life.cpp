@@ -104,6 +104,8 @@ void fire(int fireAnim, int X, int Y, int Z, int hitForce, int nextAnim)
 
 int randRange(int min, int max)
 {
+    if(max <= min)
+        return min;
     return((rand() % (max - min)) + min);
 }
 

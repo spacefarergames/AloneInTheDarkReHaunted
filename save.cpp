@@ -7,6 +7,78 @@
 ///////////////////////////////////////////////////////////////////////////////
 
 #include "common.h"
+#include "zlib.h"
+
+// Minimal PNG writer using zlib for IDAT compression
+static void writePNGChunk(FILE* f, const char* type, const unsigned char* data, unsigned int length)
+{
+    unsigned char lenBuf[4];
+    lenBuf[0] = (length >> 24) & 0xFF;
+    lenBuf[1] = (length >> 16) & 0xFF;
+    lenBuf[2] = (length >> 8) & 0xFF;
+    lenBuf[3] = length & 0xFF;
+    fwrite(lenBuf, 1, 4, f);
+    fwrite(type, 1, 4, f);
+
+    unsigned long crc = crc32(0L, Z_NULL, 0);
+    crc = crc32(crc, (const Bytef*)type, 4);
+    if (data && length > 0)
+    {
+        fwrite(data, 1, length, f);
+        crc = crc32(crc, data, length);
+    }
+
+    unsigned char crcBuf[4];
+    crcBuf[0] = (crc >> 24) & 0xFF;
+    crcBuf[1] = (crc >> 16) & 0xFF;
+    crcBuf[2] = (crc >> 8) & 0xFF;
+    crcBuf[3] = crc & 0xFF;
+    fwrite(crcBuf, 1, 4, f);
+}
+
+static bool writePNG(const char* filename, const unsigned char* rgba, int width, int height)
+{
+    FILE* f = fopen(filename, "wb");
+    if (!f) return false;
+
+    static const unsigned char sig[8] = { 137, 80, 78, 71, 13, 10, 26, 10 };
+    fwrite(sig, 1, 8, f);
+
+    unsigned char ihdr[13];
+    ihdr[0] = (width >> 24) & 0xFF;  ihdr[1] = (width >> 16) & 0xFF;
+    ihdr[2] = (width >> 8) & 0xFF;   ihdr[3] = width & 0xFF;
+    ihdr[4] = (height >> 24) & 0xFF; ihdr[5] = (height >> 16) & 0xFF;
+    ihdr[6] = (height >> 8) & 0xFF;  ihdr[7] = height & 0xFF;
+    ihdr[8] = 8; ihdr[9] = 6; ihdr[10] = 0; ihdr[11] = 0; ihdr[12] = 0;
+    writePNGChunk(f, "IHDR", ihdr, 13);
+
+    size_t rawSize = (size_t)height * ((size_t)width * 4 + 1);
+    unsigned char* raw = (unsigned char*)malloc(rawSize);
+    if (!raw) { fclose(f); return false; }
+
+    size_t rawPos = 0;
+    for (int y = 0; y < height; y++)
+    {
+        raw[rawPos++] = 0;
+        memcpy(raw + rawPos, rgba + (size_t)y * width * 4, (size_t)width * 4);
+        rawPos += (size_t)width * 4;
+    }
+
+    uLongf compSize = (uLongf)(rawSize + rawSize / 100 + 64);
+    unsigned char* comp = (unsigned char*)malloc(compSize);
+    if (!comp) { free(raw); fclose(f); return false; }
+
+    int zret = compress2(comp, &compSize, raw, (uLong)rawSize, Z_DEFAULT_COMPRESSION);
+    free(raw);
+    if (zret != Z_OK) { free(comp); fclose(f); return false; }
+
+    writePNGChunk(f, "IDAT", comp, (unsigned int)compSize);
+    free(comp);
+
+    writePNGChunk(f, "IEND", NULL, 0);
+    fclose(f);
+    return true;
+}
 
 unsigned int currentSaveEntrySize;
 
@@ -990,6 +1062,17 @@ int makeSaveFile(int entry)
     }
 
     fclose(fHandle);
+
+    // Save screenshot PNG alongside save file
+    unsigned char* previewData = osystem_getScenePreviewData();
+    int previewW = osystem_getScenePreviewWidth();
+    int previewH = osystem_getScenePreviewHeight();
+    if (previewData && previewW > 0 && previewH > 0)
+    {
+        char pngFile[100];
+        sprintf(pngFile, "SAVE%d.png", entry);
+        writePNG(pngFile, previewData, previewW, previewH);
+    }
 
     return 1;
 }

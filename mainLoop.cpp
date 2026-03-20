@@ -112,6 +112,12 @@ void PlayWorld(int allowSystemMenu, int deltaTime)
         {
             if(localKey == 0x1B)
             {
+                // Freeze the scene snapshot NOW, before the ESC-draining loop.
+                // The snapshot still holds the last game frame (with 3D objects).
+                // Without this, each process_events() in the loop would overwrite
+                // the snapshot with a cleared framebuffer (no 3D objects).
+                osystem_captureScenePreview();
+
                 while(key==0x1B)
                 {
                     process_events();

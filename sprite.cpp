@@ -36,18 +36,31 @@ void sHybrid_Sprite::read(uint8_t* buffer, int bufferSize) {
 }
 
 void AffSpr(int spriteNumber, int X, int Y, char* screen, std::vector<sHybrid_Sprite>& sprites) {
+    if (spriteNumber < 0 || spriteNumber >= (int)sprites.size())
+        return;
+
     sHybrid_Sprite& sprite = sprites[spriteNumber];
 
     Y -= sprite.dy;
     for (int y = 0; y < sprite.dy; y++) {
+        int screenY = y + Y;
+        if (screenY < 0 || screenY >= 200)
+            continue;
+
         auto& lineData = sprite.lines[y];
-        
-        char* lineStart = screen + ((y + Y) * 320 + X);
+
+        int lineOffset = screenY * 320 + X;
+        char* lineStart = screen + lineOffset;
         for (int i = 0; i < lineData.blocks.size(); i++) {
             auto& block = lineData.blocks[i];
             lineStart += block.unk0;
-            memcpy(lineStart, block.data.data(), block.data.size());
-            lineStart += block.data.size();
+            int currentOffset = (int)(lineStart - screen);
+            int blockSize = (int)block.data.size();
+            if (currentOffset >= 0 && currentOffset + blockSize <= 64000)
+            {
+                memcpy(lineStart, block.data.data(), blockSize);
+            }
+            lineStart += blockSize;
         }
     }
 }

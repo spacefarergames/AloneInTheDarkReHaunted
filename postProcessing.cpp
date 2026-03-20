@@ -25,7 +25,9 @@ static const bgfx::ViewId kViewSSAOBlur   = 199;
 static const bgfx::ViewId kViewBrightPass = 200;
 static const bgfx::ViewId kViewBlurH     = 201;
 static const bgfx::ViewId kViewBlurV     = 202;
-static const bgfx::ViewId kViewComposite = 203;
+static const bgfx::ViewId kViewBlurH2    = 203;
+static const bgfx::ViewId kViewBlurV2    = 204;
+static const bgfx::ViewId kViewComposite = 205;
 
 PostProcessing::PostProcessing()
 {
@@ -302,7 +304,7 @@ void PostProcessing::renderBloom()
         renderFullscreenQuad(kViewBrightPass, m_brightPassShader);
     }
 
-    // 2. Horizontal blur
+    // 2. First blur pass - horizontal
     {
         float blurDir[4] = { 1.0f / (float)bloomWidth, 0.0f, 0.0f, 0.0f };
 
@@ -316,7 +318,7 @@ void PostProcessing::renderBloom()
         renderFullscreenQuad(kViewBlurH, m_blurShader);
     }
 
-    // 3. Vertical blur
+    // 3. First blur pass - vertical
     {
         float blurDir[4] = { 0.0f, 1.0f / (float)bloomHeight, 0.0f, 0.0f };
 
@@ -328,6 +330,38 @@ void PostProcessing::renderBloom()
         bgfx::setUniform(u_blurDirection, blurDir);
         bgfx::setTexture(0, s_texColor, m_blurH_Tex);
         renderFullscreenQuad(kViewBlurV, m_blurShader);
+    }
+
+    // 4-5. Additional blur passes for wider, softer bloom (ping-pong between H and V textures)
+    if (m_bloomPasses >= 2)
+    {
+        // Second pass - horizontal (read from V, write to H)
+        {
+            float blurDir[4] = { 1.0f / (float)bloomWidth, 0.0f, 0.0f, 0.0f };
+
+            bgfx::setViewName(kViewBlurH2, "BlurH2");
+            bgfx::setViewRect(kViewBlurH2, 0, 0, (uint16_t)bloomWidth, (uint16_t)bloomHeight);
+            bgfx::setViewFrameBuffer(kViewBlurH2, m_blurH_FB);
+            bgfx::setViewClear(kViewBlurH2, BGFX_CLEAR_COLOR, 0x000000ff);
+
+            bgfx::setUniform(u_blurDirection, blurDir);
+            bgfx::setTexture(0, s_texColor, m_blurV_Tex);
+            renderFullscreenQuad(kViewBlurH2, m_blurShader);
+        }
+
+        // Second pass - vertical (read from H, write to V — final bloom result)
+        {
+            float blurDir[4] = { 0.0f, 1.0f / (float)bloomHeight, 0.0f, 0.0f };
+
+            bgfx::setViewName(kViewBlurV2, "BlurV2");
+            bgfx::setViewRect(kViewBlurV2, 0, 0, (uint16_t)bloomWidth, (uint16_t)bloomHeight);
+            bgfx::setViewFrameBuffer(kViewBlurV2, m_blurV_FB);
+            bgfx::setViewClear(kViewBlurV2, BGFX_CLEAR_COLOR, 0x000000ff);
+
+            bgfx::setUniform(u_blurDirection, blurDir);
+            bgfx::setTexture(0, s_texColor, m_blurH_Tex);
+            renderFullscreenQuad(kViewBlurV2, m_blurShader);
+        }
     }
 }
 

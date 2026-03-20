@@ -49,6 +49,8 @@ s16 convertTrackMacro(s16 inTrackMacro) {
 
 int makeProportional(int x1, int x2, int y1, int y2)
 {
+    if(y1 == 0)
+        return x1;
     return x1 + ((x2 - x1) * y2) / y1;
 }
 

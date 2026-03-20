@@ -370,28 +370,31 @@ public:
     // Exception filter for critical sections (used by PROTECTED_CALL macro)
     static int HandleException(EXCEPTION_POINTERS* exceptionInfo, const char* context)
     {
-        LogExceptionQuiet(exceptionInfo, context);
-
         DWORD code = exceptionInfo->ExceptionRecord->ExceptionCode;
 
-        // For heap corruption, skip and continue
+        // For heap corruption, skip and continue (lightweight log only)
         if (code == 0xC0000374) // STATUS_HEAP_CORRUPTION
         {
+            LogExceptionQuiet(exceptionInfo, context);
             printf("WARNING: Heap corruption detected in %s - logged and continuing\n", context);
             return EXCEPTION_EXECUTE_HANDLER; // Execute the __except block
         }
 
-        // For breakpoints from CRT debug heap, execute handler to skip
+        // For breakpoints from CRT debug heap, execute handler to skip (lightweight log only)
         if (code == STATUS_BREAKPOINT)
         {
+            LogExceptionQuiet(exceptionInfo, context);
             printf("WARNING: CRT debug break in %s - skipped\n", context);
             return EXCEPTION_EXECUTE_HANDLER;
         }
 
-        // For access violations, try to continue (DOS code often reads near-null)
+        // For access violations and other real crashes, write FULL diagnostic log
+        // with stack trace, symbol names, and access violation details (read/write addr)
+        LogException(exceptionInfo, context);
+
         if (code == EXCEPTION_ACCESS_VIOLATION)
         {
-            printf("WARNING: Access violation in %s - logged and continuing\n", context);
+            printf("ERROR: Access violation in %s - full stack trace written to crash_log.txt\n", context);
             return EXCEPTION_EXECUTE_HANDLER;
         }
 

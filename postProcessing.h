@@ -35,6 +35,7 @@ public:
     void setFilmGrainIntensity(float intensity) { m_filmGrainIntensity = intensity; }
     void setSSAORadius(float radius) { m_ssaoRadius = radius; }
     void setSSAOIntensity(float intensity) { m_ssaoIntensity = intensity; }
+    void setBloomPasses(int passes) { m_bloomPasses = (passes >= 1 && passes <= 4) ? passes : 2; }
 
     // Begin scene - render to main framebuffer
     void beginScene();
@@ -44,6 +45,9 @@ public:
 
     // Get the main render target for game rendering
     bgfx::FrameBufferHandle getMainRenderTarget() const { return m_mainFB; }
+    bgfx::TextureHandle getMainColorTexture() const { return m_mainColorTex; }
+    int getWidth() const { return m_width; }
+    int getHeight() const { return m_height; }
 
 private:
     void createFramebuffers(int width, int height);
@@ -105,6 +109,7 @@ private:
     float m_filmGrainIntensity = 0.05f;
     float m_ssaoRadius = 500.0f;
     float m_ssaoIntensity = 1.0f;
+    int m_bloomPasses = 2;
 
     int m_width = 0;
     int m_height = 0;

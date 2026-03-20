@@ -79,12 +79,15 @@ extern "C" {
     void Sound_Quit(void);
 }
 
+void osystemAL_deinit();
+
 void Sound_Quit(void)
 {
+    osystemAL_deinit();
 }
 
 extern "C" {
-    char homePath[256] = "";
+    char homePath[512] = "";
     int FitdMain(void* unkused);
 }
 

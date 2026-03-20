@@ -8,6 +8,7 @@
 
 #include <stdlib.h>
 #include <assert.h>
+#include <new>
 
 //#include "OpenAL/al.h"
 //#include "OpenAL/alc.h"
@@ -101,11 +102,13 @@ static const HDArchiveEntry* findAudioEntry(const char* name)
     return nullptr;
 }
 
+// Allocate with new[] (not malloc) because SoLoud's MemoryFile uses delete[]
+// when aTakeOwnership=true. Using malloc here would cause a malloc/delete[] mismatch.
 static unsigned char* readAudioEntry(const HDArchiveEntry* entry, size_t* outSize)
 {
     if (!entry || !s_audioArchiveFile) return nullptr;
     size_t sz = (size_t)entry->size;
-    unsigned char* buf = (unsigned char*)malloc(sz);
+    unsigned char* buf = new (std::nothrow) unsigned char[sz];
     if (!buf) return nullptr;
 #ifdef _WIN32
     if (_fseeki64(s_audioArchiveFile, (long long)entry->offset, SEEK_SET) != 0)
@@ -113,20 +116,44 @@ static unsigned char* readAudioEntry(const HDArchiveEntry* entry, size_t* outSiz
     if (fseeko(s_audioArchiveFile, (off_t)entry->offset, SEEK_SET) != 0)
 #endif
     {
-        free(buf);
+        delete[] buf;
         return nullptr;
     }
     if (fread(buf, 1, sz, s_audioArchiveFile) != sz)
     {
-        free(buf);
+        delete[] buf;
         return nullptr;
     }
     if (outSize) *outSize = sz;
     return buf;
 }
 
+// Music stream state (declared here so closeAudioArchive can clean them up)
+SoLoud::DiskFile* pFile = NULL;
+SoLoud::WavStream* pWavStream = NULL;
+static unsigned char* s_musicArchiveBuf = nullptr;
+
 void closeAudioArchive()
 {
+    // Stop and clean up any active music stream before closing the archive.
+    // The WavStream may be reading from s_musicArchiveBuf, so destroy it first.
+    if (pWavStream)
+    {
+        pWavStream->stop();
+        delete pWavStream;
+        pWavStream = nullptr;
+    }
+    if (pFile)
+    {
+        delete pFile;
+        pFile = nullptr;
+    }
+    if (s_musicArchiveBuf)
+    {
+        delete[] s_musicArchiveBuf;
+        s_musicArchiveBuf = nullptr;
+    }
+
     if (s_audioArchiveFile)
     {
         fclose(s_audioArchiveFile);
@@ -134,12 +161,23 @@ void closeAudioArchive()
     }
     s_audioEntries.clear();
     s_audioArchiveOpen = false;
+    s_audioArchiveTried = false;
 }
 
 void osystemAL_init()
 {
     gSoloud = new SoLoud::Soloud();
     gSoloud->init();
+}
+
+void osystemAL_deinit()
+{
+    if (gSoloud)
+    {
+        gSoloud->deinit();
+        delete gSoloud;
+        gSoloud = nullptr;
+    }
 }
 
 class ITD_AudioSource : public SoLoud::AudioSource
@@ -229,10 +267,14 @@ static SoLoud::AudioSource* g_lastSfxSource = nullptr;
 
 void osystem_playSample(char* samplePtr,int size)
 {
+    if (!gSoloud)
+        return;
+
     // Stop the previous sound effect to prevent overlapping/stuck sounds
-    if (gSoloud && g_lastSfxHandle != 0)
+    if (g_lastSfxHandle != 0)
     {
         gSoloud->stop(g_lastSfxHandle);
+        g_lastSfxHandle = 0;
     }
     // Free the previous audio source to prevent memory leaks
     if (g_lastSfxSource)
@@ -244,7 +286,12 @@ void osystem_playSample(char* samplePtr,int size)
     if (g_gameId >= TIMEGATE)
     {
         SoLoud::Wav* pAudioSource = new SoLoud::Wav();
-        pAudioSource->loadMem((u8*)samplePtr, size, true);
+        SoLoud::result res = pAudioSource->loadMem((u8*)samplePtr, size, true);
+        if (res != SoLoud::SO_NO_ERROR)
+        {
+            delete pAudioSource;
+            return;
+        }
         g_lastSfxHandle = gSoloud->play(*pAudioSource);
         g_lastSfxSource = pAudioSource;
     }
@@ -274,24 +321,39 @@ extern float gVolume;
 
 void osystemAL_udpate()
 {
-    gSoloud->setGlobalVolume(gVolume);
+    if (gSoloud)
+        gSoloud->setGlobalVolume(gVolume);
 }
 
-SoLoud::DiskFile* pFile = NULL;
-SoLoud::WavStream* pWavStream = NULL;
-static unsigned char* s_musicArchiveBuf = nullptr;
 
 int osystem_playTrack(int trackId)
 {
+    if (!gSoloud)
+        return 0;
+
+    // Delete the previous WavStream BEFORE freeing the archive buffer.
+    // WavStream::loadMem with aCopy=false means SoLoud's audio mixing thread
+    // reads directly from s_musicArchiveBuf. We must fully destroy the stream
+    // (which stops the audio thread's access) before freeing the buffer,
+    // otherwise we get a use-after-free access violation.
     if (pWavStream)
     {
         pWavStream->stop();
+        delete pWavStream;
+        pWavStream = nullptr;
     }
 
-    // Free previous archive music buffer if any
+    // Clean up previous DiskFile (used by filesystem fallback path)
+    if (pFile)
+    {
+        delete pFile;
+        pFile = nullptr;
+    }
+
+    // Now safe to free the archive buffer - no audio thread references remain
     if (s_musicArchiveBuf)
     {
-        free(s_musicArchiveBuf);
+        delete[] s_musicArchiveBuf;
         s_musicArchiveBuf = nullptr;
     }
 
@@ -318,11 +380,11 @@ int osystem_playTrack(int trackId)
                     {
                         s_musicArchiveBuf = data;
                         gSoloud->play(*pWavStream);
-                        return 0;
+                        return 1;
                     }
                     else
                     {
-                        free(data);
+                        delete[] data;
                         delete pWavStream;
                         pWavStream = nullptr;
                     }
@@ -358,8 +420,19 @@ int osystem_playTrack(int trackId)
 
     pFile = new SoLoud::DiskFile(fHandle);
     pWavStream = new SoLoud::WavStream();
-    pWavStream->loadFile(pFile);
-    gSoloud->play(*pWavStream);
+    SoLoud::result res = pWavStream->loadFile(pFile);
+    if (res == SoLoud::SO_NO_ERROR)
+    {
+        gSoloud->play(*pWavStream);
+        return 1;
+    }
+    else
+    {
+        delete pWavStream;
+        pWavStream = nullptr;
+        delete pFile;
+        pFile = nullptr;
+    }
 
     return 0;
 }
@@ -406,7 +479,8 @@ void osystem_playSampleFromName(char* sampleName)
                 }
                 else
                 {
-                    free(data);
+                    // Don't delete[] data -- Wav::loadMem's stack-local MemoryFile
+                    // already freed it (aTakeOwnership=true)
                     delete pWav;
                 }
             }

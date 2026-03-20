@@ -1072,7 +1072,11 @@ int AffObjet(int x,int y,int z,int alpha,int beta,int gamma, sBody* pBody)
         //  source += 10 * 1;
         for(i=0;i<numOfPrimitiveToRender;i++)
         {
-            renderFunctions[primTable[i].type](&primTable[i]);
+            int type = primTable[i].type;
+            if(type >= 0 && type < (int)(sizeof(renderFunctions)/sizeof(renderFunctions[0])) && renderFunctions[type])
+            {
+                renderFunctions[type](&primTable[i]);
+            }
         }
 
         //DEBUG
@@ -1117,7 +1121,7 @@ void computeScreenBox(int x, int y, int z, int alpha, int beta, int gamma, sBody
     }
 }
 
-#define SHADOW_SEGMENTS 12
+#define SHADOW_SEGMENTS 24
 
 void drawBlobShadow(int x, int y, int z, int alpha, int beta, int gamma, sBody* bodyPtr)
 {

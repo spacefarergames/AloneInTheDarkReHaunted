@@ -549,7 +549,7 @@ int evalVar(const char* name)
                 default:
                     {
                         printf("Unhandled test type %X in evalVar\n",var1);
-                        assert(0);
+                        return 0;
                         break;
                     }
                 }
@@ -1003,7 +1003,6 @@ int evalVar2(const char* name)
                 default:
                     {
                         printf("Unhandled test type %X in evalVar\n",var1);
-                        assert(0);
                         return 0;
                         break;
                     }

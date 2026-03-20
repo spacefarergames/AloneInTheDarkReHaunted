@@ -28,6 +28,7 @@ void playMenuSound(const char* soundName)
 #define	SIZE_FONT 16
 
 // Scale down the game screen and draw it to the preview box
+// destX, destY = top-left corner of the AffBigCadre box
 void scaleDownImage(int destX, int destY, char* sourceBuffer)
 {
     // Preview box is created at position (80,55) with size (120x70)
@@ -71,6 +72,7 @@ void scaleDownImage(int destX, int destY, char* sourceBuffer)
 
 // Scale down HD background (RGBA) and draw it to the preview box
 // Uses bilinear interpolation for smooth scaling, then converts to palette
+// destX, destY = top-left corner of the AffBigCadre box
 void scaleDownImageHD(int destX, int destY, unsigned char* sourceBuffer, int srcWidth, int srcHeight)
 {
     int frameThickness = 3;
@@ -173,8 +175,16 @@ void AffOptionList(int selectedStringNumber)
     AffBigCadre(80,55,120,70);
 
     // Draw the scaled game screen preview at the box's top-left corner (20,20)
-    // Use HD data if available, otherwise fall back to palettized aux2
-    if(g_hdBackgroundPreviewData && g_hdBackgroundPreviewWidth > 0 && g_hdBackgroundPreviewHeight > 0)
+    // Prefer GPU-captured scene (includes 3D objects at output resolution),
+    // fall back to HD background data, then palettized aux2.
+    unsigned char* capturedScene = osystem_getScenePreviewData();
+    int capturedW = osystem_getScenePreviewWidth();
+    int capturedH = osystem_getScenePreviewHeight();
+    if(capturedScene && capturedW > 0 && capturedH > 0)
+    {
+        scaleDownImageHD(20, 20, capturedScene, capturedW, capturedH);
+    }
+    else if(g_hdBackgroundPreviewData && g_hdBackgroundPreviewWidth > 0 && g_hdBackgroundPreviewHeight > 0)
     {
         scaleDownImageHD(20, 20, g_hdBackgroundPreviewData, g_hdBackgroundPreviewWidth, g_hdBackgroundPreviewHeight);
     }
@@ -230,19 +240,20 @@ void processSystemMenu(void)
     int exitMenu = 0;
     int currentSelectedEntry;
 
-    // Capture current game screen for preview
-    // When HD backgrounds are on, show the standard/low-quality background as preview
-    // (since the HD rendering pipeline doesn't output to a simple buffer we can capture)
+    // Scene snapshot was already frozen by PlayWorld() before the ESC-draining
+    // loop, so s_snapshotTex holds the last game frame (with 3D objects).
+    // Pump 2 frames to ensure the GPU readback completes, then finalize.
+    process_events(); // frame 1 — readback in flight
+    process_events(); // frame 2 — readback completes
+    osystem_finalizeScenePreview();
 
+    // Fallback: capture palettized background for non-PP path
     if (g_currentBackgroundIsHD)
     {
-        // The 'aux' buffer contains the standard 320x200 background that's loaded but not displayed
-        // Use this as the preview to show what the room looks like in standard mode
         memcpy(aux2, aux, 64000);
     }
     else
     {
-        // Capture the current game screen from logicalScreen (standard rendering mode)
         memcpy(aux2, logicalScreen, 64000);
     }
 
@@ -324,6 +335,7 @@ void processSystemMenu(void)
                     case 2: // load
                         if(restoreSave(46,1))
                         {
+                            osystem_releaseScenePreview();
                             FlagInitView = 2;
                             RestoreTimerAnim();
                             //updateShaking();
@@ -451,6 +463,9 @@ void processSystemMenu(void)
 	{
 		setPalette(originalPalette);
 	}
+
+	// Re-enable per-frame scene snapshot updates now that the menu is closing
+	osystem_releaseScenePreview();
 
 	// Save configuration changes
 	saveRemasterConfig();

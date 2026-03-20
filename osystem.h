@@ -101,4 +101,13 @@
 	int osystem_playTrack(int trackId);
 	void osystem_playAdlib();
 
+	// Scene preview capture for pause menu
+	void osystem_updateSceneSnapshot();
+	void osystem_captureScenePreview();
+	void osystem_finalizeScenePreview();
+	void osystem_releaseScenePreview();
+	unsigned char* osystem_getScenePreviewData();
+	int osystem_getScenePreviewWidth();
+	int osystem_getScenePreviewHeight();
+
 #endif

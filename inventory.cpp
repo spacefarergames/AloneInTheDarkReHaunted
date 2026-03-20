@@ -37,7 +37,7 @@ int DrawListObjets(int startIdx, int selectIdx, int selectColor)
 {
     int y = WindowY1+1;
     int var_6 = startIdx;
-    int var_8;
+    int var_8 = 0;
     int i;
     int currentObj;
     tWorldObject* objPtr;

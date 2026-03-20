@@ -131,6 +131,7 @@ void StartFrame()
         g_postProcessing->setSSAOEnabled(g_remasterConfig.postProcessing.enableSSAO);
         g_postProcessing->setSSAORadius(g_remasterConfig.postProcessing.ssaoRadius);
         g_postProcessing->setSSAOIntensity(g_remasterConfig.postProcessing.ssaoIntensity);
+        g_postProcessing->setBloomPasses(g_remasterConfig.postProcessing.bloomPasses);
         g_postProcessing->beginScene();
     }
 
@@ -160,6 +161,11 @@ void EndFrame()
     {
         g_postProcessing->endScene();
     }
+
+    // Snapshot the composited scene for the pause menu preview.
+    // Must happen after endScene (so the PP chain has written the final image)
+    // but before bgfx::frame() (which presents and advances the frame).
+    osystem_updateSceneSnapshot();
 
     bgfx::frame();
 

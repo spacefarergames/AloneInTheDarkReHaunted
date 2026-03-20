@@ -40,6 +40,7 @@ struct RemasterConfig
         bool enableSSAO;
         float ssaoRadius;
         float ssaoIntensity;
+        int bloomPasses;
     } postProcessing;
 
     // External music settings (for future implementation)

@@ -33,6 +33,11 @@ extern void playMenuSound(const char* soundName);
 #include <string>
 #include <fstream>
 
+// stb_image for loading save slot preview PNGs (static to avoid conflicts with hdBackground.cpp)
+#define STB_IMAGE_STATIC
+#define STB_IMAGE_IMPLEMENTATION
+#include "../ThirdParty/bgfx.cmake/bimg/3rdparty/stb/stb_image.h"
+
 extern "C" {
 	extern char homePath[512];
 }
@@ -604,6 +609,13 @@ textEntryStruct* getTextFromIdx(int index)
 
 void AffRect(int x1, int y1, int x2, int y2, char color) // fast recode. No RE
 {
+	// Clamp to screen bounds (320x200) to prevent out-of-bounds writes
+	if (x1 < 0) x1 = 0;
+	if (y1 < 0) y1 = 0;
+	if (x2 > 319) x2 = 319;
+	if (y2 > 199) y2 = 199;
+	if (x1 > x2 || y1 > y2) return;
+
 	int width = x2 - x1 + 1;
 	int height = y2 - y1 + 1;
 
@@ -871,12 +883,13 @@ int Lire(int index, int startx, int top, int endx, int bottom, int demoMode, int
                 }
             }
 
-            if(line_type & 1) // stretch words on line
-            {
-                interWordSpace = (maxStringWidth - var_1BA) / (numWordInLine-1);
-            }
+			if(line_type & 1) // stretch words on line
+			{
+				if (numWordInLine > 1)
+					interWordSpace = (maxStringWidth - var_1BA) / (numWordInLine-1);
+			}
 
-            currentText = textTable;
+			currentText = textTable;
 
             if (line_type & 8) // center
             {
@@ -3416,16 +3429,22 @@ void AllRedraw(int flagFlip)
                 }
                 else
                 {
-                    if (actorPtr->objectType & AF_OBJ_2D) {
-                        sHybrid* pHybrid = HQR_Get(HQ_Hybrides, actorPtr->ANIM);
-                        s16 numHybrid = pHybrid->animations[actorPtr->bodyNum].anims[actorPtr->frame].id;
-                        AffHyb(numHybrid, 0, 0, pHybrid);
+					if (actorPtr->objectType & AF_OBJ_2D) {
+						sHybrid* pHybrid = HQR_Get(HQ_Hybrides, actorPtr->ANIM);
+						if (pHybrid && actorPtr->bodyNum >= 0 && actorPtr->bodyNum < (int)pHybrid->animations.size()) {
+							auto& anim = pHybrid->animations[actorPtr->bodyNum];
+							if (actorPtr->frame >= 0 && actorPtr->frame < (int)anim.anims.size()) {
+								s16 numHybrid = anim.anims[actorPtr->frame].id;
+								AffHyb(numHybrid, 0, 0, pHybrid);
+							}
+						}
 
                         // TODO: bounding volume
                     }
 					else
 					{
 						sBody* bodyPtr = HQR_Get(HQ_Bodys, actorPtr->bodyNum);
+						if (!bodyPtr) continue;
 
 						if (HQ_Load)
 						{
@@ -4563,6 +4582,12 @@ int parseAllSaves(int arg)
 	char buffer[512];
 	int initialDelay = 15; // Frames to wait before accepting Enter/click to prevent accidental selection
 
+	// Preview image state
+	unsigned char* previewImageData = NULL;
+	int previewImageW = 0;
+	int previewImageH = 0;
+	int lastPreviewSlot = -1; // Track which slot's preview is loaded
+
 	// Clear any stale TTF text from previous menu (e.g. ESC menu)
 	clearTTFTextQueue();
 
@@ -4588,6 +4613,27 @@ int parseAllSaves(int arg)
 	// Draw save/load menu
 	while(selectedSlot == -1)
 	{
+		// Load preview PNG when slot selection changes
+		if(lastPreviewSlot != currentSelectedSlot)
+		{
+			if(previewImageData)
+			{
+				stbi_image_free(previewImageData);
+				previewImageData = NULL;
+			}
+			previewImageW = 0;
+			previewImageH = 0;
+
+			if(saveExists[currentSelectedSlot])
+			{
+				char pngPath[512];
+				sprintf(pngPath, "SAVE%d.png", currentSelectedSlot);
+				int channels = 0;
+				previewImageData = stbi_load(pngPath, &previewImageW, &previewImageH, &channels, 4);
+			}
+			lastPreviewSlot = currentSelectedSlot;
+		}
+
 		// Clear screen and draw frame
 		AffBigCadre(160, 100, 280, 180);
 
@@ -4596,7 +4642,7 @@ int parseAllSaves(int arg)
 		int startY = 30;
 		int lineHeight = 16;
 
-		// Display save slots
+		// Display save slots (narrowed to left side to make room for preview)
 		for(int i = 0; i < NUM_SAVE_SLOTS; i++)
 		{
 			int yPos = startY + (i * lineHeight);
@@ -4614,18 +4660,32 @@ int parseAllSaves(int arg)
 			// Highlight selected slot
 			if(i == currentSelectedSlot)
 			{
-				AffRect(20, yPos - 1, 299, yPos + 14, 100);
+				AffRect(20, yPos - 1, 160, yPos + 14, 100);
 
 				// Draw text with highlight
 				SetFont(PtrFont, 15);
-				PrintFont(40, yPos, logicalScreen, (u8*)buffer);
+				PrintFont(30, yPos, logicalScreen, (u8*)buffer);
 			}
 			else
 			{
 				// Draw normal text
 				SetFont(PtrFont, 4);
-				PrintFont(40, yPos, logicalScreen, (u8*)buffer);
+				PrintFont(30, yPos, logicalScreen, (u8*)buffer);
 			}
+		}
+
+		// Draw preview box on the right side
+		AffBigCadre(235, 80, 120, 90);
+
+		if(previewImageData && previewImageW > 0 && previewImageH > 0)
+		{
+			scaleDownImageHD(175, 35, previewImageData, previewImageW, previewImageH);
+		}
+		else if(saveExists[currentSelectedSlot])
+		{
+			// Save exists but no preview PNG — show "No Preview" text
+			SetFont(PtrFont, 4);
+			PrintFont(185, 70, logicalScreen, (u8*)"No Preview");
 		}
 
 		// Refresh display
@@ -4695,6 +4755,13 @@ int parseAllSaves(int arg)
 		}
 
 		osystem_flip(NULL);
+	}
+
+	// Free preview image
+	if(previewImageData)
+	{
+		stbi_image_free(previewImageData);
+		previewImageData = NULL;
 	}
 
 	// Wait for key release

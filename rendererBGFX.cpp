@@ -1693,3 +1693,113 @@ void osystem_drawMask(int roomId, int maskId)
 
     bgfx::submit(gameViewId, g_currentBackgroundIsHD ? getHDMaskBackgroundShader() : getMaskBackgroundShader());
 }
+
+///////////////////////////////////////////////////////////////////////////////
+// Scene preview capture for pause menu
+// A persistent GPU snapshot texture is blitted every game frame (inside
+// EndFrame, after endScene, before bgfx::frame).  When the pause menu opens
+// we stop updating the snapshot, request a CPU readback of the last game
+// frame, and use that RGBA data as the menu preview thumbnail.
+///////////////////////////////////////////////////////////////////////////////
+
+static const bgfx::ViewId kViewSnapshot = 206;
+
+static bgfx::TextureHandle s_snapshotTex = BGFX_INVALID_HANDLE;
+static unsigned char* s_previewData = nullptr;
+static int s_snapshotWidth = 0;
+static int s_snapshotHeight = 0;
+static bool s_snapshotEnabled = true;   // true during gameplay, false while menu is open
+static bool s_previewReady = false;
+
+// Called every frame from EndFrame() (after endScene, before bgfx::frame).
+// Blits the composited scene from m_mainColorTex into a persistent snapshot
+// texture so it survives the clear at the start of the next frame.
+void osystem_updateSceneSnapshot()
+{
+    if (!s_snapshotEnabled)
+        return;
+
+    if (!g_postProcessing || !bgfx::isValid(g_postProcessing->getMainColorTexture()))
+        return;
+
+    int w = g_postProcessing->getWidth();
+    int h = g_postProcessing->getHeight();
+    if (w <= 0 || h <= 0)
+        return;
+
+    // Recreate snapshot texture if resolution changed
+    if (w != s_snapshotWidth || h != s_snapshotHeight)
+    {
+        if (bgfx::isValid(s_snapshotTex))
+            bgfx::destroy(s_snapshotTex);
+        if (s_previewData)
+        {
+            delete[] s_previewData;
+            s_previewData = nullptr;
+        }
+
+        s_snapshotTex = bgfx::createTexture2D(
+            (uint16_t)w, (uint16_t)h, false, 1,
+            bgfx::TextureFormat::RGBA8,
+            BGFX_TEXTURE_BLIT_DST | BGFX_TEXTURE_READ_BACK
+        );
+
+        s_previewData = new unsigned char[(size_t)w * h * 4];
+        s_snapshotWidth = w;
+        s_snapshotHeight = h;
+    }
+
+    // Set up snapshot view (after composite view 205) so the blit happens
+    // after the post-processing chain has written the final image.
+    bgfx::setViewName(kViewSnapshot, "Snapshot");
+    bgfx::setViewRect(kViewSnapshot, 0, 0, (uint16_t)w, (uint16_t)h);
+    bgfx::touch(kViewSnapshot);
+
+    // GPU blit: m_mainColorTex -> s_snapshotTex
+    bgfx::blit(kViewSnapshot, s_snapshotTex, 0, 0, g_postProcessing->getMainColorTexture());
+}
+
+// Called when the pause menu opens.  Freezes snapshot updates and kicks off
+// a CPU readback of the last captured frame.
+void osystem_captureScenePreview()
+{
+    s_previewReady = false;
+    s_snapshotEnabled = false;  // freeze — keep the last game frame in the snapshot
+
+    if (!bgfx::isValid(s_snapshotTex) || !s_previewData || s_snapshotWidth <= 0 || s_snapshotHeight <= 0)
+        return;
+
+    // Request async readback — data is available after 2 bgfx::frame() calls.
+    bgfx::readTexture(s_snapshotTex, s_previewData);
+}
+
+// Call after pumping 2 bgfx::frame() calls so the readback has completed.
+void osystem_finalizeScenePreview()
+{
+    if (s_previewData && s_snapshotWidth > 0 && s_snapshotHeight > 0)
+    {
+        s_previewReady = true;
+    }
+}
+
+// Called when the pause menu closes.  Re-enables per-frame snapshot updates.
+void osystem_releaseScenePreview()
+{
+    s_snapshotEnabled = true;
+    s_previewReady = false;
+}
+
+unsigned char* osystem_getScenePreviewData()
+{
+    return s_previewReady ? s_previewData : nullptr;
+}
+
+int osystem_getScenePreviewWidth()
+{
+    return s_previewReady ? s_snapshotWidth : 0;
+}
+
+int osystem_getScenePreviewHeight()
+{
+    return s_previewReady ? s_snapshotHeight : 0;
+}

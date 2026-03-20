@@ -32,13 +32,14 @@ void initDefaultRemasterConfig()
 
     // Post-processing defaults
     g_remasterConfig.postProcessing.enableBloom = true;
-    g_remasterConfig.postProcessing.bloomThreshold = 0.6f;
-    g_remasterConfig.postProcessing.bloomIntensity = 0.5f;
+    g_remasterConfig.postProcessing.bloomThreshold = 0.45f;
+    g_remasterConfig.postProcessing.bloomIntensity = 0.55f;
     g_remasterConfig.postProcessing.enableFilmGrain = true;
-    g_remasterConfig.postProcessing.filmGrainIntensity = 0.03f;
+    g_remasterConfig.postProcessing.filmGrainIntensity = 0.025f;
     g_remasterConfig.postProcessing.enableSSAO = true;
-    g_remasterConfig.postProcessing.ssaoRadius = 500.0f;
-    g_remasterConfig.postProcessing.ssaoIntensity = 1.0f;
+    g_remasterConfig.postProcessing.ssaoRadius = 400.0f;
+    g_remasterConfig.postProcessing.ssaoIntensity = 0.8f;
+    g_remasterConfig.postProcessing.bloomPasses = 2;
 
     // External music defaults (for future)
     g_remasterConfig.music.enableExternalMusic = false;
@@ -169,6 +170,8 @@ void loadRemasterConfig()
                 g_remasterConfig.postProcessing.ssaoRadius = (float)atof(value);
             else if (strcmp(key, "postprocessing.ssaoIntensity") == 0)
                 g_remasterConfig.postProcessing.ssaoIntensity = (float)atof(value);
+            else if (strcmp(key, "postprocessing.bloomPasses") == 0)
+                g_remasterConfig.postProcessing.bloomPasses = atoi(value);
 
             // Controls settings
             else if (strcmp(key, "controls.key.up") == 0)
@@ -264,6 +267,7 @@ void saveRemasterConfig()
     fprintf(file, "postprocessing.ssao = %s\n", g_remasterConfig.postProcessing.enableSSAO ? "true" : "false");
     fprintf(file, "postprocessing.ssaoRadius = %.1f\n", g_remasterConfig.postProcessing.ssaoRadius);
     fprintf(file, "postprocessing.ssaoIntensity = %.2f\n", g_remasterConfig.postProcessing.ssaoIntensity);
+    fprintf(file, "postprocessing.bloomPasses = %d\n", g_remasterConfig.postProcessing.bloomPasses);
 
     fprintf(file, "\n# Controls Settings (scancode / button IDs)\n");
     fprintf(file, "controls.key.up = %d\n", g_remasterConfig.controls.keyBindings[0]);

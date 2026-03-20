@@ -160,6 +160,17 @@ int makeIntroScreens(void)
     osystem_flip(NULL);
     free(data);
 
+    // Hold the title screen for a moment (skippable by key/click)
+    startChrono(&chrono);
+    do
+    {
+        process_events();
+
+        if (evalChrono(&chrono) >= 0x80)
+            break;
+
+    } while (key == 0 && Click == 0);
+
     // Try HD replacement for LIVRE
     hdBg = loadHDBackground("ITD_RESS", AITD1_LIVRE);
     if (hdBg)
