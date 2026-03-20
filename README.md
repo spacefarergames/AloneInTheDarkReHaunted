@@ -6,16 +6,16 @@
 *Copyright © 2026 Infogrames / Spacefarer Retro Remasters LLC*
 *Author: Jake Jackson (jake@spacefarergames.com)*
 
-![Alt text](AITDREHAUNTED (1).png)
-![Alt text](AITDREHAUNTED (2).png)
-![Alt text](AITDREHAUNTED (3).png)
-![Alt text](AITDREHAUNTED (4).png)
-![Alt text](AITDREHAUNTED (5).png)
-![Alt text](AITDREHAUNTED (6).png)
-![Alt text](AITDREHAUNTED (7).png)
-![Alt text](AITDREHAUNTED (8).png)
-![Alt text](AITDREHAUNTED (9).png)
-![Alt text](AITDREHAUNTED (10).png)
+![Alt text](AITDREHAUNTED(1).png)
+![Alt text](AITDREHAUNTED(2).png)
+![Alt text](AITDREHAUNTED(3).png)
+![Alt text](AITDREHAUNTED(4).png)
+![Alt text](AITDREHAUNTED(5).png)
+![Alt text](AITDREHAUNTED(6).png)
+![Alt text](AITDREHAUNTED(7).png)
+![Alt text](AITDREHAUNTED(8).png)
+![Alt text](AITDREHAUNTED(9).png)
+![Alt text](AITDREHAUNTED(10).png)
 
 ---
 
