@@ -1,10 +1,13 @@
 ///////////////////////////////////////////////////////////////////////////////
 // Alone In The Dark Re-Haunted
 // Copyright (C) 2026 Infogrames / Spacefarer Retro Remasters LLC
+// Based on FITD by yaz0r, Re-haunted is released under GPL
 // Author: Jake Jackson (jake@spacefarergames.com)
 //
 // Alone in the Dark 1 function declarations
 ///////////////////////////////////////////////////////////////////////////////
+
+#pragma once
 
 // ITD_RESS mapping
 #define AITD1_TATOU_3DO		0
@@ -29,4 +32,4 @@
 #define AITD1_CAM06008		19
 
 void startAITD1();
-void AITD1_ReadBook(int index, int type);
+void AITD1_ReadBook(int index, int type, int vocIndex = -1);

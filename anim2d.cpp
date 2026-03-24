@@ -1,6 +1,7 @@
 ///////////////////////////////////////////////////////////////////////////////
 // Alone In The Dark Re-Haunted
 // Copyright (C) 2026 Infogrames / Spacefarer Retro Remasters LLC
+// Based on FITD by yaz0r, Re-haunted is released under GPL
 // Author: Jake Jackson (jake@spacefarergames.com)
 //
 // 2D sprite animation rendering and management
@@ -52,6 +53,7 @@ void handleAnim2d() {
         for (j = NbAffObjets + i - 1; j >= 0; j--) {
             if (!(Index2[j] & 0x8000)) {
                 //TODO: test rects
+                break;
             }
         }
 
@@ -67,6 +69,8 @@ void resetAnim2D() {
 }
 
 void startAnim2d(int index) {
+    if (!PtrAnim2D) return;
+    if (NbAnim2D >= (int)TabAnim2d.size()) return;
     auto& anim = PtrAnim2D->animations[index];
 
     TabAnim2d[NbAnim2D].pAnimation = &anim;

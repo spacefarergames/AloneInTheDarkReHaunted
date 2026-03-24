@@ -1,6 +1,7 @@
 ///////////////////////////////////////////////////////////////////////////////
 // Alone In The Dark Re-Haunted
 // Copyright (C) 2026 Infogrames / Spacefarer Retro Remasters LLC
+// Based on FITD by yaz0r, Re-haunted is released under GPL
 // Author: Jake Jackson (jake@spacefarergames.com)
 //
 // Controller and keyboard configuration menu
@@ -293,17 +294,27 @@ void processControlsMenu()
 
 		int topY = WindowY1 + 4;
 
-		// Title
-		drawText(160, topY, "Controls", CONTROLS_SELECT_COUL);
+		// Title (translated)
+		{
+			const char* titleText = "Controls";
+			if (languageNameString == "FRANCAIS")
+				titleText = "Commandes";
+			else if (languageNameString == "ITALIANO")
+				titleText = "Comandi";
+			else if (languageNameString == "ESPAGNOL")
+				titleText = "Controles";
+			else if (languageNameString == "DEUTSCH")
+				titleText = "Steuerung";
+			drawText(160, topY, titleText, CONTROLS_SELECT_COUL);
+		}
 		topY += 12;
 
-		// Show controller name if connected
+		// Show controller name if connected (translated)
 		if (g_controllerState.connected && g_controllerState.gamepad)
 		{
 			const char* name = SDL_GetGamepadName(g_controllerState.gamepad);
 			if (name && name[0])
 			{
-				// Truncate long controller names
 				char nameBuf[32];
 				strncpy(nameBuf, name, 31);
 				nameBuf[31] = '\0';
@@ -311,20 +322,39 @@ void processControlsMenu()
 			}
 			else
 			{
-				drawText(160, topY, "Controller Connected", CONTROLS_VALUE_COUL);
+				const char* connText = "Controller Connected";
+				if (languageNameString == "FRANCAIS") connText = "Manette Connect" "\xE9" "e";
+				else if (languageNameString == "ITALIANO") connText = "Controller Connesso";
+				else if (languageNameString == "ESPAGNOL") connText = "Mando Conectado";
+				else if (languageNameString == "DEUTSCH") connText = "Controller Verbunden";
+				drawText(160, topY, connText, CONTROLS_VALUE_COUL);
 			}
 		}
 		else
 		{
-			drawText(160, topY, "No Controller", CONTROLS_MENU_COUL);
+			const char* noCtrl = "No Controller";
+			if (languageNameString == "FRANCAIS") noCtrl = "Pas de Manette";
+			else if (languageNameString == "ITALIANO") noCtrl = "Nessun Controller";
+			else if (languageNameString == "ESPAGNOL") noCtrl = "Sin Mando";
+			else if (languageNameString == "DEUTSCH") noCtrl = "Kein Controller";
+			drawText(160, topY, noCtrl, CONTROLS_MENU_COUL);
 		}
 		topY += 11;
 
-		// Column headers
-		drawTextLeft(WindowX1 + 4, topY, "Action", CONTROLS_LABEL_COUL);
-		drawTextLeft(140, topY, "Key", CONTROLS_LABEL_COUL);
-		if (g_controllerState.connected)
-			drawTextLeft(230, topY, "Button", CONTROLS_LABEL_COUL);
+		// Column headers (translated)
+		{
+			const char* hdrAction = "Action";
+			const char* hdrKey = "Key";
+			const char* hdrButton = "Button";
+			if (languageNameString == "FRANCAIS") { hdrAction = "Action"; hdrKey = "Touche"; hdrButton = "Bouton"; }
+			else if (languageNameString == "ITALIANO") { hdrAction = "Azione"; hdrKey = "Tasto"; hdrButton = "Pulsante"; }
+			else if (languageNameString == "ESPAGNOL") { hdrAction = "Acci" "\xF3" "n"; hdrKey = "Tecla"; hdrButton = "Bot" "\xF3" "n"; }
+			else if (languageNameString == "DEUTSCH") { hdrAction = "Aktion"; hdrKey = "Taste"; hdrButton = "Knopf"; }
+			drawTextLeft(WindowX1 + 4, topY, hdrAction, CONTROLS_LABEL_COUL);
+			drawTextLeft(140, topY, hdrKey, CONTROLS_LABEL_COUL);
+			if (g_controllerState.connected)
+				drawTextLeft(230, topY, hdrButton, CONTROLS_LABEL_COUL);
+		}
 		topY += 10;
 
 		// Draw each control binding
@@ -335,18 +365,28 @@ void processControlsMenu()
 			drawControlRow(y, (KeyAction)i, selected, remapping && selected, remapGamepad);
 		}
 
-		// Back option
+		// Back option (translated)
 		int backY = topY + ACTION_COUNT * 11 + 2;
 		{
 			bool selected = (currentEntry == backEntry);
-			drawText(160, backY, "Back", selected ? CONTROLS_SELECT_COUL : CONTROLS_MENU_COUL);
+			const char* backText = "Back";
+			if (languageNameString == "FRANCAIS") backText = "Retour";
+			else if (languageNameString == "ITALIANO") backText = "Indietro";
+			else if (languageNameString == "ESPAGNOL") backText = "Volver";
+			else if (languageNameString == "DEUTSCH") backText = "Zur" "\xFC" "ck";
+			drawText(160, backY, backText, selected ? CONTROLS_SELECT_COUL : CONTROLS_MENU_COUL);
 		}
 
-		// Defaults option
+		// Defaults option (translated)
 		int defaultsY = backY + 11;
 		{
 			bool selected = (currentEntry == defaultsEntry);
-			drawText(160, defaultsY, "Defaults", selected ? CONTROLS_SELECT_COUL : CONTROLS_MENU_COUL);
+			const char* defText = "Defaults";
+			if (languageNameString == "FRANCAIS") defText = "Par D\xE9aut";
+			else if (languageNameString == "ITALIANO") defText = "Predefiniti";
+			else if (languageNameString == "ESPAGNOL") defText = "Predeterminado";
+			else if (languageNameString == "DEUTSCH") defText = "Standard";
+			drawText(160, defaultsY, defText, selected ? CONTROLS_SELECT_COUL : CONTROLS_MENU_COUL);
 		}
 
 		menuWaitVSync();

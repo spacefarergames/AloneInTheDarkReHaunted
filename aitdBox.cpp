@@ -1,6 +1,7 @@
 ///////////////////////////////////////////////////////////////////////////////
 // Alone In The Dark Re-Haunted
 // Copyright (C) 2026 Infogrames / Spacefarer Retro Remasters LLC
+// Based on FITD by yaz0r, Re-haunted is released under GPL
 // Author: Jake Jackson (jake@spacefarergames.com)
 //
 // UI dialog box and frame rendering
@@ -31,7 +32,6 @@ void AffSpf(int left, int top, int index, char* gfxData)
     if(g_gameId >= AITD3)
         return;
 
-    outPtr = logicalScreen + top*320 + left;
     inPtr = gfxData + READ_LE_U16(index * 2 + gfxData);
 
     inPtr +=4;
@@ -41,13 +41,24 @@ void AffSpf(int left, int top, int index, char* gfxData)
     height = READ_LE_U16(inPtr);
     inPtr+=2;
 
-    offset = 320 - width;
+    // Bounds check: ensure sprite doesn't draw beyond screen boundaries
+    if (left < 0 || top < 0 || left >= 320 || top >= 200)
+        return;
 
-    // Prevent overflow
-    if(height + top > 200)
-    {
+    // Store original width for input stride
+    int originalWidth = width;
+
+    // Clamp width/height to stay within screen bounds
+    if (left + width > 320)
+        width = 320 - left;
+    if (top + height > 200)
         height = 200 - top;
-    }
+
+    if (width <= 0 || height <= 0)
+        return;
+
+    outPtr = logicalScreen + top*320 + left;
+    offset = 320 - width;
 
     for(i=0;i<height;i++)
     {
@@ -56,6 +67,8 @@ void AffSpf(int left, int top, int index, char* gfxData)
             *(outPtr++) = *(inPtr++);
         }
 
+        // Skip remaining source pixels if width was clamped
+        inPtr += (originalWidth - width);
         outPtr+=offset;
     }
 }
@@ -91,11 +104,12 @@ void AffSpfI(int left, int top, int index, char* gfxData)
 		return;
 	
 	// Clamp width/height to stay within screen bounds
+	int originalWidth = width;
 	if (left + width > 320)
 		width = 320 - left;
 	if (top + height > 200)
 		height = 200 - top;
-	
+
 	if (width <= 0 || height <= 0)
 		return;
 
@@ -113,6 +127,8 @@ void AffSpfI(int left, int top, int index, char* gfxData)
 			outPtr++;
 		}
 
+		// Skip remaining source pixels if width was clamped
+		inPtr += (originalWidth - width);
 		outPtr+=offset;
 	}
 }

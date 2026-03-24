@@ -72,6 +72,7 @@ Revision History:
 #include <math.h>
 
 #include "common.h"
+#include "consoleLog.h"
 
 #ifndef INLINE
 # ifdef _MSC_VER
@@ -1537,7 +1538,7 @@ static void OPLWriteReg(FM_OPL *OPL, int r, int v)
 				if(OPL->keyboardhandler_w)
 					OPL->keyboardhandler_w(OPL->keyboard_param,v);
 				else
-					printf("Y8950: write unmapped KEYBOARD port\n");
+					printf(FMOPL_WARN "Y8950: write unmapped KEYBOARD port" CON_RESET "\n");
 			}
 			break;
 		case 0x07:	/* DELTA-T control 1 : START,REC,MEMDATA,REPT,SPOFF,x,x,RST */
@@ -1571,7 +1572,7 @@ static void OPLWriteReg(FM_OPL *OPL, int r, int v)
 		case 0x15:		/* DAC data high 8 bits (F7,F6...F2) */
 		case 0x16:		/* DAC data low 2 bits (F1, F0 in bits 7,6) */
 		case 0x17:		/* DAC data shift (S2,S1,S0 in bits 2,1,0) */
-			printf("FMOPL.C: DAC data register written, but not implemented reg=%02x val=%02x\n",r,v);
+			printf(FMOPL_WARN "DAC data register written, but not implemented reg=%02x val=%02x" CON_RESET "\n",r,v);
 			break;
 
 		case 0x18:		/* I/O CTRL (Direction) */
@@ -1588,7 +1589,7 @@ static void OPLWriteReg(FM_OPL *OPL, int r, int v)
 			break;
 #endif
 		default:
-			printf("FMOPL.C: write to unknown register: %02x\n",r);
+			printf(FMOPL_WARN "write to unknown register: %02x" CON_RESET "\n",r);
 			break;
 		}
 		break;

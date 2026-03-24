@@ -1,12 +1,14 @@
 ///////////////////////////////////////////////////////////////////////////////
 // Alone In The Dark Re-Haunted
 // Copyright (C) 2026 Infogrames / Spacefarer Retro Remasters LLC
+// Based on FITD by yaz0r, Re-haunted is released under GPL
 // Author: Jake Jackson (jake@spacefarergames.com)
 //
 // Script variable evaluation and conditional logic
 ///////////////////////////////////////////////////////////////////////////////
 
 #include "common.h"
+#include "consoleLog.h"
 
 int getPosRelTable[] = {4,1,8,2,4,1,8,0};
 
@@ -191,10 +193,16 @@ int evalVar(const char* name)
 
                 objectNumber = *(s16*)currentLifePtr;
 
+                currentLifePtr+=2;
+
+                if(objectNumber < 0 || objectNumber >= (int)ListWorldObjets.size())
+                {
+                    printf(EVAL_WARN "evalVar: objectNumber %d out of bounds (size %d)" CON_RESET "\n", objectNumber, (int)ListWorldObjets.size());
+                    return 0;
+                }
+
                 actorIdx = ListWorldObjets[objectNumber].objIndex;
 
-                currentLifePtr+=2;
-                
                 if(actorIdx==-1)
                 {
                     actorPtr = nullptr;
@@ -212,8 +220,8 @@ int evalVar(const char* name)
                         }
                     default:
                         {
-                            printf("Unsupported evalVar %X when actor not in room !\n", var1 & 0x7FFF);
-                            assert(0);
+                            printf(EVAL_WARN "Unsupported evalVar %X when actor not in room !" CON_RESET "\n", var1 & 0x7FFF);
+                            return 0;
                         }
                     }
                 }
@@ -548,7 +556,7 @@ int evalVar(const char* name)
                     }
                 default:
                     {
-                        printf("Unhandled test type %X in evalVar\n",var1);
+                        printf(EVAL_WARN "Unhandled test type %X in evalVar" CON_RESET "\n",var1);
                         return 0;
                         break;
                     }
@@ -598,10 +606,16 @@ int evalVar2(const char* name)
 
                 objectNumber = *(s16*)currentLifePtr;
 
-                actorIdx = ListWorldObjets[objectNumber].objIndex;
-
                 currentLifePtr+=2;
                 actorPtr = nullptr;
+
+                if(objectNumber < 0 || objectNumber >= (int)ListWorldObjets.size())
+                {
+                    printf(EVAL_WARN "evalVar2: objectNumber %d out of bounds (size %d)" CON_RESET "\n", objectNumber, (int)ListWorldObjets.size());
+                    return 0;
+                }
+
+                actorIdx = ListWorldObjets[objectNumber].objIndex;
 
                 if(actorIdx==-1)
                 {
@@ -627,7 +641,7 @@ int evalVar2(const char* name)
                         }
                     default:
                         {
-                            printf("Unsupported evalVar2 %X when actor not in room !\n", var1 & 0x7FFF);
+                            printf(EVAL_WARN "Unsupported evalVar2 %X when actor not in room !" CON_RESET "\n", var1 & 0x7FFF);
                             //assert(0);
 							return false;
                         }
@@ -1002,7 +1016,7 @@ int evalVar2(const char* name)
                     }
                 default:
                     {
-                        printf("Unhandled test type %X in evalVar\n",var1);
+                        printf(EVAL_WARN "Unhandled test type %X in evalVar" CON_RESET "\n",var1);
                         return 0;
                         break;
                     }

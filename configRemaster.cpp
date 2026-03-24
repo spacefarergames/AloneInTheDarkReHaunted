@@ -1,6 +1,7 @@
 ///////////////////////////////////////////////////////////////////////////////
 // Alone In The Dark Re-Haunted
 // Copyright (C) 2026 Infogrames / Spacefarer Retro Remasters LLC
+// Based on FITD by yaz0r, Re-haunted is released under GPL
 // Author: Jake Jackson (jake@spacefarergames.com)
 //
 // Remaster configuration loading and management
@@ -8,6 +9,7 @@
 
 #include "common.h"
 #include "configRemaster.h"
+#include "consoleLog.h"
 #include "controlsMenu.h"
 #include <stdio.h>
 #include <string.h>
@@ -81,7 +83,7 @@ void loadRemasterConfig()
     
     if (!file)
     {
-        printf("No config file found, using defaults\n");
+        printf(CFG_TAG "No config file found, using defaults\n");
         return;
     }
 
@@ -214,7 +216,7 @@ void loadRemasterConfig()
     }
 
     fclose(file);
-    printf("Remaster config loaded\n");
+    printf(CFG_OK "Remaster config loaded\n");
 
     // Sync detail level with HD backgrounds setting
     extern int detailLevel;
@@ -227,7 +229,7 @@ void saveRemasterConfig()
     
     if (!file)
     {
-        printf("Failed to save config file\n");
+        printf(CFG_ERR "Failed to save config file" CON_RESET "\n");
         return;
     }
 
@@ -290,5 +292,5 @@ void saveRemasterConfig()
     fprintf(file, "controls.pad.quickturnright = %d\n", g_remasterConfig.controls.gamepadBindings[8]);
 
     fclose(file);
-    printf("Remaster config saved\n");
+    printf(CFG_OK "Remaster config saved\n");
 }

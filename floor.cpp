@@ -1,6 +1,7 @@
 ///////////////////////////////////////////////////////////////////////////////
 // Alone In The Dark Re-Haunted
 // Copyright (C) 2026 Infogrames / Spacefarer Retro Remasters LLC
+// Based on FITD by yaz0r, Re-haunted is released under GPL
 // Author: Jake Jackson (jake@spacefarergames.com)
 //
 // Floor and level data loading
@@ -21,8 +22,15 @@ void LoadEtage(int floorNumber)
     if(g_currentFloorCameraRawData)
     {
         free(g_currentFloorCameraRawData);
-        free(g_currentFloorRoomRawData);
+        g_currentFloorCameraRawData = NULL;
     }
+    if(g_currentFloorRoomRawData)
+    {
+        free(g_currentFloorRoomRawData);
+        g_currentFloorRoomRawData = NULL;
+    }
+    g_currentFloorRoomRawDataSize = 0;
+    g_currentFloorCameraRawDataSize = 0;
 
     //stopSounds();
 
@@ -79,9 +87,16 @@ void LoadEtage(int floorNumber)
         }
         else
         {
+            if(!g_currentFloorRoomRawData)
+            {
+                continue;
+            }
             roomData = (u8*)(g_currentFloorRoomRawData + READ_LE_U32(g_currentFloorRoomRawData + i * 4));
         }
-        assert(roomData);
+        if(!roomData)
+        {
+            continue;
+        }
 
         roomDataStruct* currentRoomDataPtr = &roomDataTable.emplace_back();
 

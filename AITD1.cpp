@@ -1,6 +1,7 @@
 ///////////////////////////////////////////////////////////////////////////////
 // Alone In The Dark Re-Haunted
 // Copyright (C) 2026 Infogrames / Spacefarer Retro Remasters LLC
+// Based on FITD by yaz0r, Re-haunted is released under GPL
 // Author: Jake Jackson (jake@spacefarergames.com)
 //
 // Alone in the Dark 1 game-specific logic and startup sequence
@@ -451,6 +452,7 @@ int ChoosePerso(void)
                 setCurrentAnimatedHDBackground(nullptr);
                 uiLayer.fill(0);
                 g_portraitOverlayChoice = -1;
+                notifyTTFMenuStateChanged(false, false);
                 if (g_currentBackgroundIsHD)
                 {
                     recreateBackgroundTexture(320, 200);
@@ -502,7 +504,10 @@ int ChoosePerso(void)
 
                 FastCopyScreen(logicalScreen, aux);
                 g_portraitOverlayChoice = 0;
+                // Play character intro VO (uses text index as VOC index)
+                osystem_playVocByIndex(CVars[getCVarsIdx(INTRO_HERITIERE)]);
                 Lire(CVars[getCVarsIdx(INTRO_HERITIERE)] + 1, 165, 5, 314, 194, 2, 15, 0);
+                osystem_stopVO();
                 CVars[getCVarsIdx(CHOOSE_PERSO)] = 1;
                 break;
             }
@@ -542,7 +547,10 @@ int ChoosePerso(void)
 
                 FastCopyScreen(logicalScreen, aux);
                 g_portraitOverlayChoice = 1;
+                // Play character intro VO (uses text index as VOC index)
+                osystem_playVocByIndex(CVars[getCVarsIdx(INTRO_DETECTIVE)]);
                 Lire(CVars[getCVarsIdx(INTRO_DETECTIVE)] + 1, 5, 5, 154, 194, 2, 15, 0);
+                osystem_stopVO();
                 CVars[getCVarsIdx(CHOOSE_PERSO)] = 0;
                 break;
             }
@@ -550,7 +558,7 @@ int ChoosePerso(void)
 
         g_portraitOverlayChoice = -1;
 
-        if (localKey && 0x1C)
+        if (localKey == 0x1C)
         {
             choiceMade = 1;
         }
@@ -561,6 +569,7 @@ int ChoosePerso(void)
     setCurrentAnimatedHDBackground(nullptr);
     uiLayer.fill(0);
     g_portraitOverlayChoice = -1;
+    notifyTTFMenuStateChanged(false, false);
     if (g_currentBackgroundIsHD)
     {
         recreateBackgroundTexture(320, 200);
@@ -575,8 +584,17 @@ int ChoosePerso(void)
     // Update the foreground texture to black
     osystem_CopyBlockPhys((unsigned char*)frontBuffer, 0, 0, 320, 200);
 
-    // Draw "Please Wait..." centered on screen
-    const u8* loadingText = (const u8*)"Please Wait...";
+    // Draw loading text centered on screen, translated per language
+    const char* loadingText = "Please Wait...";
+    if (languageNameString == "FRANCAIS")
+        loadingText = "Veuillez Patienter...";
+    else if (languageNameString == "ITALIANO")
+        loadingText = "Attendere Prego...";
+    else if (languageNameString == "ESPAGNOL")
+        loadingText = "Por Favor Espere...";
+    else if (languageNameString == "DEUTSCH")
+        loadingText = "Bitte Warten...";
+
     SetFont(PtrFont, 15);
     int textWidth = ExtGetSizeFont((u8*)loadingText);
     int textX = (320 - textWidth) / 2;
@@ -618,6 +636,15 @@ void startAITD1()
     g_remasterConfig.postProcessing.enableFilmGrain = savedFilmGrain;
     g_remasterConfig.postProcessing.enableSSAO = savedSSAO;
 #endif
+
+    // Reset HD background from tatou before language selection
+    if (g_currentBackgroundIsHD)
+    {
+        recreateBackgroundTexture(320, 200);
+    }
+
+    // Show language selection before main menu (skipped if only one language available)
+    LanguageSelectionMenu();
 
     while (1)
     {
@@ -722,7 +749,7 @@ void startAITD1()
     }
 }
 
-void AITD1_ReadBook(int index, int type)
+void AITD1_ReadBook(int index, int type, int vocIndex)
 {
     int resIdx;
     switch (type)
@@ -750,6 +777,10 @@ void AITD1_ReadBook(int index, int type)
 
     LoadPak("ITD_RESS", resIdx, aux);
 
+    // Start voice-over for AITD1 CD reading (plays while user reads text)
+    if (vocIndex >= 0)
+        osystem_playVocByIndex(vocIndex);
+
     switch (type)
     {
     case 0: // READ_MESSAGE
@@ -765,6 +796,10 @@ void AITD1_ReadBook(int index, int type)
         Lire(index, 50, 20, 250, 199, 0, 26, 0);
         break;
     }
+
+    // Stop voice-over when reading ends
+    if (vocIndex >= 0)
+        osystem_stopVO();
 
     setCurrentAnimatedHDBackground(nullptr);
 }

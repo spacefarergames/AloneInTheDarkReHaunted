@@ -1,6 +1,7 @@
 ///////////////////////////////////////////////////////////////////////////////
 // Alone In The Dark Re-Haunted
 // Copyright (C) 2026 Infogrames / Spacefarer Retro Remasters LLC
+// Based on FITD by yaz0r, Re-haunted is released under GPL
 // Author: Jake Jackson (jake@spacefarergames.com)
 //
 // Bitmap font rendering and text measurement
@@ -155,11 +156,19 @@ void PrintFont(int x, int y, char* surface, u8* string)
             {
                 if (bp >= 200)
                     return;
+                if (fontSm8 < 0 || fontSm8 >= 320)
+                    return;
+
+                int cl = data&0xF;
+
+                // Skip this scanline if character would write past right edge
+                if (fontSm8 + cl > 320)
+                    cl = 320 - fontSm8;
+
                 char* outPtr = (char*)uiLayer.data() + bp * 320 + fontSm8;
 
 
                 int dh = fontSm9;
-                int cl = data&0xF;
 
                 int al = *characterPtr;
 
@@ -209,20 +218,22 @@ void SelectedMessage(int x, int y, int index, int color1, int color2)
     if(!entryPtr)
         return;
 
-    x -= (entryPtr->width/2); // center
-
     textPtr = entryPtr->textPtr;
 
-    // If TTF is enabled, queue the text with shadow and optionally skip original rendering
+    // If TTF is enabled, center using TTF text metrics for correct positioning
     if (g_remasterConfig.font.enableTTF)
     {
-        queueTTFText(x, y, textPtr, color1, true, color2);
+        int ttfWidth = getTTFTextWidth(textPtr);
+        int ttfX = x - (ttfWidth / 2);
+        queueTTFText(ttfX, y, textPtr, color1, true, color2);
 
         if (g_remasterConfig.font.hideOriginalText)
         {
             return;
         }
     }
+
+    x -= (entryPtr->width/2); // center using bitmap font metrics
 
     SetFont(PtrFont,color2);
     PrintFont(x,y+1,logicalScreen,textPtr);
@@ -239,9 +250,22 @@ void SimpleMessage(int x, int y, int index, int color)
     if(!entryPtr)
         return;
 
-    x -= (entryPtr->width/2); // center
-
     u8* textPtr = entryPtr->textPtr;
+
+    // If TTF is enabled, center using TTF text metrics for correct positioning
+    if (g_remasterConfig.font.enableTTF)
+    {
+        int ttfWidth = getTTFTextWidth(textPtr);
+        int ttfX = x - (ttfWidth / 2);
+        queueTTFText(ttfX, y, textPtr, color, false, 0);
+
+        if (g_remasterConfig.font.hideOriginalText)
+        {
+            return;
+        }
+    }
+
+    x -= (entryPtr->width/2); // center using bitmap font metrics
 
     SetFont(PtrFont,color);
 

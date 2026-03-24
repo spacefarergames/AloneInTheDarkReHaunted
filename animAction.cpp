@@ -1,12 +1,14 @@
 ///////////////////////////////////////////////////////////////////////////////
 // Alone In The Dark Re-Haunted
 // Copyright (C) 2026 Infogrames / Spacefarer Retro Remasters LLC
+// Based on FITD by yaz0r, Re-haunted is released under GPL
 // Author: Jake Jackson (jake@spacefarergames.com)
 //
 // Animation action processing and combat mechanics
 ///////////////////////////////////////////////////////////////////////////////
 
 #include "common.h"
+#include "consoleLog.h"
 #include <stdio.h>
 
 #define		NO_FRAPPE			0
@@ -98,45 +100,33 @@ void GereFrappe(void)
             }
             break;
         }
-    case 4: // WAIT_TIR_ANIM (Gun firing - adapted to use throw-style projectiles)
+        case 4: // WAIT_TIR_ANIM
         {
-            printf("Case 4: WAIT_TIR_ANIM - ANIM=%d, animActionANIM=%d, frame=%d, animActionFRAME=%d\n", 
-                currentProcessedActorPtr->ANIM, 
-                currentProcessedActorPtr->animActionANIM,
-                currentProcessedActorPtr->frame,
-                currentProcessedActorPtr->animActionFRAME);
-
             if(currentProcessedActorPtr->ANIM != currentProcessedActorPtr->animActionANIM)
             {
-                printf("  -> Waiting for animation (current ANIM != target)\n");
                 return;
             }
 
             if(currentProcessedActorPtr->frame != currentProcessedActorPtr->animActionFRAME)
             {
-                printf("  -> Waiting for frame (current frame %d != target frame %d)\n",
-                    currentProcessedActorPtr->frame, currentProcessedActorPtr->animActionFRAME);
                 return;
             }
 
-            printf("  -> Animation and frame matched! Transitioning to case 5 (DO_TIR)\n");
             currentProcessedActorPtr->animActionType = 5;
 
             break;
         }
-    case 5: // DO_TIR (Fire gun projectile with throw-style physics)
+    case 5: // DO_TIR (instant raycast)
         {
-            printf("Case 5: DO_TIR - Gun firing!\n");
-
             int touchedActor;
-            int specialObjIdx;
 
-            // Create muzzle flash special effect
-            printf("  -> Creating muzzle flash (type 3)...\n");
+            int x = currentProcessedActorPtr->roomX + currentProcessedActorPtr->hotPoint.x + currentProcessedActorPtr->stepX;
+            int y = currentProcessedActorPtr->roomY + currentProcessedActorPtr->hotPoint.y + currentProcessedActorPtr->stepY;
+            int z = currentProcessedActorPtr->roomZ + currentProcessedActorPtr->hotPoint.z + currentProcessedActorPtr->stepZ;
+
+            // Create muzzle flash at fire point
             InitSpecialObjet( 3,
-                currentProcessedActorPtr->roomX + currentProcessedActorPtr->hotPoint.x,
-                currentProcessedActorPtr->roomY + currentProcessedActorPtr->hotPoint.y,
-                currentProcessedActorPtr->roomZ + currentProcessedActorPtr->hotPoint.z,
+                x, y, z,
                 currentProcessedActorPtr->stage,
                 currentProcessedActorPtr->room,
                 0,
@@ -144,83 +134,33 @@ void GereFrappe(void)
                 0,
                 NULL);
 
-            // Create projectile as physical object (like throw) instead of raycast
-            // This makes bullets/projectiles visible and gives them travel time
-            printf("  -> Creating projectile (type 2)...\n");
-            specialObjIdx = InitSpecialObjet( 2, // projectile type
-                currentProcessedActorPtr->roomX + currentProcessedActorPtr->hotPoint.x,
-                currentProcessedActorPtr->roomY + currentProcessedActorPtr->hotPoint.y,
-                currentProcessedActorPtr->roomZ + currentProcessedActorPtr->hotPoint.z,
-                currentProcessedActorPtr->stage,
+            // Instant raycast along aim direction
+            touchedActor = checkLineProjectionWithActors(
+                currentProcessedActorIdx,
+                x, y, z,
+                currentProcessedActorPtr->beta - 0x100,
                 currentProcessedActorPtr->room,
-                0,
-                currentProcessedActorPtr->beta,
-                0,
-                NULL);
+                currentProcessedActorPtr->animActionParam);
 
-            if (specialObjIdx != -1)
+            if(touchedActor >= 0)
             {
-                printf("  -> SUCCESS: Projectile created (idx=%d), setting up physics\n", specialObjIdx);
+                tObject* hitActorPtr = &ListObjets[touchedActor];
 
-                // Set up projectile physics (like throw does)
-                tObject* projectilePtr = &ListObjets[specialObjIdx];
+                currentProcessedActorPtr->HIT = touchedActor;
+                hitActorPtr->HIT_BY = currentProcessedActorIdx;
+                hitActorPtr->hitForce = currentProcessedActorPtr->hitForce;
 
-                projectilePtr->animActionType = 9; // Use throw physics (case 9)
-                projectilePtr->animActionParam = currentProcessedActorPtr->animActionParam; // projectile range/distance
-                projectilePtr->hitForce = currentProcessedActorPtr->hitForce;
-                projectilePtr->speed = 5000; // Faster than thrown objects (3000), slower than instant raycast
-                projectilePtr->beta = currentProcessedActorPtr->beta - 0x100; // Adjust aim direction
-                projectilePtr->dynFlags = 0;
-                projectilePtr->hotPointID = -1;
-                projectilePtr->HIT_BY = currentProcessedActorIdx; // Remember who fired
+                playSound(CVars[getCVarsIdx((enumCVars)SAMPLE_CHOC)]);
 
-                // Initialize speed decay (projectiles slow down over distance like thrown objects)
-                InitRealValue(0, projectilePtr->speed, 80, &projectilePtr->speedChange); // Faster decay than throw (60)
-
-                printf("  -> Projectile setup complete: speed=%d, hitForce=%d, beta=%d\n",
-                    projectilePtr->speed, projectilePtr->hitForce, projectilePtr->beta);
-            }
-            else
-            {
-                printf("  -> FALLBACK: Projectile creation failed, using raycast\n");
-
-                // FALLBACK: If projectile creation failed, use instant line-of-sight damage (raycast)
-                int x = currentProcessedActorPtr->roomX + currentProcessedActorPtr->hotPoint.x + currentProcessedActorPtr->stepX;
-                int y = currentProcessedActorPtr->roomY + currentProcessedActorPtr->hotPoint.y + currentProcessedActorPtr->stepY;
-                int z = currentProcessedActorPtr->roomZ + currentProcessedActorPtr->hotPoint.z + currentProcessedActorPtr->stepZ;
-
-                int hitActorIdx = checkLineProjectionWithActors(
-                    currentProcessedActorIdx,
-                    x, y, z,
-                    currentProcessedActorPtr->beta - 0x100,
+                // Create impact effect at the hit position (returned in animMoveX/Y/Z)
+                InitSpecialObjet( 0,
+                    animMoveX, animMoveY, animMoveZ,
+                    currentProcessedActorPtr->stage,
                     currentProcessedActorPtr->room,
-                    currentProcessedActorPtr->animActionParam);
-
-                if (hitActorIdx >= 0)
-                {
-                    printf("  -> Raycast HIT actor %d!\n", hitActorIdx);
-
-                    // Hit an actor with instant raycast
-                    tObject* hitActorPtr = &ListObjets[hitActorIdx];
-
-                    hitActorPtr->life -= currentProcessedActorPtr->hitForce;
-
-                    if (hitActorPtr->life <= 0)
-                    {
-                        hitActorPtr->life = 0;
-                        hitActorPtr->lifeMode = 1; // Dead
-                    }
-
-                    // Play impact sound
-                    playSound(15); // Sound ID 15 = hit/impact
-                }
-                else
-                {
-                    printf("  -> Raycast MISS (hitActorIdx=%d)\n", hitActorIdx);
-                }
+                    0, 0, 0,
+                    &hitActorPtr->zv);
             }
 
-            printf("  -> Gun firing complete, resetting animActionType\n");
             currentProcessedActorPtr->animActionType = 0;
             break;
         }
@@ -595,7 +535,7 @@ void GereFrappe(void)
 #ifdef FITD_DEBUGGER
     default:
         {
-            printf("Unsupported processAnimAction type %d\n",currentProcessedActorPtr->animActionType);
+            printf(AACT_WARN "Unsupported processAnimAction type %d" CON_RESET "\n",currentProcessedActorPtr->animActionType);
             break;
         }
 #endif

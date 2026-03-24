@@ -1,6 +1,7 @@
 ///////////////////////////////////////////////////////////////////////////////
 // Alone In The Dark Re-Haunted
 // Copyright (C) 2026 Infogrames / Spacefarer Retro Remasters LLC
+// Based on FITD by yaz0r, Re-haunted is released under GPL
 // Author: Jake Jackson (jake@spacefarergames.com)
 //
 // BGFX graphics library initialization and window management
@@ -8,12 +9,14 @@
 
 #include <SDL.h>
 #include <bgfx/bgfx.h>
+#include <bgfx/platform.h>
 #include <bx/platform.h>
 #include <backends/imgui_impl_sdl3.h>
 #include "imguiBGFX.h"
 #include "SDL3/SDL.h"
 #include "fontTTF.h"
 #include "configRemaster.h"
+#include "consoleLog.h"
 #include "postProcessing.h"
 #include "debugger.h"
 
@@ -86,16 +89,20 @@ void StartFrame()
     oldResolution[0] = outputResolution[0];
     oldResolution[1] = outputResolution[1];
 
-    SDL_GetWindowSize(gWindowBGFX, &outputResolution[0], &outputResolution[1]);
+    SDL_GetWindowSizeInPixels(gWindowBGFX, &outputResolution[0], &outputResolution[1]);
 
     if ((oldResolution[0] != outputResolution[0]) || (oldResolution[1] != outputResolution[1]))
     {
-        bgfx::reset(outputResolution[0], outputResolution[1]);
-
-        // Resize post-processing framebuffers if active
-        if (g_postProcessing && (g_remasterConfig.postProcessing.enableBloom || g_remasterConfig.postProcessing.enableFilmGrain))
+        // Guard against zero dimensions (e.g. during minimize or window transitions)
+        if (outputResolution[0] > 0 && outputResolution[1] > 0)
         {
-            g_postProcessing->resize(outputResolution[0], outputResolution[1]);
+            bgfx::reset(outputResolution[0], outputResolution[1], BGFX_RESET_VSYNC);
+
+            // Resize post-processing framebuffers if active
+            if (g_postProcessing && (g_remasterConfig.postProcessing.enableBloom || g_remasterConfig.postProcessing.enableFilmGrain || g_remasterConfig.postProcessing.enableSSAO))
+            {
+                g_postProcessing->resize(outputResolution[0], outputResolution[1]);
+            }
         }
     }
 
@@ -226,25 +233,25 @@ int initBgfxGlue(int argc, char* argv[])
         {
             initparam.type = bgfx::RendererType::Direct3D11;
             rendererSpecified = true;
-            printf("Forcing DirectX 11 renderer\n");
+            printf(BGFX_TAG "Forcing DirectX 11 renderer\n");
         }
         else if (strcmp(argv[i], "-d3d12") == 0 || strcmp(argv[i], "--d3d12") == 0)
         {
             initparam.type = bgfx::RendererType::Direct3D12;
             rendererSpecified = true;
-            printf("Forcing DirectX 12 renderer\n");
+            printf(BGFX_TAG "Forcing DirectX 12 renderer\n");
         }
         else if (strcmp(argv[i], "-opengl") == 0 || strcmp(argv[i], "--opengl") == 0)
         {
             initparam.type = bgfx::RendererType::OpenGL;
             rendererSpecified = true;
-            printf("Forcing OpenGL renderer\n");
+            printf(BGFX_TAG "Forcing OpenGL renderer\n");
         }
         else if (strcmp(argv[i], "-vulkan") == 0 || strcmp(argv[i], "--vulkan") == 0)
         {
             initparam.type = bgfx::RendererType::Vulkan;
             rendererSpecified = true;
-            printf("Forcing Vulkan renderer\n");
+            printf(BGFX_TAG "Forcing Vulkan renderer\n");
         }
     }
 
@@ -252,13 +259,13 @@ int initBgfxGlue(int argc, char* argv[])
     if (!rendererSpecified)
     {
         initparam.type = bgfx::RendererType::Direct3D11;
-        printf("Using DirectX 11 renderer\n");
+        printf(BGFX_TAG "Using DirectX 11 renderer\n");
     }
 
     // ReShade compatibility settings
     // Set resolution explicitly to match window size
     int windowWidth, windowHeight;
-    SDL_GetWindowSize(gWindowBGFX, &windowWidth, &windowHeight);
+    SDL_GetWindowSizeInPixels(gWindowBGFX, &windowWidth, &windowHeight);
     initparam.resolution.width = windowWidth;
     initparam.resolution.height = windowHeight;
     initparam.resolution.reset = BGFX_RESET_VSYNC; // Enable VSync for stability
@@ -275,13 +282,13 @@ int initBgfxGlue(int argc, char* argv[])
     initparam.debug = true;
 #endif
 
-    printf("Initializing BGFX with resolution: %dx%d\n", windowWidth, windowHeight);
+    printf(BGFX_TAG "Initializing BGFX with resolution: %dx%d\n", windowWidth, windowHeight);
 
     bgfx::init(initparam);
 
     // Print actual renderer type for debugging
     const char* rendererName = bgfx::getRendererName(bgfx::getRendererType());
-    printf("BGFX initialized successfully with renderer: %s\n", rendererName);
+    printf(BGFX_OK "BGFX initialized successfully with renderer: %s\n", rendererName);
 
     // Small delay to allow ReShade hooks to stabilize (helps prevent crashes)
     SDL_Delay(100);
@@ -315,10 +322,15 @@ int initBgfxGlue(int argc, char* argv[])
     initTTFFont();
 
     // Initialize post-processing system (framebuffers will be created, but effects disabled by default)
+    // Sync outputResolution with the initial window size so the first
+    // StartFrame() does not trigger a redundant bgfx::reset().
+    outputResolution[0] = windowWidth;
+    outputResolution[1] = windowHeight;
+
     g_postProcessing = new PostProcessing();
     g_postProcessing->init(windowWidth, windowHeight);
 
-    printf("Post-processing system initialized (effects will activate when HD backgrounds are enabled)\n");
+    printf(BGFX_OK "Post-processing system initialized (effects will activate when HD backgrounds are enabled)\n");
 
     return true;
 }

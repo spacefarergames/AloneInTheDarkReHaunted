@@ -4,14 +4,7 @@
 // Based on FITD by yaz0r, Re-haunted is released under GPL
 // Author: Jake Jackson (jake@spacefarergames.com)
 //
-// Variable evaluation declarations
+// Animation action declarations
 ///////////////////////////////////////////////////////////////////////////////
 
-#ifndef _EVALVAR_
-#define _EVALVAR_
-
-int evalVar(const char* name = NULL);
-int evalVar2(const char* name = NULL);
-
-#endif
-
+void GereFrappe(void);
