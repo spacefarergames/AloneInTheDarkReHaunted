@@ -1,12 +1,14 @@
 ///////////////////////////////////////////////////////////////////////////////
 // Alone In The Dark Re-Haunted
 // Copyright (C) 2026 Infogrames / Spacefarer Retro Remasters LLC
+// Based on FITD by yaz0r, Re-haunted is released under GPL
 // Author: Jake Jackson (jake@spacefarergames.com)
 //
 // Inventory system and item management
 ///////////////////////////////////////////////////////////////////////////////
 
 #include "common.h"
+#include "consoleLog.h"
 #include "fontTTF.h"
 
 // HD background state (from hdBackgroundRenderer)
@@ -524,9 +526,15 @@ void processInventory(void)
 
 void cleanClip()
 {
-    for (int x = clipLeft; x < clipRight; x++)
+    // Clamp clip bounds to screen dimensions to prevent buffer overruns
+    int xStart = (clipLeft < 0) ? 0 : clipLeft;
+    int xEnd = (clipRight > 320) ? 320 : clipRight;
+    int yStart = (clipTop < 0) ? 0 : clipTop;
+    int yEnd = (clipBottom > 200) ? 200 : clipBottom;
+
+    for (int x = xStart; x < xEnd; x++)
     {
-        for (int y = clipTop; y < clipBottom; y++)
+        for (int y = yStart; y < yEnd; y++)
         {
             logicalScreen[y * 320 + x] = 0;
             uiLayer[y * 320 + x] = 0;
@@ -577,7 +585,7 @@ void FoundObjet(int objIdx, int param)
 
     if (param == 2)
     {
-        printf("foundObject with param == 2\n");
+        printf(INV_TAG "foundObject with param == 2\n");
     }
 
     objPtr = &ListWorldObjets[objIdx];

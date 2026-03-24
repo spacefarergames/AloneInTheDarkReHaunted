@@ -1,15 +1,17 @@
 ///////////////////////////////////////////////////////////////////////////////
 // Alone In The Dark Re-Haunted
 // Copyright (C) 2026 Infogrames / Spacefarer Retro Remasters LLC
+// Based on FITD by yaz0r, Re-haunted is released under GPL
 // Author: Jake Jackson (jake@spacefarergames.com)
 //
 // Software 3D renderer and projection pipeline
 ///////////////////////////////////////////////////////////////////////////////
 
 #include "common.h"
+#include "consoleLog.h"
 
 /* Projection:
- 
+
  Z += cameraPerspective;
  float transformedX = ((X * cameraFovX) / Z) + cameraCenterX;
  float transformedY = ((Y * cameraFovY) / Z) + cameraCenterY;
@@ -651,7 +653,7 @@ char* primVar2;
 
 void primFunctionDefault(int primType,char** ptr,char** out)
 {
-    printf("UnHandled primType %d\n",primType);
+    printf(RNDR_WARN "UnHandled primType %d" CON_RESET "\n",primType);
     assert(0);
 }
 
@@ -808,7 +810,7 @@ void processPrim_Sphere(int primType, sPrimitive* ptr, char** out)
 
 void primType5(int primType, char** ptr, char** out) // draw out of hardClip
 {
-	printf("ignoring prim type 5\n");
+	printf(RNDR_WARN "ignoring prim type 5" CON_RESET "\n");
 	return;
 
     int pointNumber;
@@ -901,7 +903,7 @@ void renderSphere(primEntryStruct* pEntry) // sphere
 
 void defaultRenderFunction(primEntryStruct* buffer)
 {
-    printf("Unsupported renderType\n");
+    printf(RNDR_WARN "Unsupported renderType" CON_RESET "\n");
 }
 
 typedef void (*renderFunction)(primEntryStruct* buffer);
@@ -966,7 +968,7 @@ int AffObjet(int x,int y,int z,int alpha,int beta,int gamma, sBody* pBody)
         }
         else
         {
-            printf("unsupported model type prerenderFlag4 in renderer !\n");
+            printf(RNDR_WARN "unsupported model type prerenderFlag4 in renderer !" CON_RESET "\n");
 
             BBox3D3 = -32000;
             BBox3D4 = -32000;

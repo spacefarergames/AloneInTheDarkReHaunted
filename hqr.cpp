@@ -1,12 +1,14 @@
 ///////////////////////////////////////////////////////////////////////////////
 // Alone In The Dark Re-Haunted
 // Copyright (C) 2026 Infogrames / Spacefarer Retro Remasters LLC
+// Based on FITD by yaz0r, Re-haunted is released under GPL
 // Author: Jake Jackson (jake@spacefarergames.com)
 //
 // HQR resource file system and memory management
 ///////////////////////////////////////////////////////////////////////////////
 
 #include "common.h"
+#include "consoleLog.h"
 #include "hybrid.h"
 #include "safeDelete.h"
 
@@ -369,7 +371,7 @@ T* HQR_Get(hqrEntryStruct<T>* hqrPtr, int index)
 
         if(size>=hqrPtr->maxFreeData)
         {
-            printf("Warning: %s entry %d too large (%d >= %d), skipping\n",
+            printf(HQR_WARN "%s entry %d too large (%d >= %d), skipping" CON_RESET "\n",
                 hqrPtr->string.c_str(), index, size, hqrPtr->maxFreeData);
             RestoreTimerAnim();
             return NULL;
@@ -388,7 +390,7 @@ T* HQR_Get(hqrEntryStruct<T>* hqrPtr, int index)
 
         if(!foundEntry)
         {
-            printf("Warning: %s no free HQR entry for index %d, skipping\n",
+            printf(HQR_WARN "%s no free HQR entry for index %d, skipping" CON_RESET "\n",
                 hqrPtr->string.c_str(), index);
             RestoreTimerAnim();
             return NULL;

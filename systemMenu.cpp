@@ -1,6 +1,7 @@
 ///////////////////////////////////////////////////////////////////////////////
 // Alone In The Dark Re-Haunted
 // Copyright (C) 2026 Infogrames / Spacefarer Retro Remasters LLC
+// Based on FITD by yaz0r, Re-haunted is released under GPL
 // Author: Jake Jackson (jake@spacefarergames.com)
 //
 // In-game pause menu, save/load, and options
@@ -203,7 +204,7 @@ void AffOptionList(int selectedStringNumber)
     AffOption(0,48,selectedStringNumber);
     AffOption(1,45,selectedStringNumber);
     AffOption(2,46,selectedStringNumber);
-    AffOption(3,41+musicEnabled,selectedStringNumber);
+    AffOption(3,42-musicEnabled,selectedStringNumber);
     AffOption(4,43+soundEnabled,selectedStringNumber);
     AffOption(5,49+detailLevel,selectedStringNumber);
 
@@ -211,6 +212,14 @@ void AffOptionList(int selectedStringNumber)
     {
         int y = WindowY1 + ((WindowY2 - WindowY1) / 2) - (NB_OPTIONS * SIZE_FONT) / 2 + (6 * SIZE_FONT);
         const char* controlsText = "Controls";
+        if (languageNameString == "FRANCAIS")
+            controlsText = "Commandes";
+        else if (languageNameString == "ITALIANO")
+            controlsText = "Comandi";
+        else if (languageNameString == "ESPAGNOL")
+            controlsText = "Controles";
+        else if (languageNameString == "DEUTSCH")
+            controlsText = "Steuerung";
         int w = ExtGetSizeFont((u8*)controlsText);
         int tx = 160 - w / 2;
 

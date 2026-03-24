@@ -1,12 +1,14 @@
 ///////////////////////////////////////////////////////////////////////////////
 // Alone In The Dark Re-Haunted
 // Copyright (C) 2026 Infogrames / Spacefarer Retro Remasters LLC
+// Based on FITD by yaz0r, Re-haunted is released under GPL
 // Author: Jake Jackson (jake@spacefarergames.com)
 //
 // Core game engine - initialization, rendering, collision, camera, and game state
 ///////////////////////////////////////////////////////////////////////////////
 
 #include "common.h"
+#include "consoleLog.h"
 #include "embedded/embeddedData.h"
 
 // Menu sound helper (from systemMenu.cpp)
@@ -339,26 +341,27 @@ void allocTextes(void)
 		fatalError(1,"TabTextes");
 	}
 
-	// setup languageNameString
+	// setup languageNameString (skip auto-detection if already set by reloadLanguage)
+	if (!languageNameString.length())
 	{
-        for (int i=0; i<languageNameTable.size(); i++)
-        {
-            char tempString[20];
+		for (int i=0; i<languageNameTable.size(); i++)
+		{
+			char tempString[20];
 
-            strcpy(tempString, languageNameTable[i].c_str());
-            strcat(tempString, ".PAK");
+			strcpy(tempString, languageNameTable[i].c_str());
+			strcat(tempString, ".PAK");
 
-            if (fileExists(tempString))
-            {
-                languageNameString = languageNameTable[i].c_str();
-                break;
-            }
-        }
+			if (fileExists(tempString))
+			{
+				languageNameString = languageNameTable[i].c_str();
+				break;
+			}
+		}
 	}
 
 	if(!languageNameString.length())
 	{
-		printf("Unable to detect language file..\n");
+		printf(MAIN_WARN "Unable to detect language file.." CON_RESET "\n");
 		assert(0);
 	}
 
@@ -416,6 +419,27 @@ void allocTextes(void)
 			}
 		}
 	}
+}
+
+void reloadLanguage(const char* langName)
+{
+	// Free old text data
+	if (tabTextes)
+	{
+		free(tabTextes);
+		tabTextes = nullptr;
+	}
+	if (systemTextes)
+	{
+		free(systemTextes);
+		systemTextes = nullptr;
+	}
+
+	// Set the new language
+	languageNameString = langName;
+
+	// Reload text data using allocTextes (it will use the pre-set languageNameString)
+	allocTextes();
 }
 
 void OpenProgram(void)
@@ -666,7 +690,7 @@ void turnPageBackward()
 {
 }
 
-void readBook(int index, int type)
+void readBook(int index, int type, int vocIndex)
 {
 	SaveTimerAnim();
 
@@ -684,7 +708,7 @@ void readBook(int index, int type)
 	switch(g_gameId)
 	{
 	case AITD1:
-		AITD1_ReadBook(index, type);
+		AITD1_ReadBook(index, type, vocIndex);
 		break;
 	case JACK:
 		JACK_ReadBook(index, type);
@@ -1826,6 +1850,7 @@ void InitViewedRoomList()
 	int var_10;
 
 	char* dataTabPos = currentCameraVisibilityList;
+	char* dataTabEnd = currentCameraVisibilityList + sizeof(currentCameraVisibilityList) - 1;
 
 	*dataTabPos = -1;
 
@@ -1837,6 +1862,7 @@ void InitViewedRoomList()
 			var_10 = roomDataTable[currentRoom].sceZoneTable[i].parameter;
 			if(!isInViewList(var_10))
 			{
+				if(dataTabPos >= dataTabEnd) break;
 				*(dataTabPos++) = var_10;
 				*(dataTabPos) = -1;
 			}
@@ -1848,6 +1874,7 @@ void InitViewedRoomList()
 	{
 		if(!isInViewList(cameraDataTable[NumCamera]->viewedRoomTable[j].viewedRoomIdx))
 		{
+			if(dataTabPos >= dataTabEnd) break;
 			*(dataTabPos++) = (char)cameraDataTable[NumCamera]->viewedRoomTable[j].viewedRoomIdx;
 			*(dataTabPos) = -1;
 		}
@@ -2345,7 +2372,7 @@ void GenereAffList()
 			if(checkActorInRoom(actorPtr->room))
 			{
 				Index[NbAffObjets] = i;
-				if(!(actorPtr->objectType & (AF_SPECIAL & AF_ANIMATED)))
+				if(!(actorPtr->objectType & (AF_SPECIAL | AF_ANIMATED)))
 				{
 					actorPtr->objectType |= AF_BOXIFY;
 					//  FlagRefreshAux2 = 1;
@@ -2666,6 +2693,9 @@ void drawZv(const ZVStruct& localZv) {
 void drawZv(tObject* actorPtr)
 {
 	ZVStruct localZv;
+
+	if(currentCameraTargetActor < 0 || currentCameraTargetActor >= NUM_MAX_OBJECT)
+		return;
 
 	if( actorPtr->room != ListObjets[currentCameraTargetActor].room )
 	{
@@ -3174,6 +3204,13 @@ void AffSpecialObjet(int actorIdx) // draw flow
 		return;
 	}
 
+	// Guard against division by zero when END_FRAME is not set
+	if (actorPtr->END_FRAME <= 0)
+	{
+		DeleteObjet(actorIdx);
+		return;
+	}
+
 	// modes 2 (impact) and 3 (flash) have no particle data, draw a simple point
 	if (mode == 2 || mode == 3)
 	{
@@ -3403,7 +3440,13 @@ void AllRedraw(int flagFlip)
 	SetClip(0,0,319,199);
 	NbLogBoxs = 0;
 
-	for(int i=0;i<NbAffObjets + NbAnim2D;i++)
+ // Safety: If the object draw list is empty, force regeneration (prevents 3D objects from disappearing)
+	if (NbAffObjets == 0 && !lightOff) {
+		GenereActiveList();
+		GenereAffList();
+	}
+
+	for(int i=0;i<NbAffObjets + NbAnim2D && i < (int)Index.size();i++)
 	{
 		int currentDrawActor = Index[i];
         if (currentDrawActor & 0x8000) {
@@ -3702,6 +3745,9 @@ int CheckObjectCol(int actorIdx, ZVStruct* zvPtr)
 void take(int objIdx)
 {
 	tWorldObject* objPtr = &ListWorldObjets[objIdx];
+
+	if(numObjInInventoryTable[currentInventory] >= INVENTORY_SIZE)
+		return;
 
 	if(numObjInInventoryTable[currentInventory] == 0)
 	{
@@ -4036,6 +4082,9 @@ int findBestCamera(void)
 	int foundAngle = 32000;
 	int foundCamera = -1;
 
+	if(currentCameraTargetActor < 0 || currentCameraTargetActor >= NUM_MAX_OBJECT)
+		return -1;
+
 	tObject* actorPtr = &ListObjets[currentCameraTargetActor];
 
 	int x1 = actorPtr->zv.ZVX1/10;
@@ -4180,6 +4229,8 @@ void GereDec()
 	do
 	{
 		onceMore = false;
+		if (currentProcessedActorPtr->room < 0 || currentProcessedActorPtr->room >= getNumberOfRoom())
+			return;
 		roomDataStruct* pRoomData = &roomDataTable[currentProcessedActorPtr->room];
 		for(u32 i=0;i<pRoomData->numSceZone;i++)
 		{
@@ -4257,17 +4308,21 @@ void GereDec()
 					}
 				case 10: // stage
 					{
-                        int life = ListWorldObjets[currentProcessedActorPtr->indexInWorld].floorLife;
+							int idxW = currentProcessedActorPtr->indexInWorld;
+							if(idxW < 0 || idxW >= (int)ListWorldObjets.size())
+								break;
 
-						if(life==-1)
-							return;
+							int life = ListWorldObjets[idxW].floorLife;
 
-						currentProcessedActorPtr->life = life;
+							if(life==-1)
+								return;
 
-						currentProcessedActorPtr->HARD_DEC = (short)pCurrentZone->parameter;
-						flagFloorChange = true;
-						break;
-					}
+							currentProcessedActorPtr->life = life;
+
+							currentProcessedActorPtr->HARD_DEC = (short)pCurrentZone->parameter;
+							flagFloorChange = true;
+							break;
+						}
 				}
 
 				if(g_gameId == AITD1) // AITD1 stops at the first zone
@@ -4295,8 +4350,15 @@ int checkLineProjectionWithActors( int actorIdx, int X, int Y, int Z, int beta, 
 
 	walkStep(param * 2, 0, beta);
 
+	int iterationLimit = 2000;
 	while(foundFlag == -2)
 	{
+		if(--iterationLimit <= 0)
+		{
+			foundFlag = -1;
+			break;
+		}
+
 		localZv.ZVX1 += animMoveX;
 		localZv.ZVX2 += animMoveX;
 
@@ -4315,45 +4377,41 @@ int checkLineProjectionWithActors( int actorIdx, int X, int Y, int Z, int beta, 
 			break;
 		}
 
-		if(AsmCheckListCol(&localZv, &roomDataTable[room]) <= 0)
+		for(int i=0;i<ListObjets.size();i++)
+		{
+			tObject* actorCheckPtr = &ListObjets[i];
+			if(actorCheckPtr->indexInWorld != -1 && i != actorIdx && !(actorCheckPtr->objectType & AF_SPECIAL))
+			{
+				ZVStruct* zvPtr = &actorCheckPtr->zv;
+
+				if(room != actorCheckPtr->room)
+				{
+					ZVStruct localZv2;
+
+					CopyZV(&localZv, &localZv2);
+					AdjustZV(&localZv2, room, actorCheckPtr->room);
+
+					if(!CubeIntersect(&localZv2,zvPtr))
+					{
+						continue;
+					}
+				}
+				else
+				{
+					if(!CubeIntersect(&localZv,zvPtr))
+					{
+						continue;
+					}
+				}
+
+				foundFlag = i;
+				break;
+			}
+		}
+
+		if(foundFlag == -2 && AsmCheckListCol(&localZv, &roomDataTable[room]) > 0)
 		{
 			foundFlag = -1;
-		}
-		else
-		{
-			for(int i=0;i<ListObjets.size();i++)
-			{
-                tObject* currentActorPtr = &ListObjets[i];
-				if(currentActorPtr->indexInWorld != -1 && i != actorIdx && !(currentActorPtr->objectType & AF_SPECIAL))
-				{
-					ZVStruct* zvPtr = &currentActorPtr->zv;
-
-					if(room != currentActorPtr->room)
-					{
-						ZVStruct localZv2;
-
-						CopyZV(&localZv, &localZv2);
-						AdjustZV(&localZv2, room, currentActorPtr->room);
-
-						if(!CubeIntersect(&localZv2,zvPtr))
-						{
-							currentActorPtr++;
-							continue;
-						}
-					}
-					else
-					{
-						if(!CubeIntersect(&localZv,zvPtr))
-						{
-							currentActorPtr++;
-							continue;
-						}
-					}
-
-					foundFlag = i;
-					break;
-				}
-			}
 		}
 	}
 
@@ -4476,6 +4534,12 @@ void throwStoppedAt(int x, int z)
 
 	while(!foundPosition)
 	{
+		if(step > 20000)
+		{
+			foundPosition = 1;
+			break;
+		}
+
 		walkStep(0,-step,currentProcessedActorPtr->beta+0x200);
 		CopyZV(&zvLocal,&zvCopy);
 
@@ -4683,7 +4747,7 @@ int parseAllSaves(int arg)
 		}
 		else if(saveExists[currentSelectedSlot])
 		{
-			// Save exists but no preview PNG — show "No Preview" text
+			// Save exists but no preview PNG ï¿½ show "No Preview" text
 			SetFont(PtrFont, 4);
 			PrintFont(185, 70, logicalScreen, (u8*)"No Preview");
 		}
@@ -4780,44 +4844,51 @@ void detectGame(void)
 {
 	const char* gameName = NULL;
 
-	if(fileExists("LISTBOD2.PAK"))
+	if(fileExists("AITD2.flag"))
+	{
+		g_gameId = AITD2;
+		CVars.resize(70);
+		currentCVarTable = AITD2KnownCVars;
+		gameName = "Alone in the Dark 2";
+	}
+	else if(fileExists("LISTBOD2.PAK"))
 	{
 		g_gameId = AITD1;
-        CVars.resize(45);
+		CVars.resize(45);
 		currentCVarTable = AITD1KnownCVars;
 		gameName = "Alone in the Dark";
 	}
 	else if(fileExists("PERE.PAK"))
 	{
 		g_gameId = JACK;
-        CVars.resize(70);
+		CVars.resize(70);
 		currentCVarTable = AITD2KnownCVars;
 		gameName = "Jack in the Dark";
 	}
 	else if(fileExists("MER.PAK"))
 	{
 		g_gameId = AITD2;
-        CVars.resize(70);
+		CVars.resize(70);
 		currentCVarTable = AITD2KnownCVars;
 		gameName = "Alone in the Dark 2";
 	}
 	else if(fileExists("AN1.PAK"))
 	{
 		g_gameId = AITD3;
-        CVars.resize(70);
+		CVars.resize(70);
 		currentCVarTable = AITD2KnownCVars;
 		gameName = "Alone in the Dark 3";
 	}
 	else if(fileExists("PURSUIT.PAK"))
 	{
 		g_gameId = TIMEGATE;
-        CVars.resize(100); // TODO: figure this
+		CVars.resize(100); // TODO: figure this
 		currentCVarTable = AITD2KnownCVars; // TODO: figure this
 		gameName = "Time Gate";
 	}
 	else
 	{
-		printf("FATAL: Game detection failed...\n");
+		printf(MAIN_ERR "FATAL: Game detection failed..." CON_RESET "\n");
 		assert(0);
 		return;
 	}
@@ -4830,7 +4901,7 @@ void detectGame(void)
 		titleStr += " - " + g_versionString;
 	}
 
-	printf("%s\n", titleStr.c_str());
+	printf(MAIN_TAG "%s\n", titleStr.c_str());
 #ifndef AITD_UE4
 	SDL_SetWindowTitle(gWindowBGFX, titleStr.c_str());
 #endif
@@ -5047,6 +5118,4 @@ void cleanupAndExit(void)
 
 	exit(0);
 }
-
-
 

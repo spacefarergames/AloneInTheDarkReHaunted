@@ -1,6 +1,7 @@
 ///////////////////////////////////////////////////////////////////////////////
 // Alone In The Dark Re-Haunted
 // Copyright (C) 2026 Infogrames / Spacefarer Retro Remasters LLC
+// Based on FITD by yaz0r, Re-haunted is released under GPL
 // Author: Jake Jackson (jake@spacefarergames.com)
 //
 // Room data loading, camera zones, and collision setup
@@ -27,6 +28,8 @@ std::vector<cameraViewedRoomStruct*> currentCameraZoneList;
 
 roomDefStruct* getRoomData(int roomNumber)
 {
+    if(!g_currentFloorRoomRawData)
+        return nullptr;
     return (roomDefStruct*)(g_currentFloorRoomRawData + READ_LE_U32(g_currentFloorRoomRawData + roomNumber * 4));
 }
 
@@ -140,7 +143,10 @@ void ChangeSalle(int roomNumber)
 
         if(g_gameId < AITD3)
         {
-            room_PtrCamera[i] = g_currentFloorCameraRawData + READ_LE_U32(g_currentFloorCameraRawData + currentCameraIdx * 4);
+            if(g_currentFloorCameraRawData)
+            {
+                room_PtrCamera[i] = g_currentFloorCameraRawData + READ_LE_U32(g_currentFloorCameraRawData + currentCameraIdx * 4);
+            }
         }
 
         cameraDataTable.push_back(&g_currentFloorCameraData.at(currentCameraIdx));

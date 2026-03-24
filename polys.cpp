@@ -1,12 +1,14 @@
 ///////////////////////////////////////////////////////////////////////////////
 // Alone In The Dark Re-Haunted
 // Copyright (C) 2026 Infogrames / Spacefarer Retro Remasters LLC
+// Based on FITD by yaz0r, Re-haunted is released under GPL
 // Author: Jake Jackson (jake@spacefarergames.com)
 //
 // Polygon rasterization and filled polygon rendering
 ///////////////////////////////////////////////////////////////////////////////
 
 #include "common.h"
+#include "consoleLog.h"
 
 void hline(int x1, int x2, int y, unsigned char c);
 void line(int x1, int y1, int x2, int y2, unsigned char c);
@@ -136,7 +138,7 @@ void fillpoly(s16 * datas, int n, unsigned char c) {
                 hline(dots[i][j], dots[i][j + 1], i, c);
 #ifdef DEBUGGING_POLYS
                 if ((!dots[i][j]) || !(dots[i][j + 1])) {
-                    printf("fillpoly: BLARGH!\n");
+                    printf(POLY_ERR "fillpoly: BLARGH!" CON_RESET "\n");
                     assert(0);
                 }
 #endif

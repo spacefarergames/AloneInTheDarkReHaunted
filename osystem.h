@@ -1,6 +1,7 @@
 ///////////////////////////////////////////////////////////////////////////////
 // Alone In The Dark Re-Haunted
 // Copyright (C) 2026 Infogrames / Spacefarer Retro Remasters LLC
+// Based on FITD by yaz0r, Re-haunted is released under GPL
 // Author: Jake Jackson (jake@spacefarergames.com)
 //
 // OS abstraction layer interface
@@ -70,6 +71,11 @@
 	void osystem_playSampleFromName(char* sampleName);
 	void osystem_playSample(char* samplePtr,int size);
 	void osystem_stopSample();
+
+	void osystem_playVO(const char* voFileName);
+	void osystem_playVocByIndex(int vocIndex);
+	void osystem_stopVO();
+	bool osystem_isVOPlaying();
 	//    void getMouseStatus(mouseStatusStruct * mouseData);
 
 	void osystem_createMask(const std::array<u8, 320 * 200>& mask, int roomId, int maskId, int maskX1, int maskY1, int maskX2, int maskY2);
@@ -93,6 +99,8 @@
 	void osystem_drawUILayer();
 
 	void osystem_drawPortraitOverlay(int choice);
+
+	void osystem_drawControllerHint();
 
 	void osystem_startBgPoly();
 	void osystem_endBgPoly();

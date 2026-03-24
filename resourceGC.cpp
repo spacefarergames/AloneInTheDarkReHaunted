@@ -1,6 +1,7 @@
 ///////////////////////////////////////////////////////////////////////////////
 // Alone In The Dark Re-Haunted
 // Copyright (C) 2026 Infogrames / Spacefarer Retro Remasters LLC
+// Based on FITD by yaz0r, Re-haunted is released under GPL
 // Author: Jake Jackson (jake@spacefarergames.com)
 //
 // Resource garbage collector for texture and memory cleanup
@@ -9,6 +10,7 @@
 #ifndef AITD_UE4
 #include "common.h"
 #include "resourceGC.h"
+#include "consoleLog.h"
 #include "hdBackground.h"
 #include <vector>
 #include <stdio.h>
@@ -46,7 +48,7 @@ namespace ResourceGC
             {
                 if (it->hdBg)
                 {
-                    printf("GC: Freeing deferred HDBackground %p (~%zu MB)\n",
+                    printf(GC_TAG "Freeing deferred HDBackground %p (~%zu MB)\n",
                         it->hdBg, it->estimatedBytes / (1024 * 1024));
                     freeHDBackground(it->hdBg);
                     it->hdBg = nullptr;
@@ -70,7 +72,7 @@ namespace ResourceGC
         item.estimatedBytes = estimateBytes(bg);
         g_pending.push_back(item);
 
-        printf("GC: Scheduled HDBackground %p (~%zu MB) for deferred free in %d frames\n",
+        printf(GC_TAG "Scheduled HDBackground %p (~%zu MB) for deferred free in %d frames\n",
             bg, item.estimatedBytes / (1024 * 1024), DEFERRED_FRAMES);
     }
 
@@ -82,7 +84,7 @@ namespace ResourceGC
         for (auto& item : g_pending)
             totalBytes += item.estimatedBytes;
 
-        printf("GC: Flushing %zu pending item(s) (~%zu MB total)\n",
+        printf(GC_TAG "Flushing %zu pending item(s) (~%zu MB total)\n",
             g_pending.size(), totalBytes / (1024 * 1024));
 
         for (auto& item : g_pending)

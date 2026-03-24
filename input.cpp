@@ -1,12 +1,14 @@
 ///////////////////////////////////////////////////////////////////////////////
 // Alone In The Dark Re-Haunted
 // Copyright (C) 2026 Infogrames / Spacefarer Retro Remasters LLC
+// Based on FITD by yaz0r, Re-haunted is released under GPL
 // Author: Jake Jackson (jake@spacefarergames.com)
 //
 // Keyboard, mouse, and gamepad input handling via SDL
 ///////////////////////////////////////////////////////////////////////////////
 
 #include "common.h"
+#include "consoleLog.h"
 #include <SDL.h>
 #include <backends/imgui_impl_sdl3.h>
 #include <cmath>
@@ -237,14 +239,14 @@ void initController()
 
     if (!g_remasterConfig.controller.enableController)
     {
-        printf("Controller support disabled in config\n");
+        printf(INP_TAG "Controller support disabled in config\n");
         return;
     }
 
     // Initialize SDL gamepad subsystem
     if (SDL_InitSubSystem(SDL_INIT_GAMEPAD) < 0)
     {
-        printf("Failed to initialize SDL gamepad subsystem: %s\n", SDL_GetError());
+        printf(INP_ERR "Failed to initialize SDL gamepad subsystem: %s" CON_RESET "\n", SDL_GetError());
         return;
     }
 
@@ -258,7 +260,7 @@ void initController()
         if (g_controllerState.gamepad)
         {
             g_controllerState.connected = true;
-            printf("Controller connected: %s\n", SDL_GetGamepadName(g_controllerState.gamepad));
+            printf(INP_OK "Controller connected: %s\n", SDL_GetGamepadName(g_controllerState.gamepad));
         }
     }
 
@@ -296,7 +298,7 @@ void handleControllerDeviceEvent(SDL_Event& event)
             if (g_controllerState.gamepad)
             {
                 g_controllerState.connected = true;
-                printf("Controller connected: %s\n", SDL_GetGamepadName(g_controllerState.gamepad));
+                printf(INP_OK "Controller connected: %s\n", SDL_GetGamepadName(g_controllerState.gamepad));
             }
         }
         break;
@@ -307,7 +309,7 @@ void handleControllerDeviceEvent(SDL_Event& event)
             SDL_CloseGamepad(g_controllerState.gamepad);
             g_controllerState.gamepad = nullptr;
             g_controllerState.connected = false;
-            printf("Controller disconnected\n");
+            printf(INP_TAG "Controller disconnected\n");
         }
         break;
     }

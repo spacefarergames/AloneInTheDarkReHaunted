@@ -1,12 +1,14 @@
 ///////////////////////////////////////////////////////////////////////////////
 // Alone In The Dark Re-Haunted
 // Copyright (C) 2026 Infogrames / Spacefarer Retro Remasters LLC
+// Based on FITD by yaz0r, Re-haunted is released under GPL
 // Author: Jake Jackson (jake@spacefarergames.com)
 //
 // HD Background Archive implementation
 ///////////////////////////////////////////////////////////////////////////////
 
 #include "hdArchive.h"
+#include "consoleLog.h"
 #include <cstdio>
 #include <cstring>
 #include <cstdlib>
@@ -73,7 +75,7 @@ bool open(const char* archivePath)
 
     if (magic != HDARCHIVE_MAGIC || version != HDARCHIVE_VERSION)
     {
-        printf("HDArchive: bad magic/version in %s (magic=0x%08X, ver=%u)\n",
+        printf(HDAR_ERR "bad magic/version in %s (magic=0x%08X, ver=%u)" CON_RESET "\n",
                archivePath, magic, version);
         fclose(f);
         return false;
@@ -122,7 +124,7 @@ bool open(const char* archivePath)
     s_file = f;
     s_open = true;
 
-    printf("HDArchive: opened %s (%u entries)\n", archivePath, entryCount);
+    printf(HDAR_OK "Opened %s (%u entries)\n", archivePath, entryCount);
     return true;
 }
 

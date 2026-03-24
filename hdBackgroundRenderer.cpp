@@ -1,6 +1,7 @@
 ///////////////////////////////////////////////////////////////////////////////
 // Alone In The Dark Re-Haunted
 // Copyright (C) 2026 Infogrames / Spacefarer Retro Remasters LLC
+// Based on FITD by yaz0r, Re-haunted is released under GPL
 // Author: Jake Jackson (jake@spacefarergames.com)
 //
 // HD background texture rendering with BGFX
@@ -12,6 +13,7 @@
 #include "hdBackground.h"
 #include "hdArchive.h"
 #include "configRemaster.h"
+#include "consoleLog.h"
 #include "memoryManager.h"
 #include "exceptionHandler.h"
 #include "resourceGC.h"
@@ -80,7 +82,7 @@ void recreateBackgroundTexture(int width, int height)
                 BGFX_TEXTURE_NONE | BGFX_SAMPLER_U_CLAMP | BGFX_SAMPLER_V_CLAMP
             );
 
-            printf("HD background texture created: %dx%d\n", width, height);
+            printf(HDBGR_OK "HD background texture created: %dx%d\n", width, height);
         }
     }
     else

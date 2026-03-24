@@ -1,12 +1,14 @@
 ///////////////////////////////////////////////////////////////////////////////
 // Alone In The Dark Re-Haunted
 // Copyright (C) 2026 Infogrames / Spacefarer Retro Remasters LLC
+// Based on FITD by yaz0r, Re-haunted is released under GPL
 // Author: Jake Jackson (jake@spacefarergames.com)
 //
 // Game object initialization and body/animation setup
 ///////////////////////////////////////////////////////////////////////////////
 
 #include "common.h"
+#include "consoleLog.h"
 
 int InitObjet(int body, int typeZv, int hardZvIdx, s16 objectType, int x, int y, int z, int stage, int room, int alpha, int beta, int gamma, int anim, int frame, int animtype, int animInfo)
 {
@@ -239,8 +241,8 @@ int InitObjet(int body, int typeZv, int hardZvIdx, s16 objectType, int x, int y,
         }
     default:
         {
-            printf("Unsupported ZV type in copyObjectToActor\n");
-            printf("var1: %d\n", typeZv);
+            printf(OBJ_WARN "Unsupported ZV type in copyObjectToActor" CON_RESET "\n");
+            printf(OBJ_WARN "var1: %d" CON_RESET "\n", typeZv);
             ASSERT(0);
             assert(0);
             break;

@@ -1,12 +1,14 @@
 ///////////////////////////////////////////////////////////////////////////////
 // Alone In The Dark Re-Haunted
 // Copyright (C) 2026 Infogrames / Spacefarer Retro Remasters LLC
+// Based on FITD by yaz0r, Re-haunted is released under GPL
 // Author: Jake Jackson (jake@spacefarergames.com)
 //
 // Main game loop, frame processing, and event dispatch
 ///////////////////////////////////////////////////////////////////////////////
 
 #include "common.h"
+#include "consoleLog.h"
 #include "anim2d.h"
 #include "fontTTF.h"
 #include "hdBackgroundRenderer.h"
@@ -63,7 +65,7 @@ static void fixPlayerStuckInWall()
     if (AsmCheckListCol(&testZv, &roomDataTable[player->room]) == 0)
         return; // not stuck
 
-    printf("Player stuck in wall at (%d, %d, %d) on floor %d camera %d, attempting warp...\n",
+    printf(MLOOP_WARN "Player stuck in wall at (%d, %d, %d) on floor %d camera %d, attempting warp..." CON_RESET "\n",
            player->roomX, player->roomY, player->roomZ, g_currentFloor, NumCamera);
 
     // Try incremental offsets in cardinal directions to find clear position
@@ -87,13 +89,13 @@ static void fixPlayerStuckInWall()
                 player->zv = tryZv;
                 player->stepX = 0;
                 player->stepZ = 0;
-                printf("Player warped by (%d, %d) to (%d, %d, %d)\n",
+                printf(MLOOP_TAG "Player warped by (%d, %d) to (%d, %d, %d)\n",
                        dx, dz, player->roomX, player->roomY, player->roomZ);
                 return;
             }
         }
     }
-    printf("Warning: Could not find walkable position for stuck player\n");
+    printf(MLOOP_WARN "Could not find walkable position for stuck player" CON_RESET "\n");
 }
 
 void PlayWorld(int allowSystemMenu, int deltaTime)

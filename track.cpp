@@ -1,12 +1,14 @@
 ///////////////////////////////////////////////////////////////////////////////
 // Alone In The Dark Re-Haunted
 // Copyright (C) 2026 Infogrames / Spacefarer Retro Remasters LLC
+// Based on FITD by yaz0r, Re-haunted is released under GPL
 // Author: Jake Jackson (jake@spacefarergames.com)
 //
 // Actor movement tracking and pathfinding
 ///////////////////////////////////////////////////////////////////////////////
 
 #include "common.h"
+#include "consoleLog.h"
 #include "math.h"
 
 #define	TL_INIT_COOR		0
@@ -791,7 +793,7 @@ void processTrack(void)
                 }
             default:
                 {
-                    printf("Unknown track macro %X\n",trackMacro);
+                    printf(TRACK_WARN "Unknown track macro %X" CON_RESET "\n",trackMacro);
                     assert(0);
                     break;
                 }

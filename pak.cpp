@@ -1,6 +1,7 @@
 ///////////////////////////////////////////////////////////////////////////////
 // Alone In The Dark Re-Haunted
 // Copyright (C) 2026 Infogrames / Spacefarer Retro Remasters LLC
+// Based on FITD by yaz0r, Re-haunted is released under GPL
 // Author: Jake Jackson (jake@spacefarergames.com)
 //
 // PAK archive file format reading and extraction
@@ -9,6 +10,7 @@
 // seg 55
 
 #include "common.h"
+#include "consoleLog.h"
 #include "embedded/embeddedData.h"
 
 #ifdef WIN32
@@ -78,7 +80,31 @@ static void buildPakFilename(char* out, const char* name)
 
 unsigned int PAK_getNumFiles(const char* name)
 {
-    // Check embedded data first
+    // Try disk file first
+    {
+        char bufferName[512];
+        FILE* fileHandle;
+        u32 fileOffset;
+
+        strcpy(bufferName, homePath);
+        strcat(bufferName, name);
+        strcat(bufferName,".PAK");
+
+        fileHandle = fopen(bufferName,"rb");
+
+        if (fileHandle)
+        {
+            fseek(fileHandle,4,SEEK_CUR);
+            fread(&fileOffset,4,1,fileHandle);
+#ifdef MACOSX
+            fileOffset = READ_LE_U32(&fileOffset);
+#endif
+            fclose(fileHandle);
+            return((fileOffset/4)-2);
+        }
+    }
+
+    // Fall back to embedded data
     {
         char pakName[256];
         buildPakFilename(pakName, name);
@@ -93,29 +119,7 @@ unsigned int PAK_getNumFiles(const char* name)
         }
     }
 
-    char bufferName[512];
-    FILE* fileHandle;
-    u32 fileOffset;
-
-    strcpy(bufferName, homePath);
-    strcat(bufferName, name); // temporary until makeExtention is coded
-    strcat(bufferName,".PAK");
-
-    fileHandle = fopen(bufferName,"rb");
-
-    if (!fileHandle)
-        return 0;
-
-    ASSERT(fileHandle);
-
-    fseek(fileHandle,4,SEEK_CUR);
-    fread(&fileOffset,4,1,fileHandle);
-#ifdef MACOSX
-    fileOffset = READ_LE_U32(&fileOffset);
-#endif
-    fclose(fileHandle);
-
-    return((fileOffset/4)-2);
+    return 0;
 }
 
 int LoadPak(const char* name, int index, char* ptr)
@@ -156,7 +160,76 @@ int LoadPak(const char* name, int index, char* ptr)
 
 int getPakSize(const char* name, int index)
 {
-    // Check embedded data first
+#ifdef USE_UNPACKED_DATA
+    char buffer[256];
+    FILE* fHandle;
+    int size;
+
+    sprintf(buffer,"%s/%04X.OUT",name,index);
+
+    fHandle = fopen(buffer,"rb");
+
+    if(!fHandle)
+        return(0);
+
+    fseek(fHandle,0L,SEEK_END);
+    size = ftell(fHandle);
+    fseek(fHandle,0L,SEEK_SET);
+
+    fclose(fHandle);
+
+    return (size);
+#else
+    // Try disk file first
+    {
+        char bufferName[512];
+        FILE* fileHandle;
+        s32 fileOffset;
+        s32 additionalDescriptorSize;
+        pakInfoStruct pakInfo;
+        s32 size=0;
+
+        strcpy(bufferName, homePath);
+        strcat(bufferName, name);
+        strcat(bufferName,".PAK");
+
+        fileHandle = fopen(bufferName,"rb");
+
+        if(fileHandle)
+        {
+            fseek(fileHandle,(index+1)*4,SEEK_SET);
+
+            fread(&fileOffset,4,1,fileHandle);
+            fileOffset = READ_LE_U32(&fileOffset);
+
+            fseek(fileHandle,fileOffset,SEEK_SET);
+
+            fread(&additionalDescriptorSize,4,1,fileHandle);
+            additionalDescriptorSize = READ_LE_U32(&additionalDescriptorSize);
+
+            readPakInfo(&pakInfo,fileHandle);
+
+            fseek(fileHandle,pakInfo.offset,SEEK_CUR);
+
+            if(pakInfo.compressionFlag == 0) // uncompressed
+            {
+                size = pakInfo.discSize;
+            }
+            else if(pakInfo.compressionFlag == 1) // compressed
+            {
+                size = pakInfo.uncompressedSize;
+            }
+            else if(pakInfo.compressionFlag == 4)
+            {
+                size = pakInfo.uncompressedSize;
+            }
+
+            fclose(fileHandle);
+            return size;
+        }
+    }
+
+    // Fall back to embedded data
     {
         char pakName[256];
         buildPakFilename(pakName, name);
@@ -186,72 +259,7 @@ int getPakSize(const char* name, int index)
         }
     }
 
-#ifdef USE_UNPACKED_DATA
-    char buffer[256];
-    FILE* fHandle;
-    int size;
-
-    sprintf(buffer,"%s/%04X.OUT",name,index);
-
-    fHandle = fopen(buffer,"rb");
-
-    if(!fHandle)
-        return(0);
-
-    fseek(fHandle,0L,SEEK_END);
-    size = ftell(fHandle);
-    fseek(fHandle,0L,SEEK_SET);
-
-    fclose(fHandle);
-
-    return (size);
-#else
-    char bufferName[512];
-    FILE* fileHandle;
-    s32 fileOffset;
-    s32 additionalDescriptorSize;
-    pakInfoStruct pakInfo;
-    s32 size=0;
-
-    strcpy(bufferName, homePath);
-    strcat(bufferName, name); // temporary until makeExtention is coded
-    strcat(bufferName,".PAK");
-
-    fileHandle = fopen(bufferName,"rb");
-
-    if(fileHandle) // a bit stupid, should return NULL right away
-    {
-        fseek(fileHandle,(index+1)*4,SEEK_SET);
-
-        fread(&fileOffset,4,1,fileHandle);
-        fileOffset = READ_LE_U32(&fileOffset);
-
-        fseek(fileHandle,fileOffset,SEEK_SET);
-
-        fread(&additionalDescriptorSize,4,1,fileHandle);
-        additionalDescriptorSize = READ_LE_U32(&additionalDescriptorSize);
-
-        readPakInfo(&pakInfo,fileHandle);
-
-        fseek(fileHandle,pakInfo.offset,SEEK_CUR);
-
-        if(pakInfo.compressionFlag == 0) // uncompressed
-        {
-            size = pakInfo.discSize;
-        }
-        else if(pakInfo.compressionFlag == 1) // compressed
-        {
-            size = pakInfo.uncompressedSize;
-        }
-        else if(pakInfo.compressionFlag == 4)
-        {
-            size = pakInfo.uncompressedSize;
-        }
-
-        fclose(fileHandle);
-    }
-
-    return size;
+    return 0;
 #endif
 }
 
@@ -260,118 +268,61 @@ char* loadPak(const char* name, int index)
     if(PAK_getNumFiles(name) < index)
         return NULL;
 
-    // Check embedded data first
-    {
-        char pakName[256];
-        buildPakFilename(pakName, name);
-        const unsigned char* embData = nullptr;
-        size_t embSize = 0;
-        if (getEmbeddedFile(pakName, &embData, &embSize))
-        {
-            size_t pos = (size_t)(index + 1) * 4;
-            u32 fileOffset;
-            memcpy(&fileOffset, embData + pos, 4);
-            fileOffset = READ_LE_U32(&fileOffset);
-
-            pos = (size_t)fileOffset;
-            u32 additionalDescriptorSize;
-            memcpy(&additionalDescriptorSize, embData + pos, 4); pos += 4;
-            additionalDescriptorSize = READ_LE_U32(&additionalDescriptorSize);
-            if (additionalDescriptorSize)
-                pos += additionalDescriptorSize - 4;
-
-            pakInfoStruct pakInfo;
-            readPakInfoFromMem(&pakInfo, embData, &pos);
-            pos += pakInfo.offset; // skip name buffer
-
-            char* ptr = nullptr;
-            switch (pakInfo.compressionFlag)
-            {
-            case 0:
-                ptr = (char*)malloc(pakInfo.discSize);
-                memcpy(ptr, embData + pos, pakInfo.discSize);
-                break;
-            case 1:
-            {
-                char* compressedDataPtr = (char*)malloc(pakInfo.discSize);
-                memcpy(compressedDataPtr, embData + pos, pakInfo.discSize);
-                ptr = (char*)malloc(pakInfo.uncompressedSize);
-                PAK_explode((unsigned char*)compressedDataPtr, (unsigned char*)ptr, pakInfo.discSize, pakInfo.uncompressedSize, pakInfo.info5);
-                free(compressedDataPtr);
-                break;
-            }
-            case 4:
-            {
-                char* compressedDataPtr = (char*)malloc(pakInfo.discSize);
-                memcpy(compressedDataPtr, embData + pos, pakInfo.discSize);
-                ptr = (char*)malloc(pakInfo.uncompressedSize);
-                PAK_deflate((unsigned char*)compressedDataPtr, (unsigned char*)ptr, pakInfo.discSize, pakInfo.uncompressedSize);
-                free(compressedDataPtr);
-                break;
-            }
-            default:
-                assert(false);
-                break;
-            }
-            return ptr;
-        }
-    }
-
-    //dumpPak(name);
+	//dumpPak(name);
 #ifdef USE_UNPACKED_DATA
-    char buffer[256];
-    FILE* fHandle;
-    int size;
-    char* ptr;
+	char buffer[256];
+	FILE* fHandle;
+	int size;
+	char* ptr;
 
-    sprintf(buffer,"%s/%04X.OUT",name,index);
+	sprintf(buffer,"%s/%04X.OUT",name,index);
 
-    fHandle = fopen(buffer,"rb");
+	fHandle = fopen(buffer,"rb");
 
-    if(!fHandle)
-        return NULL;
+	if(!fHandle)
+		return NULL;
 
-    fseek(fHandle,0L,SEEK_END);
-    size = ftell(fHandle);
-    fseek(fHandle,0L,SEEK_SET);
+	fseek(fHandle,0L,SEEK_END);
+	size = ftell(fHandle);
+	fseek(fHandle,0L,SEEK_SET);
 
-    ptr = (char*)malloc(size);
+	ptr = (char*)malloc(size);
 
-    fread(ptr,size,1,fHandle);
-    fclose(fHandle);
+	fread(ptr,size,1,fHandle);
+	fclose(fHandle);
 
-    return ptr;
+	return ptr;
 #else
-    char bufferName[512];
-    FILE* fileHandle;
-    u32 fileOffset;
-    u32 additionalDescriptorSize;
-    pakInfoStruct pakInfo;
-    char* ptr=0;
+	// Try disk file first
+	{
+		char bufferName[512];
+		FILE* fileHandle;
+		u32 fileOffset;
+		u32 additionalDescriptorSize;
+		pakInfoStruct pakInfo;
+		char* ptr=0;
 
+		strcpy(bufferName, homePath);
+		strcat(bufferName, name);
+		strcat(bufferName,".PAK");
 
-    //makeExtention(bufferName, name, ".PAK");
-    strcpy(bufferName, homePath);
-    strcat(bufferName, name); // temporary until makeExtention is coded
-    strcat(bufferName,".PAK");
+		fileHandle = fopen(bufferName,"rb");
 
-    fileHandle = fopen(bufferName,"rb");
+		if(fileHandle)
+		{
+			char nameBuffer[256] = "";
 
-    if(fileHandle) // a bit stupid, should return NULL right away
-    {
-        char nameBuffer[256] = "";
+			fseek(fileHandle,(index+1)*4,SEEK_SET);
 
-        fseek(fileHandle,(index+1)*4,SEEK_SET);
+			fread(&fileOffset,4,1,fileHandle);
+			fileOffset = READ_LE_U32(&fileOffset);
 
-        fread(&fileOffset,4,1,fileHandle);
-        fileOffset = READ_LE_U32(&fileOffset);
+			fseek(fileHandle,fileOffset,SEEK_SET);
 
-        fseek(fileHandle,fileOffset,SEEK_SET);
+			fread(&additionalDescriptorSize,4,1,fileHandle);
+			additionalDescriptorSize = READ_LE_U32(&additionalDescriptorSize);
 
-        fread(&additionalDescriptorSize,4,1,fileHandle);
-        additionalDescriptorSize = READ_LE_U32(&additionalDescriptorSize);
-
-        if(additionalDescriptorSize)
+			if(additionalDescriptorSize)
 		{
 			fseek(fileHandle, additionalDescriptorSize-4, SEEK_CUR);
 		}
@@ -384,7 +335,7 @@ char* loadPak(const char* name, int index)
 
 			fread(nameBuffer,pakInfo.offset,1,fileHandle);
 #ifdef FITD_DEBUGGER
-			printf("Loading %s/%s\n", name,nameBuffer+2);
+			printf(PAK_TAG "Loading %s/%s\n", name,nameBuffer+2);
 #endif
 		}
 		else
@@ -406,30 +357,89 @@ char* loadPak(const char* name, int index)
 				fread(compressedDataPtr, pakInfo.discSize, 1, fileHandle);
 				ptr = (char *) malloc(pakInfo.uncompressedSize);
 
-                PAK_explode((unsigned char*)compressedDataPtr, (unsigned char*)ptr, pakInfo.discSize, pakInfo.uncompressedSize, pakInfo.info5);
+				PAK_explode((unsigned char*)compressedDataPtr, (unsigned char*)ptr, pakInfo.discSize, pakInfo.uncompressedSize, pakInfo.info5);
 
-                free(compressedDataPtr);
-                break;
-            }
-        case 4:
-            {
-                char * compressedDataPtr = (char *) malloc(pakInfo.discSize);
-                fread(compressedDataPtr, pakInfo.discSize, 1, fileHandle);
-                ptr = (char *) malloc(pakInfo.uncompressedSize);
+				free(compressedDataPtr);
+				break;
+			}
+		case 4:
+			{
+				char * compressedDataPtr = (char *) malloc(pakInfo.discSize);
+				fread(compressedDataPtr, pakInfo.discSize, 1, fileHandle);
+				ptr = (char *) malloc(pakInfo.uncompressedSize);
 
-                PAK_deflate((unsigned char*)compressedDataPtr, (unsigned char*)ptr, pakInfo.discSize, pakInfo.uncompressedSize);
+				PAK_deflate((unsigned char*)compressedDataPtr, (unsigned char*)ptr, pakInfo.discSize, pakInfo.uncompressedSize);
 
-                free(compressedDataPtr);
-                break;
-            }
-        default:
-            assert(false);
-            break;
-        }
-        fclose(fileHandle);
-    }
+				free(compressedDataPtr);
+				break;
+			}
+		default:
+			assert(false);
+			break;
+		}
+			fclose(fileHandle);
+			return ptr;
+		}
+	}
 
-    return ptr;
+	// Fall back to embedded data
+	{
+		char pakName[256];
+		buildPakFilename(pakName, name);
+		const unsigned char* embData = nullptr;
+		size_t embSize = 0;
+		if (getEmbeddedFile(pakName, &embData, &embSize))
+		{
+			size_t pos = (size_t)(index + 1) * 4;
+			u32 fileOffset;
+			memcpy(&fileOffset, embData + pos, 4);
+			fileOffset = READ_LE_U32(&fileOffset);
+
+			pos = (size_t)fileOffset;
+			u32 additionalDescriptorSize;
+			memcpy(&additionalDescriptorSize, embData + pos, 4); pos += 4;
+			additionalDescriptorSize = READ_LE_U32(&additionalDescriptorSize);
+			if (additionalDescriptorSize)
+				pos += additionalDescriptorSize - 4;
+
+			pakInfoStruct pakInfo;
+			readPakInfoFromMem(&pakInfo, embData, &pos);
+			pos += pakInfo.offset; // skip name buffer
+
+			char* ptr = nullptr;
+			switch (pakInfo.compressionFlag)
+			{
+			case 0:
+				ptr = (char*)malloc(pakInfo.discSize);
+				memcpy(ptr, embData + pos, pakInfo.discSize);
+				break;
+			case 1:
+			{
+				char* compressedDataPtr = (char*)malloc(pakInfo.discSize);
+				memcpy(compressedDataPtr, embData + pos, pakInfo.discSize);
+				ptr = (char*)malloc(pakInfo.uncompressedSize);
+				PAK_explode((unsigned char*)compressedDataPtr, (unsigned char*)ptr, pakInfo.discSize, pakInfo.uncompressedSize, pakInfo.info5);
+				free(compressedDataPtr);
+				break;
+			}
+			case 4:
+			{
+				char* compressedDataPtr = (char*)malloc(pakInfo.discSize);
+				memcpy(compressedDataPtr, embData + pos, pakInfo.discSize);
+				ptr = (char*)malloc(pakInfo.uncompressedSize);
+				PAK_deflate((unsigned char*)compressedDataPtr, (unsigned char*)ptr, pakInfo.discSize, pakInfo.uncompressedSize);
+				free(compressedDataPtr);
+				break;
+			}
+			default:
+				assert(false);
+				break;
+			}
+			return ptr;
+		}
+	}
+
+	return NULL;
 #endif
 }
 
@@ -482,7 +492,7 @@ void dumpPak(const char* name)
 
                 fread(nameBuffer, pakInfo.offset, 1, fileHandle);
 #ifdef FITD_DEBUGGER
-                printf("Loading %s/%s\n", name, nameBuffer + 2);
+                printf(PAK_TAG "Loading %s/%s\n", name, nameBuffer + 2);
 #endif
             }
             else
@@ -508,7 +518,7 @@ void dumpPak(const char* name)
 
                 if(explodeResult != 0)
                 {
-                    printf("ERROR: PAK_explode failed for %s index %d (discSize=%d, uncompressedSize=%d, flags=%d, result=%d)\n", 
+                    printf(PAK_ERR "PAK_explode failed for %s index %d (discSize=%d, uncompressedSize=%d, flags=%d, result=%d)" CON_RESET "\n", 
                            name, index, pakInfo.discSize, pakInfo.uncompressedSize, pakInfo.info5, explodeResult);
                     // Initialize with zeros to avoid returning uninitialized memory
                     memset(ptr, 0, pakInfo.uncompressedSize);

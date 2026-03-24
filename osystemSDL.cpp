@@ -1,6 +1,7 @@
 ///////////////////////////////////////////////////////////////////////////////
 // Alone In The Dark Re-Haunted
 // Copyright (C) 2026 Infogrames / Spacefarer Retro Remasters LLC
+// Based on FITD by yaz0r, Re-haunted is released under GPL
 // Author: Jake Jackson (jake@spacefarergames.com)
 //
 // SDL-based operating system abstraction layer
@@ -9,7 +10,10 @@
 #include "common.h"
 #include "memoryManager.h"
 #include "exceptionHandler.h"
+#include "consoleLog.h"
+#include "updateChecker.h"
 #include "embedded/embeddedData.h"
+#include <bgfx/platform.h>
 
 /***************************************************************************
 mainSDL.cpp  -  description
@@ -102,7 +106,7 @@ static int FitdMainProtected(void* unused)
     }
     __except (ExceptionHandler::HandleException(GetExceptionInformation(), "FitdMainThread"))
     {
-        printf("CRITICAL: Exception caught at FitdMainThread top level - game continuing\n");
+        printf(SDL_ERR "CRITICAL: Exception caught at FitdMainThread top level - game continuing" CON_RESET "\n");
         OutputDebugStringA("CRITICAL: FitdMainThread top-level exception caught and handled\n");
         return -1;
     }
@@ -123,13 +127,17 @@ int FitdInit(int argc, char* argv[])
 
     // Initialize exception handler for crash logging and graceful recovery
     // Set to true to try continuing on heap corruption (logs error and continues)
+    enableConsoleColors();
     ExceptionHandler::Initialize(true);
 
-    printf("Exception handler initialized - crash logs will be written to crash_log.txt\n");
-    printf("Memory tracking active - memory debug log will be written to memory_debug.log\n");
+    printf(SDL_OK "Exception handler initialized - crash logs will be written to crash_log.txt\n");
+    printf(SDL_TAG "Memory tracking active - memory debug log will be written to memory_debug.log\n");
 
     // Initialize ReShade compatibility checking and crash logging
     InitReShadeCompatibility();
+
+    // Check for a newer release on GitHub (non-blocking background thread)
+    CheckForUpdatesAsync();
 #endif
     startOfRender = SDL_CreateSemaphore(0);
     endOfRender = SDL_CreateSemaphore(0);
@@ -146,8 +154,7 @@ int FitdInit(int argc, char* argv[])
 
     // Game is running in dos resolution 13h, ie 320x200x256, but is displayed in 4:3, so pixel are not square (1.6:1)
     // We still need to create a 4:3 window for the actual display on screen.
-    int scale = 4;
-    int resolution[2] = { 80 * 4 * scale, 80 * 3 * scale };
+    int resolution[2] = { 1410, 890 };
 
     gWindowBGFX = SDL_CreateWindow("FITD", resolution[0], resolution[1], flags);
     
@@ -155,11 +162,26 @@ int FitdInit(int argc, char* argv[])
 
     getVersion(version);
 
-    printf("%s", version);
+    printf(SDL_TAG "%s", version);
 
     detectGame();
 
+    // Call renderFrame before creating the game thread to signal bgfx
+    // to not create its own internal render thread. This keeps all D3D11
+    // calls (device creation, Present) on the main thread so Steam
+    // Overlay can hook them properly.
+    bgfx::renderFrame();
+
     SDL_CreateThread(FitdMainProtected, "FitdMainThread", NULL);
+
+    // During init, bgfx::init() calls frame() internally which needs
+    // multiple renderFrame() calls from this thread. Pump renderFrame
+    // in a polling loop until the game thread signals its first
+    // endOfRender (meaning init is done and the game loop has started).
+    SDL_SignalSemaphore(startOfRender);
+    do {
+        bgfx::renderFrame(100);
+    } while (!SDL_TryWaitSemaphore(endOfRender));
 
     unsigned long int t_start = SDL_GetTicks();
     unsigned long int t_lastUpdate = t_start;
@@ -212,9 +234,11 @@ int FitdInit(int argc, char* argv[])
         
         SDL_SignalSemaphore(startOfRender);
 
+        // Normal operation: one renderFrame per game frame. Blocks
+        // until the game thread submits via bgfx::frame(), then
+        // WaitSemaphore picks up the endOfRender signal immediately.
+        bgfx::renderFrame();
         SDL_WaitSemaphore(endOfRender);
-        
-        //SDL_RenderPresent(SDL_GetRenderer(gWindowBGFX));
     }
 
     return 0;

@@ -1,6 +1,7 @@
 ///////////////////////////////////////////////////////////////////////////////
 // Alone In The Dark Re-Haunted
 // Copyright (C) 2026 Infogrames / Spacefarer Retro Remasters LLC
+// Based on FITD by yaz0r, Re-haunted is released under GPL
 // Author: Jake Jackson (jake@spacefarergames.com)
 //
 // HD background loading declarations
@@ -53,8 +54,16 @@ const char* getHDBackgroundFolder();
 // Returns pixel data (caller must free with freeHDImageData), or nullptr on failure
 unsigned char* loadHDImageFile(const char* filename, int* width, int* height, int* channels);
 
-// Free image data returned by loadHDImageFile
+// Free image data returned by loadHDImageFile or loadImageFile
 void freeHDImageData(unsigned char* data);
+
+// Load an image file from an arbitrary filesystem path
+// Returns pixel data (caller must free with freeHDImageData), or nullptr on failure
+unsigned char* loadImageFile(const char* fullPath, int* width, int* height, int* channels);
+
+// Load an image from a memory buffer (e.g. embedded PNG data)
+// Returns pixel data (caller must free with freeHDImageData), or nullptr on failure
+unsigned char* loadImageFromMemory(const unsigned char* buffer, int bufferSize, int* width, int* height, int* channels);
 
 // Frame border types
 enum FrameBorderType

@@ -1,6 +1,7 @@
 ///////////////////////////////////////////////////////////////////////////////
 // Alone In The Dark Re-Haunted
 // Copyright (C) 2026 Infogrames / Spacefarer Retro Remasters LLC
+// Based on FITD by yaz0r, Re-haunted is released under GPL
 // Author: Jake Jackson (jake@spacefarergames.com)
 //
 // Data decompression and unpacking routines
@@ -22,6 +23,7 @@
 #include <string.h>
 
 #include "common.h"
+#include "consoleLog.h"
 
 #define _WINDOWS
 //#define ZLIB_DLL
@@ -549,7 +551,7 @@ int PAK_deflate(unsigned char * srcBuffer, unsigned char * dstBuffer, unsigned i
 // --------------------------------------------------------------
 
 void PAK_Error(char * txt) {
-  printf("%s", txt);
+  printf(PAK_ERR "%s" CON_RESET "\n", txt);
   getchar();
   assert(0);
 }

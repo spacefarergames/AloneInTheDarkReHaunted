@@ -1,6 +1,7 @@
 ///////////////////////////////////////////////////////////////////////////////
 // Alone In The Dark Re-Haunted
 // Copyright (C) 2026 Infogrames / Spacefarer Retro Remasters LLC
+// Based on FITD by yaz0r, Re-haunted is released under GPL
 // Author: Jake Jackson (jake@spacefarergames.com)
 //
 // Life script interpreter and AI behavior engine
@@ -10,6 +11,7 @@
 #include <stdio.h>
 
 #include "common.h"
+#include "consoleLog.h"
 #include "hybrid.h"
 #include "hdBackground.h"
 #include "hdBackgroundRenderer.h"
@@ -80,12 +82,12 @@ void drop(int worldIdx, int worldSource)
 
 void fire(int fireAnim, int X, int Y, int Z, int hitForce, int nextAnim)
 {
-    printf("fire() called: fireAnim=%d, shootFrame=%d, emitPoint=%d, zvSize=%d, hitForce=%d, nextAnim=%d\n",
+    printf(LIFE_TAG "fire() called: fireAnim=%d, shootFrame=%d, emitPoint=%d, zvSize=%d, hitForce=%d, nextAnim=%d\n",
         fireAnim, X, Y, Z, hitForce, nextAnim);
 
     if (InitAnim(fireAnim, 2, nextAnim))
     {
-        printf("  -> InitAnim SUCCESS, setting up actor for firing\n");
+        printf(LIFE_OK "  -> InitAnim SUCCESS, setting up actor for firing\n");
 
         currentProcessedActorPtr->animActionANIM = fireAnim;
         currentProcessedActorPtr->animActionFRAME = X;
@@ -94,11 +96,11 @@ void fire(int fireAnim, int X, int Y, int Z, int hitForce, int nextAnim)
         currentProcessedActorPtr->hotPointID = Y;
         currentProcessedActorPtr->hitForce = hitForce;
 
-        printf("  -> Actor %d set to animActionType 4 (WAIT_TIR_ANIM)\n", currentProcessedActorIdx);
+        printf(LIFE_TAG "  -> Actor %d set to animActionType 4 (WAIT_TIR_ANIM)\n", currentProcessedActorIdx);
     }
     else
     {
-        printf("  -> InitAnim FAILED, gun cannot fire\n");
+        printf(LIFE_WARN "  -> InitAnim FAILED, gun cannot fire" CON_RESET "\n");
     }
 }
 
@@ -357,7 +359,7 @@ int InitSpecialObjet(int mode, int X, int Y, int Z, int stage, int room, int alp
     }
     default:
     {
-        printf("Unsupported case %d in InitSpecialObjet\n", mode);
+        printf(LIFE_WARN "Unsupported case %d in InitSpecialObjet" CON_RESET "\n", mode);
         currentActorPtr->indexInWorld = -1;
         return(-1);
     }
@@ -665,7 +667,7 @@ void processLife(int lifeNum, bool callFoundLife)
 
             if (var_6 == -1)
             {
-                printf("Unsupported newVar = -1\n");
+                printf(LIFE_WARN "Unsupported newVar = -1" CON_RESET "\n");
                 assert(0);
             }
             else
@@ -881,7 +883,7 @@ void processLife(int lifeNum, bool callFoundLife)
                     ////////////////////////////////////////////////////////////////////////
                     default:
                     {
-                        printf("Unsupported opcode %X when actor isn't in floor\n", currentOpcode & 0x7FFF);
+                        printf(LIFE_WARN "Unsupported opcode %X when actor isn't in floor" CON_RESET "\n", currentOpcode & 0x7FFF);
                         assert(0);
                         break;
                     }
@@ -1812,14 +1814,16 @@ void processLife(int lifeNum, bool callFoundLife)
                 lifeTempVar2 = *(s16*)(currentLifePtr);
                 currentLifePtr += 2;
 
+                int vocIndex = -1;
                 if (g_gameId == AITD1)
                 {
-                    currentLifePtr += 2;// AITD1 CD has an extra digit, related to the VOC files to play for the text?
+                    vocIndex = *(s16*)(currentLifePtr); // AITD1 CD VOC file index for voice-over
+                    currentLifePtr += 2;
                 }
 
                 FadeOutPhys(0x20, 0);
 
-                readBook(lifeTempVar2 + 1, lifeTempVar1);
+                readBook(lifeTempVar2 + 1, lifeTempVar1, vocIndex);
 
                 if (g_gameId == AITD1)
                 {
@@ -1910,7 +1914,7 @@ void processLife(int lifeNum, bool callFoundLife)
                 frameNumber = *(s16*)(currentLifePtr);
                 currentLifePtr += 2;
 
-                printf("LM_2D_ANIM_SAMPLE(sampleNumber %d, animNumber %d, frameNumber %d)\n", sampleNumber, animNumber, frameNumber);
+                printf(LIFE_TAG "LM_2D_ANIM_SAMPLE(sampleNumber %d, animNumber %d, frameNumber %d)\n", sampleNumber, animNumber, frameNumber);
 
                 break; // TODO: implement
             }
@@ -1994,7 +1998,7 @@ void processLife(int lifeNum, bool callFoundLife)
 
                     playSound(newSample);
                 }
-                printf("LM_SAMPLE_THEN\n");
+                printf(LIFE_TAG "LM_SAMPLE_THEN\n");
                 // setSampleFreq(0);
                 break;
             }
@@ -2082,7 +2086,7 @@ void processLife(int lifeNum, bool callFoundLife)
             case LM_SHAKING: // SHAKING 
             {
                 appendFormated("LM_SHAKING ");
-                printf("LM_SHAKING\n");
+                printf(LIFE_TAG "LM_SHAKING\n");
                 shakingAmplitude = *(s16*)(currentLifePtr);
                 currentLifePtr += 2;
 
@@ -2104,7 +2108,7 @@ void processLife(int lifeNum, bool callFoundLife)
             {
                 appendFormated("LM_WATER ");
                 // TODO: Warning, AITD1/AITD2 diff
-                printf("LM_WATER\n");
+                printf(LIFE_TAG "LM_WATER\n");
                 shakeVar1 = *(s16*)(currentLifePtr);
                 currentLifePtr += 2;
 
@@ -2321,7 +2325,7 @@ void processLife(int lifeNum, bool callFoundLife)
             {
                 assert(g_gameId != TIMEGATE);
                 appendFormated("LM_PROTECT ");
-                printf("LM_PROTECT\n");
+                printf(LIFE_TAG "LM_PROTECT\n");
                 //protection = 1;
                 break;
             }
@@ -2353,7 +2357,7 @@ void processLife(int lifeNum, bool callFoundLife)
                 currentInHand = inventoryIndex
                 }
                 }*/
-                printf("LM_SET_INVENTORY\n");
+                printf(LIFE_TAG "LM_SET_INVENTORY\n");
                 break;
             }
             case LM_SET_GROUND:
@@ -2389,7 +2393,7 @@ void processLife(int lifeNum, bool callFoundLife)
             {
                 appendFormated("LM_END_SEQUENCE ");
                 // TODO!
-                printf("LM_END_SEQUENCE\n");
+                printf(LIFE_TAG "LM_END_SEQUENCE\n");
                 break;
             }
             ////////////////////////////////////////////////////////////////////////
@@ -2658,7 +2662,7 @@ void processLife(int lifeNum, bool callFoundLife)
                 {
                     process_events();
                 }
-                while (!key && !JoyD && Click)
+                while (!key && !JoyD && !Click)
                 {
                     process_events();
                 }
@@ -2697,7 +2701,7 @@ void processLife(int lifeNum, bool callFoundLife)
             }
             default:
             {
-                printf("Unknown opcode %X in processLife\n", currentOpcode & 0x7FFF);
+                printf(LIFE_WARN "Unknown opcode %X in processLife" CON_RESET "\n", currentOpcode & 0x7FFF);
                 assert(0);
             }
             }
@@ -2706,7 +2710,7 @@ void processLife(int lifeNum, bool callFoundLife)
 #ifdef DEBUG
         if (strlen(currentDebugLifeLine))
         {
-            printf("%s\n", currentDebugLifeLine);
+            printf(LIFE_TAG "%s\n", currentDebugLifeLine);
         }
 #endif
 

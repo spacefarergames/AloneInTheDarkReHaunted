@@ -1,12 +1,14 @@
 ///////////////////////////////////////////////////////////////////////////////
 // Alone In The Dark Re-Haunted
 // Copyright (C) 2026 Infogrames / Spacefarer Retro Remasters LLC
+// Based on FITD by yaz0r, Re-haunted is released under GPL
 // Author: Jake Jackson (jake@spacefarergames.com)
 //
 // BGFX hardware-accelerated 3D rendering pipeline
 ///////////////////////////////////////////////////////////////////////////////
 
 #include "common.h"
+#include "consoleLog.h"
 
 /***************************************************************************
 mainSDL.cpp  -  description
@@ -32,8 +34,10 @@ email                : yaz0r@yaz0r.net
 #include "imguiBGFX.h"
 #include "hdBackgroundRenderer.h"
 #include "hdBackground.h"
+#include "embedded/embeddedData.h"
 #include "debugger.h"
 #include "configRemaster.h"
+#include "input.h"
 #include "postProcessing.h"
 #include "resourceGC.h"
 #include <array>
@@ -704,6 +708,126 @@ void osystem_drawBackground()
 }
 
 bool g_bgfxMainResourcesInitialized = false;
+
+// Controller hint overlay texture for startup menu
+static bgfx::TextureHandle g_controllerHintTexture = BGFX_INVALID_HANDLE;
+static bool g_controllerHintLoaded = false;
+static int g_controllerHintWidth = 0;
+static int g_controllerHintHeight = 0;
+
+extern "C" { extern char homePath[512]; }
+
+static void loadControllerHintTexture()
+{
+    if (g_controllerHintLoaded)
+        return;
+
+    int width, height, channels;
+    unsigned char* data = nullptr;
+
+    // Try embedded data first
+    const unsigned char* embData = nullptr;
+    size_t embSize = 0;
+    if (getEmbeddedFile("ControllerHint.png", &embData, &embSize))
+    {
+        data = loadImageFromMemory(embData, (int)embSize, &width, &height, &channels);
+    }
+
+    // Fallback to external file
+    if (!data)
+    {
+        char filePath[512];
+        snprintf(filePath, sizeof(filePath), "%sControllerHint.png", homePath);
+        data = loadImageFile(filePath, &width, &height, &channels);
+    }
+
+    if (!data)
+    {
+        printf(RBGFX_WARN "Controller hint image not found (embedded or filesystem)" CON_RESET "\n");
+        g_controllerHintLoaded = true;
+        return;
+    }
+
+    // Convert to RGBA if needed
+    unsigned char* rgbaData = data;
+    bool needsFree = false;
+    if (channels == 3)
+    {
+        rgbaData = (unsigned char*)malloc(width * height * 4);
+        if (rgbaData)
+        {
+            for (int p = 0; p < width * height; p++)
+            {
+                rgbaData[p * 4 + 0] = data[p * 3 + 0];
+                rgbaData[p * 4 + 1] = data[p * 3 + 1];
+                rgbaData[p * 4 + 2] = data[p * 3 + 2];
+                rgbaData[p * 4 + 3] = 255;
+            }
+            needsFree = true;
+        }
+    }
+
+    if (rgbaData)
+    {
+        g_controllerHintTexture = bgfx::createTexture2D(width, height, false, 1,
+            bgfx::TextureFormat::RGBA8, BGFX_SAMPLER_U_CLAMP | BGFX_SAMPLER_V_CLAMP,
+            bgfx::copy(rgbaData, width * height * 4));
+        g_controllerHintWidth = width;
+        g_controllerHintHeight = height;
+        printf(RBGFX_OK "Controller hint image loaded: %dx%d\n", width, height);
+    }
+
+    if (needsFree)
+        free(rgbaData);
+    freeHDImageData(data);
+
+    g_controllerHintLoaded = true;
+}
+
+void osystem_drawControllerHint()
+{
+    // Only show the controller hint if a game controller is actually connected
+    if (!g_controllerState.connected)
+        return;
+
+    loadControllerHintTexture();
+
+    if (!bgfx::isValid(g_controllerHintTexture))
+        return;
+
+    // Get display size from ImGui (matches the window pixel size)
+    ImVec2 displaySize = ImGui::GetIO().DisplaySize;
+    if (displaySize.x <= 0 || displaySize.y <= 0)
+        return;
+
+    // Scale image to fit at the bottom, maintaining aspect ratio
+    float imgAspect = (float)g_controllerHintWidth / (float)g_controllerHintHeight;
+    float drawWidth = displaySize.x * 0.4f;
+    float drawHeight = drawWidth / imgAspect;
+
+    // Position: centered horizontally, at the bottom with a small margin
+    float margin = 10.0f;
+    float posX = (displaySize.x - drawWidth) * 0.5f;
+    float posY = displaySize.y - drawHeight - margin;
+
+    // Draw as an ImGui overlay window (transparent, no decorations)
+    ImGui::SetNextWindowPos(ImVec2(posX, posY));
+    ImGui::SetNextWindowSize(ImVec2(drawWidth, drawHeight));
+    ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));
+    ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
+    ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4(0, 0, 0, 0));
+    ImGui::Begin("##ControllerHint", nullptr,
+        ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize |
+        ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoScrollbar |
+        ImGuiWindowFlags_NoInputs | ImGuiWindowFlags_NoSavedSettings |
+        ImGuiWindowFlags_AlwaysAutoResize);
+
+    ImGui::Image(g_controllerHintTexture, ImVec2(drawWidth, drawHeight));
+
+    ImGui::End();
+    ImGui::PopStyleColor();
+    ImGui::PopStyleVar(2);
+}
 
 bgfx::FrameBufferHandle fieldModelInspector_FB = BGFX_INVALID_HANDLE;
 bgfx::TextureHandle fieldModelInspector_Texture = BGFX_INVALID_HANDLE;
@@ -1764,12 +1888,12 @@ void osystem_updateSceneSnapshot()
 void osystem_captureScenePreview()
 {
     s_previewReady = false;
-    s_snapshotEnabled = false;  // freeze — keep the last game frame in the snapshot
+    s_snapshotEnabled = false;  // freeze ï¿½ keep the last game frame in the snapshot
 
     if (!bgfx::isValid(s_snapshotTex) || !s_previewData || s_snapshotWidth <= 0 || s_snapshotHeight <= 0)
         return;
 
-    // Request async readback — data is available after 2 bgfx::frame() calls.
+    // Request async readback ï¿½ data is available after 2 bgfx::frame() calls.
     bgfx::readTexture(s_snapshotTex, s_previewData);
 }
 

@@ -1,12 +1,14 @@
 ///////////////////////////////////////////////////////////////////////////////
 // Alone In The Dark Re-Haunted
 // Copyright (C) 2026 Infogrames / Spacefarer Retro Remasters LLC
+// Based on FITD by yaz0r, Re-haunted is released under GPL
 // Author: Jake Jackson (jake@spacefarergames.com)
 //
 // Music playback control and track management
 ///////////////////////////////////////////////////////////////////////////////
 
 #include "common.h"
+#include "consoleLog.h"
 
 bool g_gameUseCDA = false;
 
@@ -1278,7 +1280,7 @@ void playMusic(int musicNumber)
 			{
 				if(!listMus)
 				{
-					printf("Warning: LISTMUS not loaded, skipping music %d\n", musicNumber);
+					printf(MUSIC_WARN "LISTMUS not loaded, skipping music %d" CON_RESET "\n", musicNumber);
 					return;
 				}
 
@@ -1297,7 +1299,7 @@ void playMusic(int musicNumber)
 				}
 				else
 				{
-					printf("Warning: LISTMUS entry %d not found, skipping\n", musicNumber);
+					printf(MUSIC_WARN "LISTMUS entry %d not found, skipping" CON_RESET "\n", musicNumber);
 				}
 			}
 		}

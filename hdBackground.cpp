@@ -1,6 +1,7 @@
 ///////////////////////////////////////////////////////////////////////////////
 // Alone In The Dark Re-Haunted
 // Copyright (C) 2026 Infogrames / Spacefarer Retro Remasters LLC
+// Based on FITD by yaz0r, Re-haunted is released under GPL
 // Author: Jake Jackson (jake@spacefarergames.com)
 //
 // High-definition background image loading
@@ -10,6 +11,7 @@
 #include "hdBackground.h"
 #include "hdArchive.h"
 #include "configRemaster.h"
+#include "consoleLog.h"
 #include "memoryManager.h"
 #include "exceptionHandler.h"
 #include <stdio.h>
@@ -244,6 +246,28 @@ void freeHDImageData(unsigned char* data)
     }
 }
 
+// Load an image file from an arbitrary filesystem path
+// Returns pixel data (caller must free with freeHDImageData), or nullptr on failure
+unsigned char* loadImageFile(const char* fullPath, int* width, int* height, int* channels)
+{
+    return loadSingleFrame(fullPath, width, height, channels);
+}
+
+// Load an image from a memory buffer (e.g. embedded PNG data)
+// Returns pixel data (caller must free with freeHDImageData), or nullptr on failure
+unsigned char* loadImageFromMemory(const unsigned char* buffer, int bufferSize, int* width, int* height, int* channels)
+{
+    unsigned char* imageData = nullptr;
+    PROTECTED_CALL({
+        imageData = stbi_load_from_memory(buffer, bufferSize, width, height, channels, 0);
+        if (imageData)
+        {
+            TRACK_ALLOCATION(imageData, (*width) * (*height) * (*channels), "stbi_load_from_memory");
+        }
+    }, "stbi_load_from_memory");
+    return imageData;
+}
+
 // Try to load HD version of background
 // Returns nullptr if no HD version found
 HDBackgroundInfo* loadHDBackground(const char* backgroundName, int cameraIdx, const char* suffix)
@@ -275,7 +299,7 @@ HDBackgroundInfo* loadHDBackground(const char* backgroundName, int cameraIdx, co
              getHDBackgroundFolder(),
              (int)(strlen(animPrefix) - 1), animPrefix); // strip trailing '/'
 
-    printf("Looking for animated background: %s (name='%s', camera=%d)\n", 
+    printf(HDBG_TAG "Looking for animated background: %s (name='%s', camera=%d)\n", 
            animDirPath, backgroundName, cameraIdx);
 
     // ---- Try animated background from archive ----
@@ -292,7 +316,7 @@ HDBackgroundInfo* loadHDBackground(const char* backgroundName, int cameraIdx, co
     if (!archiveAnimEntries.empty())
     {
         totalFrames = archiveAnimEntries.size();
-        printf("Found animated background in archive: %s with %zu frames\n",
+        printf(HDBG_OK "Found animated background in archive: %s with %zu frames\n",
                animPrefix, totalFrames);
     }
     else
@@ -302,7 +326,7 @@ HDBackgroundInfo* loadHDBackground(const char* backgroundName, int cameraIdx, co
         totalFrames = animFiles.size();
         if (totalFrames > 0)
         {
-            printf("Found animated background directory: %s with %zu frames\n",
+            printf(HDBG_OK "Found animated background directory: %s with %zu frames\n",
                    animDirPath, totalFrames);
         }
     }
@@ -330,7 +354,7 @@ HDBackgroundInfo* loadHDBackground(const char* backgroundName, int cameraIdx, co
         size_t minFramesToLoad = (totalFrames < 10) ? totalFrames : 
                                   (thirtyPercent > 3 ? thirtyPercent : 3);
 
-        printf("Pre-loading first %zu frames for immediate playback...\n", minFramesToLoad);
+        printf(HDBG_TAG "Pre-loading first %zu frames for immediate playback...\n", minFramesToLoad);
 
         for (size_t i = 0; i < minFramesToLoad && i < totalFrames; i++)
         {
@@ -353,7 +377,7 @@ HDBackgroundInfo* loadHDBackground(const char* backgroundName, int cameraIdx, co
 
             if (!frameData)
             {
-                printf("Warning: Failed to load initial frame %zu\n", i);
+                printf(HDBG_WARN "Failed to load initial frame %zu" CON_RESET "\n", i);
                 continue;
             }
 
@@ -365,7 +389,7 @@ HDBackgroundInfo* loadHDBackground(const char* backgroundName, int cameraIdx, co
             }
             else if (frameWidth != width || frameHeight != height || frameChannels != channels)
             {
-                printf("Warning: Frame %zu has inconsistent dimensions (%dx%d, %d channels), expected (%dx%d, %d channels)\n",
+                printf(HDBG_WARN "Frame %zu has inconsistent dimensions (%dx%d, %d channels), expected (%dx%d, %d channels)" CON_RESET "\n",
                        i, frameWidth, frameHeight, frameChannels, width, height, channels);
                 stbi_image_free(frameData);
                 continue;
@@ -385,17 +409,17 @@ HDBackgroundInfo* loadHDBackground(const char* backgroundName, int cameraIdx, co
                 }
             }
             free(frames);
-            printf("Failed to load any frames from animated background\n");
+            printf(HDBG_ERR "Failed to load any frames from animated background" CON_RESET "\n");
         }
         else
         {
-            printf("Loaded %d initial frames, starting playback...\n", loadedFrames);
+            printf(HDBG_OK "Loaded %d initial frames, starting playback...\n", loadedFrames);
 
             bool allInitialFramesLoaded = (loadedFrames >= (int)totalFrames);
 
             if (!allInitialFramesLoaded)
             {
-                printf("Loading remaining %zu frames...\n", totalFrames - loadedFrames);
+                printf(HDBG_TAG "Loading remaining %zu frames...\n", totalFrames - loadedFrames);
 
                 for (size_t i = minFramesToLoad; i < totalFrames; i++)
                 {
@@ -418,13 +442,13 @@ HDBackgroundInfo* loadHDBackground(const char* backgroundName, int cameraIdx, co
 
                     if (!frameData)
                     {
-                        printf("Warning: Failed to load frame %zu\n", i);
+                        printf(HDBG_WARN "Failed to load frame %zu" CON_RESET "\n", i);
                         continue;
                     }
 
                     if (frameWidth != width || frameHeight != height || frameChannels != channels)
                     {
-                        printf("Warning: Frame %zu has inconsistent dimensions, skipping\n", i);
+                        printf(HDBG_WARN "Frame %zu has inconsistent dimensions, skipping" CON_RESET "\n", i);
                         stbi_image_free(frameData);
                         continue;
                     }
@@ -466,12 +490,12 @@ HDBackgroundInfo* loadHDBackground(const char* backgroundName, int cameraIdx, co
 
             if (bgInfo->allFramesLoaded)
             {
-                printf("Loaded animated HD background: %s (%dx%d, %d channels, %d/%d frames - READY)\n", 
+                printf(HDBG_OK "Loaded animated HD background: %s (%dx%d, %d channels, %d/%d frames - READY)\n", 
                        animDirPath, width, height, channels, loadedFrames, (int)totalFrames);
             }
             else
             {
-                printf("Loaded animated HD background: %s (%dx%d, %d channels, %d/%d frames - STREAMING)\n", 
+                printf(HDBG_OK "Loaded animated HD background: %s (%dx%d, %d channels, %d/%d frames - STREAMING)\n", 
                        animDirPath, width, height, channels, loadedFrames, (int)totalFrames);
             }
 
@@ -507,7 +531,7 @@ HDBackgroundInfo* loadHDBackground(const char* backgroundName, int cameraIdx, co
             unsigned char* imageData = loadFromArchiveEntry(entry, &width, &height, &channels);
             if (!imageData)
             {
-                printf("Failed to load HD background from archive: %s\n", entryName);
+                printf(HDBG_ERR "Failed to load HD background from archive: %s" CON_RESET "\n", entryName);
                 continue;
             }
 
@@ -517,7 +541,7 @@ HDBackgroundInfo* loadHDBackground(const char* backgroundName, int cameraIdx, co
 
             if (width != expectedWidth || height != expectedHeight)
             {
-                printf("Warning: HD background %s has unexpected resolution %dx%d (expected %dx%d)\n",
+                printf(HDBG_WARN "HD background %s has unexpected resolution %dx%d (expected %dx%d)" CON_RESET "\n",
                        entryName, width, height, expectedWidth, expectedHeight);
             }
 
@@ -544,7 +568,7 @@ HDBackgroundInfo* loadHDBackground(const char* backgroundName, int cameraIdx, co
             bgInfo->minFramesForPlayback = 1;
             bgInfo->loadedFrameCount = 1;
 
-            printf("Loaded HD background from archive: %s (%dx%d, %d channels)\n",
+            printf(HDBG_OK "Loaded HD background from archive: %s (%dx%d, %d channels)\n",
                    entryName, width, height, channels);
 
             return bgInfo;
@@ -575,19 +599,11 @@ HDBackgroundInfo* loadHDBackground(const char* backgroundName, int cameraIdx, co
         fclose(testFile);
 
         int width, height, channels;
-        unsigned char* imageData = nullptr;
-
-        PROTECTED_CALL({
-            imageData = stbi_load(filePath, &width, &height, &channels, 0);
-            if (imageData)
-            {
-                TRACK_ALLOCATION(imageData, width * height * channels, "stbi_load");
-            }
-        }, "stbi_load HD background");
+        unsigned char* imageData = loadSingleFrame(filePath, &width, &height, &channels);
 
         if (!imageData)
         {
-            printf("Failed to load HD background: %s\n", filePath);
+            printf(HDBG_ERR "Failed to load HD background: %s" CON_RESET "\n", filePath);
             continue;
         }
 
@@ -597,7 +613,7 @@ HDBackgroundInfo* loadHDBackground(const char* backgroundName, int cameraIdx, co
 
         if (width != expectedWidth || height != expectedHeight)
         {
-            printf("Warning: HD background %s has unexpected resolution %dx%d (expected %dx%d)\n",
+            printf(HDBG_WARN "HD background %s has unexpected resolution %dx%d (expected %dx%d)" CON_RESET "\n",
                    filePath, width, height, expectedWidth, expectedHeight);
         }
 
@@ -624,7 +640,7 @@ HDBackgroundInfo* loadHDBackground(const char* backgroundName, int cameraIdx, co
         bgInfo->minFramesForPlayback = 1;
         bgInfo->loadedFrameCount = 1;
 
-        printf("Loaded HD background: %s (%dx%d, %d channels)\n", 
+        printf(HDBG_OK "Loaded HD background: %s (%dx%d, %d channels)\n", 
                filePath, width, height, channels);
 
         return bgInfo;
@@ -814,7 +830,7 @@ bool loadHDFrameBorders()
 
         if (!imageData)
         {
-            printf("Failed to load HD frame border: %s\n", filePath);
+            printf(HDBG_ERR "Failed to load HD frame border: %s" CON_RESET "\n", filePath);
             continue;
         }
         
@@ -824,7 +840,7 @@ bool loadHDFrameBorders()
         g_hdFrameBorders[i].channels = 4; // We forced RGBA
         g_hdFrameBorders[i].loaded = true;
         
-        printf("Loaded HD frame border: %s (%dx%d)\n", filePath, width, height);
+        printf(HDBG_OK "Loaded HD frame border: %s (%dx%d)\n", filePath, width, height);
         anyLoaded = true;
     }
     

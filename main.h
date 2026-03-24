@@ -1,6 +1,7 @@
 ///////////////////////////////////////////////////////////////////////////////
 // Alone In The Dark Re-Haunted
 // Copyright (C) 2026 Infogrames / Spacefarer Retro Remasters LLC
+// Based on FITD by yaz0r, Re-haunted is released under GPL
 // Author: Jake Jackson (jake@spacefarergames.com)
 //
 // Core game function declarations
@@ -45,6 +46,7 @@ bool fileExists(const char* name);
 
 void OpenProgram(void);
 void freeAll(void);
+void reloadLanguage(const char* langName);
 void startGame(int startupEtage, int startupRoom, int allowSystemMenu);
 void AffRect(int x1, int y1, int x2, int y2, char color); // fast recode. No RE
 void CopyZV(ZVStruct* source, ZVStruct* dest);
@@ -59,7 +61,7 @@ void SetClip(int left, int top, int right, int bottom);
 void drawZv(const ZVStruct& localZv);
 
 ///
-void readBook(int index, int type);
+void readBook(int index, int type, int vocIndex = -1);
 int Lire(int index, int left, int top, int right, int bottom, int mode, int color, int shadow);
 
 void SetProjection(int centerX, int centerY, int x, int y, int z);
