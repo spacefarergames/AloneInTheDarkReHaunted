@@ -240,7 +240,7 @@ This project is a remaster built on the reverse-engineered FITD engine. Original
 Now Updated to support original CD-ROM (in drive) CD track playback, VOC decoding and ALL language support.
 ---
 
-## Version 1.0.0 — Initial Release
+Version 1.0.0 — Initial Release
 
 ### ✨ Remaster Features
 
