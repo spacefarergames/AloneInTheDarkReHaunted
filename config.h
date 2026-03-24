@@ -1,100 +1,407 @@
-///////////////////////////////////////////////////////////////////////////////
-// Alone In The Dark Re-Haunted
-// Copyright (C) 2026 Infogrames / Spacefarer Retro Remasters LLC
-// Based on FITD by yaz0r, Re-haunted is released under GPL
-// Author: Jake Jackson (jake@spacefarergames.com)
+/*
+ * Copyright 2011-2025 Branimir Karadzic. All rights reserved.
+ * License: https://github.com/bkaradzic/bgfx/blob/master/LICENSE
+ */
+
+#ifndef BGFX_CONFIG_H_HEADER_GUARD
+#define BGFX_CONFIG_H_HEADER_GUARD
+
+#include <bx/bx.h> // bx::isPowerOf2
+
+// # Configuration options for bgfx.
 //
-// Build configuration and compile-time options
-///////////////////////////////////////////////////////////////////////////////
+// Any of `BGFX_CONFIG_*` options that's inside `#ifndef` block can be configured externally
+// via compiler options.
+//
+// When selecting rendering backends select all backends you want to include in the build.
 
-#pragma once
+#ifndef BX_CONFIG_DEBUG
+#	error "BX_CONFIG_DEBUG must be defined in build script!"
+#endif // BX_CONFIG_DEBUG
 
-#if __cplusplus
-#include <vector>
-#include <string>
-#include <format>
-#include <optional>
-#endif
+#if !defined(BGFX_CONFIG_RENDERER_AGC)        \
+ && !defined(BGFX_CONFIG_RENDERER_DIRECT3D11) \
+ && !defined(BGFX_CONFIG_RENDERER_DIRECT3D12) \
+ && !defined(BGFX_CONFIG_RENDERER_GNM)        \
+ && !defined(BGFX_CONFIG_RENDERER_METAL)      \
+ && !defined(BGFX_CONFIG_RENDERER_NVN)        \
+ && !defined(BGFX_CONFIG_RENDERER_OPENGL)     \
+ && !defined(BGFX_CONFIG_RENDERER_OPENGLES)   \
+ && !defined(BGFX_CONFIG_RENDERER_VULKAN)
 
-#ifdef __APPLE__
-#include <TargetConditionals.h>
-#include <stdint.h>
-#define HAS_STDINT
-#endif
+#	ifndef BGFX_CONFIG_RENDERER_AGC
+#		define BGFX_CONFIG_RENDERER_AGC (0 \
+					|| BX_PLATFORM_PS5     \
+					? 1 : 0)
+#	endif // BGFX_CONFIG_RENDERER_AGC
 
-#ifdef _WIN32
-#define _CRT_SECURE_NO_WARNINGS
-//#include "config.h"
-#endif
+#	ifndef BGFX_CONFIG_RENDERER_DIRECT3D11
+#		define BGFX_CONFIG_RENDERER_DIRECT3D11 (0 \
+					|| BX_PLATFORM_LINUX          \
+					|| BX_PLATFORM_WINDOWS        \
+					|| BX_PLATFORM_WINRT          \
+					|| BX_PLATFORM_XBOXONE        \
+					? 1 : 0)
+#	endif // BGFX_CONFIG_RENDERER_DIRECT3D11
 
-// Config IMGUI
-// FITD_DEBUGGER is enabled only in Debug builds
-// Release builds will have no debug menu, no collision visualization, no ImGui overhead
-#ifdef _DEBUG
-    #define FITD_DEBUGGER
-#endif
+#	ifndef BGFX_CONFIG_RENDERER_DIRECT3D12
+#		define BGFX_CONFIG_RENDERER_DIRECT3D12 (0 \
+					|| BX_PLATFORM_LINUX          \
+					|| BX_PLATFORM_WINDOWS        \
+					|| BX_PLATFORM_WINRT          \
+					|| BX_PLATFORM_XBOXONE        \
+					? 1 : 0)
+#	endif // BGFX_CONFIG_RENDERER_DIRECT3D12
 
-#ifdef __APPLE__
-    #if TARGET_OS_OSX
-        #define USE_SDL 1
-        #define USE_IMGUI
-        #define USE_OPENGL_3_2
-    #endif
-    #if TARGET_OS_TV || TARGET_OS_IOS
-        #define USE_SDL 1
-        #define USE_OPENGLES_3_0
-        #define RUN_FULLSCREEN  
-        #define USE_IMGUI
-    #endif
+#	ifndef BGFX_CONFIG_RENDERER_GNM
+#		define BGFX_CONFIG_RENDERER_GNM (0 \
+					|| BX_PLATFORM_PS4     \
+					? 1 : 0)
+#	endif // BGFX_CONFIG_RENDERER_GNM
+
+#	ifndef BGFX_CONFIG_RENDERER_METAL
+#		define BGFX_CONFIG_RENDERER_METAL (0 \
+					|| BX_PLATFORM_IOS       \
+					|| BX_PLATFORM_OSX       \
+					|| BX_PLATFORM_VISIONOS \
+					? 1 : 0)
+#	endif // BGFX_CONFIG_RENDERER_METAL
+
+#	ifndef BGFX_CONFIG_RENDERER_NVN
+#		define BGFX_CONFIG_RENDERER_NVN (0 \
+					|| BX_PLATFORM_NX      \
+					? 1 : 0)
+#	endif // BGFX_CONFIG_RENDERER_NVN
+
+#	ifndef BGFX_CONFIG_RENDERER_OPENGL_MIN_VERSION
+#		define BGFX_CONFIG_RENDERER_OPENGL_MIN_VERSION 1
+#	endif // BGFX_CONFIG_RENDERER_OPENGL_MIN_VERSION
+
+#	ifndef BGFX_CONFIG_RENDERER_OPENGL
+#		define BGFX_CONFIG_RENDERER_OPENGL (0 \
+					|| BX_PLATFORM_LINUX      \
+					|| BX_PLATFORM_WINDOWS    \
+					? BGFX_CONFIG_RENDERER_OPENGL_MIN_VERSION : 0)
+#	endif // BGFX_CONFIG_RENDERER_OPENGL
+
+#	ifndef BGFX_CONFIG_RENDERER_OPENGLES_MIN_VERSION
+#		define BGFX_CONFIG_RENDERER_OPENGLES_MIN_VERSION (0 \
+					|| BX_PLATFORM_ANDROID                  \
+					? 30 : 1)
+#	endif // BGFX_CONFIG_RENDERER_OPENGLES_MIN_VERSION
+
+#	ifndef BGFX_CONFIG_RENDERER_OPENGLES
+#		define BGFX_CONFIG_RENDERER_OPENGLES (0 \
+					|| BX_PLATFORM_ANDROID      \
+					|| BX_PLATFORM_EMSCRIPTEN   \
+					|| BX_PLATFORM_RPI          \
+					|| BX_PLATFORM_NX           \
+					? BGFX_CONFIG_RENDERER_OPENGLES_MIN_VERSION : 0)
+#	endif // BGFX_CONFIG_RENDERER_OPENGLES
+
+#	ifndef BGFX_CONFIG_RENDERER_VULKAN
+#		define BGFX_CONFIG_RENDERER_VULKAN (0 \
+					|| BX_PLATFORM_ANDROID    \
+					|| BX_PLATFORM_LINUX      \
+					|| BX_PLATFORM_WINDOWS    \
+					|| BX_PLATFORM_NX         \
+					|| BX_PLATFORM_OSX        \
+					? 1 : 0)
+#	endif // BGFX_CONFIG_RENDERER_VULKAN
+
 #else
-    #define USE_SDL 1
-    #define USE_IMGUI
-    #define USE_OPENGL_3_2
+#	ifndef BGFX_CONFIG_RENDERER_AGC
+#		define BGFX_CONFIG_RENDERER_AGC 0
+#	endif // BGFX_CONFIG_RENDERER_AGC
+
+#	ifndef BGFX_CONFIG_RENDERER_DIRECT3D11
+#		define BGFX_CONFIG_RENDERER_DIRECT3D11 0
+#	endif // BGFX_CONFIG_RENDERER_DIRECT3D11
+
+#	ifndef BGFX_CONFIG_RENDERER_DIRECT3D12
+#		define BGFX_CONFIG_RENDERER_DIRECT3D12 0
+#	endif // BGFX_CONFIG_RENDERER_DIRECT3D12
+
+#	ifndef BGFX_CONFIG_RENDERER_GNM
+#		define BGFX_CONFIG_RENDERER_GNM 0
+#	endif // BGFX_CONFIG_RENDERER_GNM
+
+#	ifndef BGFX_CONFIG_RENDERER_METAL
+#		define BGFX_CONFIG_RENDERER_METAL 0
+#	endif // BGFX_CONFIG_RENDERER_METAL
+
+#	ifndef BGFX_CONFIG_RENDERER_NVN
+#		define BGFX_CONFIG_RENDERER_NVN 0
+#	endif // BGFX_CONFIG_RENDERER_NVN
+
+#	ifndef BGFX_CONFIG_RENDERER_OPENGL
+#		define BGFX_CONFIG_RENDERER_OPENGL 0
+#	endif // BGFX_CONFIG_RENDERER_OPENGL
+
+#	ifndef BGFX_CONFIG_RENDERER_OPENGLES
+#		define BGFX_CONFIG_RENDERER_OPENGLES 0
+#	endif // BGFX_CONFIG_RENDERER_OPENGLES
+
+#	ifndef BGFX_CONFIG_RENDERER_VULKAN
+#		define BGFX_CONFIG_RENDERER_VULKAN 0
+#	endif // BGFX_CONFIG_RENDERER_VULKAN
+#endif // !defined...
+
+#if BGFX_CONFIG_RENDERER_OPENGL && BGFX_CONFIG_RENDERER_OPENGL < 21
+#	undef BGFX_CONFIG_RENDERER_OPENGL
+#	define BGFX_CONFIG_RENDERER_OPENGL 21
+#endif // BGFX_CONFIG_RENDERER_OPENGL && BGFX_CONFIG_RENDERER_OPENGL < 21
+
+#if BGFX_CONFIG_RENDERER_OPENGLES && BGFX_CONFIG_RENDERER_OPENGLES < 20
+#	undef BGFX_CONFIG_RENDERER_OPENGLES
+#	define BGFX_CONFIG_RENDERER_OPENGLES 20
+#endif // BGFX_CONFIG_RENDERER_OPENGLES && BGFX_CONFIG_RENDERER_OPENGLES < 20
+
+#if BGFX_CONFIG_RENDERER_OPENGL && BGFX_CONFIG_RENDERER_OPENGLES
+#	error "Can't define both BGFX_CONFIG_RENDERER_OPENGL and BGFX_CONFIG_RENDERER_OPENGLES"
+#endif // BGFX_CONFIG_RENDERER_OPENGL && BGFX_CONFIG_RENDERER_OPENGLES
+
+/// Enable use of extensions.
+#ifndef BGFX_CONFIG_RENDERER_USE_EXTENSIONS
+#	define BGFX_CONFIG_RENDERER_USE_EXTENSIONS 1
+#endif // BGFX_CONFIG_RENDERER_USE_EXTENSIONS
+
+#ifndef BGFX_CONFIG_RENDERER_DIRECT3D11_USE_STAGING_BUFFER
+#	define BGFX_CONFIG_RENDERER_DIRECT3D11_USE_STAGING_BUFFER 0
+#endif // BGFX_CONFIG_RENDERER_DIRECT3D11_USE_STAGING_BUFFER
+
+/// Enable use of tinystl.
+#ifndef BGFX_CONFIG_USE_TINYSTL
+#	define BGFX_CONFIG_USE_TINYSTL 1
+#endif // BGFX_CONFIG_USE_TINYSTL
+
+/// Debug text maximum scale factor.
+#ifndef BGFX_CONFIG_DEBUG_TEXT_MAX_SCALE
+#	define BGFX_CONFIG_DEBUG_TEXT_MAX_SCALE 4
+#endif // BGFX_CONFIG_DEBUG_TEXT_MAX_SCALE
+
+/// Enable nVidia PerfHUD integration.
+#ifndef BGFX_CONFIG_DEBUG_PERFHUD
+#	define BGFX_CONFIG_DEBUG_PERFHUD 0
+#endif // BGFX_CONFIG_DEBUG_NVPERFHUD
+
+/// Enable annotation for graphics debuggers.
+#ifndef BGFX_CONFIG_DEBUG_ANNOTATION
+#	define BGFX_CONFIG_DEBUG_ANNOTATION BGFX_CONFIG_DEBUG
+#endif // BGFX_CONFIG_DEBUG_ANNOTATION
+
+/// Enable DX11 object names.
+#ifndef BGFX_CONFIG_DEBUG_OBJECT_NAME
+#	define BGFX_CONFIG_DEBUG_OBJECT_NAME BGFX_CONFIG_DEBUG_ANNOTATION
+#endif // BGFX_CONFIG_DEBUG_OBJECT_NAME
+
+/// Enable uniform debug checks.
+#ifndef BGFX_CONFIG_DEBUG_UNIFORM
+#	define BGFX_CONFIG_DEBUG_UNIFORM BGFX_CONFIG_DEBUG
+#endif // BGFX_CONFIG_DEBUG_UNIFORM
+
+/// Enable occlusion debug checks.
+#ifndef BGFX_CONFIG_DEBUG_OCCLUSION
+#	define BGFX_CONFIG_DEBUG_OCCLUSION BGFX_CONFIG_DEBUG
+#endif // BGFX_CONFIG_DEBUG_OCCLUSION
+
+#ifndef BGFX_CONFIG_MULTITHREADED
+#	define BGFX_CONFIG_MULTITHREADED ( (0 == BX_PLATFORM_EMSCRIPTEN) ? 1 : 0)
+#endif // BGFX_CONFIG_MULTITHREADED
+
+#ifndef BGFX_CONFIG_MAX_DRAW_CALLS
+#	define BGFX_CONFIG_MAX_DRAW_CALLS ( (64<<10)-1)
+#endif // BGFX_CONFIG_MAX_DRAW_CALLS
+
+#ifndef BGFX_CONFIG_MAX_BLIT_ITEMS
+#	define BGFX_CONFIG_MAX_BLIT_ITEMS (1<<10)
+#endif // BGFX_CONFIG_MAX_BLIT_ITEMS
+
+#ifndef BGFX_CONFIG_MAX_MATRIX_CACHE
+#	define BGFX_CONFIG_MAX_MATRIX_CACHE (BGFX_CONFIG_MAX_DRAW_CALLS+1)
+#endif // BGFX_CONFIG_MAX_MATRIX_CACHE
+
+#ifndef BGFX_CONFIG_MAX_RECT_CACHE
+#	define BGFX_CONFIG_MAX_RECT_CACHE (4<<10)
+#endif //  BGFX_CONFIG_MAX_RECT_CACHE
+
+#ifndef BGFX_CONFIG_SORT_KEY_NUM_BITS_DEPTH
+#	define BGFX_CONFIG_SORT_KEY_NUM_BITS_DEPTH 32
+#endif // BGFX_CONFIG_SORT_KEY_NUM_BITS_DEPTH
+
+#ifndef BGFX_CONFIG_SORT_KEY_NUM_BITS_SEQ
+#	define BGFX_CONFIG_SORT_KEY_NUM_BITS_SEQ 20
+#endif // BGFX_CONFIG_SORT_KEY_NUM_BITS_SEQ
+
+#ifndef BGFX_CONFIG_SORT_KEY_NUM_BITS_PROGRAM
+#	define BGFX_CONFIG_SORT_KEY_NUM_BITS_PROGRAM 9
+#endif // BGFX_CONFIG_SORT_KEY_NUM_BITS_PROGRAM
+
+// Cannot be configured via compiler options.
+#define BGFX_CONFIG_MAX_PROGRAMS (1<<BGFX_CONFIG_SORT_KEY_NUM_BITS_PROGRAM)
+static_assert(bx::isPowerOf2(BGFX_CONFIG_MAX_PROGRAMS), "BGFX_CONFIG_MAX_PROGRAMS must be power of 2.");
+
+#ifndef BGFX_CONFIG_MAX_VIEWS
+#	define BGFX_CONFIG_MAX_VIEWS 256
+#endif // BGFX_CONFIG_MAX_VIEWS
+static_assert(bx::isPowerOf2(BGFX_CONFIG_MAX_VIEWS), "BGFX_CONFIG_MAX_VIEWS must be power of 2.");
+
+#define BGFX_CONFIG_MAX_VIEW_NAME_RESERVED 6
+
+#ifndef BGFX_CONFIG_MAX_VIEW_NAME
+#	define BGFX_CONFIG_MAX_VIEW_NAME 256
+#endif // BGFX_CONFIG_MAX_VIEW_NAME
+
+#ifndef BGFX_CONFIG_MAX_VERTEX_LAYOUTS
+#	define BGFX_CONFIG_MAX_VERTEX_LAYOUTS 64
+#endif // BGFX_CONFIG_MAX_VERTEX_LAYOUTS
+
+#ifndef BGFX_CONFIG_MAX_INDEX_BUFFERS
+#	define BGFX_CONFIG_MAX_INDEX_BUFFERS (4<<10)
+#endif // BGFX_CONFIG_MAX_INDEX_BUFFERS
+
+#ifndef BGFX_CONFIG_MAX_VERTEX_BUFFERS
+#	define BGFX_CONFIG_MAX_VERTEX_BUFFERS (4<<10)
+#endif // BGFX_CONFIG_MAX_VERTEX_BUFFERS
+
+#ifndef BGFX_CONFIG_MAX_VERTEX_STREAMS
+#	define BGFX_CONFIG_MAX_VERTEX_STREAMS 4
+#endif // BGFX_CONFIG_MAX_VERTEX_STREAMS
+
+#ifndef BGFX_CONFIG_MAX_DYNAMIC_INDEX_BUFFERS
+#	define BGFX_CONFIG_MAX_DYNAMIC_INDEX_BUFFERS (4<<10)
+#endif // BGFX_CONFIG_MAX_DYNAMIC_INDEX_BUFFERS
+
+#ifndef BGFX_CONFIG_MAX_DYNAMIC_VERTEX_BUFFERS
+#	define BGFX_CONFIG_MAX_DYNAMIC_VERTEX_BUFFERS (4<<10)
+#endif // BGFX_CONFIG_MAX_DYNAMIC_VERTEX_BUFFERS
+
+#ifndef BGFX_CONFIG_DYNAMIC_INDEX_BUFFER_SIZE
+#	define BGFX_CONFIG_DYNAMIC_INDEX_BUFFER_SIZE (1<<20)
+#endif // BGFX_CONFIG_DYNAMIC_INDEX_BUFFER_SIZE
+
+#ifndef BGFX_CONFIG_DYNAMIC_VERTEX_BUFFER_SIZE
+#	define BGFX_CONFIG_DYNAMIC_VERTEX_BUFFER_SIZE (3<<20)
+#endif // BGFX_CONFIG_DYNAMIC_VERTEX_BUFFER_SIZE
+
+#ifndef BGFX_CONFIG_MAX_SHADERS
+#	define BGFX_CONFIG_MAX_SHADERS 512
+#endif // BGFX_CONFIG_MAX_FRAGMENT_SHADERS
+
+#ifndef BGFX_CONFIG_MAX_TEXTURES
+#	define BGFX_CONFIG_MAX_TEXTURES (4<<10)
+#endif // BGFX_CONFIG_MAX_TEXTURES
+
+#ifndef BGFX_CONFIG_MAX_TEXTURE_SAMPLERS
+#	define BGFX_CONFIG_MAX_TEXTURE_SAMPLERS 16
+#endif // BGFX_CONFIG_MAX_TEXTURE_SAMPLERS
+
+#ifndef BGFX_CONFIG_MAX_FRAME_BUFFERS
+#	define BGFX_CONFIG_MAX_FRAME_BUFFERS 128
+#endif // BGFX_CONFIG_MAX_FRAME_BUFFERS
+
+#ifndef BGFX_CONFIG_MAX_FRAME_BUFFER_ATTACHMENTS
+#	define BGFX_CONFIG_MAX_FRAME_BUFFER_ATTACHMENTS 8
+#endif // BGFX_CONFIG_MAX_FRAME_BUFFER_ATTACHMENTS
+
+#ifndef BGFX_CONFIG_MAX_UNIFORMS
+#	define BGFX_CONFIG_MAX_UNIFORMS 512
+#endif // BGFX_CONFIG_MAX_UNIFORMS
+
+#ifndef BGFX_CONFIG_MAX_OCCLUSION_QUERIES
+#	define BGFX_CONFIG_MAX_OCCLUSION_QUERIES 256
+#endif // BGFX_CONFIG_MAX_OCCLUSION_QUERIES
+
+#ifndef BGFX_CONFIG_MIN_RESOURCE_COMMAND_BUFFER_SIZE
+#	define BGFX_CONFIG_MIN_RESOURCE_COMMAND_BUFFER_SIZE (64<<10)
+#endif // BGFX_CONFIG_MIN_RESOURCE_COMMAND_BUFFER_SIZE
+
+#ifndef BGFX_CONFIG_TRANSIENT_VERTEX_BUFFER_SIZE
+#	define BGFX_CONFIG_TRANSIENT_VERTEX_BUFFER_SIZE (6<<20)
+#endif // BGFX_CONFIG_TRANSIENT_VERTEX_BUFFER_SIZE
+
+#ifndef BGFX_CONFIG_TRANSIENT_INDEX_BUFFER_SIZE
+#	define BGFX_CONFIG_TRANSIENT_INDEX_BUFFER_SIZE (2<<20)
+#endif // BGFX_CONFIG_TRANSIENT_INDEX_BUFFER_SIZE
+
+#ifndef BGFX_CONFIG_PER_FRAME_SCRATCH_STAGING_BUFFER_SIZE
+/// Amount of scratch buffer size (per in-flight frame) that will be reserved
+/// for staging data for copying to the device (such as vertex buffer data,
+/// texture data, etc). This buffer will be used instead of allocating memory
+/// on device separately for every data copy.
+/// Note: Currently only used by the Vulkan backend.
+#   define BGFX_CONFIG_PER_FRAME_SCRATCH_STAGING_BUFFER_SIZE (32<<20)
 #endif
 
-#ifdef AITD_UE4
-#undef USE_IMGUI
+#ifndef BGFX_CONFIG_MAX_BYTES_CACHED_DEVICE_MEMORY_ALLOCATIONS
+/// Amount of allowed memory allocations left on device to use for recycling during
+/// later allocations. This can be beneficial in case the driver is slow allocating memory
+/// on the device.
+/// Note: Currently only used by the Vulkan backend.
+#	define BGFX_CONFIG_MAX_BYTES_CACHED_DEVICE_MEMORY_ALLOCATIONS (128 << 20)
 #endif
 
-#ifdef MACOSX
-#define UNIX
+#ifndef BGFX_CONFIG_MAX_STAGING_SIZE_FOR_SCRATCH_BUFFER
+/// The threshold of data size above which the staging scratch buffer will
+/// not be used, but instead a separate device memory allocation will take
+/// place to stage the data for copying to device.
+#   define BGFX_CONFIG_MAX_STAGING_SIZE_FOR_SCRATCH_BUFFER (16 << 20)
 #endif
 
-#define HAS_YM3812 1
+#ifndef BGFX_CONFIG_MAX_INSTANCE_DATA_COUNT
+#	define BGFX_CONFIG_MAX_INSTANCE_DATA_COUNT 5
+#endif // BGFX_CONFIG_MAX_INSTANCE_DATA_COUNT
 
-#include <stdint.h>
+#ifndef BGFX_CONFIG_MAX_COLOR_PALETTE
+#	define BGFX_CONFIG_MAX_COLOR_PALETTE 16
+#endif // BGFX_CONFIG_MAX_COLOR_PALETTE
 
-typedef uint8_t u8;
-typedef uint16_t u16;
-typedef uint32_t u32;
+#define BGFX_CONFIG_DRAW_INDIRECT_STRIDE 32
 
-typedef int8_t s8;
-typedef int16_t s16;
-typedef int32_t s32;
+#ifndef BGFX_CONFIG_PROFILER
+#	define BGFX_CONFIG_PROFILER 0
+#endif // BGFX_CONFIG_PROFILER
 
-#include <stdlib.h>
-#include <stdio.h>
-#include <time.h>
-#include <string.h>
-#ifdef WIN32
-#include <search.h>
-#endif
+#ifndef BGFX_CONFIG_RENDERDOC_LOG_FILEPATH
+#	define BGFX_CONFIG_RENDERDOC_LOG_FILEPATH "temp/bgfx"
+#endif // BGFX_CONFIG_RENDERDOC_LOG_FILEPATH
 
-#ifdef _WIN32
-#include <windows.h>
-#endif
+#ifndef BGFX_CONFIG_RENDERDOC_CAPTURE_KEYS
+#	define BGFX_CONFIG_RENDERDOC_CAPTURE_KEYS { eRENDERDOC_Key_F11 }
+#endif // BGFX_CONFIG_RENDERDOC_CAPTURE_KEYS
 
-#include <assert.h>
+#ifndef BGFX_CONFIG_API_SEMAPHORE_TIMEOUT
+#	define BGFX_CONFIG_API_SEMAPHORE_TIMEOUT (5000)
+#endif // BGFX_CONFIG_API_SEMAPHORE_TIMEOUT
 
-#ifdef _DEBUG
-#define ASSERT(exp) assert(exp)
-#else
-#define ASSERT(exp)
-#endif
+#ifndef BGFX_CONFIG_MIP_LOD_BIAS
+#	define BGFX_CONFIG_MIP_LOD_BIAS 0
+#endif // BGFX_CONFIG_MIP_LOD_BIAS
 
-#ifdef _DEBUG
-#define ASSERT_PTR(exp) assert(exp)
-#else
-#define ASSERT_PTR(exp)
-#endif
+#ifndef BGFX_CONFIG_DEFAULT_MAX_ENCODERS
+#	define BGFX_CONFIG_DEFAULT_MAX_ENCODERS ( (0 != BGFX_CONFIG_MULTITHREADED) ? 8 : 1)
+#endif // BGFX_CONFIG_DEFAULT_MAX_ENCODERS
 
+#ifndef BGFX_CONFIG_MAX_BACK_BUFFERS
+#	define BGFX_CONFIG_MAX_BACK_BUFFERS 4
+#endif // BGFX_CONFIG_MAX_BACK_BUFFERS
+
+#ifndef BGFX_CONFIG_MAX_FRAME_LATENCY
+#	define BGFX_CONFIG_MAX_FRAME_LATENCY 3
+#endif // BGFX_CONFIG_MAX_FRAME_LATENCY
+
+#ifndef BGFX_CONFIG_PREFER_DISCRETE_GPU
+// On laptops with integrated and discrete GPU, prefer selection of discrete GPU.
+// nVidia and AMD, on Windows only.
+#	define BGFX_CONFIG_PREFER_DISCRETE_GPU BX_PLATFORM_WINDOWS
+#endif // BGFX_CONFIG_PREFER_DISCRETE_GPU
+
+#ifndef BGFX_CONFIG_MAX_SCREENSHOTS
+#	define BGFX_CONFIG_MAX_SCREENSHOTS 4
+#endif // BGFX_CONFIG_MAX_SCREENSHOTS
+
+#ifndef BGFX_CONFIG_ENCODER_API_ONLY
+#	define BGFX_CONFIG_ENCODER_API_ONLY 0
+#endif // BGFX_CONFIG_ENCODER_API_ONLY
+
+#endif // BGFX_CONFIG_H_HEADER_GUARD
