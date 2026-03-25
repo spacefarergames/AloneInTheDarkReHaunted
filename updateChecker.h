@@ -9,10 +9,7 @@
 
 #pragma once
 
-// Current application version — bump this each release.
-// Format: "major.minor.patch.build" e.g. "1.0.3.2103"
-#define REHAUNTED_VERSION "1.0.3.2103"
-
 // Launches a background thread that queries GitHub for the latest release.
+// The local version is read from "version.txt" in the game folder at check time.
 // Safe to call early in init; does not block the caller.
 void CheckForUpdatesAsync();

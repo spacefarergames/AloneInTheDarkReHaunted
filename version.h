@@ -1,13 +1,11 @@
-/*
- * Copyright 2011-2025 Branimir Karadzic. All rights reserved.
- * License: https://github.com/bkaradzic/bgfx/blob/master/LICENSE
- */
+///////////////////////////////////////////////////////////////////////////////
+// Alone In The Dark Re-Haunted
+// Copyright (C) 2026 Infogrames / Spacefarer Retro Remasters LLC
+// Based on FITD by yaz0r, Re-haunted is released under GPL
+// Author: Jake Jackson (jake@spacefarergames.com)
+//
+// Version information macro
+///////////////////////////////////////////////////////////////////////////////
 
-/*
- *
- * AUTO GENERATED! DO NOT EDIT!
- *
- */
+#define getVersion(string) sprintf(string,"Compiled the %s at %s\n",__DATE__,__TIME__);
 
-#define BGFX_REV_NUMBER 8889
-#define BGFX_REV_SHA1   "4cc041f59f90fee9272ca9b57b292e2c23df1c69"

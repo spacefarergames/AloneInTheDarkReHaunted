@@ -17,6 +17,8 @@
 #include <shellapi.h>
 #include <thread>
 #include <string>
+#include <fstream>
+#include <filesystem>
 
 #pragma comment(lib, "winhttp.lib")
 
@@ -86,6 +88,30 @@ static std::string ExtractTagName(const std::string& json)
     return tag;
 }
 
+extern "C" {
+    extern char homePath[512];
+}
+
+// Read the local version string from version.txt in the game folder.
+static std::string ReadLocalVersion()
+{
+    std::filesystem::path versionPath = std::filesystem::path(homePath) / "version.txt";
+    std::ifstream file(versionPath);
+    if (!file.is_open())
+        return {};
+
+    std::string version;
+    std::getline(file, version);
+    // trim trailing whitespace
+    while (!version.empty() && (version.back() == '\r' || version.back() == '\n' || version.back() == ' '))
+        version.pop_back();
+    // strip "Re-Haunted " prefix to get the numeric version
+    const std::string prefix = "Re-Haunted ";
+    if (version.substr(0, prefix.size()) == prefix)
+        version = version.substr(prefix.size());
+    return version;
+}
+
 static void CheckForUpdatesWorker()
 {
     HINTERNET hSession = WinHttpOpen(L"FITD-UpdateChecker/1.0",
@@ -152,7 +178,12 @@ static void CheckForUpdatesWorker()
         return;
     }
 
-    const std::string localVersion = REHAUNTED_VERSION;
+    const std::string localVersion = ReadLocalVersion();
+    if (localVersion.empty())
+    {
+        printf(UPD_WARN "Update check: could not read version.txt from game folder" CON_RESET "\n");
+        return;
+    }
 
     if (IsNewerVersion(remoteVersion, localVersion))
     {

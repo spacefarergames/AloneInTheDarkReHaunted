@@ -18,6 +18,7 @@ void Rotate(unsigned int x, unsigned int y, unsigned int z, int* xOut, int* yOut
 void FadeInPhys(int var1,int var2);
 void FadeOutPhys(int var1, int var2);
 void playSound(int num);
+void playSoundLooping(int num);
 void setCameraTarget(int x,int y,int z,int alpha,int beta,int gamma,int time);
 
 void startChrono(unsigned int* chrono);

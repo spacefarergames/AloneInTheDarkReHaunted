@@ -184,12 +184,43 @@ void playSound(int num)
 	}
 
 	int size = getPakSize(sampleFileName,num);
-	assert(size);
+	if(!size)
+		return;
 
 	char* ptr = HQR_Get(listSamp,num);
-	assert(ptr);
+	if(!ptr)
+		return;
 
 	osystem_playSample(ptr, size);
+}
+
+void playSoundLooping(int num)
+{
+	if(num == -1)
+		return;
+
+	if(!soundEnabled)
+		return;
+
+	char sampleFileName[256] = "";
+	if (g_gameId == TIMEGATE)
+	{
+		strcpy(sampleFileName, "SAMPLES");
+	}
+	else
+	{
+		strcpy(sampleFileName, "LISTSAMP");
+	}
+
+	int size = getPakSize(sampleFileName,num);
+	if(!size)
+		return;
+
+	char* ptr = HQR_Get(listSamp,num);
+	if(!ptr)
+		return;
+
+	osystem_playLoopingSample(ptr, size);
 }
 
 ////////////////////////
