@@ -70,10 +70,12 @@
 	void osystem_drawLine(int X1,int X2,int Y1,int Y2,unsigned char color, unsigned char* palette);
 	void osystem_playSampleFromName(char* sampleName);
 	void osystem_playSample(char* samplePtr,int size);
+	void osystem_playLoopingSample(char* samplePtr, int size);
 	void osystem_stopSample();
 
 	void osystem_playVO(const char* voFileName);
 	void osystem_playVocByIndex(int vocIndex);
+	void osystem_playVocPageLines(int vocIndex, int page, int numLines);
 	void osystem_stopVO();
 	bool osystem_isVOPlaying();
 	//    void getMouseStatus(mouseStatusStruct * mouseData);

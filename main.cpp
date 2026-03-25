@@ -732,7 +732,7 @@ void readBook(int index, int type, int vocIndex)
 	notifyTTFMenuStateChanged(false, false);
 }
 
-int Lire(int index, int startx, int top, int endx, int bottom, int demoMode, int color, int shadow)
+int Lire(int index, int startx, int top, int endx, int bottom, int demoMode, int color, int shadow, int vocIndex)
 {
 	bool lastPageReached = false;
 	u8 tabString[] = "    ";
@@ -777,6 +777,7 @@ int Lire(int index, int startx, int top, int endx, int bottom, int demoMode, int
 
 		currentTextY = top;
 		lastPageReached = false;
+		int vocLinesOnPage = 0;
 
 		while(currentTextY <= bottom - 16)
 		{
@@ -929,19 +930,20 @@ int Lire(int index, int startx, int top, int endx, int bottom, int demoMode, int
                 currentTextX += currentText->width + interWordSpace; // add inter word space
                 currentText++;
             }
-            currentTextIdx = 0;
+			currentTextIdx = 0;
+			vocLinesOnPage++;
 
 
-            if (line_type & 2) // font size
-            {
-                currentTextY += 8;
-            }
+			if (line_type & 2) // font size
+			{
+				currentTextY += 8;
+			}
 
-            currentTextY += 16;
+			currentTextY += 16;
 
-            if (lastPageReached)
-                break;
-        }
+			if (lastPageReached)
+				break;
+		}
 
         pageChange:
         if(lastPageReached)
@@ -1041,6 +1043,13 @@ int Lire(int index, int startx, int top, int endx, int bottom, int demoMode, int
 
 		osystem_drawBackground();
 
+		// Play per-page voice-over: concatenate all line VOCs for this page
+		// VOC naming: BBSSLL.VOC where BB=vocIndex, SS=page, LL=line
+		if (vocIndex >= 0 && vocLinesOnPage > 0)
+		{
+			osystem_playVocPageLines(vocIndex, page, vocLinesOnPage);
+		}
+
 		if(demoMode!=1) // mode != 1: normal behavior (user can flip pages)
 		{
 			do
@@ -1075,7 +1084,7 @@ int Lire(int index, int startx, int top, int endx, int bottom, int demoMode, int
 						page++;
 						notifyTTFMenuSelectionChanged(); // Clear TTF text when flipping page
 
-						if (demoMode == 2)
+						if (demoMode == 2 || vocIndex >= 0)
 						{
 							playSound(CVars[getCVarsIdx(SAMPLE_PAGE)]);
 							LastSample = -1;
@@ -1097,15 +1106,15 @@ int Lire(int index, int startx, int top, int endx, int bottom, int demoMode, int
 						previousPage = page;
 						page--;
 						notifyTTFMenuSelectionChanged(); // Clear TTF text when flipping page
-						if (demoMode == 2)
+						if (demoMode == 2 || vocIndex >= 0)
 						{
 							playSound(CVars[getCVarsIdx(SAMPLE_PAGE)]);
 							LastSample = -1;
-                            LastPriority = -1;
-                        }
-                        break;
-                    }
-                }
+							LastPriority = -1;
+						}
+						break;
+					}
+				}
 			}
 		}
 		else // Demo mode: pages automatically flips
@@ -1140,6 +1149,10 @@ int Lire(int index, int startx, int top, int endx, int bottom, int demoMode, int
 			}
 		}
 	}
+
+	// Stop any playing voice-over VOC when exiting
+	if (vocIndex >= 0)
+		osystem_stopVO();
 
 	HQ_Free_Malloc(HQ_Memory, textIndexMalloc);
 

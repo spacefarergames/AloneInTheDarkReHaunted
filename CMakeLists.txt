@@ -2,55 +2,108 @@ cmake_minimum_required(VERSION 3.9)
 
 include_directories(
     "."
-    "${CMAKE_SOURCE_DIR}/FitdLib"
+    "${THIRD_PARTY}/SDL/include/SDL3"
+    "${THIRD_PARTY}/SDL/include"
+    "${THIRD_PARTY}/imgui"
+    "${THIRD_PARTY}/soloud.cmake/soloud/include"
+    "${THIRD_PARTY}/bgfx.cmake/bgfx/include"
+    "${THIRD_PARTY}/bgfx.cmake/bx/include"
+    "${THIRD_PARTY}/bgfx.cmake/bgfx/3rdparty"
+    "${THIRD_PARTY}/bgfx.cmake/bimg/include"
 )
+
+IF(${MSVC})
+    include_directories("${THIRD_PARTY}/bgfx.cmake/bx/include/compat/msvc")
+endif()
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
-file(GLOB FITD_DATA
-    "${CMAKE_SOURCE_DIR}/data/*"
-)
-
-file(GLOB SRC_ROOT
+file(GLOB_RECURSE SRC_ROOT
     "*.cpp"
     "*.h"
-    "*.rc"
 )
 
 set(SOURCES
  ${SOURCES}
  ${SRC_ROOT}
+ "${THIRD_PARTY}/imgui/imgui.cpp"
+ "${THIRD_PARTY}/imgui/imgui.h"
+ "${THIRD_PARTY}/imgui/imgui_draw.cpp"
+ "${THIRD_PARTY}/imgui/imgui_tables.cpp"
+ "${THIRD_PARTY}/imgui/imgui_widgets.cpp"
+ "${THIRD_PARTY}/imgui/backends/imgui_impl_sdl3.cpp"
 )
 
-IF(${CMAKE_SYSTEM_NAME} MATCHES Darwin)
+function(assign_source_group)
+    foreach(_source IN ITEMS ${ARGN})
+        if (IS_ABSOLUTE "${_source}")
+            file(RELATIVE_PATH _source_rel "${CMAKE_CURRENT_SOURCE_DIR}" "${_source}")
+        else()
+            set(_source_rel "${_source}")
+        endif()
+        get_filename_component(_source_path "${_source_rel}" PATH)
+        string(REPLACE "/" "\\" _source_path_msvc "${_source_path}")
+        source_group("${_source_path_msvc}" FILES "${_source}")
+    endforeach()
+endfunction(assign_source_group)
+
+macro(addShaderProgramPermutation vsname psname varyingname)
+    bgfx_compile_shaders(SHADERS shaders/${vsname}.sc AS_HEADERS OUTPUT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/shaders/generated TYPE VERTEX VARYING_DEF ${CMAKE_CURRENT_SOURCE_DIR}/shaders/${varyingname}.sc INCLUDE_DIRS ${BGFX_DIR}/src AS_HEADERS)
+    bgfx_compile_shaders(SHADERS shaders/${psname}.sc AS_HEADERS OUTPUT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/shaders/generated TYPE FRAGMENT VARYING_DEF ${CMAKE_CURRENT_SOURCE_DIR}/shaders/${varyingname}.sc INCLUDE_DIRS ${BGFX_DIR}/src AS_HEADERS)
+    #shaderc(FILE shaders/${vsname}.sc BIN2C ${vsname}_${api} OUTPUT ${CMAKE_CURRENT_SOURCE_DIR}/shaders/generated/${vsname}_${api}.debug.h DEBUG VERTEX ${platform} VARYINGDEF shaders/${varyingname}.sc INCLUDES ${BGFX_DIR}/src PROFILE ${profileVS})
+    #shaderc(FILE shaders/${psname}.sc BIN2C ${psname}_${api} OUTPUT ${CMAKE_CURRENT_SOURCE_DIR}/shaders/generated/${psname}_${api}.debug.h DEBUG FRAGMENT ${platform} VARYINGDEF shaders/${varyingname}.sc INCLUDES ${BGFX_DIR}/src PROFILE ${profilePS})
+    #set(SOURCES
+     #   ${SOURCES}
+    #    ${CMAKE_CURRENT_SOURCE_DIR}/shaders/generated/${vsname}_${api}.h
+     #   ${CMAKE_CURRENT_SOURCE_DIR}/shaders/generated/${psname}_${api}.h
+        #${CMAKE_CURRENT_SOURCE_DIR}/shaders/generated/${vsname}_${api}.debug.h
+        #${CMAKE_CURRENT_SOURCE_DIR}/shaders/generated/${psname}_${api}.debug.h
+    #)
+endmacro()
+
+macro(addShaderProgram vsname psname varyingname)
+
     set(SOURCES
-     ${SOURCES}
-     "bgfxPatch.mm"
+        ${SOURCES}
+        shaders/${vsname}.sc
+        shaders/${psname}.sc
+        shaders/${varyingname}.sc
     )
+
+    addShaderProgramPermutation(${vsname} ${psname} ${varyingname})
+    addShaderProgramPermutation(${vsname} ${psname} ${varyingname})
+
+endmacro()
+
+addShaderProgram(ui_vs ui_ps ui.varying.def)
+addShaderProgram(background_vs background_ps background.varying.def)
+addShaderProgram(background_vs hdBackground_ps background.varying.def)
+addShaderProgram(maskBackground_vs maskBackground_ps maskBackground.varying.def)
+addShaderProgram(maskBackground_vs maskHDBackground_ps maskBackground.varying.def)
+addShaderProgram(flat_vs flat_ps flat.varying.def)
+addShaderProgram(noise_vs noise_ps noise.varying.def)
+addShaderProgram(ramp_vs ramp_ps ramp.varying.def)
+addShaderProgram(sphere_vs sphere_ps sphere.varying.def)
+addShaderProgram(postprocess_vs brightpass_ps postprocess.varying.def)
+addShaderProgram(postprocess_vs blur_ps postprocess.varying.def)
+addShaderProgram(postprocess_vs composite_ps postprocess.varying.def)
+addShaderProgram(postprocess_vs ssao_ps postprocess.varying.def)
+addShaderProgram(postprocess_vs ssao_blur_ps postprocess.varying.def)
+
+assign_source_group(${SOURCES})
+
+if(MSVC)
+    add_compile_options(/Zc:__cplusplus)
+    add_compile_options(/Zc:preprocessor)
 endif()
 
-source_group("src" FILES ${SRC_ROOT})
-
-set( CMAKE_EXE_LINKER_FLAGS_SHIPPING "${CMAKE_EXE_LINKER_FLAGS_RELWITHDEBINFO} /LTCG /OPT:ICF /OPT:REF /SUBSYSTEM:WINDOWS /DEBUG" )
-
-add_executable (Fitd ${SOURCES})
-
-# Output executable as Tatou.exe (Alone In The Dark Re-Haunted)
-set_target_properties(Fitd PROPERTIES OUTPUT_NAME "Tatou")
-
-TARGET_LINK_LIBRARIES(Fitd FitdLib bgfx zlibstatic SDL3-static soloud ${EXTRA_LIBS})
-
-set_target_properties(Fitd PROPERTIES VS_DEBUGGER_WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}/data/AITD1_CD")
-
-# Hide console window in Release builds, show in Debug builds
-if(CMAKE_BUILD_TYPE STREQUAL "Release" OR CMAKE_BUILD_TYPE STREQUAL "RelWithDebInfo" OR CMAKE_BUILD_TYPE STREQUAL "MinSizeRel")
-    set_target_properties(Fitd PROPERTIES WIN32_EXECUTABLE TRUE)
-else()
-    set_target_properties(Fitd PROPERTIES WIN32_EXECUTABLE FALSE)
-endif()
-
-set_property( DIRECTORY PROPERTY VS_STARTUP_PROJECT Fitd)
+add_library (FitdLib ${SOURCES})
 
 
+
+#set( CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} /DBX_CONFIG_DEBUG=1")
+#set( CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /DBX_CONFIG_DEBUG=1")
+
+set_property(TARGET FitdLib PROPERTY CXX_STANDARD 20)

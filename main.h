@@ -62,7 +62,7 @@ void drawZv(const ZVStruct& localZv);
 
 ///
 void readBook(int index, int type, int vocIndex = -1);
-int Lire(int index, int left, int top, int right, int bottom, int mode, int color, int shadow);
+int Lire(int index, int left, int top, int right, int bottom, int mode, int color, int shadow, int vocIndex = -1);
 
 void SetProjection(int centerX, int centerY, int x, int y, int z);
 void SetAngleCamera(int x, int y, int z);

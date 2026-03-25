@@ -1854,6 +1854,13 @@ void processLife(int lifeNum, bool callFoundLife)
                 lifeTempVar8 = *(s16*)(currentLifePtr);
                 currentLifePtr += 2;
 
+                int ropVocIndex = -1;
+                if (g_gameId == AITD1)
+                {
+                    ropVocIndex = *(s16*)(currentLifePtr);
+                    currentLifePtr += 2;
+                }
+
                 SaveTimerAnim();
 
                 FadeOutPhys(32, 0);
@@ -1864,7 +1871,8 @@ void processLife(int lifeNum, bool callFoundLife)
                 copyPalette(lpalette, currentGamePalette);
                 setPalette(lpalette);
                 turnPageFlag = false;
-                Lire(lifeTempVar2 + 1, lifeTempVar3, lifeTempVar4, lifeTempVar5, lifeTempVar6, 0, lifeTempVar7, lifeTempVar8);
+
+                Lire(lifeTempVar2 + 1, lifeTempVar3, lifeTempVar4, lifeTempVar5, lifeTempVar6, 0, lifeTempVar7, lifeTempVar8, ropVocIndex);
 
                 FlagInitView = 2;
 
@@ -1942,19 +1950,23 @@ void processLife(int lifeNum, bool callFoundLife)
                 //setSampleFreq(0);
                 break;
             }
-            case LM_REP_SAMPLE: // sample TODO!
+            case LM_REP_SAMPLE:
             {
                 appendFormated("LM_REP_SAMPLE ");
+                int repSampleNum;
                 if ((g_gameId == AITD1) || (g_gameId == TIMEGATE))
                 {
-                    evalVar();
-                    currentLifePtr += 2;
+                    repSampleNum = evalVar();
+                    currentLifePtr += 2; // frequency parameter (ignored for now)
                 }
                 else
                 {
-                    currentLifePtr += 4;
+                    repSampleNum = *(s16*)(currentLifePtr);
+                    currentLifePtr += 2;
+                    currentLifePtr += 2; // frequency parameter
                 }
-                //printf("LM_REP_SAMPLE\n");
+
+                playSoundLooping(repSampleNum);
                 break;
             }
             case LM_STOP_SAMPLE:

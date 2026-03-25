@@ -504,10 +504,7 @@ int ChoosePerso(void)
 
                 FastCopyScreen(logicalScreen, aux);
                 g_portraitOverlayChoice = 0;
-                // Play character intro VO (uses text index as VOC index)
-                osystem_playVocByIndex(CVars[getCVarsIdx(INTRO_HERITIERE)]);
-                Lire(CVars[getCVarsIdx(INTRO_HERITIERE)] + 1, 165, 5, 314, 194, 2, 15, 0);
-                osystem_stopVO();
+                Lire(CVars[getCVarsIdx(INTRO_HERITIERE)] + 1, 165, 5, 314, 194, 2, 15, 0, 1);
                 CVars[getCVarsIdx(CHOOSE_PERSO)] = 1;
                 break;
             }
@@ -547,10 +544,7 @@ int ChoosePerso(void)
 
                 FastCopyScreen(logicalScreen, aux);
                 g_portraitOverlayChoice = 1;
-                // Play character intro VO (uses text index as VOC index)
-                osystem_playVocByIndex(CVars[getCVarsIdx(INTRO_DETECTIVE)]);
-                Lire(CVars[getCVarsIdx(INTRO_DETECTIVE)] + 1, 5, 5, 154, 194, 2, 15, 0);
-                osystem_stopVO();
+                Lire(CVars[getCVarsIdx(INTRO_DETECTIVE)] + 1, 5, 5, 154, 194, 2, 15, 0, 0);
                 CVars[getCVarsIdx(CHOOSE_PERSO)] = 0;
                 break;
             }
@@ -777,29 +771,21 @@ void AITD1_ReadBook(int index, int type, int vocIndex)
 
     LoadPak("ITD_RESS", resIdx, aux);
 
-    // Start voice-over for AITD1 CD reading (plays while user reads text)
-    if (vocIndex >= 0)
-        osystem_playVocByIndex(vocIndex);
-
     switch (type)
     {
     case 0: // READ_MESSAGE
         turnPageFlag = 0;
-        Lire(index, 60, 10, 245, 190, 0, 26, 0);
+        Lire(index, 60, 10, 245, 190, 0, 26, 0, vocIndex);
         break;
     case 1: // READ_BOOK
         turnPageFlag = 1;
-        Lire(index, 48, 2, 260, 197, 0, 26, 0);
+        Lire(index, 48, 2, 260, 197, 0, 26, 0, vocIndex);
         break;
     case 2: // READ_CARNET
         turnPageFlag = 0;
-        Lire(index, 50, 20, 250, 199, 0, 26, 0);
+        Lire(index, 50, 20, 250, 199, 0, 26, 0, vocIndex);
         break;
     }
-
-    // Stop voice-over when reading ends
-    if (vocIndex >= 0)
-        osystem_stopVO();
 
     setCurrentAnimatedHDBackground(nullptr);
 }

@@ -1,4 +1,4 @@
-///////////////////////////////////////////////////////////////////////////////
+﻿///////////////////////////////////////////////////////////////////////////////
 // Alone In The Dark Re-Haunted
 // Copyright (C) 2026 Infogrames / Spacefarer Retro Remasters LLC
 // Based on FITD by yaz0r, Re-haunted is released under GPL
@@ -331,6 +331,7 @@ class ITD_AudioSource : public SoLoud::AudioSource
 {
 public:
     char* m_samples;
+    char* m_ownedBuf;
     int m_size;
 
     ITD_AudioSource(char* samplePtr, int size);
@@ -393,7 +394,11 @@ ITD_AudioSource::ITD_AudioSource(char* samplePtr, int size) : SoLoud::AudioSourc
 
     int sampleRate = 1000000 / (256 - frequencyDiv);
 
-    m_samples = sampleData;
+    // Copy sample data into an owned buffer so we don't hold a dangling
+    // pointer into HQR cache memory that may be evicted during playback.
+    m_ownedBuf = new char[sampleSize];
+    memcpy(m_ownedBuf, sampleData, sampleSize);
+    m_samples = m_ownedBuf;
     m_size = sampleSize-1;
 
     mBaseSamplerate = sampleRate;
@@ -401,6 +406,7 @@ ITD_AudioSource::ITD_AudioSource(char* samplePtr, int size) : SoLoud::AudioSourc
 
 ITD_AudioSource::~ITD_AudioSource()
 {
+    delete[] m_ownedBuf;
 }
 
 SoLoud::AudioSourceInstance* ITD_AudioSource::createInstance()
@@ -408,62 +414,154 @@ SoLoud::AudioSourceInstance* ITD_AudioSource::createInstance()
    return new ITD_AudioInstance(this);
 }
 
-// Track the last played SFX handle and source so we can stop/free them
-static SoLoud::handle g_lastSfxHandle = 0;
-static SoLoud::AudioSource* g_lastSfxSource = nullptr;
+// Track active SFX handles and sources so multiple sounds can overlap
+struct ActiveSfx
+{
+    SoLoud::handle handle;
+    SoLoud::AudioSource* source;
+    bool looping;
+};
+static std::vector<ActiveSfx> g_activeSfx;
 
 void osystem_playSample(char* samplePtr,int size)
 {
-    if (!gSoloud)
+    if (!gSoloud || !samplePtr || size <= 0)
         return;
 
-    // Stop the previous sound effect to prevent overlapping/stuck sounds
-    if (g_lastSfxHandle != 0)
+    // The original DOS game had a single SFX channel — any new sound replaced
+    // the previous one. LIFE script opcodes (LM_ANIM_SAMPLE, LM_SAMPLE, etc.)
+    // fire every game tick and rely on this replacement behavior. Without it,
+    // sounds accumulate indefinitely and become corrupted.
+    for (auto& sfx : g_activeSfx)
     {
-        gSoloud->stop(g_lastSfxHandle);
-        g_lastSfxHandle = 0;
+        gSoloud->stop(sfx.handle);
+        delete sfx.source;
     }
-    // Free the previous audio source to prevent memory leaks
-    if (g_lastSfxSource)
-    {
-        delete g_lastSfxSource;
-        g_lastSfxSource = nullptr;
-    }
+    g_activeSfx.clear();
 
-    if (g_gameId >= TIMEGATE)
+    // Check if the sample data is in VOC format (LISTSAMP entries for AITD-era games are VOC)
+    bool isVoc = (size >= 20 && memcmp(samplePtr, "Creative Voice File\x1a", 20) == 0);
+
+    SoLoud::AudioSource* pAudioSource = nullptr;
+    SoLoud::handle h = 0;
+
+    if (isVoc)
     {
-        SoLoud::Wav* pAudioSource = new SoLoud::Wav();
-        SoLoud::result res = pAudioSource->loadMem((u8*)samplePtr, size, true);
-        if (res != SoLoud::SO_NO_ERROR)
+        // Use the robust VOC decoder to convert to WAV, then play via SoLoud
+        unsigned char* wavBuf = nullptr;
+        size_t wavSize = 0;
+        if (!vocDecodeToWav((const unsigned char*)samplePtr, (size_t)size, &wavBuf, &wavSize))
         {
-            delete pAudioSource;
+            printf(VO_WARN "Failed to decode VOC sample (%d bytes)" CON_RESET "\n", size);
             return;
         }
-        g_lastSfxHandle = gSoloud->play(*pAudioSource);
-        g_lastSfxSource = pAudioSource;
+
+        SoLoud::Wav* pWav = new SoLoud::Wav();
+        SoLoud::result res = pWav->loadMem(wavBuf, (unsigned int)wavSize, true);
+        delete[] wavBuf;
+        if (res != SoLoud::SO_NO_ERROR)
+        {
+            delete pWav;
+            return;
+        }
+        pWav->setLooping(false);
+        h = gSoloud->play(*pWav);
+        pAudioSource = pWav;
+    }
+    else if (g_gameId >= TIMEGATE)
+    {
+        SoLoud::Wav* pWav = new SoLoud::Wav();
+        SoLoud::result res = pWav->loadMem((u8*)samplePtr, size, true);
+        if (res != SoLoud::SO_NO_ERROR)
+        {
+            delete pWav;
+            return;
+        }
+        pWav->setLooping(false);
+        h = gSoloud->play(*pWav);
+        pAudioSource = pWav;
     }
     else
     {
-        ITD_AudioSource* pAudioSource = new ITD_AudioSource(samplePtr, size);
-        g_lastSfxHandle = gSoloud->play(*pAudioSource);
-        g_lastSfxSource = pAudioSource;
+        // Legacy fallback for non-VOC sample data
+        ITD_AudioSource* pItd = new ITD_AudioSource(samplePtr, size);
+        pItd->setLooping(false);
+        h = gSoloud->play(*pItd);
+        pAudioSource = pItd;
+    }
+
+    if (pAudioSource)
+    {
+        ActiveSfx sfx = { h, pAudioSource, false };
+        g_activeSfx.push_back(sfx);
     }
 }
 
 void osystem_stopSample()
 {
-    if (gSoloud && g_lastSfxHandle != 0)
+    if (!gSoloud) return;
+    for (auto& sfx : g_activeSfx)
     {
-        gSoloud->stop(g_lastSfxHandle);
-        g_lastSfxHandle = 0;
+        gSoloud->stop(sfx.handle);
+        delete sfx.source;
     }
-    if (g_lastSfxSource)
-    {
-        delete g_lastSfxSource;
-        g_lastSfxSource = nullptr;
-    }
+    g_activeSfx.clear();
 }
 
+void osystem_playLoopingSample(char* samplePtr, int size)
+{
+    if (!gSoloud || !samplePtr || size <= 0)
+        return;
+
+    // Stop all active sounds — single SFX channel, same as osystem_playSample
+    for (auto& sfx : g_activeSfx)
+    {
+        gSoloud->stop(sfx.handle);
+        delete sfx.source;
+    }
+    g_activeSfx.clear();
+
+    // Check if the sample data is in VOC format
+    bool isVoc = (size >= 20 && memcmp(samplePtr, "Creative Voice File\x1a", 20) == 0);
+
+    SoLoud::Wav* pWav = new SoLoud::Wav();
+    SoLoud::handle h = 0;
+
+    if (isVoc)
+    {
+        unsigned char* wavBuf = nullptr;
+        size_t wavSize = 0;
+        if (!vocDecodeToWav((const unsigned char*)samplePtr, (size_t)size, &wavBuf, &wavSize))
+        {
+            printf(VO_WARN "Failed to decode VOC sample for looping (%d bytes)" CON_RESET "\n", size);
+            delete pWav;
+            return;
+        }
+
+        SoLoud::result res = pWav->loadMem(wavBuf, (unsigned int)wavSize, true);
+        delete[] wavBuf;
+        if (res != SoLoud::SO_NO_ERROR)
+        {
+            delete pWav;
+            return;
+        }
+    }
+    else
+    {
+        SoLoud::result res = pWav->loadMem((u8*)samplePtr, size, true);
+        if (res != SoLoud::SO_NO_ERROR)
+        {
+            delete pWav;
+            return;
+        }
+    }
+
+    pWav->setLooping(true);
+    h = gSoloud->play(*pWav);
+
+    ActiveSfx sfx = { h, pWav, true };
+    g_activeSfx.push_back(sfx);
+}
 extern float gVolume;
 
 void osystemAL_udpate()
@@ -693,26 +791,233 @@ static bool tryPlayVoFile(const char* path, const char* label)
     return false;
 }
 
-// Build a VOC filename from a numeric index and the current language.
-// AITD1 CD naming convention: <LANG><index>.VOC  (e.g. ENG001.VOC)
-static const char* getVocLanguagePrefix()
-{
-    if (languageNameString == "FRANCAIS") return "FRE";
-    if (languageNameString == "ITALIANO") return "ITA";
-    if (languageNameString == "ESPAGNOL") return "ESP";
-    if (languageNameString == "DEUTSCH")  return "DEU";
-    return "ENG"; // ENGLISH, USA, TEXTES all map to English
-}
-
 void osystem_playVocByIndex(int vocIndex)
 {
     if (!gSoloud || vocIndex < 0)
         return;
 
     char vocName[64];
-    sprintf(vocName, "%s%03d.VOC", getVocLanguagePrefix(), vocIndex);
+    sprintf(vocName, "%06d.VOC", vocIndex);
     printf(VO_TAG "Playing VOC by index: %d -> %s\n", vocIndex, vocName);
     osystem_playVO(vocName);
+}
+
+// Helper: try to load raw file data for a VOC name from archive, CD, or filesystem.
+// Returns allocated buffer (caller must delete[]) and size, or nullptr on failure.
+static unsigned char* loadVocFileData(const char* vocName, size_t* outSize)
+{
+    *outSize = 0;
+
+    // Try audio archive first
+    ensureAudioArchiveOpen();
+    if (s_audioArchiveOpen)
+    {
+        const char* arcExts[] = { "", ".voc" };
+        for (int i = 0; i < 2; i++)
+        {
+            char entryName[512];
+            sprintf(entryName, "%s%s", vocName, arcExts[i]);
+            const HDArchiveEntry* entry = findAudioEntry(entryName);
+            if (!entry) continue;
+
+            size_t dataSize = 0;
+            unsigned char* data = readAudioEntry(entry, &dataSize);
+            if (data)
+            {
+                *outSize = dataSize;
+                return data;
+            }
+        }
+    }
+
+    // Try CD path
+#ifdef _WIN32
+    detectAloneCD();
+    if (s_cdDetected)
+    {
+        const char* exts[] = { "", ".voc" };
+        for (int i = 0; i < 2; i++)
+        {
+            char cdPath[512];
+            sprintf(cdPath, "%c:\\INDARK\\%s%s", s_cdDriveLetter, vocName, exts[i]);
+            FILE* fh = fopen(cdPath, "rb");
+            if (!fh) continue;
+
+            fseek(fh, 0, SEEK_END);
+            long fileLen = ftell(fh);
+            fseek(fh, 0, SEEK_SET);
+            if (fileLen <= 0) { fclose(fh); continue; }
+
+            unsigned char* raw = new (std::nothrow) unsigned char[(size_t)fileLen];
+            if (!raw) { fclose(fh); continue; }
+            if (fread(raw, 1, (size_t)fileLen, fh) != (size_t)fileLen)
+            {
+                delete[] raw;
+                fclose(fh);
+                continue;
+            }
+            fclose(fh);
+            *outSize = (size_t)fileLen;
+            return raw;
+        }
+    }
+#endif
+
+    // Filesystem fallback
+    {
+        const char* exts[] = { "", ".voc" };
+        for (int i = 0; i < 2; i++)
+        {
+            char path[512];
+            sprintf(path, "%s%s", vocName, exts[i]);
+            FILE* fh = fopen(path, "rb");
+            if (!fh) continue;
+
+            fseek(fh, 0, SEEK_END);
+            long fileLen = ftell(fh);
+            fseek(fh, 0, SEEK_SET);
+            if (fileLen <= 0) { fclose(fh); continue; }
+
+            unsigned char* raw = new (std::nothrow) unsigned char[(size_t)fileLen];
+            if (!raw) { fclose(fh); continue; }
+            if (fread(raw, 1, (size_t)fileLen, fh) != (size_t)fileLen)
+            {
+                delete[] raw;
+                fclose(fh);
+                continue;
+            }
+            fclose(fh);
+            *outSize = (size_t)fileLen;
+            return raw;
+        }
+    }
+
+    return nullptr;
+}
+
+// VOC page naming: BBSSLL.VOC where BB=vocIndex, SS=page, LL=line
+// Numeric value = vocIndex * 10000 + page * 100 + line
+void osystem_playVocPageLines(int vocIndex, int page, int numLines)
+{
+    if (!gSoloud || vocIndex < 0 || numLines <= 0)
+        return;
+
+    osystem_stopVO();
+
+    // Collect decoded PCM data from all line VOCs for this page
+    std::vector<unsigned char> combinedPcm;
+    uint32_t sampleRate = 0;
+    uint16_t bitsPerSample = 0;
+    uint16_t numChannels = 0;
+    bool gotFormat = false;
+
+    for (int line = 0; line < numLines; line++)
+    {
+        int vocNum = vocIndex * 10000 + page * 100 + line;
+        char vocName[64];
+        sprintf(vocName, "%06d.VOC", vocNum);
+
+        size_t rawSize = 0;
+        unsigned char* rawData = loadVocFileData(vocName, &rawSize);
+        if (!rawData)
+            break; // stop at first missing line
+
+        // Decode VOC to WAV
+        unsigned char* wavBuf = nullptr;
+        size_t wavSize = 0;
+        if (!vocDecodeToWav(rawData, rawSize, &wavBuf, &wavSize))
+        {
+            delete[] rawData;
+            break;
+        }
+        delete[] rawData;
+
+        // Extract format info from first decoded WAV header (44 bytes)
+        if (!gotFormat && wavSize >= 44)
+        {
+            sampleRate    = (uint32_t)wavBuf[24] | ((uint32_t)wavBuf[25] << 8) |
+                            ((uint32_t)wavBuf[26] << 16) | ((uint32_t)wavBuf[27] << 24);
+            numChannels   = (uint16_t)wavBuf[22] | ((uint16_t)wavBuf[23] << 8);
+            bitsPerSample = (uint16_t)wavBuf[34] | ((uint16_t)wavBuf[35] << 8);
+            gotFormat = true;
+        }
+
+        // Append PCM data (skip 44-byte WAV header)
+        if (wavSize > 44)
+            combinedPcm.insert(combinedPcm.end(), wavBuf + 44, wavBuf + wavSize);
+
+        delete[] wavBuf;
+    }
+
+    if (!gotFormat || combinedPcm.empty())
+    {
+        printf(VO_WARN "No VOC lines found for book %d page %d" CON_RESET "\n", vocIndex, page);
+        return;
+    }
+
+    // Build combined WAV in memory
+    uint32_t dataSize   = (uint32_t)combinedPcm.size();
+    uint32_t wavSize    = 44 + dataSize;
+    uint16_t blockAlign = numChannels * (bitsPerSample / 8);
+    uint32_t byteRate   = sampleRate * blockAlign;
+
+    unsigned char* wav = new (std::nothrow) unsigned char[wavSize];
+    if (!wav)
+        return;
+
+    // RIFF header
+    memcpy(wav, "RIFF", 4);
+    wav[4] = (unsigned char)((wavSize - 8) & 0xFF);
+    wav[5] = (unsigned char)(((wavSize - 8) >> 8) & 0xFF);
+    wav[6] = (unsigned char)(((wavSize - 8) >> 16) & 0xFF);
+    wav[7] = (unsigned char)(((wavSize - 8) >> 24) & 0xFF);
+    memcpy(wav + 8, "WAVE", 4);
+
+    // fmt chunk
+    memcpy(wav + 12, "fmt ", 4);
+    wav[16] = 16; wav[17] = 0; wav[18] = 0; wav[19] = 0; // chunk size = 16
+    wav[20] = 1;  wav[21] = 0; // PCM format
+    wav[22] = (unsigned char)(numChannels & 0xFF);
+    wav[23] = (unsigned char)((numChannels >> 8) & 0xFF);
+    wav[24] = (unsigned char)(sampleRate & 0xFF);
+    wav[25] = (unsigned char)((sampleRate >> 8) & 0xFF);
+    wav[26] = (unsigned char)((sampleRate >> 16) & 0xFF);
+    wav[27] = (unsigned char)((sampleRate >> 24) & 0xFF);
+    wav[28] = (unsigned char)(byteRate & 0xFF);
+    wav[29] = (unsigned char)((byteRate >> 8) & 0xFF);
+    wav[30] = (unsigned char)((byteRate >> 16) & 0xFF);
+    wav[31] = (unsigned char)((byteRate >> 24) & 0xFF);
+    wav[32] = (unsigned char)(blockAlign & 0xFF);
+    wav[33] = (unsigned char)((blockAlign >> 8) & 0xFF);
+    wav[34] = (unsigned char)(bitsPerSample & 0xFF);
+    wav[35] = (unsigned char)((bitsPerSample >> 8) & 0xFF);
+
+    // data chunk
+    memcpy(wav + 36, "data", 4);
+    wav[40] = (unsigned char)(dataSize & 0xFF);
+    wav[41] = (unsigned char)((dataSize >> 8) & 0xFF);
+    wav[42] = (unsigned char)((dataSize >> 16) & 0xFF);
+    wav[43] = (unsigned char)((dataSize >> 24) & 0xFF);
+    memcpy(wav + 44, combinedPcm.data(), dataSize);
+
+    // Play the combined WAV
+    s_voStream = new SoLoud::WavStream();
+    SoLoud::result res = s_voStream->loadMem(wav, wavSize, false, false);
+    if (res == SoLoud::SO_NO_ERROR)
+    {
+        s_voBuf = wav;
+        s_voHandle = gSoloud->play(*s_voStream);
+        printf(VO_OK "Playing VOC page: book %d page %d (%d lines, %u bytes)" CON_RESET "\n",
+               vocIndex, page, numLines, dataSize);
+    }
+    else
+    {
+        delete[] wav;
+        delete s_voStream;
+        s_voStream = nullptr;
+        printf(VO_WARN "Failed to play combined VOC for book %d page %d" CON_RESET "\n",
+               vocIndex, page);
+    }
 }
 
 void osystem_playVO(const char* voFileName)
