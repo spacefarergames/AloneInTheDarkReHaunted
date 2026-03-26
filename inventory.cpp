@@ -10,6 +10,8 @@
 #include "common.h"
 #include "consoleLog.h"
 #include "fontTTF.h"
+#include <SDL.h>
+#include <math.h>
 
 // HD background state (from hdBackgroundRenderer)
 extern bool g_currentBackgroundIsHD;
@@ -17,6 +19,10 @@ void recreateBackgroundTexture(int width, int height);
 
 // Menu sound helper (from systemMenu.cpp)
 extern void playMenuSound(const char* soundName);
+
+// UI animation state for pulsing highlight and selection pop
+static u32 s_invObjSelTime = 0;   // Time when object selection changed
+static u32 s_invActSelTime = 0;   // Time when action selection changed
 
 sBody* ShowObjet;
 int ShowBody;
@@ -62,22 +68,38 @@ int DrawListObjets(int startIdx, int selectIdx, int selectColor)
 		y = 28;
 	}
 
-    for(i=0;i<5;i++)
-    {
-        if(startIdx>=numObjInInventoryTable[currentInventory])
-            break;
+	for(i=0;i<5;i++)
+	{
+		if(startIdx>=numObjInInventoryTable[currentInventory])
+			break;
 
-        currentObj = inventoryTable[currentInventory][startIdx];
+		currentObj = inventoryTable[currentInventory][startIdx];
 
-        objPtr = &ListWorldObjets[currentObj];
+		objPtr = &ListWorldObjets[currentObj];
 
-        if(startIdx == selectIdx)
-        {
+		if(startIdx == selectIdx)
+		{
 			if(g_gameId <= JACK)
 			{
 				if(selectColor == 15)
 				{
-					AffRect(0xA,y,0x135,y+0x10,0x64);
+					// Pulsing highlight effect
+					u32 now = (u32)SDL_GetTicks();
+					char color = (char)(100 + (int)(fabsf(sinf((float)now * 0.004f)) * 8.0f));
+
+					// Selection pop effect
+					int pop = 0;
+					if (s_invObjSelTime)
+					{
+						float t = (float)(now - s_invObjSelTime) / 250.0f;
+						if (t < 1.0f)
+							pop = (int)(sinf(t * 3.14159f) * 6.0f);
+					}
+					int x1 = 0xA - pop;
+					int x2 = 0x135 + pop;
+					if (x1 < 8) x1 = 8;
+					if (x2 > 311) x2 = 311;
+					AffRect(x1,y,x2,y+0x10,color);
 				}
 
 				SelectedMessage(160,y,objPtr->foundName,selectColor,4);
@@ -87,16 +109,16 @@ int DrawListObjets(int startIdx, int selectIdx, int selectColor)
 				SimpleMessage(160,y,objPtr->foundName,selectColor);
 			}
 
-            var_8 = currentObj;
-        }
-        else
-        {
-            SimpleMessage(160,y,objPtr->foundName,4);
-        }
+			var_8 = currentObj;
+		}
+		else
+		{
+			SimpleMessage(160,y,objPtr->foundName,4);
+		}
 
-        y += fontHeight;
-        startIdx++;
-    }
+		y += fontHeight;
+		startIdx++;
+	}
 
 
 	if(var_6>0)
@@ -164,13 +186,29 @@ void drawInventoryActions(int arg)
 		y = 139 - ((numInventoryActions*fontHeight)/2);
 	}
 
-    for(int i=0;i<numInventoryActions;i++)
-    {
-        if(arg == i)
-        {
+	for(int i=0;i<numInventoryActions;i++)
+	{
+		if(arg == i)
+		{
 			if(g_gameId <= JACK)
 			{
-				AffRect(170,y,309,y+16,100);
+				// Pulsing highlight effect
+				u32 now = (u32)SDL_GetTicks();
+				char color = (char)(100 + (int)(fabsf(sinf((float)now * 0.004f)) * 8.0f));
+
+				// Selection pop effect
+				int pop = 0;
+				if (s_invActSelTime)
+				{
+					float t = (float)(now - s_invActSelTime) / 250.0f;
+					if (t < 1.0f)
+						pop = (int)(sinf(t * 3.14159f) * 6.0f);
+				}
+				int x1 = 170 - pop;
+				int x2 = 309 + pop;
+				if (x1 < 168) x1 = 168;
+				if (x2 > 311) x2 = 311;
+				AffRect(x1,y,x2,y+16,color);
 				SelectedMessage(240,y,inventoryActionTable[i],15,4);
 			}
 			else
@@ -319,6 +357,7 @@ void processInventory(void)
                         // Play navigation sound
                         playMenuSound("Navigation.wav");
                         selectedObjectIdx--;
+                        s_invObjSelTime = (u32)SDL_GetTicks();
                         notifyTTFMenuSelectionChanged();
                     }
 
@@ -327,6 +366,7 @@ void processInventory(void)
                         // Play navigation sound
                         playMenuSound("Navigation.wav");
                         selectedObjectIdx++;
+                        s_invObjSelTime = (u32)SDL_GetTicks();
                         notifyTTFMenuSelectionChanged();
                     }
 
@@ -423,6 +463,7 @@ void processInventory(void)
                     // Play navigation sound
                     playMenuSound("Navigation.wav");
                     selectedActions --;
+                    s_invActSelTime = (u32)SDL_GetTicks();
                     notifyTTFMenuSelectionChanged();
                 }
                 else if(localJoyD&1 && selectedActions == 0)
@@ -443,6 +484,7 @@ void processInventory(void)
                     // Play navigation sound
                     playMenuSound("Navigation.wav");
                     selectedActions++;
+                    s_invActSelTime = (u32)SDL_GetTicks();
                     notifyTTFMenuSelectionChanged();
                 }
                 else if(localJoyD&2 && selectedActions == (numInventoryActions-1))
@@ -476,13 +518,13 @@ void processInventory(void)
                         antiBounce = -1;
                     }
                 }
+            }
 
-                if(lastSelectedObjectIdx != selectedActions)
-                {
-                    lastSelectedObjectIdx = selectedActions;
-                    drawInventoryActions(lastSelectedObjectIdx);
-                    menuWaitVSync();
-                }
+            if(lastSelectedObjectIdx != selectedActions)
+            {
+                lastSelectedObjectIdx = selectedActions;
+                drawInventoryActions(lastSelectedObjectIdx);
+                menuWaitVSync();
             }
         }
         renderInventoryObject(ListWorldObjets[selectedWorldObjectIdx].floorLife);
@@ -613,7 +655,7 @@ void FoundObjet(int objIdx, int param)
     notifyTTFMenuStateChanged(true, true);
 
     SaveTimerAnim();
-    setupShaking(1000); // remove the shaking when in foundObject screen
+    pauseShaking(); // pause the shaking when in foundObject screen
 
     int weight = 0;
     for (int i = 0; i < numObjInInventoryTable[currentInventory]; i++)

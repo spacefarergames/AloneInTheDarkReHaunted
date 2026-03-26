@@ -11,6 +11,7 @@
 #define _FONT_TTF_H_
 
 #include "common.h"
+#include <string>
 
 // TTF font rendering system - matches original font placement but renders with smooth TTF fonts
 
@@ -19,7 +20,7 @@ struct TTFTextCommand
 {
     int x;
     int y;
-    u8* text;
+    std::string text;
     int color;
     bool shadow;
     int shadowColor;

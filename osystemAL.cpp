@@ -241,6 +241,33 @@ static void stopCDAudio()
     }
 }
 
+void osystem_stopTrack()
+{
+    if (gSoloud)
+    {
+        if (pWavStream)
+        {
+            pWavStream->stop();
+            delete pWavStream;
+            pWavStream = nullptr;
+        }
+
+        if (pFile)
+        {
+            delete pFile;
+            pFile = nullptr;
+        }
+
+        if (s_musicArchiveBuf)
+        {
+            delete[] s_musicArchiveBuf;
+            s_musicArchiveBuf = nullptr;
+        }
+    }
+
+    stopCDAudio();
+}
+
 // Play a CD audio track via MCI.  Returns true on success.
 static bool playCDAudioTrack(int trackId)
 {
@@ -494,6 +521,22 @@ void osystem_playSample(char* samplePtr,int size)
     {
         ActiveSfx sfx = { h, pAudioSource, false };
         g_activeSfx.push_back(sfx);
+
+        // Apply random frequency modulation if set (rndFreqModulation is 0-100)
+        extern s16 rndFreqModulation;
+        if (rndFreqModulation > 0 && h != 0)
+        {
+            // Random variation: ±rndFreqModulation% of pitch
+            // rndFreqModulation of 40 means ±40% variation
+            float variation = (float)(rand() % (rndFreqModulation * 2 + 1) - rndFreqModulation) / 100.0f;
+            float playSpeed = 1.0f + variation;
+
+            // Clamp to reasonable range (0.5x to 2.0x)
+            if (playSpeed < 0.5f) playSpeed = 0.5f;
+            if (playSpeed > 2.0f) playSpeed = 2.0f;
+
+            gSoloud->setRelativePlaySpeed(h, playSpeed);
+        }
     }
 }
 

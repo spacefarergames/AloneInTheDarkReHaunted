@@ -475,6 +475,8 @@ extern float g_shakeOffsetX;
 extern float g_shakeOffsetY;
 extern unsigned int timerFreeze1;
 
+extern s16 rndFreqModulation; // Random frequency modulation for sound effects (0-100)
+
 void updateShaking();
 void stopShaking();
 void setupShaking(int amplitude);

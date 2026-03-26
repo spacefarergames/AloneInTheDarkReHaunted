@@ -157,6 +157,9 @@ void EndFrame()
     }
 #endif
 
+    // Render vignette overlay (darkened screen edges for cinematic look)
+    osystem_drawVignette();
+
     // Render TTF text overlay before ImGui render
     renderTTFText();
 

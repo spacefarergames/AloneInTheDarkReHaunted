@@ -227,12 +227,6 @@ int manageFall(int actorIdx, ZVStruct* zvPtr)
 
 void GereAnim(void)
 {
-    if (currentProcessedActorPtr->objectType & AF_OBJ_2D) {
-        if ((currentProcessedActorPtr->ANIM != -1) && (currentProcessedActorPtr->bodyNum != -1)) {
-            sHybrid* pHybrid = HQR_Get(HQ_Hybrides, currentProcessedActorPtr->ANIM);
-        }
-    }
-
 	int oldStepZ=0;
 	int oldStepY=0;
 	int oldStepX=0;
@@ -370,6 +364,16 @@ void GereAnim(void)
 			{
 				currentProcessedActorPtr->END_FRAME = SetInterAnimObjet(currentProcessedActorPtr->frame, pAnim, pBody);
 			}
+		}
+
+		// Apply speed-based movement during animation (for trackmode follow)
+		if (currentProcessedActorPtr->speed != 0)
+		{
+			if (currentProcessedActorPtr->speedChange.numSteps == 0)
+			{
+				InitRealValue(0, currentProcessedActorPtr->speed, 60, &currentProcessedActorPtr->speedChange);
+			}
+			animStepZ += evaluateReal(&currentProcessedActorPtr->speedChange);
 		}
 
 		walkStep(animStepX,animStepZ,currentProcessedActorPtr->beta);
@@ -674,15 +678,15 @@ void GereAnim(void)
 
 			if(actorTouchedPtr->objectType & AF_MOVABLE)
 			{
-				int i;
+				int j;
 
-				for(i=0;i<3;i++)
+				for(j=0;j<3;j++)
 				{
-					if(currentProcessedActorPtr->COL[i] == collisionIndex)
+					if(currentProcessedActorPtr->COL[j] == collisionIndex)
 						break;
 				}
 
-				if(i == 3)
+				if(j == 3)
 				{
 					actorTouchedPtr->objectType &= ~AF_ANIMATED;
 					addActorToBgInscrust(collisionIndex);

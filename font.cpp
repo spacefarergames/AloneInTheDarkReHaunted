@@ -150,8 +150,6 @@ void PrintFont(int x, int y, char* surface, u8* string)
 
             fontSm8 = fontVar6;
 
-            ch;
-
             for(ch = fontSm1; ch>0; ch--)
             {
                 if (bp >= 200)

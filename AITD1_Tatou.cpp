@@ -32,6 +32,12 @@ int make3dTatou(void)
     palette_t tatouPal;
     palette_t paletteBackup;
 
+    // Stop any CD audio before loading resources. On mixed-mode CDs the drive
+    // cannot read data while an audio track is playing, which would cause
+    // CheckLoadMallocPak to fail and crash.
+    osystem_stopTrack();
+    currentMusic = -1;
+
     char* tatou2d = CheckLoadMallocPak("ITD_RESS",AITD1_TATOU_MCG);
 
     // Load HD background for initial 2D phase (ITD_RESS_002.png - with tatou in background)

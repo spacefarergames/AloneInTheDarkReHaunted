@@ -1123,12 +1123,12 @@ void computeScreenBox(int x, int y, int z, int alpha, int beta, int gamma, sBody
     }
 }
 
-#define SHADOW_SEGMENTS 24
+#define SHADOW_SEGMENTS 36
 
 void drawBlobShadow(int x, int y, int z, int alpha, int beta, int gamma, sBody* bodyPtr)
 {
-    float radiusX = (float)(bodyPtr->m_zv.ZVX2 - bodyPtr->m_zv.ZVX1) * 0.4f;
-    float radiusZ = (float)(bodyPtr->m_zv.ZVZ2 - bodyPtr->m_zv.ZVZ1) * 0.4f;
+    float radiusX = (float)(bodyPtr->m_zv.ZVX2 - bodyPtr->m_zv.ZVX1) * 0.45f;
+    float radiusZ = (float)(bodyPtr->m_zv.ZVZ2 - bodyPtr->m_zv.ZVZ1) * 0.45f;
 
     if (radiusX < 10.f || radiusZ < 10.f)
         return;

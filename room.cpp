@@ -161,8 +161,8 @@ void ChangeSalle(int roomNumber)
                 break;
         }
 
-        ASSERT(cameraDataTable[i]->viewedRoomTable[j].viewedRoomIdx == currentRoom);
-        if(cameraDataTable[i]->viewedRoomTable[j].viewedRoomIdx == currentRoom) {
+        if(j < currentCameraIdx) {
+            ASSERT(cameraDataTable[i]->viewedRoomTable[j].viewedRoomIdx == currentRoom);
             currentCameraZoneList[i] = &cameraDataTable[i]->viewedRoomTable[j];
         }
     }

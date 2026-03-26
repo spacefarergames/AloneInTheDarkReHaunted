@@ -292,11 +292,8 @@ void PlayWorld(int allowSystemMenu, int deltaTime)
 			ChangeSalle(NewNumSalle);
             InitView();
 
-            // Fix: warp player out of walls after floor transition to CAMERA05_000 (caves)
-            if (g_currentFloor == 5 && NumCamera == 0)
-            {
-                fixPlayerStuckInWall();
-            }
+            // Fix: warp player out of walls after any room transition
+            fixPlayerStuckInWall();
 
             continue;
         }

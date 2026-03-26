@@ -9,6 +9,7 @@
 
 #include "common.h"
 #include "consoleLog.h"
+#include "configRemaster.h"
 
 /***************************************************************************
 mainSDL.cpp  -  description
@@ -594,6 +595,64 @@ void osystem_drawPortraitOverlay(int choice)
     bgfx::submit(gameViewId, getHDBackgroundShader());
 }
 
+void osystem_drawBlackScreen()
+{
+    bgfx::VertexLayout layout;
+    layout
+        .begin()
+        .add(bgfx::Attrib::Position, 3, bgfx::AttribType::Float)
+        .add(bgfx::Attrib::Color0, 4, bgfx::AttribType::Uint8, true)
+        .end();
+
+    bgfx::TransientVertexBuffer transientBuffer;
+    bgfx::allocTransientVertexBuffer(&transientBuffer, 6, layout);
+
+    struct sVertice
+    {
+        float position[3];
+        uint32_t color;
+    };
+
+    sVertice* pVertices = (sVertice*)transientBuffer.data;
+
+    // Full-screen black quad at Z=100 (in front of 3D scene but behind UI)
+    uint32_t blackColor = 0xFF000000;
+
+    // Triangle 1
+    pVertices->position[0] = 0.f;   pVertices->position[1] = 0.f;   pVertices->position[2] = 100.f;
+    pVertices->color = blackColor;
+    pVertices++;
+
+    pVertices->position[0] = 320.f; pVertices->position[1] = 200.f; pVertices->position[2] = 100.f;
+    pVertices->color = blackColor;
+    pVertices++;
+
+    pVertices->position[0] = 320.f; pVertices->position[1] = 0.f;   pVertices->position[2] = 100.f;
+    pVertices->color = blackColor;
+    pVertices++;
+
+    // Triangle 2
+    pVertices->position[0] = 0.f;   pVertices->position[1] = 0.f;   pVertices->position[2] = 100.f;
+    pVertices->color = blackColor;
+    pVertices++;
+
+    pVertices->position[0] = 0.f;   pVertices->position[1] = 200.f; pVertices->position[2] = 100.f;
+    pVertices->color = blackColor;
+    pVertices++;
+
+    pVertices->position[0] = 320.f; pVertices->position[1] = 200.f; pVertices->position[2] = 100.f;
+    pVertices->color = blackColor;
+    pVertices++;
+
+    bgfx::setState(0 | BGFX_STATE_WRITE_RGB
+        | BGFX_STATE_WRITE_A
+        | BGFX_STATE_MSAA
+    );
+
+    bgfx::setVertexBuffer(0, &transientBuffer);
+    bgfx::submit(gameViewId, getFlatShader());
+}
+
 void osystem_drawBackground()
 {
     if (backgroundMode == backgroundModeEnum_2D)
@@ -829,6 +888,78 @@ void osystem_drawControllerHint()
     ImGui::PopStyleVar(2);
 }
 
+void osystem_drawVignette()
+{
+    if (!g_remasterConfig.postProcessing.enableVignette)
+        return;
+
+    float intensity = g_remasterConfig.postProcessing.vignetteIntensity;
+    float radius = g_remasterConfig.postProcessing.vignetteRadius;
+
+    if (intensity <= 0.0f)
+        return;
+
+    ImVec2 displaySize = ImGui::GetIO().DisplaySize;
+    if (displaySize.x <= 0 || displaySize.y <= 0)
+        return;
+
+    ImDrawList* drawList = ImGui::GetForegroundDrawList();
+
+    // Draw radial vignette using concentric rectangles with increasing opacity
+    // towards the edges. This creates a smooth darkened border effect.
+    const int numSteps = 16;
+    float maxAlpha = intensity * 255.0f;
+    if (maxAlpha > 200.0f) maxAlpha = 200.0f;
+
+    float cx = displaySize.x * 0.5f;
+    float cy = displaySize.y * 0.5f;
+
+    for (int i = numSteps; i >= 1; i--)
+    {
+        float t = (float)i / (float)numSteps;
+        // Map t through radius parameter: lower radius = more vignette coverage
+        float edgeFactor = (t - radius) / (1.0f - radius);
+        if (edgeFactor <= 0.0f)
+            continue;
+
+        // Smooth ease-in curve for natural falloff
+        float alpha = edgeFactor * edgeFactor * maxAlpha;
+        if (alpha < 1.0f)
+            continue;
+
+        ImU32 color = IM_COL32(0, 0, 0, (int)alpha);
+
+        // Calculate rect bounds for this step (inset from screen edges)
+        float insetX = cx * (1.0f - t);
+        float insetY = cy * (1.0f - t);
+
+        // Draw 4 edge strips (top, bottom, left, right)
+        float nextInsetX = (i > 1) ? cx * (1.0f - (float)(i - 1) / (float)numSteps) : 0.0f;
+        float nextInsetY = (i > 1) ? cy * (1.0f - (float)(i - 1) / (float)numSteps) : 0.0f;
+
+        // Top strip
+        drawList->AddRectFilled(
+            ImVec2(nextInsetX, nextInsetY),
+            ImVec2(displaySize.x - nextInsetX, insetY),
+            color);
+        // Bottom strip
+        drawList->AddRectFilled(
+            ImVec2(nextInsetX, displaySize.y - insetY),
+            ImVec2(displaySize.x - nextInsetX, displaySize.y - nextInsetY),
+            color);
+        // Left strip
+        drawList->AddRectFilled(
+            ImVec2(nextInsetX, insetY),
+            ImVec2(insetX, displaySize.y - insetY),
+            color);
+        // Right strip
+        drawList->AddRectFilled(
+            ImVec2(displaySize.x - insetX, insetY),
+            ImVec2(displaySize.x - nextInsetX, displaySize.y - insetY),
+            color);
+    }
+}
+
 bgfx::FrameBufferHandle fieldModelInspector_FB = BGFX_INVALID_HANDLE;
 bgfx::TextureHandle fieldModelInspector_Texture = BGFX_INVALID_HANDLE;
 bgfx::TextureHandle fieldModelInspector_Depth = BGFX_INVALID_HANDLE;
@@ -968,29 +1099,33 @@ std::array<unsigned char, 320 * 200> uiLayer;
 
 void osystem_CopyBlockPhys(unsigned char* videoBuffer, int left, int top, int right, int bottom)
 {
-    unsigned char* in = (unsigned char*)&videoBuffer[0] + left + top * 320;
+	unsigned char* in = (unsigned char*)&videoBuffer[0] + left + top * 320;
 
-    while ((right - left) % 4)
-    {
-        right++;
-    }
+	while ((right - left) % 4)
+	{
+		right++;
+	}
 
-    while ((bottom - top) % 4)
-    {
-        bottom++;
-    }
+	while ((bottom - top) % 4)
+	{
+		bottom++;
+	}
 
-    for (int i = top; i < bottom; i++)
-    {
-        in = (unsigned char*)&videoBuffer[0] + left + i * 320;
-        unsigned char* out2 = physicalScreen + left + i * 320;
-        for (int j = left; j < right; j++)
-        {
+	// Clamp to screen bounds after alignment rounding
+	if (right > 320) right = 320;
+	if (bottom > 200) bottom = 200;
+
+	for (int i = top; i < bottom; i++)
+	{
+		in = (unsigned char*)&videoBuffer[0] + left + i * 320;
+		unsigned char* out2 = physicalScreen + left + i * 320;
+		for (int j = left; j < right; j++)
+		{
 			*(out2++) = *(in++);
-        }
-    }
+		}
+	}
 
-    bgfx::updateTexture2D(g_backgroundTexture, 0, 0, 0, 0, 320, 200, bgfx::copy(physicalScreen, 320 * 200));
+	bgfx::updateTexture2D(g_backgroundTexture, 0, 0, 0, 0, 320, 200, bgfx::copy(physicalScreen, 320 * 200));
 }
 
 void osystem_refreshFrontTextureBuffer()
@@ -1242,6 +1377,8 @@ void osystem_flushPendingPrimitives()
             | BGFX_STATE_WRITE_Z
             | BGFX_STATE_DEPTH_TEST_LEQUAL
             | BGFX_STATE_MSAA
+            | BGFX_STATE_LINEAA
+            | BGFX_STATE_BLEND_FUNC(BGFX_STATE_BLEND_SRC_ALPHA, BGFX_STATE_BLEND_INV_SRC_ALPHA)
         );
 
         static bgfx::UniformHandle paletteTextureUniform = BGFX_INVALID_HANDLE;
@@ -1396,9 +1533,6 @@ void osystem_fillPoly(float* buffer, int numPoint, unsigned char color, u8 polyT
             pVertex->X = buffer[i * 3 + 0];
             pVertex->Y = buffer[i * 3 + 1];
             pVertex->Z = buffer[i * 3 + 2];
-
-            pVertex->U = (pVertex->X / 320.f) * 50.f + polyMinX * 1.2f + polyMaxX;
-            pVertex->V = (pVertex->Y / 200.f) * 50.f + polyMinY * 0.7f + polyMaxY;
 
             int bank = (color & 0xF0) >> 4;
             int startColor = color & 0xF;
@@ -1926,4 +2060,71 @@ int osystem_getScenePreviewWidth()
 int osystem_getScenePreviewHeight()
 {
     return s_previewReady ? s_snapshotHeight : 0;
+}
+
+// Page turn animation support
+static unsigned char s_pageTurnOldPage[320 * 200];
+
+void osystem_pageTurnCapture()
+{
+    memcpy(s_pageTurnOldPage, physicalScreen, 320 * 200);
+}
+
+void osystem_pageTurnFrame(float progress, bool forward, unsigned char* newPage)
+{
+    unsigned char compositedPage[320 * 200];
+
+    // Ease-out curve for smooth deceleration
+    float easedProgress = 1.0f - (1.0f - progress) * (1.0f - progress);
+    int offset = (int)(320.0f * easedProgress);
+
+    if (offset <= 0)
+    {
+        bgfx::updateTexture2D(g_backgroundTexture, 0, 0, 0, 0, 320, 200,
+            bgfx::copy(s_pageTurnOldPage, 320 * 200));
+        return;
+    }
+    if (offset >= 320)
+    {
+        bgfx::updateTexture2D(g_backgroundTexture, 0, 0, 0, 0, 320, 200,
+            bgfx::copy(newPage, 320 * 200));
+        return;
+    }
+
+    for (int y = 0; y < 200; y++)
+    {
+        for (int x = 0; x < 320; x++)
+        {
+            if (forward)
+            {
+                int srcX = x + offset;
+                if (srcX < 320)
+                    compositedPage[y * 320 + x] = s_pageTurnOldPage[y * 320 + srcX];
+                else
+                    compositedPage[y * 320 + x] = newPage[y * 320 + (srcX - 320)];
+            }
+            else
+            {
+                int srcX = x - offset;
+                if (srcX >= 0)
+                    compositedPage[y * 320 + x] = s_pageTurnOldPage[y * 320 + srcX];
+                else
+                    compositedPage[y * 320 + x] = newPage[y * 320 + (320 + srcX)];
+            }
+        }
+    }
+
+    // Draw a 2-pixel black dividing line at the fold edge
+    int splitX = forward ? (320 - offset) : offset;
+    if (splitX > 0 && splitX < 319)
+    {
+        for (int y = 0; y < 200; y++)
+        {
+            compositedPage[y * 320 + splitX] = 0;
+            compositedPage[y * 320 + splitX + 1] = 0;
+        }
+    }
+
+    bgfx::updateTexture2D(g_backgroundTexture, 0, 0, 0, 0, 320, 200,
+        bgfx::copy(compositedPage, 320 * 200));
 }

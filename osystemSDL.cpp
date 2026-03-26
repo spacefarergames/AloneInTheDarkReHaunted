@@ -201,8 +201,7 @@ int FitdInit(int argc, char* argv[])
 
         if (tickDifference < 1000 / FRAMES_PER_SECOND)
         {
-            //Sleep the remaining frame time
-            //SDL_Delay((1000 / FRAMES_PER_SECOND) - tickDifference);
+           // SDL_Delay((1000 / FRAMES_PER_SECOND) - tickDifference);
         }
 
         startOfPreviousFrame = startOfFrame;

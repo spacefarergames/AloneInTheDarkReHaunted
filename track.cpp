@@ -281,6 +281,10 @@ void processTrack(void)
 
             if(followedActorIdx == -1)
             {
+                // Target was deleted - stop following and switch to idle.
+                // Without this, the enemy stays in trackMode 2 forever with
+                // direction=0/speed=0, permanently frozen.
+                currentProcessedActorPtr->trackMode = 0;
                 currentProcessedActorPtr->direction = 0;
                 currentProcessedActorPtr->speed = 0;
             }
@@ -432,6 +436,13 @@ void processTrack(void)
 
                     if(distanceToPoint >= DISTANCE_TO_POINT_TRESSHOLD) // not yet at position
                     {
+                        // If speed was zeroed (e.g. by TL_INIT_COOR, TL_STOP, or a track that
+                        // starts directly with TL_GOTO without a preceding TL_WALK), the actor
+                        // will turn toward the waypoint but never move, causing a permanent stuck.
+                        // Restore walk speed so the waypoint can actually be reached.
+                        if (currentProcessedActorPtr->speed == 0)
+                            currentProcessedActorPtr->speed = 4;
+
                         int angleModif = CapObjet( currentProcessedActorPtr->roomX + currentProcessedActorPtr->stepX,
                             currentProcessedActorPtr->roomZ + currentProcessedActorPtr->stepZ,
                             currentProcessedActorPtr->beta,
@@ -498,6 +509,10 @@ void processTrack(void)
                 }
 
                 {
+                    // Recover speed if zeroed before this 3D goto, same reason as TL_GOTO.
+                    if (currentProcessedActorPtr->speed == 0)
+                        currentProcessedActorPtr->speed = 4;
+
                     int direction = CapObjet(
                         currentProcessedActorPtr->roomX + currentProcessedActorPtr->stepX,
                         currentProcessedActorPtr->roomZ + currentProcessedActorPtr->stepZ,
@@ -658,6 +673,10 @@ void processTrack(void)
                     if(   currentProcessedActorPtr->roomY + currentProcessedActorPtr->stepY < y - 100
                         ||  currentProcessedActorPtr->roomY + currentProcessedActorPtr->stepY > y + 100)
                     {
+                        // Recover speed if zeroed before this stair goto, same reason as TL_GOTO.
+                        if (currentProcessedActorPtr->speed == 0)
+                            currentProcessedActorPtr->speed = 4;
+
                         int propX = makeProportional(objY, y, x - objX, (currentProcessedActorPtr->roomX + currentProcessedActorPtr->stepX) - objX);
 
                         int difY = propX - currentProcessedActorPtr->worldY;
@@ -728,6 +747,10 @@ void processTrack(void)
                     if(   currentProcessedActorPtr->roomY + currentProcessedActorPtr->stepY < y - 100
                         ||  currentProcessedActorPtr->roomY + currentProcessedActorPtr->stepY > y + 100)
                     {
+                        // Recover speed if zeroed before this stair goto, same reason as TL_GOTO.
+                        if (currentProcessedActorPtr->speed == 0)
+                            currentProcessedActorPtr->speed = 4;
+
                         int propZ = makeProportional(objY, y, z - objZ, (currentProcessedActorPtr->roomZ + currentProcessedActorPtr->stepZ) - objZ);
 
                         int difY = propZ - currentProcessedActorPtr->worldY;

@@ -9,6 +9,8 @@
 
 #include "common.h"
 #include "fontTTF.h"
+#include <SDL.h>
+#include <math.h>
 
 // Language entry: PAK base name and display label
 struct LanguageEntry
@@ -28,6 +30,10 @@ static const LanguageEntry s_allLanguages[] =
 };
 static const int s_allLanguagesCount = sizeof(s_allLanguages) / sizeof(s_allLanguages[0]);
 
+// UI animation state
+static u32 s_mainMenuSelTime = 0;
+static u32 s_langMenuSelTime = 0;
+
 // Helper function to play menu navigation sounds
 static void playMenuSound(const char* soundName)
 {
@@ -45,7 +51,7 @@ void DrawMenu(int selectedEntry)
     else {
         AffBigCadre(160, 100, 320, 80);
     }
-    
+
     int currentY = 76;
 
     for(int i=0; i<3; i++)
@@ -56,7 +62,20 @@ void DrawMenu(int selectedEntry)
                 SelectedMessage(160, currentY+1, i + 11, 1, 4);
             }
             else {
-                AffRect(10, currentY, 309, currentY + 16, 100);
+                u32 now = (u32)SDL_GetTicks();
+                char color = (char)(100 + (int)(fabsf(sinf((float)now * 0.004f)) * 8.0f));
+                int pop = 0;
+                if (s_mainMenuSelTime)
+                {
+                    float t = (float)(now - s_mainMenuSelTime) / 250.0f;
+                    if (t < 1.0f)
+                        pop = (int)(sinf(t * 3.14159f) * 6.0f);
+                }
+                int x1 = 10 - pop;
+                int x2 = 309 + pop;
+                if (x1 < 8) x1 = 8;
+                if (x2 > 311) x2 = 311;
+                AffRect(x1, currentY, x2, currentY+16, color);
                 SelectedMessage(160, currentY, i + 11, 15, 4);
             }
         }
@@ -102,7 +121,21 @@ static void DrawLanguageMenu(int* availableLanguages, int availableCount, int se
 
         if (i == selectedEntry)
         {
-            AffRect(10, currentY, 309, currentY + 16, 100);
+            u32 now = (u32)SDL_GetTicks();
+            char color = (char)(100 + (int)(fabsf(sinf((float)now * 0.004f)) * 8.0f));
+            int pop = 0;
+            if (s_langMenuSelTime)
+            {
+                float t = (float)(now - s_langMenuSelTime) / 250.0f;
+                if (t < 1.0f)
+                    pop = (int)(sinf(t * 3.14159f) * 6.0f);
+            }
+            int x1 = 10 - pop;
+            int x2 = 309 + pop;
+            if (x1 < 8) x1 = 8;
+            if (x2 > 311) x2 = 311;
+            AffRect(x1, currentY, x2, currentY+16, color);
+
             SetFont(PtrFont, 4);
             PrintFont(textX, currentY + 1, logicalScreen, displayName);
             SetFont(PtrFont, 15);
@@ -143,6 +176,7 @@ void LanguageSelectionMenu(void)
 
     while (selectedEntry == -1)
     {
+        DrawLanguageMenu(availableLanguages, availableCount, currentSelectedEntry);
         osystem_CopyBlockPhys((unsigned char*)logicalScreen, 0, 0, 320, 200);
         osystem_startFrame();
 
@@ -153,6 +187,8 @@ void LanguageSelectionMenu(void)
             currentSelectedEntry--;
             if (currentSelectedEntry < 0)
                 currentSelectedEntry = availableCount - 1;
+
+            s_langMenuSelTime = (u32)SDL_GetTicks();
 
             playMenuSound("Navigation.wav");
             notifyTTFMenuSelectionChanged();
@@ -169,6 +205,8 @@ void LanguageSelectionMenu(void)
             currentSelectedEntry++;
             if (currentSelectedEntry >= availableCount)
                 currentSelectedEntry = 0;
+
+            s_langMenuSelTime = (u32)SDL_GetTicks();
 
             playMenuSound("Navigation.wav");
             notifyTTFMenuSelectionChanged();
@@ -236,6 +274,7 @@ int MainMenu(void)
 
     while(evalChrono(&chrono) <= 0x10000) // exit loop only if time out or if choice made
     {
+        DrawMenu(currentSelectedEntry);
         osystem_CopyBlockPhys((unsigned char*)logicalScreen,0,0,320,200);
         osystem_startFrame();
 
@@ -255,6 +294,8 @@ int MainMenu(void)
             {
                 currentSelectedEntry = 2;
             }
+
+            s_mainMenuSelTime = (u32)SDL_GetTicks();
 
             // Play navigation sound
             playMenuSound("Navigation.wav");
@@ -283,6 +324,8 @@ int MainMenu(void)
             {
                 currentSelectedEntry = 0;
             }
+
+            s_mainMenuSelTime = (u32)SDL_GetTicks();
 
             // Play navigation sound
             playMenuSound("Navigation.wav");

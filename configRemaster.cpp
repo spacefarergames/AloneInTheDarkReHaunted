@@ -42,8 +42,11 @@ void initDefaultRemasterConfig()
     g_remasterConfig.postProcessing.ssaoRadius = 400.0f;
     g_remasterConfig.postProcessing.ssaoIntensity = 0.8f;
     g_remasterConfig.postProcessing.bloomPasses = 2;
+    g_remasterConfig.postProcessing.enableVignette = false;
+    g_remasterConfig.postProcessing.vignetteIntensity = 0.35f;
+    g_remasterConfig.postProcessing.vignetteRadius = 0.75f;
 
-    // External music defaults (for future)
+    // External music defaults
     g_remasterConfig.music.enableExternalMusic = false;
     strcpy(g_remasterConfig.music.musicFolder, "music");
 
@@ -174,6 +177,12 @@ void loadRemasterConfig()
                 g_remasterConfig.postProcessing.ssaoIntensity = (float)atof(value);
             else if (strcmp(key, "postprocessing.bloomPasses") == 0)
                 g_remasterConfig.postProcessing.bloomPasses = atoi(value);
+            else if (strcmp(key, "postprocessing.vignette") == 0)
+                g_remasterConfig.postProcessing.enableVignette = (strcmp(value, "true") == 0 || strcmp(value, "1") == 0);
+            else if (strcmp(key, "postprocessing.vignetteIntensity") == 0)
+                g_remasterConfig.postProcessing.vignetteIntensity = (float)atof(value);
+            else if (strcmp(key, "postprocessing.vignetteRadius") == 0)
+                g_remasterConfig.postProcessing.vignetteRadius = (float)atof(value);
 
             // Controls settings
             else if (strcmp(key, "controls.key.up") == 0)
@@ -270,8 +279,11 @@ void saveRemasterConfig()
     fprintf(file, "postprocessing.ssaoRadius = %.1f\n", g_remasterConfig.postProcessing.ssaoRadius);
     fprintf(file, "postprocessing.ssaoIntensity = %.2f\n", g_remasterConfig.postProcessing.ssaoIntensity);
     fprintf(file, "postprocessing.bloomPasses = %d\n", g_remasterConfig.postProcessing.bloomPasses);
+    fprintf(file, "postprocessing.vignette = %s\n", g_remasterConfig.postProcessing.enableVignette ? "true" : "false");
+    fprintf(file, "postprocessing.vignetteIntensity = %.2f\n", g_remasterConfig.postProcessing.vignetteIntensity);
+    fprintf(file, "postprocessing.vignetteRadius = %.2f\n", g_remasterConfig.postProcessing.vignetteRadius);
 
-    fprintf(file, "\n# Controls Settings (scancode / button IDs)\n");
+    fprintf(file, "\n# Controls Settings\n");
     fprintf(file, "controls.key.up = %d\n", g_remasterConfig.controls.keyBindings[0]);
     fprintf(file, "controls.key.down = %d\n", g_remasterConfig.controls.keyBindings[1]);
     fprintf(file, "controls.key.left = %d\n", g_remasterConfig.controls.keyBindings[2]);

@@ -42,6 +42,9 @@ struct RemasterConfig
         float ssaoRadius;
         float ssaoIntensity;
         int bloomPasses;
+        bool enableVignette;
+        float vignetteIntensity;
+        float vignetteRadius;
     } postProcessing;
 
     // External music settings (for future implementation)

@@ -257,6 +257,8 @@ float g_shakeOffsetX = 0.f;
 float g_shakeOffsetY = 0.f;
 unsigned int timerFreeze1;
 
+s16 rndFreqModulation = 0; // Random frequency modulation for sound effects (0-100)
+
 hardColStruct* hardColTable[10];
 
 s16 hardColStepX;

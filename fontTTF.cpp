@@ -346,20 +346,15 @@ void queueTTFText(int x, int y, u8* string, int color, bool shadow, int shadowCo
     // Convert CP850 to UTF-8 and apply all display substitutions
     std::string utf8Str = transformTTFText(string);
 
-    u8* textCopy = new u8[utf8Str.size() + 1];
-    memcpy(textCopy, utf8Str.c_str(), utf8Str.size() + 1);
-
     TTFTextCommand cmd;
     cmd.x = x;
     cmd.y = y;
-    cmd.text = textCopy;
+    cmd.text = utf8Str;
     cmd.color = color;
     cmd.shadow = shadow;
     cmd.shadowColor = shadowColor;
 
     g_textQueue.push_back(cmd);
-    printf(TTF_TAG CON_MAGENTA "+" CON_RESET " " CON_WHITE "'%s'" CON_RESET " " CON_DIM "@ (%d,%d) col=%d [%zu]" CON_RESET "\n", 
-        string, x, y, color, g_textQueue.size());
 
     // Detect fade-out effect: when color=31 and queue reaches 55-56 or 76 items,
     // this indicates the text is fading out and should be cleared
@@ -384,6 +379,9 @@ void renderTTFText()
 
     // Get output resolution for coordinate scaling
     extern int outputResolution[2];
+
+    // Get fade level for fade-in/fade-out synchronization with scene
+    extern float g_fadeLevel;
 
 
     // Detect resolution or fullscreen changes and adjust font scaling dynamically
@@ -413,6 +411,15 @@ void renderTTFText()
     float scaleX = viewportWidth / 320.0f;
     float scaleY = viewportHeight / 200.0f;
 
+    // Compute fade alpha from g_fadeLevel (0.0=black, 1.0=full brightness)
+    // This keeps TTF text in sync with HD background / portrait / mask fading
+    float clampedFade = g_fadeLevel < 0.0f ? 0.0f : (g_fadeLevel > 1.0f ? 1.0f : g_fadeLevel);
+    unsigned char fadeAlpha = (unsigned char)(clampedFade * 255.0f);
+
+    // Skip rendering entirely when fully faded out
+    if (fadeAlpha == 0)
+        return;
+
     // Use foreground draw list directly - no window, no background
     ImDrawList* drawList = ImGui::GetForegroundDrawList();
     ImGui::PushFont(g_ttfFont);
@@ -432,15 +439,16 @@ void renderTTFText()
         unsigned char g = (unsigned char)RGB_Pal[colorIndex * 3 + 1];
         unsigned char b = (unsigned char)RGB_Pal[colorIndex * 3 + 2];
 
-        // Fallback to white if palette entry is black
-        if (r == 0 && g == 0 && b == 0 && colorIndex != 0)
+        // Fallback to white if palette entry is black, but only when NOT
+        // fading — during a fade-out the palette intentionally goes to black
+        if (r == 0 && g == 0 && b == 0 && colorIndex != 0 && fadeAlpha == 255)
         {
             r = g = b = 255;
         }
 
-        ImU32 color = IM_COL32(r, g, b, 255);
+        ImU32 color = IM_COL32(r, g, b, fadeAlpha);
 
-        // Render shadow if requested
+        // Render outline/shadow for better readability against any background
         if (cmd.shadow)
         {
             int shadowColorIndex = cmd.shadowColor;
@@ -451,12 +459,23 @@ void renderTTFText()
             unsigned char sg = (unsigned char)RGB_Pal[shadowColorIndex * 3 + 1];
             unsigned char sb = (unsigned char)RGB_Pal[shadowColorIndex * 3 + 2];
 
-            ImU32 shadowColor = IM_COL32(sr, sg, sb, 255);
-            drawList->AddText(ImVec2(screenX, screenY + scaleY), shadowColor, (const char*)cmd.text);
+            float outlineSize = scaleY * 0.6f;
+            if (outlineSize < 1.0f) outlineSize = 1.0f;
+
+            ImU32 outlineColor = IM_COL32(sr, sg, sb, fadeAlpha);
+
+            // 4-cardinal outline pass (readable against any background, low cost)
+            drawList->AddText(ImVec2(screenX - outlineSize, screenY), outlineColor, cmd.text.c_str());
+            drawList->AddText(ImVec2(screenX + outlineSize, screenY), outlineColor, cmd.text.c_str());
+            drawList->AddText(ImVec2(screenX, screenY - outlineSize), outlineColor, cmd.text.c_str());
+            drawList->AddText(ImVec2(screenX, screenY + outlineSize), outlineColor, cmd.text.c_str());
+
+            // Drop shadow for depth
+            drawList->AddText(ImVec2(screenX + outlineSize * 0.8f, screenY + outlineSize * 1.2f), IM_COL32(0, 0, 0, (unsigned char)((100 * fadeAlpha) / 255)), cmd.text.c_str());
         }
 
         // Render main text
-        drawList->AddText(ImVec2(screenX, screenY), color, (const char*)cmd.text);
+        drawList->AddText(ImVec2(screenX, screenY), color, cmd.text.c_str());
     }
 
     ImGui::PopFont();
@@ -464,11 +483,6 @@ void renderTTFText()
 
 void clearTTFTextQueue()
 {
-    // Clean up any remaining strings
-    for (auto& cmd : g_textQueue)
-    {
-        delete[] cmd.text;
-    }
     g_textQueue.clear();
 }
 

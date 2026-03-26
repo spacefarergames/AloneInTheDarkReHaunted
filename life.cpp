@@ -1872,7 +1872,13 @@ void processLife(int lifeNum, bool callFoundLife)
                 setPalette(lpalette);
                 turnPageFlag = false;
 
-                Lire(lifeTempVar2 + 1, lifeTempVar3, lifeTempVar4, lifeTempVar5, lifeTempVar6, 0, lifeTempVar7, lifeTempVar8, ropVocIndex);
+                if (ropVocIndex >= 0)
+                    osystem_playVocByIndex(ropVocIndex);
+
+                Lire(lifeTempVar2 + 1, lifeTempVar3, lifeTempVar4, lifeTempVar5, lifeTempVar6, 0, lifeTempVar7, lifeTempVar8);
+
+                if (ropVocIndex >= 0)
+                    osystem_stopVO();
 
                 FlagInitView = 2;
 
@@ -2098,7 +2104,6 @@ void processLife(int lifeNum, bool callFoundLife)
             case LM_SHAKING: // SHAKING 
             {
                 appendFormated("LM_SHAKING ");
-                printf(LIFE_TAG "LM_SHAKING\n");
                 shakingAmplitude = *(s16*)(currentLifePtr);
                 currentLifePtr += 2;
 
@@ -2106,6 +2111,13 @@ void processLife(int lifeNum, bool callFoundLife)
                 {
                     stopShaking();
                 }
+                else
+                {
+                    // Trigger screen shake with the specified amplitude
+                    setupShaking(shakingAmplitude);
+                }
+
+                printf(LIFE_TAG "LM_SHAKING set to amplitude %d\n", shakingAmplitude);
                 break;
             }
             case LM_PLUIE:
@@ -2116,14 +2128,19 @@ void processLife(int lifeNum, bool callFoundLife)
                 currentLifePtr += 2;
                 break;
             }
-            case LM_WATER: // water effect (not shaking)
+            case LM_WATER: // water/worm attack effect with screen shake
             {
                 appendFormated("LM_WATER ");
-                // TODO: Warning, AITD1/AITD2 diff
-                printf(LIFE_TAG "LM_WATER\n");
                 shakeVar1 = *(s16*)(currentLifePtr);
                 currentLifePtr += 2;
 
+                // Trigger screen shake for dramatic water/worm effects
+                if (shakeVar1 > 0)
+                {
+                    setupShaking(shakeVar1 * 10); // Amplify for dramatic effect
+                }
+
+                printf(LIFE_TAG "LM_WATER set to %d\n", shakeVar1);
                 break;
             }
             case LM_CAMERA_TARGET: // CAMERA_TARGET
@@ -2267,6 +2284,11 @@ void processLife(int lifeNum, bool callFoundLife)
                     unsigned int time;
                     process_events();
 
+                    osystem_startFrame();
+                    osystem_drawBackground();
+                    osystem_stopFrame();
+                    osystem_flip(NULL);
+
                     time = evalChrono(&chrono);
 
                     if (time > (unsigned int)delay)
@@ -2404,8 +2426,21 @@ void processLife(int lifeNum, bool callFoundLife)
             case LM_END_SEQUENCE: // ENDING
             {
                 appendFormated("LM_END_SEQUENCE ");
-                // TODO!
-                printf(LIFE_TAG "LM_END_SEQUENCE\n");
+                printf(LIFE_TAG "LM_END_SEQUENCE - Triggering game ending\n");
+
+                // Fade out music before ending
+                fadeMusic(0, 0, 0x8000);
+                startChrono(&musicChrono);
+
+                // Wait briefly for music to fade
+                while (evalChrono(&musicChrono) < 60)
+                {
+                    process_events();
+                }
+
+                // Set game over flag to exit the main game loop
+                FlagGameOver = 1;
+                exitLife = 1;
                 break;
             }
             ////////////////////////////////////////////////////////////////////////

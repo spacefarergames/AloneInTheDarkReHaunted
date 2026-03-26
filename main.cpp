@@ -1,4 +1,4 @@
-///////////////////////////////////////////////////////////////////////////////
+﻿///////////////////////////////////////////////////////////////////////////////
 // Alone In The Dark Re-Haunted
 // Copyright (C) 2026 Infogrames / Spacefarer Retro Remasters LLC
 // Based on FITD by yaz0r, Re-haunted is released under GPL
@@ -22,6 +22,8 @@ extern void playMenuSound(const char* soundName);
 #include "resourceGC.h"
 
 #include <time.h>
+#include <math.h>
+#include <SDL.h>
 
 #ifndef AITD_UE4
 #include "bgfxGlue.h"
@@ -66,11 +68,39 @@ static void loadVersionString()
 
 int AntiRebond;
 
+// Shake state - only triggers via life script LM_SHAKING opcode
+static int s_shakeFramesRemaining = 0;
+static int s_shakeMaxAmplitude = 0;
+
 void updateShaking()
 {
-	shakingAmplitude = 0;
-	g_shakeOffsetX = 0.f;
-	g_shakeOffsetY = 0.f;
+	// Only update shake if it was triggered by a life script (via setupShaking)
+	if (s_shakeFramesRemaining > 0 && s_shakeMaxAmplitude > 0)
+	{
+		// Calculate current amplitude (fades out over time)
+		float progress = (float)s_shakeFramesRemaining / 60.0f; // Assume 60 frames max duration
+		float currentAmplitude = (float)s_shakeMaxAmplitude * progress;
+
+		// Generate random shake offsets - scale to visible pixel displacement
+		// For amplitude 1, this gives ~5 pixel max displacement (visible shake)
+		// For amplitude 10, this gives ~50 pixel displacement (dramatic shake)
+		g_shakeOffsetX = ((float)(rand() % 200) - 100.0f) / 100.0f * currentAmplitude * 2.0f;
+		g_shakeOffsetY = ((float)(rand() % 200) - 100.0f) / 100.0f * currentAmplitude * 2.0f;
+
+		s_shakeFramesRemaining--;
+
+		// Stop shaking when duration expires
+		if (s_shakeFramesRemaining <= 0)
+		{
+			stopShaking();
+		}
+	}
+	else
+	{
+		// No shake active - ensure offsets are zero
+		g_shakeOffsetX = 0.f;
+		g_shakeOffsetY = 0.f;
+	}
 }
 
 void stopShaking()
@@ -79,11 +109,21 @@ void stopShaking()
 	shakeVar1 = 0;
 	g_shakeOffsetX = 0.f;
 	g_shakeOffsetY = 0.f;
+	s_shakeFramesRemaining = 0;
+	s_shakeMaxAmplitude = 0;
 }
 
 void setupShaking(int amplitude)
 {
-	// shaking disabled
+	// Called from LM_SHAKING life script opcode
+	// amplitude = 0 means stop shaking (handled by stopShaking() in life.cpp)
+	// amplitude > 0 means start shaking with given intensity
+	if (amplitude > 0)
+	{
+		shakingAmplitude = amplitude;
+		s_shakeMaxAmplitude = amplitude;
+		s_shakeFramesRemaining = 60; // Shake for ~1 second (60 frames at 60fps)
+	}
 }
 
 void pauseShaking()
@@ -406,6 +446,9 @@ void allocTextes(void)
 
 				*(currentPosInTextes-1) = 0; // add the end of string
 
+				if(textCounter >= NUM_MAX_TEXT_ENTRY)
+					break;
+
 				tabTextes[textCounter].index = stringIndex;
 				tabTextes[textCounter].textPtr = stringPtr;
 				tabTextes[textCounter].width = ExtGetSizeFont(stringPtr);
@@ -530,6 +573,11 @@ void OpenProgram(void)
 	case AITD1:
 		{
 			PtrCadre = CheckLoadMallocPak("ITD_RESS",4);
+			break;
+		}
+	case TIMEGATE:
+		{
+			PtrCadre = CheckLoadMallocPak("ITD_RESS",0);
 			break;
 		}
 	}
@@ -664,11 +712,12 @@ void AffRect(int x1, int y1, int x2, int y2, char color) // fast recode. No RE
 
 void loadPalette(void)
 {
-    palette_t localPalette;
+	palette_t localPalette;
 
 	if(g_gameId == AITD2)
 	{
 		//loadPakToPtr("ITD_RESS",59,aux);
+		return; // palette data not loaded for AITD2 yet
 	}
 	else
 	{
@@ -684,10 +733,45 @@ void loadPalette(void)
 
 void turnPageForward()
 {
+	// Force SD background path during animation - our composited data
+	// is uploaded to g_backgroundTexture (paletted R8U), but when HD
+	// backgrounds are active the renderer draws g_hdBackgroundTexture instead.
+	bool savedHD = g_currentBackgroundIsHD;
+	g_currentBackgroundIsHD = false;
+
+	osystem_pageTurnCapture();
+	osystem_CopyBlockPhys((unsigned char*)logicalScreen, 0, 0, 320, 200);
+
+	const int NUM_STEPS = 15;
+	for (int step = 0; step <= NUM_STEPS; step++)
+	{
+		float progress = (float)step / (float)NUM_STEPS;
+		osystem_pageTurnFrame(progress, true, (unsigned char*)logicalScreen);
+		process_events();
+	}
+
+	osystem_CopyBlockPhys((unsigned char*)logicalScreen, 0, 0, 320, 200);
+	g_currentBackgroundIsHD = savedHD;
 }
 
 void turnPageBackward()
 {
+	bool savedHD = g_currentBackgroundIsHD;
+	g_currentBackgroundIsHD = false;
+
+	osystem_pageTurnCapture();
+	osystem_CopyBlockPhys((unsigned char*)logicalScreen, 0, 0, 320, 200);
+
+	const int NUM_STEPS = 15;
+	for (int step = 0; step <= NUM_STEPS; step++)
+	{
+		float progress = (float)step / (float)NUM_STEPS;
+		osystem_pageTurnFrame(progress, false, (unsigned char*)logicalScreen);
+		process_events();
+	}
+
+	osystem_CopyBlockPhys((unsigned char*)logicalScreen, 0, 0, 320, 200);
+	g_currentBackgroundIsHD = savedHD;
 }
 
 void readBook(int index, int type, int vocIndex)
@@ -952,7 +1036,10 @@ int Lire(int index, int startx, int top, int endx, int bottom, int demoMode, int
 		}
 		else
 		{
-			ptrpage[page+1] = ptrt;
+			if(page + 1 < (int)ptrpage.size())
+				ptrpage[page+1] = ptrt;
+			else
+				quit = 1;
 		}
 
 		if(demoMode == 0)
@@ -1157,10 +1244,6 @@ int Lire(int index, int startx, int top, int endx, int bottom, int demoMode, int
 	HQ_Free_Malloc(HQ_Memory, textIndexMalloc);
 
 	return(demoMode);
-}
-
-extern "C" {
-	extern char homePath[512];
 }
 
 void LoadWorld(void)
@@ -2041,6 +2124,10 @@ void InitDeplacement(int trackMode, int trackNumber)
 			currentProcessedActorPtr->trackNumber = trackNumber;
 			currentProcessedActorPtr->positionInTrack = 0;
 			currentProcessedActorPtr->MARK = -1;
+			// Reset speed interpolator so there is no leftover state from a prior
+			// trackMode (e.g. follow-mode speedChange mid-ramp) that would produce
+			// incorrect movement speed at the start of the patrol track.
+			currentProcessedActorPtr->speedChange.numSteps = 0;
 			break;
 		}
 	}
@@ -2712,9 +2799,10 @@ void drawZv(tObject* actorPtr)
 
 	if( actorPtr->room != ListObjets[currentCameraTargetActor].room )
 	{
-        if (ListObjets[currentCameraTargetActor].room == -1) {
-            return;
-        }
+		if (ListObjets[currentCameraTargetActor].room == -1) {
+			return;
+		}
+		CopyZV(&actorPtr->zv,&localZv);
 		AdjustZV(&localZv, actorPtr->room, ListObjets[currentCameraTargetActor].room);
 	}
 	else
@@ -4650,6 +4738,70 @@ void startGame(int startupFloor, int startupRoom, int allowSystemMenu)
 	fadeOut(8,0);*/
 }
 
+// Scales an RGBA source image to fill exactly the pixel region (x1,y1)-(x2,y2) inclusive
+// in logicalScreen, using bilinear interpolation + nearest-palette matching.
+// Used exclusively by the save/load slot selection screen.
+static void fillSavePreviewToFrame(int x1, int y1, int x2, int y2,
+								   unsigned char* sourceBuffer, int srcWidth, int srcHeight)
+{
+	int destW = x2 - x1 + 1;
+	int destH = y2 - y1 + 1;
+	if (destW <= 0 || destH <= 0 || !sourceBuffer) return;
+
+	float scaleX = (destW > 1) ? (float)(srcWidth  - 1) / (float)(destW - 1) : 0.0f;
+	float scaleY = (destH > 1) ? (float)(srcHeight - 1) / (float)(destH - 1) : 0.0f;
+
+	for (int y = 0; y < destH; y++)
+	{
+		for (int x = 0; x < destW; x++)
+		{
+			float srcXf = x * scaleX;
+			float srcYf = y * scaleY;
+
+			int srcX0 = (int)srcXf;
+			int srcY0 = (int)srcYf;
+			int srcX1c = (srcX0 + 1 < srcWidth)  ? srcX0 + 1 : srcX0;
+			int srcY1c = (srcY0 + 1 < srcHeight) ? srcY0 + 1 : srcY0;
+
+			float fx  = srcXf - srcX0;
+			float fy  = srcYf - srcY0;
+			float fx1 = 1.0f - fx;
+			float fy1 = 1.0f - fy;
+
+			int idx00 = (srcY0  * srcWidth + srcX0)  * 4;
+			int idx10 = (srcY0  * srcWidth + srcX1c) * 4;
+			int idx01 = (srcY1c * srcWidth + srcX0)  * 4;
+			int idx11 = (srcY1c * srcWidth + srcX1c) * 4;
+
+			float r = (sourceBuffer[idx00+0]*fx1 + sourceBuffer[idx10+0]*fx)*fy1
+					+ (sourceBuffer[idx01+0]*fx1 + sourceBuffer[idx11+0]*fx)*fy;
+			float g = (sourceBuffer[idx00+1]*fx1 + sourceBuffer[idx10+1]*fx)*fy1
+					+ (sourceBuffer[idx01+1]*fx1 + sourceBuffer[idx11+1]*fx)*fy;
+			float b = (sourceBuffer[idx00+2]*fx1 + sourceBuffer[idx10+2]*fx)*fy1
+					+ (sourceBuffer[idx01+2]*fx1 + sourceBuffer[idx11+2]*fx)*fy;
+
+			int ri = (int)(r + 0.5f);
+			int gi = (int)(g + 0.5f);
+			int bi = (int)(b + 0.5f);
+
+			int bestIdx = 0, bestDist = 999999;
+			for (int i = 16; i < 256; i++)
+			{
+				int pr = currentGamePalette[i][0];
+				int pg = currentGamePalette[i][1];
+				int pb = currentGamePalette[i][2];
+				int dist = (ri-pr)*(ri-pr) + (gi-pg)*(gi-pg) + (bi-pb)*(bi-pb);
+				if (dist < bestDist) { bestDist = dist; bestIdx = i; }
+			}
+
+			int dstX = x1 + x;
+			int dstY = y1 + y;
+			if (dstX >= 0 && dstX < 320 && dstY >= 0 && dstY < 200)
+				logicalScreen[dstY * 320 + dstX] = (char)bestIdx;
+		}
+	}
+}
+
 int parseAllSaves(int arg)
 {
 	const int NUM_SAVE_SLOTS = 9; // Slots 0-8 (slot 9 would overflow menu)
@@ -4658,6 +4810,7 @@ int parseAllSaves(int arg)
 	int selectedSlot = -1;
 	char buffer[512];
 	int initialDelay = 15; // Frames to wait before accepting Enter/click to prevent accidental selection
+	static u32 s_saveMenuSelTime = 0; // For pulsing highlight effect
 
 	// Preview image state
 	unsigned char* previewImageData = NULL;
@@ -4704,7 +4857,10 @@ int parseAllSaves(int arg)
 			if(saveExists[currentSelectedSlot])
 			{
 				char pngPath[512];
-				sprintf(pngPath, "SAVE%d.png", currentSelectedSlot);
+				strcpy(pngPath, homePath);
+				char pngFile[32];
+				sprintf(pngFile, "SAVE%d.png", currentSelectedSlot);
+				strcat(pngPath, pngFile);
 				int channels = 0;
 				previewImageData = stbi_load(pngPath, &previewImageW, &previewImageH, &channels, 4);
 			}
@@ -4734,10 +4890,20 @@ int parseAllSaves(int arg)
 				sprintf(buffer, "Slot %d - Empty", i);
 			}
 
-			// Highlight selected slot
+			// Highlight selected slot with pulsing effect
 			if(i == currentSelectedSlot)
 			{
-				AffRect(20, yPos - 1, 160, yPos + 14, 100);
+				u32 now = SDL_GetTicks();
+				// Calculate selection pop effect
+				int pop = 0;
+				if(now - s_saveMenuSelTime < 250)
+				{
+					float t = (float)(now - s_saveMenuSelTime) / 250.0f;
+					pop = (int)(sinf(t * 3.14159f) * 6.0f);
+				}
+				// Pulsing highlight color
+				char color = (char)(100 + (int)(fabsf(sinf((float)now * 0.004f)) * 8.0f));
+				AffRect(28, yPos - 1 - pop/2, 160 + pop*2, yPos + 14 + pop, color);
 
 				// Draw text with highlight
 				SetFont(PtrFont, 15);
@@ -4756,11 +4922,15 @@ int parseAllSaves(int arg)
 
 		if(previewImageData && previewImageW > 0 && previewImageH > 0)
 		{
-			scaleDownImageHD(175, 35, previewImageData, previewImageW, previewImageH);
+			// Fill from the content area top (WindowY1=43) all the way down to y=126,
+			// just before the bottom bar sprite at y=127. This covers the 10-pixel black
+			// gap that exists between WindowY2=116 and the visible bottom golden bar.
+			// Corner sprites live at x=175-182 / x=287+ so x=183-286 is clear to overwrite.
+			fillSavePreviewToFrame(183, 43, 286, 126, previewImageData, previewImageW, previewImageH);
 		}
 		else if(saveExists[currentSelectedSlot])
 		{
-			// Save exists but no preview PNG � show "No Preview" text
+			// Save exists but no preview PNG - show "No Preview" text
 			SetFont(PtrFont, 4);
 			PrintFont(185, 70, logicalScreen, (u8*)"No Preview");
 		}
@@ -4810,6 +4980,7 @@ int parseAllSaves(int arg)
 				if(currentSelectedSlot < 0)
 					currentSelectedSlot = NUM_SAVE_SLOTS - 1;
 				notifyTTFMenuSelectionChanged();
+				s_saveMenuSelTime = SDL_GetTicks();
 				AntiRebond = 1;
 			}
 			// Down arrow
@@ -4819,6 +4990,7 @@ int parseAllSaves(int arg)
 				if(currentSelectedSlot >= NUM_SAVE_SLOTS)
 					currentSelectedSlot = 0;
 				notifyTTFMenuSelectionChanged();
+				s_saveMenuSelTime = SDL_GetTicks();
 				AntiRebond = 1;
 			}
 		}

@@ -9,6 +9,11 @@
 
 #include "common.h"
 #include "zlib.h"
+#include <filesystem>
+
+extern "C" {
+    extern char homePath[512];
+}
 
 // Minimal PNG writer using zlib for IDAT compression
 static void writePNGChunk(FILE* f, const char* type, const unsigned char* data, unsigned int length)
@@ -133,7 +138,14 @@ int loadSave(int saveNumber)
     int i;
     int oldNumMaxObj;
 
-    sprintf(buffer,"SAVE%d.ITD",saveNumber);
+    {
+        std::filesystem::path savePath = std::filesystem::path(homePath) / ("SAVE" + std::to_string(saveNumber) + ".ITD");
+        std::string pathStr = savePath.string();
+        if (pathStr.size() < sizeof(buffer))
+            strcpy(buffer, pathStr.c_str());
+        else
+            sprintf(buffer, "SAVE%d.ITD", saveNumber);
+    }
 
     fHandle = fopen(buffer,"rb");
 
@@ -336,7 +348,12 @@ int loadSave(int saveNumber)
     fseek(fHandle,offsetToVars,SEEK_SET);
 
     fread(&tempVarSize,2,1,fHandle);
-    varSize = tempVarSize;
+    {
+        int savedVarSize = varSize; // varSize set by LoadWorld from VARS.ITD
+        varSize = tempVarSize;
+        if (varSize > savedVarSize)
+            varSize = savedVarSize; // clamp to allocated buffer size
+    }
 
     fread(vars,varSize,1,fHandle);
 
@@ -355,8 +372,8 @@ int loadSave(int saveNumber)
 
     fseek(fHandle,16,SEEK_SET);
     fread(&offsetToActors,4,1,fHandle);
-    offsetToVars = ((offsetToActors & 0xFF) << 24) | ((offsetToActors & 0xFF00) << 8) | (( offsetToActors & 0xFF0000) >> 8) | ((offsetToActors & 0xFF000000) >> 24);
-    fseek(fHandle,offsetToVars,SEEK_SET);
+    offsetToActors = ((offsetToActors & 0xFF) << 24) | ((offsetToActors & 0xFF00) << 8) | (( offsetToActors & 0xFF0000) >> 8) | ((offsetToActors & 0xFF000000) >> 24);
+    fseek(fHandle,offsetToActors,SEEK_SET);
 
     for(i=0;i<NUM_MAX_OBJECT;i++)
     {
@@ -650,7 +667,14 @@ int makeSaveFile(int entry)
 		}
 	}
 
-    sprintf(buffer,"SAVE%d.ITD",entry);
+    {
+        std::filesystem::path savePath = std::filesystem::path(homePath) / ("SAVE" + std::to_string(entry) + ".ITD");
+        std::string pathStr = savePath.string();
+        if (pathStr.size() < sizeof(buffer))
+            strcpy(buffer, pathStr.c_str());
+        else
+            sprintf(buffer, "SAVE%d.ITD", entry);
+    }
 
     fHandle = fopen(buffer,"wb+");
 
@@ -869,11 +893,9 @@ int makeSaveFile(int entry)
 
         //    ASSERT(sizeof(actorTable[i].zv.ZVX1) == 2);
         fwrite(&ListObjets[i].zv.ZVX1,2,1,fHandle);
-        ListObjets[i].zv.ZVX1 = (s16)ListObjets[i].zv.ZVX1;
 
         //    ASSERT(sizeof(actorTable[i].zv.ZVX2) == 2);
         fwrite(&ListObjets[i].zv.ZVX2,2,1,fHandle);
-        ListObjets[i].zv.ZVX2 = (s16)ListObjets[i].zv.ZVX2;
 
         //    ASSERT(sizeof(actorTable[i].zv.ZVY1) == 2);
         fwrite(&ListObjets[i].zv.ZVY1,2,1,fHandle);
@@ -1070,9 +1092,8 @@ int makeSaveFile(int entry)
     int previewH = osystem_getScenePreviewHeight();
     if (previewData && previewW > 0 && previewH > 0)
     {
-        char pngFile[100];
-        sprintf(pngFile, "SAVE%d.png", entry);
-        writePNG(pngFile, previewData, previewW, previewH);
+        std::filesystem::path pngPath = std::filesystem::path(homePath) / ("SAVE" + std::to_string(entry) + ".png");
+        writePNG(pngPath.string().c_str(), previewData, previewW, previewH);
     }
 
     return 1;

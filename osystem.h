@@ -104,11 +104,16 @@
 
 	void osystem_drawControllerHint();
 
+	void osystem_drawVignette();
+
+	void osystem_drawBlackScreen();
+
 	void osystem_startBgPoly();
 	void osystem_endBgPoly();
 	void osystem_addBgPolyPoint(int x, int y);
 
 	int osystem_playTrack(int trackId);
+	void osystem_stopTrack();
 	void osystem_playAdlib();
 
 	// Scene preview capture for pause menu
@@ -119,5 +124,9 @@
 	unsigned char* osystem_getScenePreviewData();
 	int osystem_getScenePreviewWidth();
 	int osystem_getScenePreviewHeight();
+
+	// Page turn animation
+	void osystem_pageTurnCapture();
+	void osystem_pageTurnFrame(float progress, bool forward, unsigned char* newPage);
 
 #endif

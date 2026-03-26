@@ -280,8 +280,42 @@ void GereFrappe(void)
 
             break;
         }
-    case 8: // HIT_OBJ
+    case 8: // HIT_OBJ - Projectile collision checking (used by painting axes/arrows)
         {
+            // This case handles continuous collision checking for projectiles
+            // that use hit_object(range, force) opcode. The script checks actor_collider
+            // to see what was hit and handles the damage/despawn in script.
+
+            int x = currentProcessedActorPtr->roomX + currentProcessedActorPtr->stepX;
+            int y = currentProcessedActorPtr->roomY + currentProcessedActorPtr->stepY;
+            int z = currentProcessedActorPtr->roomZ + currentProcessedActorPtr->stepZ;
+
+            int range = currentProcessedActorPtr->animActionParam;
+
+            ZVStruct rangeZv;
+            rangeZv.ZVX1 = x - range;
+            rangeZv.ZVX2 = x + range;
+            rangeZv.ZVY1 = y - range;
+            rangeZv.ZVY2 = y + range;
+            rangeZv.ZVZ1 = z - range;
+            rangeZv.ZVZ2 = z + range;
+
+            // Check for collisions with other actors
+            int collision = CheckObjectCol(currentProcessedActorIdx, &rangeZv);
+
+            // Process collisions - set HIT_BY and hitForce on hit actors
+            // The script will check actor_collider (COL[0]) to handle damage/despawn
+            for (int i = 0; i < collision; i++)
+            {
+                int hitActorIdx = currentProcessedActorPtr->COL[i];
+                tObject* hitActorPtr = &ListObjets[hitActorIdx];
+
+                // Set damage info on the hit actor
+                currentProcessedActorPtr->HIT = hitActorIdx;
+                hitActorPtr->HIT_BY = currentProcessedActorIdx;
+                hitActorPtr->hitForce = currentProcessedActorPtr->hitForce;
+            }
+
             break;
         }
     case 9: // during throw (handles both thrown objects AND gun projectiles)
