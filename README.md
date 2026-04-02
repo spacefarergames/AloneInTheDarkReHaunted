@@ -7,10 +7,7 @@
 *Author: Jake Jackson (jake@spacefarergames.com)*
 
 <img width="1386" height="884" alt="image" src="https://github.com/user-attachments/assets/7d49eb5a-8d31-4474-a939-ff9876fdc9df" />
-
-![Alt text](AITDREHAUNTED(4).png)
 <img width="982" height="706" alt="image" src="https://github.com/user-attachments/assets/b0206b5f-8026-46d0-89a6-b5dc6b7ba73e" />
-
 
 ---
 
