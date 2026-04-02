@@ -32,7 +32,7 @@ void main()
         // Scale noise strength based on how dark the area is
         // Darker areas get more pronounced noise
         float noiseStrength = (noiseThreshold - luminance) / noiseThreshold;
-        gl_FragColor = baseColor * (0.5f + (noise/2.f) * noiseStrength);
+        gl_FragColor = baseColor * (0.85f + (noise * 0.15f) * noiseStrength);
     }
     else
     {
