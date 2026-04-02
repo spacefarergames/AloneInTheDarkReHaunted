@@ -10,6 +10,8 @@
 #ifndef _RENDERER_H_
 #define _RENDERER_H_
 
+#include <string>
+
 extern int BBox3D1;
 extern int BBox3D2;
 extern int BBox3D3;
@@ -25,10 +27,14 @@ void transformPoint(float* ax, float* bx, float* cx);
 
 int AffObjet(int x, int y, int z, int alpha, int beta, int gamma, sBody* pBody);
 
+void setCurrentBodyNum(int bodyNum, sBody* pBody, const std::string& hqrName);
+
 void computeScreenBox(int x, int y, int z, int alpha, int beta, int gamma, sBody* bodyPtr);
 
 void drawBlobShadow(int x, int y, int z, int alpha, int beta, int gamma, sBody* bodyPtr);
 
 void drawPlanarShadow(int x, int y, int z, int alpha, int beta, int gamma, sBody* bodyPtr);
+
+void drawWallPlanarShadow(int x, int y, int z, int alpha, int beta, int gamma, sBody* bodyPtr, int actorRoom);
 
 #endif

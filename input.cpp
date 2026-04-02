@@ -40,6 +40,14 @@ ControllerState g_controllerState = {
     0.0f     // rightStickY
 };
 
+// Window resize flag - set when window dimensions change
+bool g_windowWasResized = false;
+
+void resetWindowResizeFlag()
+{
+    g_windowWasResized = false;
+}
+
 void handleKeyDown(SDL_Event& event)
 {
     switch (event.key.key)
@@ -55,6 +63,9 @@ void handleKeyDown(SDL_Event& event)
         {
             toggleFullscreen();
         }
+        break;
+    case SDL_SCANCODE_F11:
+        toggleFullscreen();
         break;
     }
 }
@@ -87,6 +98,12 @@ void readKeyboard(void)
             {
                 toggleFullscreen();
             }
+            break;
+        case SDL_EVENT_WINDOW_RESIZED:
+        case SDL_EVENT_WINDOW_MAXIMIZED:
+        case SDL_EVENT_WINDOW_RESTORED:
+            // Mark that the window was resized so menus can redraw
+            g_windowWasResized = true;
             break;
         case SDL_EVENT_GAMEPAD_ADDED:
         case SDL_EVENT_GAMEPAD_REMOVED:
@@ -148,6 +165,9 @@ void readKeyboard(void)
                 break;
             case SDL_SCANCODE_ESCAPE:
                 key = 0x1B;
+                break;
+            case SDL_SCANCODE_TAB:
+                key = 0x0F;
                 break;
             default:
                 // Check configurable key bindings
@@ -401,6 +421,10 @@ void updateController()
     // Back/Select button = Toggle debug menu (Debug builds only)
     if (SDL_GetGamepadButton(g_controllerState.gamepad, SDL_GAMEPAD_BUTTON_BACK))
         debuggerVar_debugMenuDisplayed ^= 1;
+#else
+    // Back/Select button = Open map (Release builds)
+    if (SDL_GetGamepadButton(g_controllerState.gamepad, SDL_GAMEPAD_BUTTON_BACK))
+        key = 0x0F;
 #endif
 
     // Quick turn shoulder buttons

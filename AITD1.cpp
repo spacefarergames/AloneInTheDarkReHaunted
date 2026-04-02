@@ -12,6 +12,7 @@
 #include "hdBackground.h"
 #include "hdBackgroundRenderer.h"
 #include "fontTTF.h"
+#include "bgfxGlue.h"
 #include "startupMenu.h"
 
 // DEMO mapping
@@ -214,6 +215,9 @@ int makeIntroScreens(void)
     LastPriority = 0; */
     turnPageFlag = 1;
     Lire(CVars[getCVarsIdx(TEXTE_CREDITS)] + 1, 48, 2, 260, 197, 1, 26, 0);
+
+    // Note: TTF text will be rendered when the normal game loop starts via EndFrame()
+    // We don't manually render here as it would conflict with the multi-threaded rendering system
 
     setCurrentAnimatedHDBackground(nullptr);
     return(0);
@@ -504,7 +508,9 @@ int ChoosePerso(void)
 
                 FastCopyScreen(logicalScreen, aux);
                 g_portraitOverlayChoice = 0;
+                g_voPitchMultiplier = 1.15f;
                 Lire(CVars[getCVarsIdx(INTRO_HERITIERE)] + 1, 165, 5, 314, 194, 2, 15, 0, 1);
+                g_voPitchMultiplier = 1.0f;
                 CVars[getCVarsIdx(CHOOSE_PERSO)] = 1;
                 break;
             }
@@ -544,7 +550,9 @@ int ChoosePerso(void)
 
                 FastCopyScreen(logicalScreen, aux);
                 g_portraitOverlayChoice = 1;
+                g_voPitchMultiplier = 1.05f;
                 Lire(CVars[getCVarsIdx(INTRO_DETECTIVE)] + 1, 5, 5, 154, 194, 2, 15, 0, 0);
+                g_voPitchMultiplier = 1.0f;
                 CVars[getCVarsIdx(CHOOSE_PERSO)] = 0;
                 break;
             }

@@ -100,7 +100,13 @@ static unsigned short cpdist8[] = {
 };
 
 #define PAK_NEXTBYTE ((pG->off_src<pG->csize)?(pG->buf_src[pG->off_src++]):0)
-#define PAK_FLUSH(size) { memcpy(pG->buf_dst + pG->off_dst, PAK_slide, size); pG->off_dst += size; }
+#define PAK_FLUSH(size) { \
+    unsigned long _fs = (size); \
+    if(pG->off_dst + _fs > pG->ucsize) { \
+        _fs = (pG->off_dst < pG->ucsize) ? (pG->ucsize - pG->off_dst) : 0; \
+    } \
+    if(_fs) { memcpy(pG->buf_dst + pG->off_dst, PAK_slide, _fs); pG->off_dst += _fs; } \
+}
 
 #define PAK_NEEDBITS(n) {while(k<(n)){b|=((unsigned long)PAK_NEXTBYTE)<<k;k+=8;}}
 #define PAK_DUMPBITS(n) {b>>=(n);k-=(n);}

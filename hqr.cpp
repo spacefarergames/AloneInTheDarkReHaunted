@@ -13,26 +13,6 @@
 #include "safeDelete.h"
 
 template <typename T>
-struct hqrSubEntryStruct
-{
-    s16 key;
-    s16 size;
-    unsigned int lastTimeUsed;
-    T* ptr;
-};
-
-template <typename T>
-struct hqrEntryStruct
-{
-    std::string string;
-    u16 maxFreeData;
-    u16 sizeFreeData;
-    u16 numMaxEntry;
-    u16 numUsedEntry;
-    std::vector<hqrSubEntryStruct<T>> entries;
-};
-
-template <typename T>
 hqrSubEntryStruct<T>* quickFindEntry(int index, int numMax, std::vector<hqrSubEntryStruct<T>>& ptr) // no RE. Original was probably faster
 {
     for(int i=0;i<numMax;i++)
@@ -78,7 +58,24 @@ int HQ_Malloc(hqrEntryStruct<char>* hqrPtr,int size)
     if(hqrPtr->sizeFreeData<size)
         return(-1);
 
-    entryNum = hqrPtr->numUsedEntry;
+    // Reuse a freed slot (ptr == nullptr) if available, otherwise append
+    entryNum = -1;
+    for(int i = 0; i < hqrPtr->numUsedEntry; i++)
+    {
+        if(hqrPtr->entries[i].ptr == nullptr)
+        {
+            entryNum = i;
+            break;
+        }
+    }
+
+    if(entryNum == -1)
+    {
+        if(hqrPtr->numUsedEntry >= hqrPtr->numMaxEntry)
+            return(-1);
+        entryNum = hqrPtr->numUsedEntry;
+        hqrPtr->numUsedEntry++;
+    }
 
     key = hqrKeyGen;
 
@@ -88,7 +85,6 @@ int HQ_Malloc(hqrEntryStruct<char>* hqrPtr,int size)
     hqrPtr->entries[entryNum].size = size;
     hqrPtr->entries[entryNum].ptr = (char*)malloc(size);
 
-    hqrPtr->numUsedEntry++;
     hqrPtr->sizeFreeData -= size;
 
     hqrKeyGen++;
@@ -477,7 +473,7 @@ void HQR_Reset(hqrEntryStruct<T>* hqrPtr)
         {
             if constexpr (std::is_same_v<T, char>) {
                 // Use safe delete for char arrays
-                SafeDelete::SafeDeleteObject(hqrPtr->entries[i].ptr);
+                SafeDelete::SafeDeleteArray(hqrPtr->entries[i].ptr);
                 if (hqrPtr->entries[i].ptr) {
                     // If SafeDelete failed, try normal deletion
                     try {
@@ -533,6 +529,17 @@ void configureHqrHero(hqrEntryStruct<T>* hqrPtr, const char* name)
 
 void HQ_Free_Malloc(hqrEntryStruct<char>* hqrPtr, int index)
 {
+    if(index < 0)
+        return;
+
+    hqrSubEntryStruct<char>* entry = quickFindEntry(index, hqrPtr->numUsedEntry, hqrPtr->entries);
+
+    if(!entry)
+        return;
+
+    free(entry->ptr);
+    entry->ptr = nullptr;
+    hqrPtr->sizeFreeData += entry->size;
 }
 
 template

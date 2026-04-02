@@ -374,6 +374,12 @@ void renderTTFText()
     if (g_textQueue.empty())
         return;
 
+    // Safety check: ensure we're inside an ImGui frame
+    // This prevents crashes when renderTTFText() is called before imguiBeginFrame()
+    extern bool g_imguiFrameActive;
+    if (!g_imguiFrameActive)
+        return;
+
     // Get palette colors (RGB format: 3 bytes per color)
     extern char RGB_Pal[256 * 3];
 
@@ -389,8 +395,21 @@ void renderTTFText()
     {
         printf(TTF_TAG CON_CYAN "Resolution: " CON_RESET "%dx%d -> %dx%d\n",
             g_lastResolutionX, g_lastResolutionY, outputResolution[0], outputResolution[1]);
+
+        // Only clear text queue if this is a real resolution change (not initial setup)
+        // Initial setup has g_lastResolutionX/Y at 0, so skip clearing in that case
+        // This prevents intro book text from being cleared before it can render
+        bool isInitialSetup = (g_lastResolutionX == 0 && g_lastResolutionY == 0);
+
         g_lastResolutionX = outputResolution[0];
         g_lastResolutionY = outputResolution[1];
+
+        if (!isInitialSetup)
+        {
+            // Clear stale text so menus re-queue with correct width measurements
+            clearTTFTextQueue();
+            g_lastTextQueueFrame = g_ttfFrameCounter;
+        }
     }
 
     // Adjust font scale on the fly to match current resolution.

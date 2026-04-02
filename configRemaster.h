@@ -29,6 +29,8 @@ struct RemasterConfig
         bool enableFiltering;
         bool enableBlurredMenu;
         float menuBlurAmount;
+        bool enableHints;
+        bool enableArtwork;
     } graphics;
 
     // Post-processing settings
@@ -45,6 +47,14 @@ struct RemasterConfig
         bool enableVignette;
         float vignetteIntensity;
         float vignetteRadius;
+        // SSGI (Screen-Space Global Illumination)
+        bool enableSSGI;
+        float ssgiRadius;
+        float ssgiIntensity;
+        int ssgiNumSamples;
+        // Light Probes
+        bool enableLightProbes;
+        float lightProbeIntensity;
     } postProcessing;
 
     // External music settings (for future implementation)
@@ -66,6 +76,12 @@ struct RemasterConfig
         int keyBindings[9];     // SDL_Scancode per action (ACTION_COUNT = 9)
         int gamepadBindings[9]; // SDL_GamepadButton per action
     } controls;
+
+    // Mask dumping/loading settings
+    struct {
+        bool dumpEnabled;       // Dump generated masks to PNG for artist editing (default: false)
+        bool loadEnabled;       // Load hand-edited masks from masks_hd/ directory (default: true)
+    } masks;
 };
 
 extern RemasterConfig g_remasterConfig;

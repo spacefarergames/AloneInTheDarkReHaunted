@@ -449,12 +449,14 @@ struct OcornutImguiContext
 #endif // USE_ENTRY
 
 		ImGui::NewFrame();
+		g_imguiFrameActive = true;
 
 		//ImGuizmo::BeginFrame();
 	}
 
 	void endFrame()
 	{
+		g_imguiFrameActive = false;
 		ImGui::Render();
 		//ImGui::UpdatePlatformWindows();
 		render(ImGui::GetDrawData());
@@ -522,6 +524,10 @@ struct OcornutImguiContext
 };
 
 static OcornutImguiContext s_ctx;
+
+// Track whether we're between ImGui::NewFrame() and ImGui::Render()
+// Used by renderTTFText() to avoid crashes when called outside a frame
+bool g_imguiFrameActive = false;
 
 static void* memAlloc(size_t _size, void* _userData)
 {

@@ -249,11 +249,11 @@ int InitSpecialObjet(int mode, int X, int Y, int Z, int stage, int room, int alp
 
         for (j = 0; j < 20; j++)
         {
-            *(s16*)flowPtr = randRange(-20, 20); //X offset
+            *(s16*)flowPtr = randRange(-60, 60); //X offset (wide splatter)
             flowPtr += 2;
-            *(s16*)flowPtr = randRange(-20, 20); //Y offset
+            *(s16*)flowPtr = randRange(-15, 15); //Y offset (flatter initial spread)
             flowPtr += 2;
-            *(s16*)flowPtr = randRange(-20, 20); //Z offset
+            *(s16*)flowPtr = randRange(-60, 60); //Z offset (wide splatter)
             flowPtr += 2;
         }
 
@@ -272,7 +272,7 @@ int InitSpecialObjet(int mode, int X, int Y, int Z, int stage, int room, int alp
         currentActorPtr->zv.ZVZ1 = Z - 15;
         currentActorPtr->zv.ZVZ2 = Z + 15;
 
-        currentActorPtr->END_FRAME = 40; // lifetime in frames
+        currentActorPtr->END_FRAME = 25; // lifetime in frames (fast spray)
         break;
     }
     case 2: // bullet hole / impact
@@ -1595,10 +1595,8 @@ void processLife(int lifeNum, bool callFoundLife)
                         &currentProcessedActorPtr->zv);
                     break;
                 }
-                case 1: // flow
+                case 1: // flow - spawn blood at the victim (current actor), not the hitter
                 {
-                    currentProcessedActorPtr = &ListObjets[currentProcessedActorPtr->HIT_BY];
-
                     InitSpecialObjet(1,
                         currentProcessedActorPtr->roomX + currentProcessedActorPtr->stepX + currentProcessedActorPtr->hotPoint.x,
                         currentProcessedActorPtr->roomY + currentProcessedActorPtr->stepY + currentProcessedActorPtr->hotPoint.y,
@@ -1609,9 +1607,6 @@ void processLife(int lifeNum, bool callFoundLife)
                         -currentProcessedActorPtr->beta,
                         0,
                         NULL);
-
-                    currentProcessedActorPtr = currentLifeActorPtr;
-
 
                     break;
                 }
@@ -2423,24 +2418,10 @@ void processLife(int lifeNum, bool callFoundLife)
 
                 break;
             }
-            case LM_END_SEQUENCE: // ENDING
+            case LM_END_SEQUENCE: // ends a scripted cinematic sequence, game continues
             {
                 appendFormated("LM_END_SEQUENCE ");
-                printf(LIFE_TAG "LM_END_SEQUENCE - Triggering game ending\n");
-
-                // Fade out music before ending
-                fadeMusic(0, 0, 0x8000);
-                startChrono(&musicChrono);
-
-                // Wait briefly for music to fade
-                while (evalChrono(&musicChrono) < 60)
-                {
-                    process_events();
-                }
-
-                // Set game over flag to exit the main game loop
-                FlagGameOver = 1;
-                exitLife = 1;
+                printf(LIFE_TAG "LM_END_SEQUENCE - Ending cinematic sequence, gameplay continues\n");
                 break;
             }
             ////////////////////////////////////////////////////////////////////////

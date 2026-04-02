@@ -9,6 +9,8 @@
 
 #include "common.h"
 #include "fontTTF.h"
+#include "input.h"
+#include "configRemaster.h"
 #include <SDL.h>
 #include <math.h>
 
@@ -48,7 +50,7 @@ void DrawMenu(int selectedEntry)
     if (g_gameId == AITD3) {
         LoadPak("ITD_RESS", 13, logicalScreen);
     }
-    else {
+    else if (detailLevel == 0) {
         AffBigCadre(160, 100, 320, 80);
     }
 
@@ -71,10 +73,22 @@ void DrawMenu(int selectedEntry)
                     if (t < 1.0f)
                         pop = (int)(sinf(t * 3.14159f) * 6.0f);
                 }
-                int x1 = 10 - pop;
-                int x2 = 309 + pop;
-                if (x1 < 8) x1 = 8;
-                if (x2 > 311) x2 = 311;
+                int x1, x2;
+                if (g_remasterConfig.graphics.enableArtwork)
+                {
+                    // Constrain selector within the artwork's black box area
+                    x1 = 65 - pop;
+                    x2 = 255 + pop;
+                    if (x1 < 63) x1 = 63;
+                    if (x2 > 257) x2 = 257;
+                }
+                else
+                {
+                    x1 = 10 - pop;
+                    x2 = 309 + pop;
+                    if (x1 < 8) x1 = 8;
+                    if (x2 > 311) x2 = 311;
+                }
                 AffRect(x1, currentY, x2, currentY+16, color);
                 SelectedMessage(160, currentY, i + 11, 15, 4);
             }
@@ -107,7 +121,8 @@ static int detectAvailableLanguages(int* availableLanguages, int maxCount)
 
 static void DrawLanguageMenu(int* availableLanguages, int availableCount, int selectedEntry)
 {
-    AffBigCadre(160, 100, 320, availableCount * 16 + 32);
+    if (detailLevel == 0)
+        AffBigCadre(160, 100, 320, availableCount * 16 + 32);
 
     int totalHeight = availableCount * 16;
     int currentY = 100 - totalHeight / 2;
@@ -130,10 +145,11 @@ static void DrawLanguageMenu(int* availableLanguages, int availableCount, int se
                 if (t < 1.0f)
                     pop = (int)(sinf(t * 3.14159f) * 6.0f);
             }
-            int x1 = 10 - pop;
-            int x2 = 309 + pop;
-            if (x1 < 8) x1 = 8;
-            if (x2 > 311) x2 = 311;
+            int boxPad = 00;
+            int x1 = textX - boxPad - pop;
+            int x2 = textX + textWidth + boxPad + pop;
+            if (x1 < textX - boxPad - 6) x1 = textX - boxPad - 6;
+            if (x2 > textX + textWidth + boxPad + 6) x2 = textX + textWidth + boxPad + 6;
             AffRect(x1, currentY, x2, currentY+16, color);
 
             SetFont(PtrFont, 4);
@@ -162,6 +178,7 @@ void LanguageSelectionMenu(void)
 
     int currentSelectedEntry = 0;
     int selectedEntry = -1;
+    int AntiRebond = 0;
 
     flushScreen();
 
@@ -176,55 +193,55 @@ void LanguageSelectionMenu(void)
 
     while (selectedEntry == -1)
     {
+        flushScreen();
         DrawLanguageMenu(availableLanguages, availableCount, currentSelectedEntry);
         osystem_CopyBlockPhys((unsigned char*)logicalScreen, 0, 0, 320, 200);
         osystem_startFrame();
 
+        if (detailLevel == 1)
+            osystem_drawLanguageSelectionBackground();
         process_events();
 
-        if (JoyD & 1) // up key
+        // Handle window resize
+        if (g_windowWasResized)
+        {
+            resetWindowResizeFlag();
+            DrawLanguageMenu(availableLanguages, availableCount, currentSelectedEntry);
+            osystem_CopyBlockPhys((unsigned char*)logicalScreen, 0, 0, 320, 200);
+        }
+
+        if(AntiRebond)
+        {
+            if(!JoyD && !key && !Click)
+                AntiRebond = 0;
+        }
+        else if (JoyD & 1) // up key
         {
             currentSelectedEntry--;
             if (currentSelectedEntry < 0)
                 currentSelectedEntry = availableCount - 1;
-
             s_langMenuSelTime = (u32)SDL_GetTicks();
-
             playMenuSound("Navigation.wav");
             notifyTTFMenuSelectionChanged();
-
-            DrawLanguageMenu(availableLanguages, availableCount, currentSelectedEntry);
-            osystem_flip(NULL);
-
-            while (JoyD)
-                process_events();
+            AntiRebond = 1;
         }
-
-        if (JoyD & 2) // down key
+        else if (JoyD & 2) // down key
         {
             currentSelectedEntry++;
             if (currentSelectedEntry >= availableCount)
                 currentSelectedEntry = 0;
-
             s_langMenuSelTime = (u32)SDL_GetTicks();
-
             playMenuSound("Navigation.wav");
             notifyTTFMenuSelectionChanged();
-
-            DrawLanguageMenu(availableLanguages, availableCount, currentSelectedEntry);
-            osystem_flip(NULL);
-
-            while (JoyD)
-                process_events();
+            AntiRebond = 1;
         }
-
-        if (key == 28 || Click != 0) // select
+        else if (key == 28 || Click != 0) // select
         {
             playMenuSound("Select.wav");
             selectedEntry = currentSelectedEntry;
         }
 
-        osystem_drawControllerHint();
+        osystem_drawControllerHint(20.0f);
 
         osystem_stopFrame();
         osystem_flip(NULL);
@@ -249,6 +266,7 @@ int MainMenu(void)
     int currentSelectedEntry = 0;
     unsigned int chrono;
     int selectedEntry = -1;
+    int AntiRebond = 0;
 
     flushScreen();
 
@@ -272,85 +290,63 @@ int MainMenu(void)
     FadeInPhys(16,0);
     startChrono(&chrono);
 
-    while(evalChrono(&chrono) <= 0x10000) // exit loop only if time out or if choice made
-    {
-        DrawMenu(currentSelectedEntry);
-        osystem_CopyBlockPhys((unsigned char*)logicalScreen,0,0,320,200);
-        osystem_startFrame();
+	while(evalChrono(&chrono) <= 0x10000) // exit loop only if time out or if choice made
+	{
+		flushScreen();
+		DrawMenu(currentSelectedEntry);
+		osystem_CopyBlockPhys((unsigned char*)logicalScreen,0,0,320,200);
+		osystem_startFrame();
 
-        if(selectedEntry!=-1 || evalChrono(&chrono) > 0x10000)
-        {
-            break;
-        }
+		if (detailLevel == 1)
+			osystem_drawStartupMenuBackground();
+		if(selectedEntry!=-1 || evalChrono(&chrono) > 0x10000)
+		{
+			break;
+		}
 
-        process_events();
-		osystem_drawBackground();
+		process_events();
 
-        if(JoyD&1) // up key
-        {
-            currentSelectedEntry--;
-
-            if(currentSelectedEntry<0)
-            {
-                currentSelectedEntry = 2;
-            }
-
-            s_mainMenuSelTime = (u32)SDL_GetTicks();
-
-            // Play navigation sound
-            playMenuSound("Navigation.wav");
-
-            // Notify TTF system that menu selection changed
-            notifyTTFMenuSelectionChanged();
-
-            DrawMenu(currentSelectedEntry);
-            osystem_flip(NULL);
-            //      menuWaitVSync();
-
-            startChrono(&chrono);
-
-            while(JoyD)
-            {
-                process_events();
-            }
-        }
+		// Handle window resize
+		if (g_windowWasResized)
+		{
+			resetWindowResizeFlag();
+			DrawMenu(currentSelectedEntry);
+			osystem_CopyBlockPhys((unsigned char*)logicalScreen,0,0,320,200);
+		}
 
 
-        if(JoyD&2) // down key
-        {
-            currentSelectedEntry++;
-
-            if(currentSelectedEntry>2)
-            {
-                currentSelectedEntry = 0;
-            }
-
-            s_mainMenuSelTime = (u32)SDL_GetTicks();
-
-            // Play navigation sound
-            playMenuSound("Navigation.wav");
-
-            // Notify TTF system that menu selection changed
-            notifyTTFMenuSelectionChanged();
-
-            DrawMenu(currentSelectedEntry);
-            //menuWaitVSync();
-            osystem_flip(NULL);
-
-            startChrono(&chrono);
-
-            while(JoyD)
-            {
-                process_events();
-            }
-        }
-
-        if(key == 28 || Click != 0) // select current entry
-        {
-            // Play select sound
-            playMenuSound("Select.wav");
-            selectedEntry = currentSelectedEntry;
-        }
+		if(AntiRebond)
+		{
+			if(!JoyD && !key && !Click)
+				AntiRebond = 0;
+		}
+		else if(JoyD&1) // up key
+		{
+			currentSelectedEntry--;
+			if(currentSelectedEntry<0)
+				currentSelectedEntry = 2;
+			s_mainMenuSelTime = (u32)SDL_GetTicks();
+			playMenuSound("Navigation.wav");
+			notifyTTFMenuSelectionChanged();
+			startChrono(&chrono);
+			AntiRebond = 1;
+		}
+		else if(JoyD&2) // down key
+		{
+			currentSelectedEntry++;
+			if(currentSelectedEntry>2)
+				currentSelectedEntry = 0;
+			s_mainMenuSelTime = (u32)SDL_GetTicks();
+			playMenuSound("Navigation.wav");
+			notifyTTFMenuSelectionChanged();
+			startChrono(&chrono);
+			AntiRebond = 1;
+		}
+		else if(key == 28 || Click != 0) // select current entry
+		{
+			playMenuSound("Select.wav");
+			selectedEntry = currentSelectedEntry;
+		}
 
         // Draw controller hint image at the bottom of the screen
         osystem_drawControllerHint();

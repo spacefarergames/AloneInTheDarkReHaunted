@@ -157,7 +157,42 @@ int FitdInit(int argc, char* argv[])
     int resolution[2] = { 1410, 890 };
 
     gWindowBGFX = SDL_CreateWindow("FITD", resolution[0], resolution[1], flags);
-    
+
+#ifdef _WIN32
+    // Now that the main window is visible, show the console window
+    // positioned so it doesn't overlap the game window
+    HWND hConsole = GetConsoleWindow();
+    if (hConsole)
+    {
+        int wx, wy;
+        SDL_GetWindowPosition(gWindowBGFX, &wx, &wy);
+
+        // Place the console to the right of the main window
+        int consoleX = wx + resolution[0] + 8;
+
+        // If it would go off-screen, place it below the main window instead
+        int screenW = GetSystemMetrics(SM_CXSCREEN);
+        RECT consoleRect;
+        GetWindowRect(hConsole, &consoleRect);
+        int consoleW = consoleRect.right - consoleRect.left;
+        int consoleH = consoleRect.bottom - consoleRect.top;
+
+        if (consoleX + consoleW > screenW)
+        {
+            // Doesn't fit to the right — place below
+            SetWindowPos(hConsole, NULL, wx, wy + resolution[1] + 8, 0, 0,
+                SWP_NOSIZE | SWP_NOZORDER | SWP_NOACTIVATE);
+        }
+        else
+        {
+            SetWindowPos(hConsole, NULL, consoleX, wy, 0, 0,
+                SWP_NOSIZE | SWP_NOZORDER | SWP_NOACTIVATE);
+        }
+
+        ShowWindow(hConsole, SW_SHOWNOACTIVATE);
+    }
+#endif
+
     char version[256];
 
     getVersion(version);
@@ -230,7 +265,14 @@ int FitdInit(int argc, char* argv[])
         else {
             bFirstFrame = false;
         }
-        
+
+        // Process deferred fullscreen toggle on the main/window thread
+        if (g_pendingFullscreenToggle)
+        {
+            g_pendingFullscreenToggle = false;
+            toggleFullscreen();
+        }
+
         SDL_SignalSemaphore(startOfRender);
 
         // Normal operation: one renderFrame per game frame. Blocks

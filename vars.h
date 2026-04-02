@@ -402,11 +402,13 @@ extern int cameraFovX;
 extern int cameraFovY;
 
 extern bool g_planarShadowEnabled;
+extern bool g_wallShadowEnabled;
 extern float g_shadowLightDirX;
 extern float g_shadowLightDirY;
 extern float g_shadowLightDirZ;
 extern bool g_submitShadowStencil;
 extern int g_portraitOverlayChoice;
+extern bool g_roomIsDark;
 
 extern char currentCameraVisibilityList[30];
 

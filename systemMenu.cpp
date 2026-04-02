@@ -12,6 +12,8 @@
 #include "fontTTF.h"
 #include "hdBackgroundRenderer.h"
 #include "controlsMenu.h"
+#include "input.h"
+#include "bgfxGlue.h"
 void SetLevelDestPal(palette_t& inPalette, palette_t& outPalette, int coef);
 
 // Helper function to play menu navigation sounds
@@ -23,7 +25,7 @@ void playMenuSound(const char* soundName)
     }
 }
 
-#define	NB_OPTIONS	8
+#define	NB_OPTIONS	10
 #define SELECT_COUL 0xF
 #define MENU_COUL 4
 #define	SIZE_FONT 16
@@ -162,35 +164,35 @@ void AffOption(int n, int num, int selected)
     }
 }
 
-void AffOptionList(int selectedStringNumber)
+void AffOptionList(int selectedStringNumber, bool hdPreview)
 {
-    AffBigCadre(160,100,320,200);
+    // In HD mode, the SystemMenu.png GPU overlay provides the background,
+    // so skip drawing the palettized frames but still set the window
+    // coordinates so AffOption positions text consistently.
+    if (!hdPreview)
+    {
+        AffBigCadre(160,100,320,200);
+    }
+    else
+    {
+        WindowX1 = 8;
+        WindowY1 = 8;
+        WindowX2 = 311;
+        WindowY2 = 191;
+    }
 
     int backupTop = WindowY1;
     int backupBottom = WindowY2;
     int backupLeft = WindowX1;
     int backupRight = WindowX2;
 
-    // Draw preview box: center (80,55), size 120x70
-    // This means top-left corner is at (80-60, 55-35) = (20, 20)
-    AffBigCadre(80,55,120,70);
+    if (!hdPreview)
+    {
+        // Draw preview box: center (80,55), size 120x70
+        // This means top-left corner is at (80-60, 55-35) = (20, 20)
+        AffBigCadre(80,55,120,70);
 
-    // Draw the scaled game screen preview at the box's top-left corner (20,20)
-    // Prefer GPU-captured scene (includes 3D objects at output resolution),
-    // fall back to HD background data, then palettized aux2.
-    unsigned char* capturedScene = osystem_getScenePreviewData();
-    int capturedW = osystem_getScenePreviewWidth();
-    int capturedH = osystem_getScenePreviewHeight();
-    if(capturedScene && capturedW > 0 && capturedH > 0)
-    {
-        scaleDownImageHD(20, 20, capturedScene, capturedW, capturedH);
-    }
-    else if(g_hdBackgroundPreviewData && g_hdBackgroundPreviewWidth > 0 && g_hdBackgroundPreviewHeight > 0)
-    {
-        scaleDownImageHD(20, 20, g_hdBackgroundPreviewData, g_hdBackgroundPreviewWidth, g_hdBackgroundPreviewHeight);
-    }
-    else
-    {
+        // CPU-side scaling for non-HD path
         scaleDownImage(20, 20, aux2);
     }
 
@@ -208,9 +210,64 @@ void AffOptionList(int selectedStringNumber)
     AffOption(4,43+soundEnabled,selectedStringNumber);
     AffOption(5,49+detailLevel,selectedStringNumber);
 
-    // Controls option (no string table entry, draw manually)
+    // Fullscreen option (no string table entry, draw manually)
     {
         int y = WindowY1 + ((WindowY2 - WindowY1) / 2) - (NB_OPTIONS * SIZE_FONT) / 2 + (6 * SIZE_FONT);
+        const char* fsText = gIsFullscreen ? "Display: Fullscreen" : "Display: Windowed";
+        if (languageNameString == "FRANCAIS")
+            fsText = gIsFullscreen ? "Affichage: Plein \x82" "cran" : "Affichage: Fen\x88" "tr\x82";
+        else if (languageNameString == "ITALIANO")
+            fsText = gIsFullscreen ? "Schermo: Intero" : "Schermo: Finestra";
+        else if (languageNameString == "ESPAGNOL")
+            fsText = gIsFullscreen ? "Pantalla: Completa" : "Pantalla: Ventana";
+        else if (languageNameString == "DEUTSCH")
+            fsText = gIsFullscreen ? "Anzeige: Vollbild" : "Anzeige: Fenster";
+
+        u8* fsPtr = (u8*)fsText;
+
+        if (g_remasterConfig.font.enableTTF)
+        {
+            int ttfWidth = getTTFTextWidth(fsPtr);
+            int ttfX = 160 - (ttfWidth / 2);
+
+            if (6 == selectedStringNumber)
+            {
+                queueTTFText(ttfX, y, fsPtr, SELECT_COUL, true, MENU_COUL);
+            }
+            else
+            {
+                queueTTFText(ttfX, y, fsPtr, MENU_COUL, false, 0);
+            }
+
+            if (g_remasterConfig.font.hideOriginalText)
+            {
+                goto fullscreenDone;
+            }
+        }
+
+        {
+            int w = ExtGetSizeFont(fsPtr);
+            int tx = 160 - w / 2;
+
+            if (6 == selectedStringNumber)
+            {
+                SetFont(PtrFont, MENU_COUL);
+                PrintFont(tx, y + 1, logicalScreen, fsPtr);
+                SetFont(PtrFont, SELECT_COUL);
+                PrintFont(tx, y, logicalScreen, fsPtr);
+            }
+            else
+            {
+                SetFont(PtrFont, MENU_COUL);
+                PrintFont(tx, y + 1, logicalScreen, fsPtr);
+            }
+        }
+        fullscreenDone:;
+    }
+
+    // Controls option (no string table entry, draw manually)
+    {
+        int y = WindowY1 + ((WindowY2 - WindowY1) / 2) - (NB_OPTIONS * SIZE_FONT) / 2 + (7 * SIZE_FONT);
         const char* controlsText = "Controls";
         if (languageNameString == "FRANCAIS")
             controlsText = "Commandes";
@@ -220,25 +277,105 @@ void AffOptionList(int selectedStringNumber)
             controlsText = "Controles";
         else if (languageNameString == "DEUTSCH")
             controlsText = "Steuerung";
-        int w = ExtGetSizeFont((u8*)controlsText);
-        int tx = 160 - w / 2;
 
-        if (6 == selectedStringNumber)
+        u8* textPtr = (u8*)controlsText;
+
+        if (g_remasterConfig.font.enableTTF)
         {
-            // Shadow + foreground like SelectedMessage
-            SetFont(PtrFont, MENU_COUL);
-            PrintFont(tx, y + 1, logicalScreen, (u8*)controlsText);
-            SetFont(PtrFont, SELECT_COUL);
-            PrintFont(tx, y, logicalScreen, (u8*)controlsText);
+            int ttfWidth = getTTFTextWidth(textPtr);
+            int ttfX = 160 - (ttfWidth / 2);
+
+            if (7 == selectedStringNumber)
+            {
+                queueTTFText(ttfX, y, textPtr, SELECT_COUL, true, MENU_COUL);
+            }
+            else
+            {
+                queueTTFText(ttfX, y, textPtr, MENU_COUL, false, 0);
+            }
+
+            if (g_remasterConfig.font.hideOriginalText)
+            {
+                goto controlsDone;
+            }
         }
-        else
+
         {
-            SetFont(PtrFont, MENU_COUL);
-            PrintFont(tx, y + 1, logicalScreen, (u8*)controlsText);
+            int w = ExtGetSizeFont(textPtr);
+            int tx = 160 - w / 2;
+
+            if (7 == selectedStringNumber)
+            {
+                SetFont(PtrFont, MENU_COUL);
+                PrintFont(tx, y + 1, logicalScreen, textPtr);
+                SetFont(PtrFont, SELECT_COUL);
+                PrintFont(tx, y, logicalScreen, textPtr);
+            }
+            else
+            {
+                SetFont(PtrFont, MENU_COUL);
+                PrintFont(tx, y + 1, logicalScreen, textPtr);
+            }
         }
+        controlsDone:;
     }
 
-    AffOption(7,47,selectedStringNumber);
+    // Hints toggle option (no string table entry, draw manually)
+    {
+        int y = WindowY1 + ((WindowY2 - WindowY1) / 2) - (NB_OPTIONS * SIZE_FONT) / 2 + (8 * SIZE_FONT);
+        const char* hintsText = g_remasterConfig.graphics.enableHints ? "Hints: On" : "Hints: Off";
+        if (languageNameString == "FRANCAIS")
+            hintsText = g_remasterConfig.graphics.enableHints ? "Indices: Activ\x82" : "Indices: D\x82sactiv\x82";
+        else if (languageNameString == "ITALIANO")
+            hintsText = g_remasterConfig.graphics.enableHints ? "Suggerimenti: On" : "Suggerimenti: Off";
+        else if (languageNameString == "ESPAGNOL")
+            hintsText = g_remasterConfig.graphics.enableHints ? "Pistas: On" : "Pistas: Off";
+        else if (languageNameString == "DEUTSCH")
+            hintsText = g_remasterConfig.graphics.enableHints ? "Hinweise: An" : "Hinweise: Aus";
+
+        u8* textPtr = (u8*)hintsText;
+
+        if (g_remasterConfig.font.enableTTF)
+        {
+            int ttfWidth = getTTFTextWidth(textPtr);
+            int ttfX = 160 - (ttfWidth / 2);
+
+            if (8 == selectedStringNumber)
+            {
+                queueTTFText(ttfX, y, textPtr, SELECT_COUL, true, MENU_COUL);
+            }
+            else
+            {
+                queueTTFText(ttfX, y, textPtr, MENU_COUL, false, 0);
+            }
+
+            if (g_remasterConfig.font.hideOriginalText)
+            {
+                goto hintsDone;
+            }
+        }
+
+        {
+            int w = ExtGetSizeFont(textPtr);
+            int tx = 160 - w / 2;
+
+            if (8 == selectedStringNumber)
+            {
+                SetFont(PtrFont, MENU_COUL);
+                PrintFont(tx, y + 1, logicalScreen, textPtr);
+                SetFont(PtrFont, SELECT_COUL);
+                PrintFont(tx, y, logicalScreen, textPtr);
+            }
+            else
+            {
+                SetFont(PtrFont, MENU_COUL);
+                PrintFont(tx, y + 1, logicalScreen, textPtr);
+            }
+        }
+        hintsDone:;
+    }
+
+    AffOption(9,47,selectedStringNumber);
 
     menuWaitVSync();
 }
@@ -249,15 +386,14 @@ void processSystemMenu(void)
     int exitMenu = 0;
     int currentSelectedEntry;
 
-    // Scene snapshot was already frozen by PlayWorld() before the ESC-draining
-    // loop, so s_snapshotTex holds the last game frame (with 3D objects).
-    // Pump 2 frames to ensure the GPU readback completes, then finalize.
-    process_events(); // frame 1 — readback in flight
-    process_events(); // frame 2 — readback completes
-    osystem_finalizeScenePreview();
+    // Capture HD state before recreateBackgroundTexture changes it
+    bool useHDBG = g_currentBackgroundIsHD;
+
+    // Freeze the scene snapshot so it preserves the last game frame (with 3D objects)
+    osystem_freezeSceneForMenu();
 
     // Fallback: capture palettized background for non-PP path
-    if (g_currentBackgroundIsHD)
+    if (useHDBG)
     {
         memcpy(aux2, aux, 64000);
     }
@@ -283,7 +419,7 @@ void processSystemMenu(void)
 
     // Fallback from HD background to standard for menu rendering
     // (This happens AFTER we've captured aux2)
-    if (g_currentBackgroundIsHD)
+    if (useHDBG)
     {
         recreateBackgroundTexture(320, 200);
     }
@@ -298,22 +434,48 @@ void processSystemMenu(void)
 
     //clearScreenSystemMenu(unkScreenVar,aux2);
 
-    currentSelectedEntry = 0;
+	currentSelectedEntry = 0;
+
+	int previewFrameCounter = 0;
 
 	while(!exitMenu)
 	{
+		// Finalize scene preview readback after enough frames for async GPU readback
+		if (previewFrameCounter < 4)
+		{
+			previewFrameCounter++;
+			if (previewFrameCounter == 3)
+			{
+				osystem_finalizeScenePreview();
+			}
+		}
+
 		// Apply darkened palette if blur effect is enabled
 		if (useBlurEffect)
 		{
 			setPalette(darkenedPalette);
 		}
 
-		AffOptionList(currentSelectedEntry);
+		AffOptionList(currentSelectedEntry, useHDBG);
 		osystem_CopyBlockPhys((unsigned char*)logicalScreen,0,0,320,200);
 		osystem_startFrame();
+		osystem_drawFrozenScenePreview(23.f, 23.f, 140.f, 87.f);
+		if (useHDBG)
+		{
+			osystem_drawSystemMenuBackground();
+		}
 		process_events();
+
+		// If window was resized during process_events, force a full redraw
+		if (g_windowWasResized)
+		{
+			resetWindowResizeFlag();
+			// Redraw the menu UI immediately with new window size
+			AffOptionList(currentSelectedEntry, useHDBG);
+			osystem_CopyBlockPhys((unsigned char*)logicalScreen,0,0,320,200);
+		}
+
 		flushScreen();
-		osystem_drawBackground();
 
         if(lightOff)
         {
@@ -344,17 +506,23 @@ void processSystemMenu(void)
                     case 2: // load
                         if(restoreSave(46,1))
                         {
-                            osystem_releaseScenePreview();
+                            osystem_unfreezeSceneForMenu();
                             FlagInitView = 2;
                             RestoreTimerAnim();
                             //updateShaking();
                             return;
                         }
                         break;
-                    case 6: // controls
-                        processControlsMenu();
+                    case 6: // fullscreen toggle
+                        g_pendingFullscreenToggle = true;
                         break;
-                    case 7: // quit to main menu
+                    case 7: // controls
+                        processControlsMenu(useHDBG);
+                        break;
+                    case 8: // hints toggle
+                        g_remasterConfig.graphics.enableHints = !g_remasterConfig.graphics.enableHints;
+                        break;
+                    case 9: // quit to main menu
                         FlagGameOver = 1;
                         exitMenu = 1;
                         break;
@@ -369,12 +537,36 @@ void processSystemMenu(void)
                         playMenuSound("Back.wav");
                         exitMenu = 1;
                     }
+                    if(localKey == 0x0F) // TAB / SELECT button -> switch to map
+                    {
+                        playMenuSound("Select.wav");
+
+                        // Restore palette before opening map
+                        if (useBlurEffect)
+                        {
+                            setPalette(originalPalette);
+                        }
+
+                        osystem_unfreezeSceneForMenu();
+                        saveRemasterConfig();
+
+                        while(key || JoyD || Click)
+                        {
+                            process_events();
+                        }
+                        localKey = localClick = localJoyD = 0;
+                        FlagInitView = 2;
+                        RestoreTimerAnim();
+
+                        processMapScreen();
+                        return;
+                    }
                     if(localJoyD == 1) // up
                     {
                         currentSelectedEntry--;
 
                         if(currentSelectedEntry<0)
-                            currentSelectedEntry = 7;
+                            currentSelectedEntry = 9;
 
                         // Play navigation sound
                         playMenuSound("Navigation.wav");
@@ -388,7 +580,7 @@ void processSystemMenu(void)
                     {
                         currentSelectedEntry++;
 
-                        if(currentSelectedEntry>7)
+                        if(currentSelectedEntry>9)
                             currentSelectedEntry = 0;
 
                         // Play navigation sound
@@ -447,6 +639,32 @@ void processSystemMenu(void)
                             recreateBackgroundTexture(320, 200);
                         }
 
+                        // Update HD mode flag so the menu switches between
+                        // palettized frames and the HD background overlay
+                        useHDBG = (detailLevel == 1);
+
+                        // Play navigation sound
+                        playMenuSound("Navigation.wav");
+
+                        notifyTTFMenuSelectionChanged();
+                        AntiRebond = 1;
+                    }
+                    // Handle left/right for fullscreen toggle
+                    if((localJoyD == 4 || localJoyD == 8) && currentSelectedEntry == 6) // left or right on fullscreen option
+                    {
+                        g_pendingFullscreenToggle = true;
+
+                        // Play navigation sound
+                        playMenuSound("Navigation.wav");
+
+                        notifyTTFMenuSelectionChanged();
+                        AntiRebond = 1;
+                    }
+                    // Handle left/right for hints toggle
+                    if((localJoyD == 4 || localJoyD == 8) && currentSelectedEntry == 8) // left or right on hints option
+                    {
+                        g_remasterConfig.graphics.enableHints = !g_remasterConfig.graphics.enableHints;
+
                         // Play navigation sound
                         playMenuSound("Navigation.wav");
 
@@ -474,13 +692,169 @@ void processSystemMenu(void)
 	}
 
 	// Re-enable per-frame scene snapshot updates now that the menu is closing
-	osystem_releaseScenePreview();
+	osystem_unfreezeSceneForMenu();
 
 	// Save configuration changes
 	saveRemasterConfig();
 
 	//fadeOut(32,2);
 	while(key || JoyD || Click)
+	{
+		process_events();
+	}
+	localKey = localClick = localJoyD = 0;
+	FlagInitView = 2;
+	RestoreTimerAnim();
+}
+
+void processMapScreen(void)
+{
+	int exitMenu = 0;
+
+	bool useHDBG = g_currentBackgroundIsHD;
+
+	// Load map texture for the current floor
+	osystem_loadMapTexture(g_currentFloor);
+
+	// Freeze scene snapshot for background
+	osystem_freezeSceneForMenu();
+
+	// Fallback: capture palettized background for non-HD path
+	if (useHDBG)
+	{
+		memcpy(aux2, aux, 64000);
+	}
+	else
+	{
+		memcpy(aux2, logicalScreen, 64000);
+	}
+
+	// Fallback from HD background to standard for menu rendering
+	if (useHDBG)
+	{
+		recreateBackgroundTexture(320, 200);
+	}
+
+	SaveTimerAnim();
+
+	// Drain stale input
+	AntiRebond = 1;
+
+	flushScreen();
+	clearTTFTextQueue();
+
+	while (!exitMenu)
+	{
+		clearTTFTextQueue();
+
+		// Draw frame
+		if (!useHDBG)
+		{
+			AffBigCadre(160, 100, 320, 200);
+		}
+		else
+		{
+			WindowX1 = 8;
+			WindowY1 = 8;
+			WindowX2 = 311;
+			WindowY2 = 191;
+		}
+
+		// Draw title text
+		{
+			int titleY = WindowY1 + 4;
+			const char* titleText = "Map";
+			if (languageNameString == "FRANCAIS")
+				titleText = "Carte";
+			else if (languageNameString == "ITALIANO")
+				titleText = "Mappa";
+			else if (languageNameString == "ESPAGNOL")
+				titleText = "Mapa";
+			else if (languageNameString == "DEUTSCH")
+				titleText = "Karte";
+
+			u8* textPtr = (u8*)titleText;
+
+			if (g_remasterConfig.font.enableTTF)
+			{
+				int ttfWidth = getTTFTextWidth(textPtr);
+				int ttfX = 160 - (ttfWidth / 2);
+				queueTTFText(ttfX, titleY, textPtr, SELECT_COUL, false, 0);
+
+				if (!g_remasterConfig.font.hideOriginalText)
+				{
+					int w = ExtGetSizeFont(textPtr);
+					int tx = 160 - w / 2;
+					SetFont(PtrFont, SELECT_COUL);
+					PrintFont(tx, titleY, logicalScreen, textPtr);
+				}
+			}
+			else
+			{
+				int w = ExtGetSizeFont(textPtr);
+				int tx = 160 - w / 2;
+				SetFont(PtrFont, SELECT_COUL);
+				PrintFont(tx, titleY, logicalScreen, textPtr);
+			}
+		}
+
+		menuWaitVSync();
+		osystem_CopyBlockPhys((unsigned char*)logicalScreen, 0, 0, 320, 200);
+		osystem_startFrame();
+
+		// Draw frame overlay first (behind the map)
+		if (useHDBG)
+		{
+			osystem_drawFullScreenFrame();
+		}
+
+		// Draw map image on top of the frame
+		osystem_drawMapImage();
+
+		process_events();
+
+		if (g_windowWasResized)
+		{
+			resetWindowResizeFlag();
+		}
+
+		flushScreen();
+
+		// Input handling
+		{
+			localKey = key;
+			localJoyD = JoyD;
+			localClick = Click;
+
+			if (!AntiRebond)
+			{
+				if (localKey == 0x1B || localKey == 0x0F || localKey == 0x1C || localClick)
+				{
+					playMenuSound("Back.wav");
+					exitMenu = 1;
+				}
+			}
+			else
+			{
+				if (!localKey && !localJoyD && !localClick)
+				{
+					AntiRebond = 0;
+				}
+			}
+		}
+
+		osystem_flip(NULL);
+	}
+
+	// Cleanup
+	osystem_destroyMapTexture();
+
+	osystem_unfreezeSceneForMenu();
+
+	flushScreen();
+	clearTTFTextQueue();
+
+	while (key || JoyD || Click)
 	{
 		process_events();
 	}

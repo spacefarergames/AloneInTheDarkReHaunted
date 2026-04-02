@@ -1,4 +1,4 @@
-﻿///////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////
 // Alone In The Dark Re-Haunted
 // Copyright (C) 2026 Infogrames / Spacefarer Retro Remasters LLC
 // Based on FITD by yaz0r, Re-haunted is released under GPL
@@ -146,6 +146,8 @@ static SoLoud::WavStream* s_voStream = nullptr;
 static SoLoud::DiskFile*  s_voFile   = nullptr;
 static unsigned char*      s_voBuf    = nullptr;
 static SoLoud::handle      s_voHandle = 0;
+
+float g_voPitchMultiplier = 1.0f;
 
 static void stopCDAudio();
 
@@ -327,7 +329,7 @@ static bool playCDAudioTrack(int) { return false; }
 void osystemAL_init()
 {
     gSoloud = new SoLoud::Soloud();
-    gSoloud->init();
+    gSoloud->init(SoLoud::Soloud::CLIP_ROUNDOFF, SoLoud::Soloud::AUTO, SoLoud::Soloud::AUTO, SoLoud::Soloud::AUTO, 2);
 }
 
 void osystemAL_deinit()
@@ -549,6 +551,17 @@ void osystem_stopSample()
         delete sfx.source;
     }
     g_activeSfx.clear();
+}
+
+bool osystem_isSamplePlaying()
+{
+    if (!gSoloud) return false;
+    for (auto& sfx : g_activeSfx)
+    {
+        if (gSoloud->isValidVoiceHandle(sfx.handle))
+            return true;
+    }
+    return false;
 }
 
 void osystem_playLoopingSample(char* samplePtr, int size)
@@ -1050,6 +1063,8 @@ void osystem_playVocPageLines(int vocIndex, int page, int numLines)
     {
         s_voBuf = wav;
         s_voHandle = gSoloud->play(*s_voStream);
+        if (g_voPitchMultiplier != 1.0f)
+            gSoloud->setRelativePlaySpeed(s_voHandle, g_voPitchMultiplier);
         printf(VO_OK "Playing VOC page: book %d page %d (%d lines, %u bytes)" CON_RESET "\n",
                vocIndex, page, numLines, dataSize);
     }

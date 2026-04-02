@@ -61,6 +61,44 @@ namespace SafeDelete {
         }
     }
 
+    // Safe delete for arrays (new[]) with heap corruption protection
+    template<typename T>
+    inline bool SafeDeleteArray(T*& ptr) {
+        if (!ptr) {
+            return true; // Already null
+        }
+
+        __try {
+            // Check if memory is accessible
+            volatile char test = *((char*)ptr);
+            (void)test;
+
+            // Try to delete array
+            delete[] ptr;
+            ptr = nullptr;
+            stats.successfulDeletes++;
+            return true;
+        }
+        __except (GetExceptionCode() == STATUS_ACCESS_VIOLATION ||
+                  GetExceptionCode() == STATUS_HEAP_CORRUPTION ?
+                  EXCEPTION_EXECUTE_HANDLER : EXCEPTION_CONTINUE_SEARCH) {
+
+            stats.caughtExceptions++;
+
+            #ifdef _DEBUG
+            char msg[256];
+            sprintf_s(msg, sizeof(msg),
+                "SafeDeleteArray caught exception 0x%08lX for pointer 0x%p - continuing\n",
+                GetExceptionCode(), ptr);
+            OutputDebugStringA(msg);
+            #endif
+
+            // Set to null and continue
+            ptr = nullptr;
+            return false;
+        }
+    }
+
     // Get statistics
     inline const Stats& GetStats() {
         return stats;

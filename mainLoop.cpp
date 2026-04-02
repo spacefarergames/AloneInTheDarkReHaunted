@@ -54,10 +54,13 @@ void updatePendingEvents(void)
 // Checks if player's bounding box overlaps any wall and tries to push them out
 static void fixPlayerStuckInWall()
 {
-    if (currentCameraTargetActor < 0)
+    if (currentCameraTargetActor < 0 || currentCameraTargetActor >= NUM_MAX_OBJECT)
         return;
 
     tObject* player = &ListObjets[currentCameraTargetActor];
+    if (player->indexInWorld < 0)
+        return;
+
     if (player->room < 0 || player->room >= (int)roomDataTable.size())
         return;
 
@@ -96,6 +99,226 @@ static void fixPlayerStuckInWall()
         }
     }
     printf(MLOOP_WARN "Could not find walkable position for stuck player" CON_RESET "\n");
+}
+
+// Hide the rocking horse object on CAMERA00_003 to avoid visual artifacts.
+// The object is restored automatically when the camera changes away.
+static int s_hiddenRockingHorseActorIdx = -1;
+static s16 s_savedRockingHorseBodyNum = -1;
+
+static int getAbsoluteCameraIndex()
+{
+    if (NumCamera < 0 || currentRoom < 0 || currentRoom >= (int)roomDataTable.size())
+        return -1;
+    if (NumCamera >= (int)roomDataTable[currentRoom].cameraIdxTable.size())
+        return -1;
+    return roomDataTable[currentRoom].cameraIdxTable[NumCamera];
+}
+
+static void restoreRockingHorse()
+{
+    if (s_hiddenRockingHorseActorIdx >= 0 && s_hiddenRockingHorseActorIdx < NUM_MAX_OBJECT)
+    {
+        ListObjets[s_hiddenRockingHorseActorIdx].bodyNum = s_savedRockingHorseBodyNum;
+        s_hiddenRockingHorseActorIdx = -1;
+        s_savedRockingHorseBodyNum = -1;
+    }
+}
+
+static void updateRockingHorseVisibility()
+{
+    bool shouldHide = (g_currentFloor == 0 && getAbsoluteCameraIndex() == 3);
+
+    if (shouldHide)
+    {
+        if (s_hiddenRockingHorseActorIdx >= 0)
+            return; // already hidden
+
+        for (int i = 0; i < NUM_MAX_OBJECT; i++)
+        {
+            tObject* obj = &ListObjets[i];
+            if (obj->indexInWorld < 0 || obj->bodyNum < 0)
+                continue;
+
+            int worldIdx = obj->indexInWorld;
+            if (worldIdx < 0 || worldIdx >= (int)ListWorldObjets.size())
+                continue;
+
+            textEntryStruct* entry = getTextFromIdx(ListWorldObjets[worldIdx].foundName);
+            if (entry && entry->textPtr)
+            {
+                if (_stricmp((const char*)entry->textPtr, "ROCKING HORSE") == 0)
+                {
+                    s_hiddenRockingHorseActorIdx = i;
+                    s_savedRockingHorseBodyNum = obj->bodyNum;
+                    obj->bodyNum = -1;
+                    return;
+                }
+            }
+        }
+    }
+    else
+    {
+        restoreRockingHorse();
+    }
+}
+
+// Hotspot overlay detection - shows magnifying glass when near interactive objects
+static float g_hotspotOverlayOpacity = 0.0f;
+static const int HOTSPOT_INTERACTION_DISTANCE = 1000; // Units for interaction proximity
+static const float HOTSPOT_FADE_SPEED = 4.0f; // ~0.25s full transition
+static u32 s_lastHotspotUpdateTime = 0;
+
+bool isHotspotOverlayVisible()
+{
+    return g_hotspotOverlayOpacity > 0.0f;
+}
+
+float getHotspotOverlayOpacity()
+{
+    return g_hotspotOverlayOpacity;
+}
+
+// Compute distance from a point to the nearest edge of a zone volume (XZ plane).
+// For spawned actors the ZV is in world space (actor position + local ZV bounds).
+// Returns 0 if the point is inside the ZV.
+static int distanceToZV(int px, int pz, const ZVStruct& zv)
+{
+    int dx = 0;
+    if (px < zv.ZVX1)
+        dx = zv.ZVX1 - px;
+    else if (px > zv.ZVX2)
+        dx = px - zv.ZVX2;
+
+    int dz = 0;
+    if (pz < zv.ZVZ1)
+        dz = zv.ZVZ1 - pz;
+    else if (pz > zv.ZVZ2)
+        dz = pz - zv.ZVZ2;
+
+    // Manhattan distance (consistent with GiveDistance2D)
+    return dx + dz;
+}
+
+static bool detectNearbyInteractiveHotspot()
+{
+    // Only detect during active gameplay
+    if (currentCameraTargetActor < 0 || currentCameraTargetActor >= NUM_MAX_OBJECT)
+        return false;
+
+    tObject* player = &ListObjets[currentCameraTargetActor];
+    if (player->indexInWorld < 0)
+        return false;
+
+    int playerX = player->worldX;
+    int playerZ = player->worldZ;
+    int playerRoom = player->room;
+
+    static u32 s_lastDiagTime = 0;
+    u32 now = SDL_GetTicks();
+    bool doDiag = (now - s_lastDiagTime > 3000);
+    if (doDiag) s_lastDiagTime = now;
+
+    int candidateCount = 0;
+    int closestDist = 999999;
+    int closestIdx = -1;
+
+    // Iterate all world objects (includes static interactable objects that are not spawned as actors)
+    int numWorldObjects = (int)ListWorldObjets.size();
+    for (int i = 0; i < numWorldObjects; i++)
+    {
+        tWorldObject* worldObj = &ListWorldObjets[i];
+
+        // Skip objects not in the player's room
+        if (worldObj->room != playerRoom)
+            continue;
+
+        // Skip objects already found/in inventory
+        if (worldObj->foundFlag & 0x8000)
+            continue;
+
+        // Check if the object is interactive (has a found body, found life, or action flag)
+        bool isInteractive = (worldObj->foundBody != -1) ||
+                             (worldObj->foundLife != -1) ||
+                             (worldObj->foundFlag & 0x4000);
+        if (!isInteractive)
+            continue;
+
+        candidateCount++;
+
+        // Compute distance: for spawned actors use the ZV bounding box (nearest edge),
+        // otherwise fall back to point-to-point distance from the world object position.
+        int distance;
+        if (worldObj->objIndex != -1 && worldObj->objIndex < NUM_MAX_OBJECT)
+        {
+            tObject* actor = &ListObjets[worldObj->objIndex];
+            if (actor->indexInWorld >= 0)
+            {
+                // Actor ZV is in world space already (updated each frame by the engine)
+                distance = distanceToZV(playerX, playerZ, actor->zv);
+            }
+            else
+            {
+                distance = GiveDistance2D(playerX, playerZ, worldObj->x, worldObj->z);
+            }
+        }
+        else
+        {
+            distance = GiveDistance2D(playerX, playerZ, worldObj->x, worldObj->z);
+        }
+
+        if (distance < closestDist)
+        {
+            closestDist = distance;
+            closestIdx = i;
+        }
+
+        if (distance < HOTSPOT_INTERACTION_DISTANCE)
+        {
+            if (doDiag)
+            {
+                printf(MLOOP_TAG "Hotspot HIT: world %d dist=%d player=(%d,%d) room=%d\n",
+                       i, distance, playerX, playerZ, playerRoom);
+            }
+            return true;
+        }
+    }
+
+    // Check type 9 hard collision zones (searchable scenario trigger areas)
+    if (playerRoom >= 0 && playerRoom < (int)roomDataTable.size())
+    {
+        roomDataStruct& roomData = roomDataTable[playerRoom];
+        for (int i = 0; i < roomData.numHardCol; i++)
+        {
+            if (roomData.hardColTable[i].type != 9)
+                continue;
+
+            int dist = distanceToZV(playerX, playerZ, roomData.hardColTable[i].zv);
+            if (dist < HOTSPOT_INTERACTION_DISTANCE)
+            {
+                if (doDiag)
+                {
+                    printf(MLOOP_TAG "Hotspot HIT: hardcol zone %d (type 9) dist=%d player=(%d,%d) room=%d\n",
+                           i, dist, playerX, playerZ, playerRoom);
+                }
+                return true;
+            }
+
+            if (dist < closestDist)
+            {
+                closestDist = dist;
+                closestIdx = 1000 + i; // offset to distinguish from world object indices
+            }
+        }
+    }
+
+    if (doDiag)
+    {
+        printf(MLOOP_TAG "Hotspot scan: room=%d player=(%d,%d) candidates=%d closest=%d (idx %d)\n",
+               playerRoom, playerX, playerZ, candidateCount, closestDist, closestIdx);
+    }
+
+    return false;
 }
 
 void PlayWorld(int allowSystemMenu, int deltaTime)
@@ -143,6 +366,37 @@ void PlayWorld(int allowSystemMenu, int deltaTime)
                 {
                     process_events();
                     localKey = key;
+                }
+            }
+
+            if(localKey == 0x0F) // TAB / SELECT button - open map
+            {
+                if(allowSystemMenu && statusScreenAllowed)
+                {
+                    while(key==0x0F)
+                    {
+                        process_events();
+                    }
+
+                    // Pause HD background animation when entering map
+                    pauseCurrentAnimatedHDBackground();
+
+                    // Notify TTF that we're entering the map screen
+                    notifyTTFMenuStateChanged(true, true);
+
+                    processMapScreen();
+
+                    // Notify TTF that we're exiting the map screen
+                    notifyTTFMenuStateChanged(false, false);
+
+                    // Resume HD background animation when exiting map
+                    resumeCurrentAnimatedHDBackground();
+
+                    while(key==0x0F || key == 0x1B)
+                    {
+                        process_events();
+                        localKey = key;
+                    }
                 }
             }
 
@@ -196,10 +450,13 @@ void PlayWorld(int allowSystemMenu, int deltaTime)
         {
             if(g_gameId == AITD1)
             {
-                if(CVars[getCVarsIdx(LIGHT_OBJECT)] == -1)
+                bool isDark = (CVars[getCVarsIdx(LIGHT_OBJECT)] != -1);
+                if (isDark != g_roomIsDark)
                 {
-                    //        mainVar2 = 2000;
-                    //        mainVar3 = 2000;
+                    g_roomIsDark = isDark;
+                    osystem_setDarkRoom(isDark);
+                    // Reload camera to switch between normal and _DARK HD background
+                    InitView();
                 }
             }
 
@@ -284,6 +541,12 @@ void PlayWorld(int allowSystemMenu, int deltaTime)
 
         if(FlagChangeEtage)
         {
+            // Reset dark room state before loading new floor
+            if (g_roomIsDark)
+            {
+                g_roomIsDark = false;
+                osystem_setDarkRoom(false);
+            }
             LoadEtage(NewNumEtage);
         }
 
@@ -355,6 +618,7 @@ void PlayWorld(int allowSystemMenu, int deltaTime)
 
         //    if(actorTurnedToObj)
         {
+            updateRockingHorseVisibility();
             GenereAffList();
         }
 
@@ -372,6 +636,26 @@ void PlayWorld(int allowSystemMenu, int deltaTime)
         //osystem_delay(100);
 
         updateShaking();
+
+        // Update hotspot overlay visibility with fade in/out
+        // Don't show hotspot indicator during intro, game over, or ending scenes
+        {
+            bool detected = (allowSystemMenu && !FlagGameOver && g_remasterConfig.graphics.enableHints) ? detectNearbyInteractiveHotspot() : false;
+            u32 now = SDL_GetTicks();
+            float dt = (s_lastHotspotUpdateTime > 0) ? (now - s_lastHotspotUpdateTime) / 1000.0f : 0.0f;
+            s_lastHotspotUpdateTime = now;
+            if (dt > 0.1f) dt = 0.1f; // clamp large spikes
+            if (detected)
+            {
+                g_hotspotOverlayOpacity += HOTSPOT_FADE_SPEED * dt;
+                if (g_hotspotOverlayOpacity > 1.0f) g_hotspotOverlayOpacity = 1.0f;
+            }
+            else
+            {
+                g_hotspotOverlayOpacity -= HOTSPOT_FADE_SPEED * dt;
+                if (g_hotspotOverlayOpacity < 0.0f) g_hotspotOverlayOpacity = 0.0f;
+            }
+        }
 
         AllRedraw(flagRedraw);
 

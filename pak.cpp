@@ -23,7 +23,7 @@ extern "C" {
     extern char homePath[512];
 }
 
-typedef struct pakInfoStruct // warning: alignment unsafe
+struct pakInfoStruct // warning: alignment unsafe
 {
     s32 discSize;
     s32 uncompressedSize;
@@ -31,8 +31,6 @@ typedef struct pakInfoStruct // warning: alignment unsafe
     char info5;
     s16 offset;
 };
-
-typedef struct pakInfoStruct pakInfoStruct;
 
 //#define USE_UNPACKED_DATA
 
@@ -149,8 +147,10 @@ int LoadPak(const char* name, int index, char* ptr)
 
     lptr = loadPak(name,index);
 
-    memcpy(ptr,lptr,getPakSize(name,index));
+    if(!lptr)
+        return(0);
 
+    memcpy(ptr,lptr,getPakSize(name,index));
 
     free(lptr);
 
@@ -160,6 +160,13 @@ int LoadPak(const char* name, int index, char* ptr)
 
 int getPakSize(const char* name, int index)
 {
+    // Bounds check - log warning but continue to access data (DOS buffer skipover)
+    int numFiles = PAK_getNumFiles(name);
+    if(index < 0 || numFiles <= index)
+    {
+        printf("[PAK] Warning: DOS buffer skipover - getPakSize index %d for '%s' (numFiles=%d)\n", index, name, numFiles);
+    }
+
 #ifdef USE_UNPACKED_DATA
     char buffer[256];
     FILE* fHandle;
@@ -207,9 +214,19 @@ int getPakSize(const char* name, int index)
             fread(&additionalDescriptorSize,4,1,fileHandle);
             additionalDescriptorSize = READ_LE_U32(&additionalDescriptorSize);
 
+            if(additionalDescriptorSize)
+            {
+                fseek(fileHandle, additionalDescriptorSize-4, SEEK_CUR);
+            }
+
             readPakInfo(&pakInfo,fileHandle);
 
             fseek(fileHandle,pakInfo.offset,SEEK_CUR);
+
+            // Apply same safety caps as loadPak for DOS buffer skipover consistency
+            const s32 MAX_PAK_SIZE = 16 * 1024 * 1024;
+            if(pakInfo.discSize > MAX_PAK_SIZE || pakInfo.discSize <= 0) pakInfo.discSize = 4096;
+            if(pakInfo.uncompressedSize > MAX_PAK_SIZE || pakInfo.uncompressedSize <= 0) pakInfo.uncompressedSize = 4096;
 
             if(pakInfo.compressionFlag == 0) // uncompressed
             {
@@ -246,11 +263,18 @@ int getPakSize(const char* name, int index)
             s32 additionalDescriptorSize;
             memcpy(&additionalDescriptorSize, embData + pos, 4); pos += 4;
             additionalDescriptorSize = READ_LE_U32(&additionalDescriptorSize);
+            if (additionalDescriptorSize)
+                pos += additionalDescriptorSize - 4;
 
             pakInfoStruct pakInfo;
             readPakInfoFromMem(&pakInfo, embData, &pos);
 
             pos += pakInfo.offset;
+
+            // Apply same safety caps as loadPak for consistency
+            const s32 MAX_PAK_SIZE = 16 * 1024 * 1024;
+            if(pakInfo.discSize > MAX_PAK_SIZE || pakInfo.discSize <= 0) pakInfo.discSize = 4096;
+            if(pakInfo.uncompressedSize > MAX_PAK_SIZE || pakInfo.uncompressedSize <= 0) pakInfo.uncompressedSize = 4096;
 
             if (pakInfo.compressionFlag == 0)
                 return pakInfo.discSize;
@@ -265,8 +289,12 @@ int getPakSize(const char* name, int index)
 
 char* loadPak(const char* name, int index)
 {
-    if(PAK_getNumFiles(name) < index)
-        return NULL;
+	// Bounds check - log warning but continue to access data (DOS buffer skipover)
+	int numFiles = PAK_getNumFiles(name);
+	if(index < 0 || numFiles <= index)
+	{
+		printf("[PAK] Warning: DOS buffer skipover - loadPak index %d for '%s' (numFiles=%d)\n", index, name, numFiles);
+	}
 
 	//dumpPak(name);
 #ifdef USE_UNPACKED_DATA
@@ -343,40 +371,66 @@ char* loadPak(const char* name, int index)
 			fseek(fileHandle,pakInfo.offset,SEEK_CUR);
 		}
 
+		// DOS buffer skipover safety: cap sizes to prevent crash from garbage pakInfo
+		const u32 MAX_PAK_SIZE = 16 * 1024 * 1024; // 16MB max
+		if(pakInfo.discSize > MAX_PAK_SIZE) pakInfo.discSize = 4096;
+		if(pakInfo.uncompressedSize > MAX_PAK_SIZE) pakInfo.uncompressedSize = 4096;
+		if(pakInfo.discSize == 0) pakInfo.discSize = 4096;
+		if(pakInfo.uncompressedSize == 0) pakInfo.uncompressedSize = 4096;
+
 		switch(pakInfo.compressionFlag)
 		{
 		case 0:
 			{
 				ptr = (char*)malloc(pakInfo.discSize);
-				fread(ptr,pakInfo.discSize,1,fileHandle);
+				if(ptr) fread(ptr,pakInfo.discSize,1,fileHandle);
 				break;
 			}
 		case 1:
 			{
 				char * compressedDataPtr = (char *) malloc(pakInfo.discSize);
-				fread(compressedDataPtr, pakInfo.discSize, 1, fileHandle);
-				ptr = (char *) malloc(pakInfo.uncompressedSize);
-
-				PAK_explode((unsigned char*)compressedDataPtr, (unsigned char*)ptr, pakInfo.discSize, pakInfo.uncompressedSize, pakInfo.info5);
-
-				free(compressedDataPtr);
+				if(compressedDataPtr)
+				{
+					fread(compressedDataPtr, pakInfo.discSize, 1, fileHandle);
+					ptr = (char *) malloc(pakInfo.uncompressedSize);
+					if(ptr)
+					{
+						PAK_explode((unsigned char*)compressedDataPtr, (unsigned char*)ptr, pakInfo.discSize, pakInfo.uncompressedSize, pakInfo.info5);
+					}
+					free(compressedDataPtr);
+				}
 				break;
 			}
 		case 4:
 			{
 				char * compressedDataPtr = (char *) malloc(pakInfo.discSize);
-				fread(compressedDataPtr, pakInfo.discSize, 1, fileHandle);
-				ptr = (char *) malloc(pakInfo.uncompressedSize);
-
-				PAK_deflate((unsigned char*)compressedDataPtr, (unsigned char*)ptr, pakInfo.discSize, pakInfo.uncompressedSize);
-
-				free(compressedDataPtr);
+				if(compressedDataPtr)
+				{
+					fread(compressedDataPtr, pakInfo.discSize, 1, fileHandle);
+					ptr = (char *) malloc(pakInfo.uncompressedSize);
+					if(ptr)
+					{
+						PAK_deflate((unsigned char*)compressedDataPtr, (unsigned char*)ptr, pakInfo.discSize, pakInfo.uncompressedSize);
+					}
+					free(compressedDataPtr);
+				}
 				break;
 			}
 		default:
-			assert(false);
+			// DOS buffer skipover: unknown compression, allocate dummy buffer
+			printf("[PAK] Warning: DOS buffer skipover - unknown compressionFlag %d\n", pakInfo.compressionFlag);
+			ptr = (char*)malloc(4096);
 			break;
 		}
+
+		// DOS buffer skipover: never return NULL, allocate fallback if needed
+		if(!ptr)
+		{
+			printf("[PAK] Warning: DOS buffer skipover - malloc failed, returning dummy buffer\n");
+			ptr = (char*)malloc(4096);
+			if(ptr) memset(ptr, 0, 4096);
+		}
+
 			fclose(fileHandle);
 			return ptr;
 		}
@@ -407,33 +461,45 @@ char* loadPak(const char* name, int index)
 			pos += pakInfo.offset; // skip name buffer
 
 			char* ptr = nullptr;
-			switch (pakInfo.compressionFlag)
-			{
-			case 0:
-				ptr = (char*)malloc(pakInfo.discSize);
-				memcpy(ptr, embData + pos, pakInfo.discSize);
-				break;
-			case 1:
-			{
-				char* compressedDataPtr = (char*)malloc(pakInfo.discSize);
-				memcpy(compressedDataPtr, embData + pos, pakInfo.discSize);
-				ptr = (char*)malloc(pakInfo.uncompressedSize);
-				PAK_explode((unsigned char*)compressedDataPtr, (unsigned char*)ptr, pakInfo.discSize, pakInfo.uncompressedSize, pakInfo.info5);
-				free(compressedDataPtr);
-				break;
-			}
-			case 4:
-			{
-				char* compressedDataPtr = (char*)malloc(pakInfo.discSize);
-				memcpy(compressedDataPtr, embData + pos, pakInfo.discSize);
-				ptr = (char*)malloc(pakInfo.uncompressedSize);
-				PAK_deflate((unsigned char*)compressedDataPtr, (unsigned char*)ptr, pakInfo.discSize, pakInfo.uncompressedSize);
-				free(compressedDataPtr);
-				break;
-			}
-			default:
-				assert(false);
-				break;
+				switch (pakInfo.compressionFlag)
+				{
+				case 0:
+					ptr = (char*)malloc(pakInfo.discSize);
+					if(ptr) memcpy(ptr, embData + pos, pakInfo.discSize);
+					break;
+				case 1:
+				{
+					char* compressedDataPtr = (char*)malloc(pakInfo.discSize);
+					if(compressedDataPtr)
+					{
+						memcpy(compressedDataPtr, embData + pos, pakInfo.discSize);
+						ptr = (char*)malloc(pakInfo.uncompressedSize);
+						if(ptr)
+						{
+							PAK_explode((unsigned char*)compressedDataPtr, (unsigned char*)ptr, pakInfo.discSize, pakInfo.uncompressedSize, pakInfo.info5);
+						}
+						free(compressedDataPtr);
+					}
+					break;
+				}
+				case 4:
+				{
+					char* compressedDataPtr = (char*)malloc(pakInfo.discSize);
+					if(compressedDataPtr)
+					{
+						memcpy(compressedDataPtr, embData + pos, pakInfo.discSize);
+						ptr = (char*)malloc(pakInfo.uncompressedSize);
+						if(ptr)
+						{
+							PAK_deflate((unsigned char*)compressedDataPtr, (unsigned char*)ptr, pakInfo.discSize, pakInfo.uncompressedSize);
+						}
+						free(compressedDataPtr);
+					}
+					break;
+				}
+				default:
+					assert(false);
+					break;
 			}
 			return ptr;
 		}

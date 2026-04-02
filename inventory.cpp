@@ -10,6 +10,7 @@
 #include "common.h"
 #include "consoleLog.h"
 #include "fontTTF.h"
+#include "input.h"
 #include <SDL.h>
 #include <math.h>
 
@@ -52,7 +53,19 @@ int DrawListObjets(int startIdx, int selectIdx, int selectColor)
 
 	if(g_gameId <= JACK)
 	{
-		AffBigCadre(160,50,320,100);
+		if (g_currentBackgroundIsHD)
+		{
+			SetClip(8,8,311,91);
+			AffRect(8,8,311,91,0);
+			WindowX1 = 8;
+			WindowY1 = 8;
+			WindowX2 = 311;
+			WindowY2 = 91;
+		}
+		else
+		{
+			AffBigCadre(160,50,320,100);
+		}
 		y = WindowY1+1;
 	}
 	else
@@ -142,7 +155,11 @@ void renderInventoryObject(int arg)
     ShowBeta -= 8;
 
     setCameraTarget(0,0,0,60,ShowBeta,0,24000);
-    AffObjet(0,0,0,0,0,0,ShowObjet);
+    if (ShowObjet)
+    {
+        setCurrentBodyNum(ShowBody, ShowObjet, HQ_Bodys->string);
+        AffObjet(0,0,0,0,0,0,ShowObjet);
+    }
 
     if(arg!=-1)
     {
@@ -170,7 +187,19 @@ void drawInventoryActions(int arg)
 
 	if(g_gameId <= JACK)
 	{
-		AffBigCadre(240,150,160,100);
+		if (g_currentBackgroundIsHD)
+		{
+			SetClip(168,108,311,191);
+			AffRect(168,108,311,191,0);
+			WindowX1 = 168;
+			WindowY1 = 108;
+			WindowX2 = 311;
+			WindowY2 = 191;
+		}
+		else
+		{
+			AffBigCadre(240,150,160,100);
+		}
 		y = 150 - ((numInventoryActions<<4)/2);
 	}
 	else
@@ -256,11 +285,9 @@ void processInventory(void)
     // Play inventory open sound
     playMenuSound("Expand.wav");
 
-    // Fallback from HD background to standard for menu rendering
-    if (g_currentBackgroundIsHD)
-    {
-        recreateBackgroundTexture(320, 200);
-    }
+    // When HD backgrounds are active, use HD inventory background overlay
+    // Otherwise fall back to standard rendering
+    bool useHDInventoryBG = g_currentBackgroundIsHD;
 
     firstObjectDisplayedIdx = 0;
     lastSelectedObjectIdx = -1;
@@ -284,7 +311,19 @@ void processInventory(void)
 	{
 	case AITD1:
 	case JACK:
-		AffBigCadre(80,150,160,100);
+		if (useHDInventoryBG)
+		{
+			SetClip(8,108,151,191);
+			AffRect(8,108,151,191,0);
+			WindowX1 = 8;
+			WindowY1 = 108;
+			WindowX2 = 151;
+			WindowY2 = 191;
+		}
+		else
+		{
+			AffBigCadre(80,150,160,100);
+		}
 
 		statusLeft = WindowX1;
 		statusTop = WindowY1;
@@ -304,16 +343,81 @@ void processInventory(void)
 		assert(0);
 	}
 
-    while(!exitMenu)
-    {
+	if (useHDInventoryBG)
+		osystem_freezeSceneForMenu();
+
+	while(!exitMenu)
+	{
 		/*
-        osystem_CopyBlockPhys((unsigned char*)backbuffer,0,0,320,200);
-        osystem_startFrame();
-        osystem_cleanScreenKeepZBuffer();
+		osystem_CopyBlockPhys((unsigned char*)backbuffer,0,0,320,200);
+		osystem_startFrame();
+		osystem_cleanScreenKeepZBuffer();
 		*/
 
-        process_events();
-		osystem_drawBackground();
+		process_events();
+
+		// If window was resized during process_events, force a full redraw
+		bool needRedraw = false;
+		if (g_windowWasResized)
+		{
+			resetWindowResizeFlag();
+			needRedraw = true;
+
+			// Force redraw of inventory UI
+			switch(g_gameId)
+			{
+			case AITD1:
+			case JACK:
+				if (useHDInventoryBG)
+				{
+					SetClip(8,108,151,191);
+					AffRect(8,108,151,191,0);
+					WindowX1 = 8;
+					WindowY1 = 108;
+					WindowX2 = 151;
+					WindowY2 = 191;
+				}
+				else
+				{
+					AffBigCadre(80,150,160,100);
+				}
+				statusLeft = WindowX1;
+				statusTop = WindowY1;
+				statusRight = WindowX2;
+				statusBottom = WindowY2;
+				SetProjection(((statusRight-statusLeft)/2)+statusLeft,((statusBottom-statusTop)/2) + statusTop,128,400,390);
+				break;
+			case AITD2:
+				drawInventoryAITD2();
+				break;
+			case AITD3:
+				drawInventoryAITD3();
+				break;
+			default:
+				break;
+			}
+
+			// Redraw current state
+			if (modeSelect == 0)
+			{
+				DrawListObjets(firstObjectDisplayedIdx, selectedObjectIdx, 14);
+			}
+			else
+			{
+				DrawListObjets(firstObjectDisplayedIdx, selectedObjectIdx, 14);
+				drawInventoryActions(lastSelectedObjectIdx);
+			}
+		}
+
+		if (useHDInventoryBG)
+		{
+			osystem_drawFrozenSceneBackground();
+			osystem_drawInventoryBackground();
+		}
+		else
+		{
+			osystem_drawBackground();
+		}
 
         localKey = key;
         localJoyD = JoyD;
@@ -542,6 +646,9 @@ void processInventory(void)
         //osystem_flip(NULL);
     }
 
+    if (useHDInventoryBG)
+        osystem_unfreezeSceneForMenu();
+
     RestoreTimerAnim();
 
     FlagInitView = 1;
@@ -590,7 +697,12 @@ void DrawFoundWindow(int menuState, int objectName, int zoomFactor)
 
     setCameraTarget(0, 0, 0, 60, ShowBeta, 0, zoomFactor);
 
-    AffObjet(0, 0, 0, 0, 0, 0, HQR_Get(HQ_Bodys, ShowBody));
+    sBody* foundBody = HQR_Get(HQ_Bodys, ShowBody);
+    if (foundBody)
+    {
+        setCurrentBodyNum(ShowBody, foundBody, HQ_Bodys->string);
+        AffObjet(0, 0, 0, 0, 0, 0, foundBody);
+    }
 
     SimpleMessage(160, WindowY1, 20, 1);
     SimpleMessage(160, WindowY1 + 16, objectName, 1);
@@ -645,11 +757,9 @@ void FoundObjet(int objIdx, int param)
 
     objPtr->trackNumber = 0;
 
-    // Fallback from HD background to standard for menu rendering
-    if (g_currentBackgroundIsHD)
-    {
-        recreateBackgroundTexture(320, 200);
-    }
+    // When HD backgrounds are active, use HD inventory background overlay
+    // Otherwise fall back to standard rendering
+    bool useHDInventoryBG = g_currentBackgroundIsHD;
 
     // Notify TTF that we're entering pickup/found object screen
     notifyTTFMenuStateChanged(true, true);
@@ -682,7 +792,19 @@ void FoundObjet(int objIdx, int param)
     memset(frontBuffer, 0, 320 * 200);
     FastCopyScreen(frontBuffer, logicalScreen);
 
-    AffBigCadre(160, 100, 240, 120);
+    if (useHDInventoryBG)
+    {
+        SetClip(48,48,271,151);
+        AffRect(48,48,271,151,0);
+        WindowX1 = 48;
+        WindowY1 = 48;
+        WindowX2 = 271;
+        WindowY2 = 151;
+    }
+    else
+    {
+        AffBigCadre(160, 100, 240, 120);
+    }
 
     DrawFoundWindow(choix, objPtr->foundName, zoom);
     osystem_flip(NULL);
@@ -690,12 +812,47 @@ void FoundObjet(int objIdx, int param)
     AntiRebond = 1;
 
     int exitflag = 0;
+    if (useHDInventoryBG)
+        osystem_freezeSceneForMenu();
+
     while (!exitflag)
     {
         osystem_CopyBlockPhys((unsigned char*)logicalScreen, 0, 0, 320, 200);
 
         process_events();
-        osystem_drawBackground();
+
+        // If window was resized, redraw the found object UI
+        if (g_windowWasResized)
+        {
+            resetWindowResizeFlag();
+            memset(frontBuffer, 0, 320 * 200);
+            FastCopyScreen(frontBuffer, logicalScreen);
+            if (useHDInventoryBG)
+            {
+                SetClip(48,48,271,151);
+                AffRect(48,48,271,151,0);
+                WindowX1 = 48;
+                WindowY1 = 48;
+                WindowX2 = 271;
+                WindowY2 = 151;
+            }
+            else
+            {
+                AffBigCadre(160, 100, 240, 120);
+            }
+            DrawFoundWindow(choix, objPtr->foundName, zoom);
+            osystem_CopyBlockPhys((unsigned char*)logicalScreen, 0, 0, 320, 200);
+        }
+
+        if (useHDInventoryBG)
+        {
+            osystem_drawFrozenSceneBackground();
+            osystem_drawFoundObjectBackground();
+        }
+        else
+        {
+            osystem_drawBackground();
+        }
 
         localKey = key;
         localJoyD = JoyD;
@@ -755,6 +912,9 @@ void FoundObjet(int objIdx, int param)
 
         //    menuWaitVSync();
     }
+
+    if (useHDInventoryBG)
+        osystem_unfreezeSceneForMenu();
 
     RestoreTimerAnim();
 

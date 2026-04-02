@@ -176,10 +176,11 @@ int make3dTatou(void)
     // Clean up animated HD background if it was set
     setCurrentAnimatedHDBackground(nullptr);
 
-    delete[] tatou3dRaw;
+    free(tatou3dRaw);
     delete tatou3d;
 
     free(tatou2d);
+    free(tatouPalRaw);
 
     if(key || Click || JoyD)
     {

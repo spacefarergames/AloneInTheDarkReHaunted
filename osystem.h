@@ -59,8 +59,9 @@
 	void osystem_putpixel(int x, int y, int pixel);
 	void osystem_setColor(byte i, byte R, byte G, byte B);
 	void osystem_setPalette(unsigned byte * palette);
-    void osystem_setPalette(palette_t* palette);
+	void osystem_setPalette(palette_t* palette);
 	void osystem_setPalette320x200(byte * palette);
+	void osystem_setDarkRoom(bool dark);
 	void osystem_flip(unsigned char *videoBuffer);
 	void osystem_draw320x200BufferToScreen(unsigned char *videoBuffer);
 	void osystem_CopyBlockPhys(unsigned char* videoBuffer, int left, int top, int right, int bottom);
@@ -72,16 +73,20 @@
 	void osystem_playSample(char* samplePtr,int size);
 	void osystem_playLoopingSample(char* samplePtr, int size);
 	void osystem_stopSample();
+	bool osystem_isSamplePlaying();
 
 	void osystem_playVO(const char* voFileName);
 	void osystem_playVocByIndex(int vocIndex);
 	void osystem_playVocPageLines(int vocIndex, int page, int numLines);
 	void osystem_stopVO();
 	bool osystem_isVOPlaying();
+
+	extern float g_voPitchMultiplier;
 	//    void getMouseStatus(mouseStatusStruct * mouseData);
 
-	void osystem_createMask(const std::array<u8, 320 * 200>& mask, int roomId, int maskId, int maskX1, int maskY1, int maskX2, int maskY2);
+	void osystem_createMask(const std::array<u8, 320 * 200>& mask, int roomId, int maskId, int actualRoomNumber, int maskX1, int maskY1, int maskX2, int maskY2);
 	void osystem_drawMask(int roomId, int maskId);
+	void osystem_drawMaskStencilPrepass(int roomId, int maskId);
 
 	void osystem_startFrame();
 	void osystem_stopFrame();
@@ -102,9 +107,31 @@
 
 	void osystem_drawPortraitOverlay(int choice);
 
-	void osystem_drawControllerHint();
+	void osystem_drawInventoryBackground();
+
+	void osystem_drawFoundObjectBackground();
+
+	void osystem_drawControllerHint(float bottomMargin = 2.0f);
 
 	void osystem_drawVignette();
+
+	void osystem_drawSystemMenuBackground();
+
+	void osystem_drawSaveRestoreBackground();
+	void osystem_updateSaveSlotPreviewTexture(unsigned char* rgbaData, int width, int height);
+	void osystem_drawSaveSlotPreviewHD(float x1, float y1, float x2, float y2);
+	void osystem_destroySaveSlotPreviewTexture();
+
+	void osystem_drawHotspotOverlay(float opacity = 1.0f);
+
+	void osystem_drawStartupMenuBackground();
+	void osystem_drawLanguageSelectionBackground();
+	void osystem_drawFullScreenFrame();
+
+	// Map screen overlay
+	void osystem_loadMapTexture(int floorNumber);
+	void osystem_drawMapImage();
+	void osystem_destroyMapTexture();
 
 	void osystem_drawBlackScreen();
 
@@ -124,6 +151,12 @@
 	unsigned char* osystem_getScenePreviewData();
 	int osystem_getScenePreviewWidth();
 	int osystem_getScenePreviewHeight();
+
+	// Freeze/unfreeze scene snapshot for menu backgrounds
+	void osystem_freezeSceneForMenu();
+	void osystem_unfreezeSceneForMenu();
+	void osystem_drawFrozenSceneBackground();
+	void osystem_drawFrozenScenePreview(float x1, float y1, float x2, float y2);
 
 	// Page turn animation
 	void osystem_pageTurnCapture();

@@ -43,6 +43,9 @@ void imguiRebuildFontTexture(); // Rebuild font texture after adding fonts dynam
 void imguiBeginFrame(int32_t _mx, int32_t _my, uint8_t _button, int32_t _scroll, uint16_t _width, uint16_t _height, int _inputChar = -1, bgfx::ViewId _view = 255);
 void imguiEndFrame();
 
+// Track whether we're between imguiBeginFrame() and imguiEndFrame()
+extern bool g_imguiFrameActive;
+
 namespace entry { class AppI; }
 void showExampleDialog(entry::AppI* _app, const char* _errorText = NULL);
 

@@ -1,4 +1,4 @@
-﻿///////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////
 // Alone In The Dark Re-Haunted
 // Copyright (C) 2026 Infogrames / Spacefarer Retro Remasters LLC
 // Based on FITD by yaz0r, Re-haunted is released under GPL
@@ -43,27 +43,27 @@ extern void playMenuSound(const char* soundName);
 #include "../ThirdParty/bgfx.cmake/bimg/3rdparty/stb/stb_image.h"
 
 extern "C" {
-	extern char homePath[512];
+    extern char homePath[512];
 }
 
 FILE* Open(const char* filename, const char* mode) {
-	std::filesystem::path path = std::filesystem::path(homePath) / filename;
-	return fopen(path.string().c_str(), mode);
+    std::filesystem::path path = std::filesystem::path(homePath) / filename;
+    return fopen(path.string().c_str(), mode);
 }
 
 static std::string g_versionString;
 
 static void loadVersionString()
 {
-	std::filesystem::path versionPath = std::filesystem::path(homePath) / "version.txt";
-	std::ifstream file(versionPath);
-	if (file.is_open())
-	{
-		std::getline(file, g_versionString);
-		// trim trailing whitespace
-		while (!g_versionString.empty() && (g_versionString.back() == '\r' || g_versionString.back() == '\n' || g_versionString.back() == ' '))
-			g_versionString.pop_back();
-	}
+    std::filesystem::path versionPath = std::filesystem::path(homePath) / "version.txt";
+    std::ifstream file(versionPath);
+    if (file.is_open())
+    {
+        std::getline(file, g_versionString);
+        // trim trailing whitespace
+        while (!g_versionString.empty() && (g_versionString.back() == '\r' || g_versionString.back() == '\n' || g_versionString.back() == ' '))
+            g_versionString.pop_back();
+    }
 }
 
 int AntiRebond;
@@ -74,515 +74,515 @@ static int s_shakeMaxAmplitude = 0;
 
 void updateShaking()
 {
-	// Only update shake if it was triggered by a life script (via setupShaking)
-	if (s_shakeFramesRemaining > 0 && s_shakeMaxAmplitude > 0)
-	{
-		// Calculate current amplitude (fades out over time)
-		float progress = (float)s_shakeFramesRemaining / 60.0f; // Assume 60 frames max duration
-		float currentAmplitude = (float)s_shakeMaxAmplitude * progress;
+    // Only update shake if it was triggered by a life script (via setupShaking)
+    if (s_shakeFramesRemaining > 0 && s_shakeMaxAmplitude > 0)
+    {
+        // Calculate current amplitude (fades out over time)
+        float progress = (float)s_shakeFramesRemaining / 60.0f; // Assume 60 frames max duration
+        float currentAmplitude = (float)s_shakeMaxAmplitude * progress;
 
-		// Generate random shake offsets - scale to visible pixel displacement
-		// For amplitude 1, this gives ~5 pixel max displacement (visible shake)
-		// For amplitude 10, this gives ~50 pixel displacement (dramatic shake)
-		g_shakeOffsetX = ((float)(rand() % 200) - 100.0f) / 100.0f * currentAmplitude * 2.0f;
-		g_shakeOffsetY = ((float)(rand() % 200) - 100.0f) / 100.0f * currentAmplitude * 2.0f;
+        // Generate random shake offsets - scale to visible pixel displacement
+        // For amplitude 1, this gives ~5 pixel max displacement (visible shake)
+        // For amplitude 10, this gives ~50 pixel displacement (dramatic shake)
+        g_shakeOffsetX = ((float)(rand() % 200) - 100.0f) / 100.0f * currentAmplitude * 2.0f;
+        g_shakeOffsetY = ((float)(rand() % 200) - 100.0f) / 100.0f * currentAmplitude * 2.0f;
 
-		s_shakeFramesRemaining--;
+        s_shakeFramesRemaining--;
 
-		// Stop shaking when duration expires
-		if (s_shakeFramesRemaining <= 0)
-		{
-			stopShaking();
-		}
-	}
-	else
-	{
-		// No shake active - ensure offsets are zero
-		g_shakeOffsetX = 0.f;
-		g_shakeOffsetY = 0.f;
-	}
+        // Stop shaking when duration expires
+        if (s_shakeFramesRemaining <= 0)
+        {
+            stopShaking();
+        }
+    }
+    else
+    {
+        // No shake active - ensure offsets are zero
+        g_shakeOffsetX = 0.f;
+        g_shakeOffsetY = 0.f;
+    }
 }
 
 void stopShaking()
 {
-	shakingAmplitude = 0;
-	shakeVar1 = 0;
-	g_shakeOffsetX = 0.f;
-	g_shakeOffsetY = 0.f;
-	s_shakeFramesRemaining = 0;
-	s_shakeMaxAmplitude = 0;
+    shakingAmplitude = 0;
+    shakeVar1 = 0;
+    g_shakeOffsetX = 0.f;
+    g_shakeOffsetY = 0.f;
+    s_shakeFramesRemaining = 0;
+    s_shakeMaxAmplitude = 0;
 }
 
 void setupShaking(int amplitude)
 {
-	// Called from LM_SHAKING life script opcode
-	// amplitude = 0 means stop shaking (handled by stopShaking() in life.cpp)
-	// amplitude > 0 means start shaking with given intensity
-	if (amplitude > 0)
-	{
-		shakingAmplitude = amplitude;
-		s_shakeMaxAmplitude = amplitude;
-		s_shakeFramesRemaining = 60; // Shake for ~1 second (60 frames at 60fps)
-	}
+    // Called from LM_SHAKING life script opcode
+    // amplitude = 0 means stop shaking (handled by stopShaking() in life.cpp)
+    // amplitude > 0 means start shaking with given intensity
+    if (amplitude > 0)
+    {
+        shakingAmplitude = amplitude;
+        s_shakeMaxAmplitude = amplitude;
+        s_shakeFramesRemaining = 60; // Shake for ~1 second (60 frames at 60fps)
+    }
 }
 
 void pauseShaking()
 {
-	g_shakeOffsetX = 0.f;
-	g_shakeOffsetY = 0.f;
+    g_shakeOffsetX = 0.f;
+    g_shakeOffsetY = 0.f;
 }
 
 int* currentCVarTable = NULL;
 
 int getCVarsIdx(enumCVars searchedType) // TODO: optimize by reversing the table....
 {
-	for(int i=0;i<CVars.size();i++)
-	{
-		if(currentCVarTable[i] == -1)
-		{
-			ASSERT(0);
-		}
+    for (int i = 0; i < CVars.size(); i++)
+    {
+        if (currentCVarTable[i] == -1)
+        {
+            ASSERT(0);
+        }
 
 
-		if(currentCVarTable[i] == searchedType)
-			return i;
-	}
+        if (currentCVarTable[i] == searchedType)
+            return i;
+    }
 
-	ASSERT(0);
-	return 0;
+    ASSERT(0);
+    return 0;
 }
 
 int getCVarsIdx(int searchedType)
 {
-	return getCVarsIdx((enumCVars)searchedType);
+    return getCVarsIdx((enumCVars)searchedType);
 }
 
 const unsigned char defaultPalette[0x30] =
 {
-	0x00,
-	0x00,
-	0x00,
-	0x3F,
-	0x3F,
-	0x3F,
-	0x0C,
-	0x0C,
-	0x0E,
-	0x30,
-	0x2F,
-	0x3F,
-	0x23,
-	0x2C,
-	0x23,
-	0x2A,
-	0x1D,
-	0x2A,
-	0x2A,
-	0x21,
-	0x18,
-	0x3F,
-	0x05,
-	0x2A,
-	0x12,
-	0x14,
-	0x18,
-	0x31,
-	0x15,
-	0x17,
-	0x15,
-	0x25,
-	0x15,
-	0x15,
-	0x2F,
-	0x3F,
-	0x3F,
-	0x22,
-	0x15,
-	0x2B,
-	0x15,
-	0x3F,
-	0x3F,
-	0x3F,
-	0x21,
-	0x3F,
-	0x3F,
-	0x3F
+    0x00,
+    0x00,
+    0x00,
+    0x3F,
+    0x3F,
+    0x3F,
+    0x0C,
+    0x0C,
+    0x0E,
+    0x30,
+    0x2F,
+    0x3F,
+    0x23,
+    0x2C,
+    0x23,
+    0x2A,
+    0x1D,
+    0x2A,
+    0x2A,
+    0x21,
+    0x18,
+    0x3F,
+    0x05,
+    0x2A,
+    0x12,
+    0x14,
+    0x18,
+    0x31,
+    0x15,
+    0x17,
+    0x15,
+    0x25,
+    0x15,
+    0x15,
+    0x2F,
+    0x3F,
+    0x3F,
+    0x22,
+    0x15,
+    0x2B,
+    0x15,
+    0x3F,
+    0x3F,
+    0x3F,
+    0x21,
+    0x3F,
+    0x3F,
+    0x3F
 };
 
-const unsigned char defaultPaletteAITD3[0x30]=
+const unsigned char defaultPaletteAITD3[0x30] =
 {
-	0x00,
-	0x00,
-	0x00,
-	0xFC,
-	0xFC,
-	0xFC,
-	0x30,
-	0x30,
-	0x38,
-	0xC0,
-	0xBC,
-	0xFC,
-	0x78,
-	0x58,
-	0x3C,
-	0x00,
-	0x00,
-	0x00,
-	0xF0,
-	0x70,
-	0x10,
-	0xFC,
-	0xFC,
-	0xFC,
-	0x48,
-	0x50,
-	0x60,
-	0xC4,
-	0x54,
-	0x5C,
-	0x54,
-	0x94,
-	0x54,
-	0x54,
-	0xBC,
-	0xFC,
-	0xFC,
-	0x88,
-	0x54,
-	0xAC,
-	0x54,
-	0xFC,
-	0xFC,
-	0xFC,
-	0xFC,
-	0xFC,
-	0xFC,
-	0xF8
+    0x00,
+    0x00,
+    0x00,
+    0xFC,
+    0xFC,
+    0xFC,
+    0x30,
+    0x30,
+    0x38,
+    0xC0,
+    0xBC,
+    0xFC,
+    0x78,
+    0x58,
+    0x3C,
+    0x00,
+    0x00,
+    0x00,
+    0xF0,
+    0x70,
+    0x10,
+    0xFC,
+    0xFC,
+    0xFC,
+    0x48,
+    0x50,
+    0x60,
+    0xC4,
+    0x54,
+    0x5C,
+    0x54,
+    0x94,
+    0x54,
+    0x54,
+    0xBC,
+    0xFC,
+    0xFC,
+    0x88,
+    0x54,
+    0xAC,
+    0x54,
+    0xFC,
+    0xFC,
+    0xFC,
+    0xFC,
+    0xFC,
+    0xFC,
+    0xF8
 };
 
 void executeFoundLife(int objIdx)
 {
-	int var_2;
-	int actorIdx;
-	int lifeOffset;
-	int currentActorIdx;
-	int currentActorLifeIdx;
-	int currentActorLifeNum;
-	int foundLife;
-	tObject* currentActorPtr;
-	tObject* currentActorLifePtr;
+    int var_2;
+    int actorIdx;
+    int lifeOffset;
+    int currentActorIdx;
+    int currentActorLifeIdx;
+    int currentActorLifeNum;
+    int foundLife;
+    tObject* currentActorPtr;
+    tObject* currentActorLifePtr;
 
-	if(objIdx == -1)
-		return;
+    if (objIdx == -1)
+        return;
 
-	foundLife = ListWorldObjets[objIdx].foundLife;
+    foundLife = ListWorldObjets[objIdx].foundLife;
 
-	if(ListWorldObjets[objIdx].foundLife == -1)
-		return;
+    if (ListWorldObjets[objIdx].foundLife == -1)
+        return;
 
-	currentActorPtr = currentProcessedActorPtr;
-	currentActorIdx = currentProcessedActorIdx;
-	currentActorLifeIdx = currentLifeActorIdx;
-	currentActorLifePtr = currentLifeActorPtr;
-	currentActorLifeNum = currentLifeNum;
+    currentActorPtr = currentProcessedActorPtr;
+    currentActorIdx = currentProcessedActorIdx;
+    currentActorLifeIdx = currentLifeActorIdx;
+    currentActorLifePtr = currentLifeActorPtr;
+    currentActorLifeNum = currentLifeNum;
 
-	if(currentLifeNum != -1)
-	{
-		lifeOffset = (currentLifePtr - HQR_Get(listLife,currentActorLifeNum))/2;
-	}
+    if (currentLifeNum != -1)
+    {
+        lifeOffset = (int)((currentLifePtr - HQR_Get(listLife, currentActorLifeNum)) / 2);
+    }
 
-	var_2 = 0;
+    var_2 = 0;
 
-	actorIdx = ListWorldObjets[objIdx].objIndex;
+    actorIdx = ListWorldObjets[objIdx].objIndex;
 
-	if(actorIdx==-1)
-	{
-		tObject* currentActorEntryPtr = &ListObjets[NUM_MAX_OBJECT-1];
-		int currentActorEntry = NUM_MAX_OBJECT-1;
+    if (actorIdx == -1)
+    {
+        tObject* currentActorEntryPtr = &ListObjets[NUM_MAX_OBJECT - 1];
+        int currentActorEntry = NUM_MAX_OBJECT - 1;
 
-		while(currentActorEntry>=0)
-		{
-			if(currentActorEntryPtr->indexInWorld == -1)
-				break;
+        while (currentActorEntry >= 0)
+        {
+            if (currentActorEntryPtr->indexInWorld == -1)
+                break;
 
-			currentActorEntryPtr--;
-			currentActorEntry--;
-		}
+            currentActorEntryPtr--;
+            currentActorEntry--;
+        }
 
-		if(currentActorEntry==-1) // no space, we will have to overwrite the last actor !
-		{
-			currentActorEntry = NUM_MAX_OBJECT-1;
-			currentActorEntryPtr = &ListObjets[NUM_MAX_OBJECT-1];
-		}
+        if (currentActorEntry == -1) // no space, we will have to overwrite the last actor !
+        {
+            currentActorEntry = NUM_MAX_OBJECT - 1;
+            currentActorEntryPtr = &ListObjets[NUM_MAX_OBJECT - 1];
+        }
 
-		actorIdx = currentActorEntry;
-		var_2 = 1;
+        actorIdx = currentActorEntry;
+        var_2 = 1;
 
-		currentProcessedActorPtr = &ListObjets[actorIdx];
-		currentLifeActorPtr = &ListObjets[actorIdx];
-		currentProcessedActorIdx = actorIdx;
-		currentLifeActorIdx = actorIdx;
+        currentProcessedActorPtr = &ListObjets[actorIdx];
+        currentLifeActorPtr = &ListObjets[actorIdx];
+        currentProcessedActorIdx = actorIdx;
+        currentLifeActorIdx = actorIdx;
 
-		currentProcessedActorPtr->indexInWorld = objIdx;
-		currentProcessedActorPtr->life = -1;
-		currentProcessedActorPtr->bodyNum = -1;
-		currentProcessedActorPtr->objectType = 0;
-		currentProcessedActorPtr->trackMode = -1;
-		currentProcessedActorPtr->room = -1;
-		currentProcessedActorPtr->lifeMode = -1;
-		currentProcessedActorPtr->ANIM = -1;
-	}
+        currentProcessedActorPtr->indexInWorld = objIdx;
+        currentProcessedActorPtr->life = -1;
+        currentProcessedActorPtr->bodyNum = -1;
+        currentProcessedActorPtr->objectType = 0;
+        currentProcessedActorPtr->trackMode = -1;
+        currentProcessedActorPtr->room = -1;
+        currentProcessedActorPtr->lifeMode = -1;
+        currentProcessedActorPtr->ANIM = -1;
+    }
 
-	processLife(foundLife, true);
+    processLife(foundLife, true);
 
-	if(var_2)
-	{
-		currentProcessedActorPtr->indexInWorld = -1;
-	}
+    if (var_2)
+    {
+        currentProcessedActorPtr->indexInWorld = -1;
+    }
 
-	currentProcessedActorPtr = currentActorPtr;
-	currentProcessedActorIdx = currentActorIdx;
-	currentLifeActorIdx = currentActorLifeIdx;
-	currentLifeActorPtr = currentActorLifePtr;
+    currentProcessedActorPtr = currentActorPtr;
+    currentProcessedActorIdx = currentActorIdx;
+    currentLifeActorIdx = currentActorLifeIdx;
+    currentLifeActorPtr = currentActorLifePtr;
 
-	if(currentActorLifeNum != -1)
-	{
-		currentLifeNum = currentActorLifeNum;
-		currentLifePtr = HQR_Get(listLife,currentLifeNum) + lifeOffset * 2;
-	}
+    if (currentActorLifeNum != -1)
+    {
+        currentLifeNum = currentActorLifeNum;
+        currentLifePtr = HQR_Get(listLife, currentLifeNum) + lifeOffset * 2;
+    }
 }
 
 void InitCopyBox(char* var0, char* var1)
 {
-	screenSm1 = var0;
-	screenSm2 = var0;
+    screenSm1 = var0;
+    screenSm2 = var0;
 
-	screenSm3 = var1;
-	screenSm4 = var1;
-	screenSm5 = var1;
+    screenSm3 = var1;
+    screenSm4 = var1;
+    screenSm5 = var1;
 }
 
 void allocTextes(void)
 {
-	int currentIndex;
-	u8* currentPosInTextes;
-	int textCounter;
-	int stringIndex;
-	u8* stringPtr;
-	int textLength;
+    int currentIndex;
+    u8* currentPosInTextes;
+    int textCounter;
+    int stringIndex;
+    u8* stringPtr;
+    int textLength;
 
-	tabTextes = (textEntryStruct*)malloc(NUM_MAX_TEXT_ENTRY * sizeof(textEntryStruct)); // 2000 = 250 * 8
+    tabTextes = (textEntryStruct*)malloc(NUM_MAX_TEXT_ENTRY * sizeof(textEntryStruct)); // 2000 = 250 * 8
 
-	ASSERT_PTR(tabTextes);
+    ASSERT_PTR(tabTextes);
 
-	if(!tabTextes)
-	{
-		fatalError(1,"TabTextes");
-	}
+    if (!tabTextes)
+    {
+        fatalError(1, "TabTextes");
+    }
 
-	// setup languageNameString (skip auto-detection if already set by reloadLanguage)
-	if (!languageNameString.length())
-	{
-		for (int i=0; i<languageNameTable.size(); i++)
-		{
-			char tempString[20];
+    // setup languageNameString (skip auto-detection if already set by reloadLanguage)
+    if (!languageNameString.length())
+    {
+        for (int i = 0; i < languageNameTable.size(); i++)
+        {
+            char tempString[20];
 
-			strcpy(tempString, languageNameTable[i].c_str());
-			strcat(tempString, ".PAK");
+            strcpy(tempString, languageNameTable[i].c_str());
+            strcat(tempString, ".PAK");
 
-			if (fileExists(tempString))
-			{
-				languageNameString = languageNameTable[i].c_str();
-				break;
-			}
-		}
-	}
+            if (fileExists(tempString))
+            {
+                languageNameString = languageNameTable[i].c_str();
+                break;
+            }
+        }
+    }
 
-	if(!languageNameString.length())
-	{
-		printf(MAIN_WARN "Unable to detect language file.." CON_RESET "\n");
-		assert(0);
-	}
+    if (!languageNameString.length())
+    {
+        printf(MAIN_WARN "Unable to detect language file.." CON_RESET "\n");
+        assert(0);
+    }
 
-	systemTextes = (u8*)CheckLoadMallocPak(languageNameString.c_str(), 0); // todo: use real language name
-	textLength = getPakSize(languageNameString.c_str(), 0);
+    systemTextes = (u8*)CheckLoadMallocPak(languageNameString.c_str(), 0); // todo: use real language name
+    textLength = getPakSize(languageNameString.c_str(), 0);
 
-	for(currentIndex=0;currentIndex<NUM_MAX_TEXT_ENTRY;currentIndex++)
-	{
-		tabTextes[currentIndex].index = -1;
-		tabTextes[currentIndex].textPtr = NULL;
-		tabTextes[currentIndex].width = 0;
-	}
+    for (currentIndex = 0; currentIndex < NUM_MAX_TEXT_ENTRY; currentIndex++)
+    {
+        tabTextes[currentIndex].index = -1;
+        tabTextes[currentIndex].textPtr = NULL;
+        tabTextes[currentIndex].width = 0;
+    }
 
-	currentPosInTextes = systemTextes;
+    currentPosInTextes = systemTextes;
 
-	textCounter = 0;
+    textCounter = 0;
 
-	while(currentPosInTextes<systemTextes+textLength)
-	{
-		currentIndex = *(currentPosInTextes++);
+    while (currentPosInTextes < systemTextes + textLength)
+    {
+        currentIndex = *(currentPosInTextes++);
 
-		if(currentIndex == 26)
-			break;
+        if (currentIndex == 26)
+            break;
 
-		if(currentIndex == '@') // start of string marker
-		{
-			stringIndex = 0;
+        if (currentIndex == '@') // start of string marker
+        {
+            stringIndex = 0;
 
-			while((currentIndex = *(currentPosInTextes++)) >= '0' && currentIndex <= '9') // parse string number
-			{
-				stringIndex = stringIndex * 10 + currentIndex - 48;
-			}
+            while ((currentIndex = *(currentPosInTextes++)) >= '0' && currentIndex <= '9') // parse string number
+            {
+                stringIndex = stringIndex * 10 + currentIndex - 48;
+            }
 
-			if(currentIndex == ':') // start of string
-			{
-				stringPtr = currentPosInTextes;
+            if (currentIndex == ':') // start of string
+            {
+                stringPtr = currentPosInTextes;
 
-				do
-				{
-					currentPosInTextes ++;
-				}while((unsigned char)*(currentPosInTextes-1) >= ' '); // detect the end of the string
+                do
+                {
+                    currentPosInTextes++;
+                } while ((unsigned char)*(currentPosInTextes - 1) >= ' '); // detect the end of the string
 
-				*(currentPosInTextes-1) = 0; // add the end of string
+                *(currentPosInTextes - 1) = 0; // add the end of string
 
-				if(textCounter >= NUM_MAX_TEXT_ENTRY)
-					break;
+                if (textCounter >= NUM_MAX_TEXT_ENTRY)
+                    break;
 
-				tabTextes[textCounter].index = stringIndex;
-				tabTextes[textCounter].textPtr = stringPtr;
-				tabTextes[textCounter].width = ExtGetSizeFont(stringPtr);
+                tabTextes[textCounter].index = stringIndex;
+                tabTextes[textCounter].textPtr = stringPtr;
+                tabTextes[textCounter].width = ExtGetSizeFont(stringPtr);
 
-				textCounter++;
-			}
+                textCounter++;
+            }
 
-			if(currentIndex == 26)
-			{
-				return;
-			}
-		}
-	}
+            if (currentIndex == 26)
+            {
+                return;
+            }
+        }
+    }
 }
 
 void reloadLanguage(const char* langName)
 {
-	// Free old text data
-	if (tabTextes)
-	{
-		free(tabTextes);
-		tabTextes = nullptr;
-	}
-	if (systemTextes)
-	{
-		free(systemTextes);
-		systemTextes = nullptr;
-	}
+    // Free old text data
+    if (tabTextes)
+    {
+        free(tabTextes);
+        tabTextes = nullptr;
+    }
+    if (systemTextes)
+    {
+        free(systemTextes);
+        systemTextes = nullptr;
+    }
 
-	// Set the new language
-	languageNameString = langName;
+    // Set the new language
+    languageNameString = langName;
 
-	// Reload text data using allocTextes (it will use the pre-set languageNameString)
-	allocTextes();
+    // Reload text data using allocTextes (it will use the pre-set languageNameString)
+    allocTextes();
 }
 
 void OpenProgram(void)
 {
-	//time_t ltime;
-	FILE* fHandle;
+    //time_t ltime;
+    FILE* fHandle;
 
-	setupScreen();
-	//setupInterrupt();
-	//setupInterrupt2();
-	//setupInterrupt3();
+    setupScreen();
+    //setupInterrupt();
+    //setupInterrupt2();
+    //setupInterrupt3();
 
-	//setupVideoMode();
+    //setupVideoMode();
 
 //	time( &ltime );
 
 //	srand(ltime);
 
-	if(!initMusicDriver())
-	{
-		musicConfigured = 0;
-		musicEnabled = 0;
-	}
+    if (!initMusicDriver())
+    {
+        musicConfigured = 0;
+        musicEnabled = 0;
+    }
 
-	// Initialize controller support
-	initController();
+    // Initialize controller support
+    initController();
 
-	// TODO: reverse sound init code
+    // TODO: reverse sound init code
 
 
-	aux = (char*)malloc(65068);
-	if(!aux)
-	{
-		fatalError(1,"Aux");
-	}
+    aux = (char*)malloc(65068);
+    if (!aux)
+    {
+        fatalError(1, "Aux");
+    }
 
-	aux2 = (char*)malloc(65068);
-	if(!aux2)
-	{
-		fatalError(1,"Aux2");
-	}
+    aux2 = (char*)malloc(65068);
+    if (!aux2)
+    {
+        fatalError(1, "Aux2");
+    }
 
-	InitCopyBox(aux2,logicalScreen);
-	/*  InitCopyPlot(aux2);
-	InitSpecialCopyPoly(aux2); */
+    InitCopyBox(aux2, logicalScreen);
+    /*  InitCopyPlot(aux2);
+    InitSpecialCopyPoly(aux2); */
 
     BufferAnim.resize(NB_BUFFER_ANIM);
 
-    switch(g_gameId)
-	{
-	case AITD3:
+    switch (g_gameId)
+    {
+    case AITD3:
         PtrFont = CheckLoadMallocPak("ITD_RESS", 1);
         break;
-	case JACK:
-	case AITD2:
-		PtrFont = CheckLoadMallocPak("ITD_RESS", 1);
-		break;
-	case AITD1:
-		PtrFont = CheckLoadMallocPak("ITD_RESS", 5);
-		break;
+    case JACK:
+    case AITD2:
+        PtrFont = CheckLoadMallocPak("ITD_RESS", 1);
+        break;
+    case AITD1:
+        PtrFont = CheckLoadMallocPak("ITD_RESS", 5);
+        break;
     case TIMEGATE:
         PtrFont = CheckLoadMallocPak("ITD_RESS", 2);
         break;
-	default:
-		assert(0);
-	}
+    default:
+        assert(0);
+    }
 
-	SetFont(PtrFont, 14);
+    SetFont(PtrFont, 14);
 
-	if(g_gameId == AITD1)
-	{
-		SetFontSpace(2,0);
-	}
-	else
-	{
-		SetFontSpace(2,1);
-	}
+    if (g_gameId == AITD1)
+    {
+        SetFontSpace(2, 0);
+    }
+    else
+    {
+        SetFontSpace(2, 1);
+    }
 
-	switch(g_gameId)
-	{
-	case JACK:
-	case AITD2:
-	case AITD3:
-		{
-			PtrCadre = CheckLoadMallocPak("ITD_RESS",0);
-			break;
-		}
-	case AITD1:
-		{
-			PtrCadre = CheckLoadMallocPak("ITD_RESS",4);
-			break;
-		}
-	case TIMEGATE:
-		{
-			PtrCadre = CheckLoadMallocPak("ITD_RESS",0);
-			break;
-		}
-	}
+    switch (g_gameId)
+    {
+    case JACK:
+    case AITD2:
+    case AITD3:
+    {
+        PtrCadre = CheckLoadMallocPak("ITD_RESS", 0);
+        break;
+    }
+    case AITD1:
+    {
+        PtrCadre = CheckLoadMallocPak("ITD_RESS", 4);
+        break;
+    }
+    case TIMEGATE:
+    {
+        PtrCadre = CheckLoadMallocPak("ITD_RESS", 0);
+        break;
+    }
+    }
 
-	PtrPrioritySample = loadFromItd("PRIORITY.ITD");
+    PtrPrioritySample = loadFromItd("PRIORITY.ITD");
 
     // read cvars definitions
     {
@@ -612,12 +612,12 @@ void OpenProgram(void)
         }
     }
 
-	allocTextes();
+    allocTextes();
 
-	//  if(musicConfigured)
-	{
-		listMus = HQR_InitRessource<char>("LISTMUS",110000,40);
-	}
+    //  if(musicConfigured)
+    {
+        listMus = HQR_InitRessource<char>("LISTMUS", 110000, 40);
+    }
 
     char sampleFileName[256] = "";
     if (g_gameId == TIMEGATE)
@@ -629,252 +629,252 @@ void OpenProgram(void)
         strcpy(sampleFileName, "LISTSAMP");
     }
 
-	listSamp = HQR_InitRessource<char>(sampleFileName,64000,30);
+    listSamp = HQR_InitRessource<char>(sampleFileName, 64000, 30);
 
-	HQ_Memory = HQR_Init(10000,50);
+    HQ_Memory = HQR_Init(10000, 50);
 }
 
 void freeAll(void)
 {
-	/*  HQR_Free(hqrUnk);
+    /*  HQR_Free(hqrUnk);
 
-	HQR_Free(listSamp);
+    HQR_Free(listSamp);
 
-	HQR_Free(listMus);
+    HQR_Free(listMus);
 
-	free(languageData);
+    free(languageData);
 
-	free(tabTextes);
+    free(tabTextes);
 
-	free(priority);
+    free(priority);
 
-	free(aitdBoxGfx);
+    free(aitdBoxGfx);
 
-	free(fontData);
+    free(fontData);
 
-	free(bufferAnim);
+    free(bufferAnim);
 
-	if(aux != aux3)
-	{
-	free(aux);
-	}
+    if(aux != aux3)
+    {
+    free(aux);
+    }
 
-	free(aux2);*/
+    free(aux2);*/
 
-	//TODO: implement all the code that restore the interrupts & all
+    //TODO: implement all the code that restore the interrupts & all
 }
 
 textEntryStruct* getTextFromIdx(int index)
 {
-	int currentIndex;
+    int currentIndex;
 
-	for(currentIndex = 0; currentIndex < NUM_MAX_TEXT_ENTRY; currentIndex++)
-	{
-		if(tabTextes[currentIndex].index == index)
-		{
-			return(&tabTextes[currentIndex]);
-		}
-	}
+    for (currentIndex = 0; currentIndex < NUM_MAX_TEXT_ENTRY; currentIndex++)
+    {
+        if (tabTextes[currentIndex].index == index)
+        {
+            return(&tabTextes[currentIndex]);
+        }
+    }
 
-	return(NULL);
+    return(NULL);
 }
 
 void AffRect(int x1, int y1, int x2, int y2, char color) // fast recode. No RE
 {
-	// Clamp to screen bounds (320x200) to prevent out-of-bounds writes
-	if (x1 < 0) x1 = 0;
-	if (y1 < 0) y1 = 0;
-	if (x2 > 319) x2 = 319;
-	if (y2 > 199) y2 = 199;
-	if (x1 > x2 || y1 > y2) return;
+    // Clamp to screen bounds (320x200) to prevent out-of-bounds writes
+    if (x1 < 0) x1 = 0;
+    if (y1 < 0) y1 = 0;
+    if (x2 > 319) x2 = 319;
+    if (y2 > 199) y2 = 199;
+    if (x1 > x2 || y1 > y2) return;
 
-	int width = x2 - x1 + 1;
-	int height = y2 - y1 + 1;
+    int width = x2 - x1 + 1;
+    int height = y2 - y1 + 1;
 
-	char* dest = logicalScreen + y1*320 + x1;
-	char* dest2 = (char*)uiLayer.data() + y1*320 + x1;
+    char* dest = logicalScreen + y1 * 320 + x1;
+    char* dest2 = (char*)uiLayer.data() + y1 * 320 + x1;
 
-	int i;
-	int j;
+    int i;
+    int j;
 
-	for(i=0;i<height;i++)
-	{
-		for(j=0;j<width;j++)
-		{
-			*(dest++)= color;
-			*(dest2++)= color;
-		}
+    for (i = 0; i < height; i++)
+    {
+        for (j = 0; j < width; j++)
+        {
+            *(dest++) = color;
+            *(dest2++) = color;
+        }
 
-		dest += 320-width;
-		dest2 += 320-width;
-	}
+        dest += 320 - width;
+        dest2 += 320 - width;
+    }
 }
 
 void loadPalette(void)
 {
-	palette_t localPalette;
+    palette_t localPalette;
 
-	if(g_gameId == AITD2)
-	{
-		//loadPakToPtr("ITD_RESS",59,aux);
-		return; // palette data not loaded for AITD2 yet
-	}
-	else
-	{
-		LoadPak("ITD_RESS",3,aux);
-	}
-	copyPalette(aux,currentGamePalette);
+    if (g_gameId == AITD2)
+    {
+        //loadPakToPtr("ITD_RESS",59,aux);
+        return; // palette data not loaded for AITD2 yet
+    }
+    else
+    {
+        LoadPak("ITD_RESS", 3, aux);
+    }
+    copyPalette(aux, currentGamePalette);
 
-	copyPalette(currentGamePalette,localPalette);
-	//  fadeInSub1(localPalette);
+    copyPalette(currentGamePalette, localPalette);
+    //  fadeInSub1(localPalette);
 
-	// to finish
+    // to finish
 }
 
 void turnPageForward()
 {
-	// Force SD background path during animation - our composited data
-	// is uploaded to g_backgroundTexture (paletted R8U), but when HD
-	// backgrounds are active the renderer draws g_hdBackgroundTexture instead.
-	bool savedHD = g_currentBackgroundIsHD;
-	g_currentBackgroundIsHD = false;
+    // Force SD background path during animation - our composited data
+    // is uploaded to g_backgroundTexture (paletted R8U), but when HD
+    // backgrounds are active the renderer draws g_hdBackgroundTexture instead.
+    bool savedHD = g_currentBackgroundIsHD;
+    g_currentBackgroundIsHD = false;
 
-	osystem_pageTurnCapture();
-	osystem_CopyBlockPhys((unsigned char*)logicalScreen, 0, 0, 320, 200);
+    osystem_pageTurnCapture();
+    osystem_CopyBlockPhys((unsigned char*)logicalScreen, 0, 0, 320, 200);
 
-	const int NUM_STEPS = 15;
-	for (int step = 0; step <= NUM_STEPS; step++)
-	{
-		float progress = (float)step / (float)NUM_STEPS;
-		osystem_pageTurnFrame(progress, true, (unsigned char*)logicalScreen);
-		process_events();
-	}
+    const int NUM_STEPS = 15;
+    for (int step = 0; step <= NUM_STEPS; step++)
+    {
+        float progress = (float)step / (float)NUM_STEPS;
+        osystem_pageTurnFrame(progress, true, (unsigned char*)logicalScreen);
+        process_events();
+    }
 
-	osystem_CopyBlockPhys((unsigned char*)logicalScreen, 0, 0, 320, 200);
-	g_currentBackgroundIsHD = savedHD;
+    osystem_CopyBlockPhys((unsigned char*)logicalScreen, 0, 0, 320, 200);
+    g_currentBackgroundIsHD = savedHD;
 }
 
 void turnPageBackward()
 {
-	bool savedHD = g_currentBackgroundIsHD;
-	g_currentBackgroundIsHD = false;
+    bool savedHD = g_currentBackgroundIsHD;
+    g_currentBackgroundIsHD = false;
 
-	osystem_pageTurnCapture();
-	osystem_CopyBlockPhys((unsigned char*)logicalScreen, 0, 0, 320, 200);
+    osystem_pageTurnCapture();
+    osystem_CopyBlockPhys((unsigned char*)logicalScreen, 0, 0, 320, 200);
 
-	const int NUM_STEPS = 15;
-	for (int step = 0; step <= NUM_STEPS; step++)
-	{
-		float progress = (float)step / (float)NUM_STEPS;
-		osystem_pageTurnFrame(progress, false, (unsigned char*)logicalScreen);
-		process_events();
-	}
+    const int NUM_STEPS = 15;
+    for (int step = 0; step <= NUM_STEPS; step++)
+    {
+        float progress = (float)step / (float)NUM_STEPS;
+        osystem_pageTurnFrame(progress, false, (unsigned char*)logicalScreen);
+        process_events();
+    }
 
-	osystem_CopyBlockPhys((unsigned char*)logicalScreen, 0, 0, 320, 200);
-	g_currentBackgroundIsHD = savedHD;
+    osystem_CopyBlockPhys((unsigned char*)logicalScreen, 0, 0, 320, 200);
+    g_currentBackgroundIsHD = savedHD;
 }
 
 void readBook(int index, int type, int vocIndex)
 {
-	SaveTimerAnim();
+    SaveTimerAnim();
 
-	// Notify TTF that we're entering book reading mode
-	notifyTTFMenuStateChanged(true, true);
+    // Notify TTF that we're entering book reading mode
+    notifyTTFMenuStateChanged(true, true);
 
-	// Suspend post-processing during book reading (2D overlay screen)
-	bool savedBloom = g_remasterConfig.postProcessing.enableBloom;
-	bool savedFilmGrain = g_remasterConfig.postProcessing.enableFilmGrain;
-	bool savedSSAO = g_remasterConfig.postProcessing.enableSSAO;
-	g_remasterConfig.postProcessing.enableBloom = false;
-	g_remasterConfig.postProcessing.enableFilmGrain = false;
-	g_remasterConfig.postProcessing.enableSSAO = false;
+    // Suspend post-processing during book reading (2D overlay screen)
+    bool savedBloom = g_remasterConfig.postProcessing.enableBloom;
+    bool savedFilmGrain = g_remasterConfig.postProcessing.enableFilmGrain;
+    bool savedSSAO = g_remasterConfig.postProcessing.enableSSAO;
+    g_remasterConfig.postProcessing.enableBloom = false;
+    g_remasterConfig.postProcessing.enableFilmGrain = false;
+    g_remasterConfig.postProcessing.enableSSAO = false;
 
-	switch(g_gameId)
-	{
-	case AITD1:
-		AITD1_ReadBook(index, type, vocIndex);
-		break;
-	case JACK:
-		JACK_ReadBook(index, type);
-		break;
-	case AITD2:
-		AITD2_ReadBook(index, type);
-		break;
-	default:
-		assert(0);
+    switch (g_gameId)
+    {
+    case AITD1:
+        AITD1_ReadBook(index, type, vocIndex);
+        break;
+    case JACK:
+        JACK_ReadBook(index, type);
+        break;
+    case AITD2:
+        AITD2_ReadBook(index, type);
+        break;
+    default:
+        assert(0);
 
-	}
+    }
 
-	// Restore post-processing state
-	g_remasterConfig.postProcessing.enableBloom = savedBloom;
-	g_remasterConfig.postProcessing.enableFilmGrain = savedFilmGrain;
-	g_remasterConfig.postProcessing.enableSSAO = savedSSAO;
+    // Restore post-processing state
+    g_remasterConfig.postProcessing.enableBloom = savedBloom;
+    g_remasterConfig.postProcessing.enableFilmGrain = savedFilmGrain;
+    g_remasterConfig.postProcessing.enableSSAO = savedSSAO;
 
-	RestoreTimerAnim();
+    RestoreTimerAnim();
 
-	// Notify TTF that we're exiting book reading mode
-	notifyTTFMenuStateChanged(false, false);
+    // Notify TTF that we're exiting book reading mode
+    notifyTTFMenuStateChanged(false, false);
 }
 
 int Lire(int index, int startx, int top, int endx, int bottom, int demoMode, int color, int shadow, int vocIndex)
 {
-	bool lastPageReached = false;
-	u8 tabString[] = "    ";
-	int firstpage = 1;
-	int page = 0;
-	int quit = 0;
-	int previousPage = -1;
-	int var_1C3;
-	std::array<u8*, 100> ptrpage;
-	int currentTextIdx;
-	int maxStringWidth;
-	u8* textPtr;
+    bool lastPageReached = false;
+    u8 tabString[] = "    ";
+    int firstpage = 1;
+    int page = 0;
+    int quit = 0;
+    int previousPage = -1;
+    int var_1C3;
+    std::array<u8*, 100> ptrpage;
+    int currentTextIdx;
+    int maxStringWidth;
+    u8* textPtr;
 
-	SetFont(PtrFont, color);
+    SetFont(PtrFont, color);
 
-	maxStringWidth = endx - startx + 4;
+    maxStringWidth = endx - startx + 4;
 
-	int textIndexMalloc = HQ_Malloc(HQ_Memory,getPakSize(languageNameString.c_str(),index)+300);
-	textPtr = (u8*)HQ_PtrMalloc(HQ_Memory, textIndexMalloc);
+    int textIndexMalloc = HQ_Malloc(HQ_Memory, getPakSize(languageNameString.c_str(), index) + 300);
+    textPtr = (u8*)HQ_PtrMalloc(HQ_Memory, textIndexMalloc);
 
-	if(!LoadPak( languageNameString.c_str(), index, (char*)textPtr))
-	{
-		fatalError(1, languageNameString.c_str() );
-	}
+    if (!LoadPak(languageNameString.c_str(), index, (char*)textPtr))
+    {
+        fatalError(1, languageNameString.c_str());
+    }
 
     ptrpage.fill(nullptr);
-	ptrpage[0] = textPtr;
+    ptrpage[0] = textPtr;
 
-	//  LastSample = -1;
-	//  LastPriority = -1;
+    //  LastSample = -1;
+    //  LastPriority = -1;
 
-	while(!quit)
-	{
-		u8* ptrt;
-		int currentTextY;
-		FastCopyScreen(aux,logicalScreen);
-		process_events();
-		SetClip(startx,top,endx,bottom);
+    while (!quit)
+    {
+        u8* ptrt;
+        int currentTextY;
+        FastCopyScreen(aux, logicalScreen);
+        process_events();
+        SetClip(startx, top, endx, bottom);
 
-		uiLayer.fill(0);
-		ptrt = ptrpage[page];
+        uiLayer.fill(0);
+        ptrt = ptrpage[page];
 
-		currentTextY = top;
-		lastPageReached = false;
-		int vocLinesOnPage = 0;
+        currentTextY = top;
+        lastPageReached = false;
+        int vocLinesOnPage = 0;
 
-		while(currentTextY <= bottom - 16)
-		{
-			int line_type = 1;
-			int var_1BA = 0;
-			int currentStringWidth;
-			int currentTextX;
+        while (currentTextY <= bottom - 16)
+        {
+            int line_type = 1;
+            int var_1BA = 0;
+            int currentStringWidth;
+            int currentTextX;
 
-			regularTextEntryStruct* currentText = textTable;
+            regularTextEntryStruct* currentText = textTable;
 
-			int numWordInLine = 0;
+            int numWordInLine = 0;
 
-			int interWordSpace = 0;
+            int interWordSpace = 0;
 
             while (true) {
                 while (*ptrt == '#')
@@ -992,13 +992,13 @@ int Lire(int index, int startx, int top, int endx, int bottom, int demoMode, int
                 }
             }
 
-			if(line_type & 1) // stretch words on line
-			{
-				if (numWordInLine > 1)
-					interWordSpace = (maxStringWidth - var_1BA) / (numWordInLine-1);
-			}
+            if (line_type & 1) // stretch words on line
+            {
+                if (numWordInLine > 1)
+                    interWordSpace = (maxStringWidth - var_1BA) / (numWordInLine - 1);
+            }
 
-			currentText = textTable;
+            currentText = textTable;
 
             if (line_type & 8) // center
             {
@@ -1014,171 +1014,171 @@ int Lire(int index, int startx, int top, int endx, int bottom, int demoMode, int
                 currentTextX += currentText->width + interWordSpace; // add inter word space
                 currentText++;
             }
-			currentTextIdx = 0;
-			vocLinesOnPage++;
+            currentTextIdx = 0;
+            vocLinesOnPage++;
 
 
-			if (line_type & 2) // font size
-			{
-				currentTextY += 8;
-			}
+            if (line_type & 2) // font size
+            {
+                currentTextY += 8;
+            }
 
-			currentTextY += 16;
+            currentTextY += 16;
 
-			if (lastPageReached)
-				break;
-		}
+            if (lastPageReached)
+                break;
+        }
 
-        pageChange:
-        if(lastPageReached)
-		{
-			*(ptrt-1) = 0x1A; // rewrite End Of Text
-		}
-		else
-		{
-			if(page + 1 < (int)ptrpage.size())
-				ptrpage[page+1] = ptrt;
-			else
-				quit = 1;
-		}
+    pageChange:
+        if (lastPageReached)
+        {
+            *(ptrt - 1) = 0x1A; // rewrite End Of Text
+        }
+        else
+        {
+            if (page + 1 < (int)ptrpage.size())
+                ptrpage[page + 1] = ptrt;
+            else
+                quit = 1;
+        }
 
-		if(demoMode == 0)
-		{
-			if(page>0)
-			{
-				AffSpfI(startx-19,185,12,PtrCadre);
-			}
+        if (demoMode == 0)
+        {
+            if (page > 0)
+            {
+                AffSpfI(startx - 19, 185, 12, PtrCadre);
+            }
 
-			if(!lastPageReached)
-			{
-				AffSpfI(endx+4,185,11,PtrCadre);
-			}
-		}
+            if (!lastPageReached)
+            {
+                AffSpfI(endx + 4, 185, 11, PtrCadre);
+            }
+        }
 
-		if(demoMode == 2)
-		{
-			if(page>0)
-			{
-				AffSpfI(startx-3,191,13,PtrCadre);
-			}
+        if (demoMode == 2)
+        {
+            if (page > 0)
+            {
+                AffSpfI(startx - 3, 191, 13, PtrCadre);
+            }
 
-			if(!lastPageReached)
-			{
-				AffSpfI(endx-10,191,14,PtrCadre);
-			}
-		} 
+            if (!lastPageReached)
+            {
+                AffSpfI(endx - 10, 191, 14, PtrCadre);
+            }
+        }
 
-		// When using HD background, copy only pixels that differ from the baseline book
-		// background (aux) into uiLayer. This reveals the HD background texture while still
-		// overlaying text and navigation arrows on top. The portrait-exclusion approach used
-		// previously was wrong for regular books (entire SD background covered the HD image).
-		// For intro reading, aux already has the portrait side intact and the text area zeroed,
-		// so the delta naturally includes only drawn text pixels - no portrait exclusion needed.
-		if (g_currentBackgroundIsHD)
-		{
-			for (int iy = 0; iy < 200; iy++)
-			{
-				for (int ix = 0; ix < 320; ix++)
-				{
-					unsigned char pixel = (unsigned char)logicalScreen[iy * 320 + ix];
-					unsigned char bgPixel = (unsigned char)aux[iy * 320 + ix];
-					if (pixel != bgPixel)
-						uiLayer[iy * 320 + ix] = pixel;
-				}
-			}
-		}
+        // When using HD background, copy only pixels that differ from the baseline book
+        // background (aux) into uiLayer. This reveals the HD background texture while still
+        // overlaying text and navigation arrows on top. The portrait-exclusion approach used
+        // previously was wrong for regular books (entire SD background covered the HD image).
+        // For intro reading, aux already has the portrait side intact and the text area zeroed,
+        // so the delta naturally includes only drawn text pixels - no portrait exclusion needed.
+        if (g_currentBackgroundIsHD)
+        {
+            for (int iy = 0; iy < 200; iy++)
+            {
+                for (int ix = 0; ix < 320; ix++)
+                {
+                    unsigned char pixel = (unsigned char)logicalScreen[iy * 320 + ix];
+                    unsigned char bgPixel = (unsigned char)aux[iy * 320 + ix];
+                    if (pixel != bgPixel)
+                        uiLayer[iy * 320 + ix] = pixel;
+                }
+            }
+        }
 
-		if(firstpage)
-		{
-			if(demoMode!=1)
-			{
-				osystem_CopyBlockPhys((unsigned char*)logicalScreen,0,0,320,200);
-				FadeInPhys(16,0);
-			}
-			else
-			{
-				if(turnPageFlag)
-				{
-					turnPageForward();
-				}
-				else
-				{
-					osystem_CopyBlockPhys((unsigned char*)logicalScreen,0,0,320,200);
-				}
-			}
+        if (firstpage)
+        {
+            if (demoMode != 1)
+            {
+                osystem_CopyBlockPhys((unsigned char*)logicalScreen, 0, 0, 320, 200);
+                FadeInPhys(16, 0);
+            }
+            else
+            {
+                if (turnPageFlag)
+                {
+                    turnPageForward();
+                }
+                else
+                {
+                    osystem_CopyBlockPhys((unsigned char*)logicalScreen, 0, 0, 320, 200);
+                }
+            }
 
-			firstpage = 0;
-		}
-		else
-		{
-			if(turnPageFlag)
-			{
-				if(previousPage<page)
-				{
-					turnPageForward();
-				}
-				else
-				{
-					turnPageBackward();
-				}
-			}
-			else
-			{
-				osystem_CopyBlockPhys((unsigned char*)logicalScreen,0,0,320,200);
-			}
-		}
+            firstpage = 0;
+        }
+        else
+        {
+            if (turnPageFlag)
+            {
+                if (previousPage < page)
+                {
+                    turnPageForward();
+                }
+                else
+                {
+                    turnPageBackward();
+                }
+            }
+            else
+            {
+                osystem_CopyBlockPhys((unsigned char*)logicalScreen, 0, 0, 320, 200);
+            }
+        }
 
-		osystem_drawBackground();
+        osystem_drawBackground();
 
-		// Play per-page voice-over: concatenate all line VOCs for this page
-		// VOC naming: BBSSLL.VOC where BB=vocIndex, SS=page, LL=line
-		if (vocIndex >= 0 && vocLinesOnPage > 0)
-		{
-			osystem_playVocPageLines(vocIndex, page, vocLinesOnPage);
-		}
+        // Play per-page voice-over: concatenate all line VOCs for this page
+        // VOC naming: BBSSLL.VOC where BB=vocIndex, SS=page, LL=line
+        if (vocIndex >= 0 && vocLinesOnPage > 0)
+        {
+            osystem_playVocPageLines(vocIndex, page, vocLinesOnPage);
+        }
 
-		if(demoMode!=1) // mode != 1: normal behavior (user can flip pages)
-		{
-			do
-			{
-				process_events();
-			}while(key || JoyD || Click);
+        if (demoMode != 1) // mode != 1: normal behavior (user can flip pages)
+        {
+            do
+            {
+                process_events();
+            } while (key || JoyD || Click);
 
-			while(1)
-			{
-				process_events();
-				localKey = key;
-				localJoyD = JoyD;
-				localClick = Click;
+            while (1)
+            {
+                process_events();
+                localKey = key;
+                localJoyD = JoyD;
+                localClick = Click;
 
-				if((localKey==1) || localClick)
-				{
-					quit = 1;
-					break;
-				}
+                if ((localKey == 1) || localClick)
+                {
+                    quit = 1;
+                    break;
+                }
 
                 if ((demoMode == 2) && (localKey == 0x1C)) {
                     quit = 1;
                     break;
                 }
 
-				// flip to next page
-				if (JoyD & 0xA || localKey == 0x1C)
-				{
-					if (!lastPageReached)
-					{
-						previousPage = page;
-						page++;
-						notifyTTFMenuSelectionChanged(); // Clear TTF text when flipping page
+                // flip to next page
+                if (JoyD & 0xA || localKey == 0x1C)
+                {
+                    if (!lastPageReached)
+                    {
+                        previousPage = page;
+                        page++;
+                        notifyTTFMenuSelectionChanged(); // Clear TTF text when flipping page
 
-						if (demoMode == 2 || vocIndex >= 0)
-						{
-							playSound(CVars[getCVarsIdx(SAMPLE_PAGE)]);
-							LastSample = -1;
-							LastPriority = -1;
-						}
-						break;
-					}
+                        if (demoMode == 2 || vocIndex >= 0)
+                        {
+                            playSound(CVars[getCVarsIdx(SAMPLE_PAGE)]);
+                            LastSample = -1;
+                            LastPriority = -1;
+                        }
+                        break;
+                    }
                     else {
                         if (localKey == 0x1C) {
                             quit = 1;
@@ -1187,471 +1187,475 @@ int Lire(int index, int startx, int top, int endx, int bottom, int demoMode, int
                     }
                 }
 
-				// flip to previous page
-				if (JoyD & 5) {
-					if (page > 0) {
-						previousPage = page;
-						page--;
-						notifyTTFMenuSelectionChanged(); // Clear TTF text when flipping page
-						if (demoMode == 2 || vocIndex >= 0)
-						{
-							playSound(CVars[getCVarsIdx(SAMPLE_PAGE)]);
-							LastSample = -1;
-							LastPriority = -1;
-						}
-						break;
-					}
-				}
-			}
-		}
-		else // Demo mode: pages automatically flips
-		{
-			unsigned int var_6;
-			startChrono(&var_6);
+                // flip to previous page
+                if (JoyD & 5) {
+                    if (page > 0) {
+                        previousPage = page;
+                        page--;
+                        notifyTTFMenuSelectionChanged(); // Clear TTF text when flipping page
+                        if (demoMode == 2 || vocIndex >= 0)
+                        {
+                            playSound(CVars[getCVarsIdx(SAMPLE_PAGE)]);
+                            LastSample = -1;
+                            LastPriority = -1;
+                        }
+                        break;
+                    }
+                }
+            }
+        }
+        else // Demo mode: pages automatically flips
+        {
+            unsigned int var_6;
+            startChrono(&var_6);
 
-			do
-			{
-				process_events();
-				if(evalChrono(&var_6) > 300)
-				{
-					break;
-				}
-			}while(!key && !Click);
+            do
+            {
+                process_events();
+                if (evalChrono(&var_6) > 300)
+                {
+                    break;
+                }
+            } while (!key && !Click);
 
-			if(key || Click)
-			{
-				quit = 1;
-			}
+            if (key || Click)
+            {
+                quit = 1;
+            }
 
-			if(!lastPageReached)
-			{
-				page++;
-				playSound(CVars[getCVarsIdx(SAMPLE_PAGE)]);
-				LastSample = -1;
-			}
-			else
-			{
-				quit = 1;
-				demoMode = 0;
-			}
-		}
-	}
+            if (!lastPageReached)
+            {
+                page++;
+                playSound(CVars[getCVarsIdx(SAMPLE_PAGE)]);
+                LastSample = -1;
+            }
+            else
+            {
+                quit = 1;
+                demoMode = 0;
+            }
+        }
+    }
 
-	// Stop any playing voice-over VOC when exiting
-	if (vocIndex >= 0)
-		osystem_stopVO();
+    // Stop any playing voice-over VOC when exiting
+    if (vocIndex >= 0)
+        osystem_stopVO();
 
-	HQ_Free_Malloc(HQ_Memory, textIndexMalloc);
+    HQ_Free_Malloc(HQ_Memory, textIndexMalloc);
 
-	return(demoMode);
+    return(demoMode);
 }
 
 void LoadWorld(void)
 {
-	u8* pObjectData;
-	u8* pObjectDataBackup;
-	unsigned long int objectDataSize;
-	FILE* fHandle;
-	int i;
-	int choosePersoBackup;
+    u8* pObjectData;
+    u8* pObjectDataBackup;
+    size_t objectDataSize;
+    FILE* fHandle;
+    int i;
+    int choosePersoBackup;
 
-	{
-		const unsigned char* embData = nullptr;
-		size_t embSize = 0;
-		if (getEmbeddedFile("OBJETS.ITD", &embData, &embSize))
-		{
-			objectDataSize = embSize;
-			pObjectDataBackup = pObjectData = (u8*)malloc(objectDataSize);
-			ASSERT(pObjectData);
-			memcpy(pObjectData, embData, objectDataSize);
-		}
-		else
-		{
-			char objectPath[512];
-			strcpy(objectPath, homePath);
-			strcat(objectPath, "OBJETS.ITD");
-			fHandle = fopen(objectPath,"rb");
-			if (!fHandle) {
-				fatalError(0, "OBJETS.ITD");
-			}
+    {
+        const unsigned char* embData = nullptr;
+        size_t embSize = 0;
+        if (getEmbeddedFile("OBJETS.ITD", &embData, &embSize))
+        {
+            objectDataSize = embSize;
+            pObjectDataBackup = pObjectData = (u8*)malloc(objectDataSize);
+            ASSERT(pObjectData);
+            memcpy(pObjectData, embData, objectDataSize);
+        }
+        else
+        {
+            char objectPath[512];
+            strcpy(objectPath, homePath);
+            strcat(objectPath, "OBJETS.ITD");
+            fHandle = fopen(objectPath, "rb");
+            if (!fHandle) {
+                fatalError(0, "OBJETS.ITD");
+            }
 
-			fseek(fHandle,0,SEEK_END);
-			objectDataSize = ftell(fHandle);
-			fseek(fHandle,0,SEEK_SET);
+            fseek(fHandle, 0, SEEK_END);
+            objectDataSize = ftell(fHandle);
+            fseek(fHandle, 0, SEEK_SET);
 
-			pObjectDataBackup = pObjectData = (u8*)malloc(objectDataSize);
-			ASSERT(pObjectData);
+            pObjectDataBackup = pObjectData = (u8*)malloc(objectDataSize);
+            ASSERT(pObjectData);
 
-			fread(pObjectData,objectDataSize,1,fHandle);
-			fclose(fHandle);
-		}
-	}
+            fread(pObjectData, objectDataSize, 1, fHandle);
+            fclose(fHandle);
+        }
+    }
 
-	maxObjects = READ_LE_U16(pObjectData);
-	pObjectData+=2;
+    maxObjects = READ_LE_U16(pObjectData);
+    pObjectData += 2;
 
     ListWorldObjets.resize(maxObjects);
 
-	for(i=0;i<maxObjects;i++)
-	{
-		ListWorldObjets[i].objIndex = READ_LE_U16(pObjectData);
-		pObjectData+=2;
+    for (i = 0; i < maxObjects; i++)
+    {
+        ListWorldObjets[i].objIndex = READ_LE_U16(pObjectData);
+        pObjectData += 2;
 
-		ListWorldObjets[i].body = READ_LE_U16(pObjectData);
-		pObjectData+=2;
+        ListWorldObjets[i].body = READ_LE_U16(pObjectData);
+        pObjectData += 2;
 
-		ListWorldObjets[i].flags = READ_LE_U16(pObjectData);
-		pObjectData+=2;
+        ListWorldObjets[i].flags = READ_LE_U16(pObjectData);
+        pObjectData += 2;
 
-		ListWorldObjets[i].typeZV = READ_LE_U16(pObjectData);
-		pObjectData+=2;
+        ListWorldObjets[i].typeZV = READ_LE_U16(pObjectData);
+        pObjectData += 2;
 
-		ListWorldObjets[i].foundBody = READ_LE_U16(pObjectData);
-		pObjectData+=2;
+        ListWorldObjets[i].foundBody = READ_LE_U16(pObjectData);
+        pObjectData += 2;
 
-		ListWorldObjets[i].foundName = READ_LE_U16(pObjectData);
-		pObjectData+=2;
+        ListWorldObjets[i].foundName = READ_LE_U16(pObjectData);
+        pObjectData += 2;
 
-		ListWorldObjets[i].foundFlag = READ_LE_U16(pObjectData);
-		pObjectData+=2;
+        ListWorldObjets[i].foundFlag = READ_LE_U16(pObjectData);
+        pObjectData += 2;
 
-		ListWorldObjets[i].foundLife = READ_LE_U16(pObjectData);
-		pObjectData+=2;
+        ListWorldObjets[i].foundLife = READ_LE_U16(pObjectData);
+        pObjectData += 2;
 
-		ListWorldObjets[i].x = READ_LE_U16(pObjectData);
-		pObjectData+=2;
+        ListWorldObjets[i].x = READ_LE_U16(pObjectData);
+        pObjectData += 2;
 
-		ListWorldObjets[i].y = READ_LE_U16(pObjectData);
-		pObjectData+=2;
+        ListWorldObjets[i].y = READ_LE_U16(pObjectData);
+        pObjectData += 2;
 
-		ListWorldObjets[i].z = READ_LE_U16(pObjectData);
-		pObjectData+=2;
+        ListWorldObjets[i].z = READ_LE_U16(pObjectData);
+        pObjectData += 2;
 
-		ListWorldObjets[i].alpha = READ_LE_U16(pObjectData);
-		pObjectData+=2;
+        ListWorldObjets[i].alpha = READ_LE_U16(pObjectData);
+        pObjectData += 2;
 
-		ListWorldObjets[i].beta = READ_LE_U16(pObjectData);
-		pObjectData+=2;
+        ListWorldObjets[i].beta = READ_LE_U16(pObjectData);
+        pObjectData += 2;
 
-		ListWorldObjets[i].gamma = READ_LE_U16(pObjectData);
-		pObjectData+=2;
+        ListWorldObjets[i].gamma = READ_LE_U16(pObjectData);
+        pObjectData += 2;
 
-		ListWorldObjets[i].stage = READ_LE_U16(pObjectData);
-		pObjectData+=2;
+        ListWorldObjets[i].stage = READ_LE_U16(pObjectData);
+        pObjectData += 2;
 
-		ListWorldObjets[i].room = READ_LE_U16(pObjectData);
-		pObjectData+=2;
+        ListWorldObjets[i].room = READ_LE_U16(pObjectData);
+        pObjectData += 2;
 
-		ListWorldObjets[i].lifeMode = READ_LE_U16(pObjectData);
-		pObjectData+=2;
+        ListWorldObjets[i].lifeMode = READ_LE_U16(pObjectData);
+        pObjectData += 2;
 
-		ListWorldObjets[i].life = READ_LE_U16(pObjectData);
-		pObjectData+=2;
+        ListWorldObjets[i].life = READ_LE_U16(pObjectData);
+        pObjectData += 2;
 
-		ListWorldObjets[i].floorLife = READ_LE_U16(pObjectData);
-		pObjectData+=2;
+        ListWorldObjets[i].floorLife = READ_LE_U16(pObjectData);
+        pObjectData += 2;
 
-		ListWorldObjets[i].anim = READ_LE_U16(pObjectData);
-		pObjectData+=2;
+        ListWorldObjets[i].anim = READ_LE_U16(pObjectData);
+        pObjectData += 2;
 
-		ListWorldObjets[i].frame = READ_LE_U16(pObjectData);
-		pObjectData+=2;
+        ListWorldObjets[i].frame = READ_LE_U16(pObjectData);
+        pObjectData += 2;
 
-		ListWorldObjets[i].animType = READ_LE_U16(pObjectData);
-		pObjectData+=2;
+        ListWorldObjets[i].animType = READ_LE_U16(pObjectData);
+        pObjectData += 2;
 
-		ListWorldObjets[i].animInfo = READ_LE_U16(pObjectData);
-		pObjectData+=2;
+        ListWorldObjets[i].animInfo = READ_LE_U16(pObjectData);
+        pObjectData += 2;
 
-		ListWorldObjets[i].trackMode = READ_LE_U16(pObjectData);
-		pObjectData+=2;
+        ListWorldObjets[i].trackMode = READ_LE_U16(pObjectData);
+        pObjectData += 2;
 
-		ListWorldObjets[i].trackNumber = READ_LE_U16(pObjectData);
-		pObjectData+=2;
+        ListWorldObjets[i].trackNumber = READ_LE_U16(pObjectData);
+        pObjectData += 2;
 
-		ListWorldObjets[i].positionInTrack = READ_LE_U16(pObjectData);
-		pObjectData+=2;
+        ListWorldObjets[i].positionInTrack = READ_LE_U16(pObjectData);
+        pObjectData += 2;
 
-		if(g_gameId >= JACK)
-		{
-			ListWorldObjets[i].mark = READ_LE_U16(pObjectData);
-			pObjectData+=2;
-		}
-		ListWorldObjets[i].flags |= 0x20;
-	}
+        if (g_gameId >= JACK)
+        {
+            ListWorldObjets[i].mark = READ_LE_U16(pObjectData);
+            pObjectData += 2;
+        }
+        ListWorldObjets[i].flags |= 0x20;
+    }
 
-	free(pObjectDataBackup);
+    free(pObjectDataBackup);
 
-	vars = (s16*)loadFromItd("VARS.ITD");
+    vars = (s16*)loadFromItd("VARS.ITD");
 
-	varSize = fileSize;
+    varSize = fileSize;
 
-	if(g_gameId == AITD1)
-	{
-		choosePersoBackup = CVars[getCVarsIdx(CHOOSE_PERSO)]; // backup hero selection
-	}
+    if (g_gameId == AITD1)
+    {
+        choosePersoBackup = CVars[getCVarsIdx(CHOOSE_PERSO)]; // backup hero selection
+    }
 
-	{
-		const unsigned char* embData = nullptr;
-		size_t embSize = 0;
-		if (getEmbeddedFile("DEFINES.ITD", &embData, &embSize))
-		{
-			memcpy(&CVars[0], embData, CVars.size() * 2);
-		}
-		else
-		{
-			char definestPath[512];
-			strcpy(definestPath, homePath);
-			strcat(definestPath, "DEFINES.ITD");
+    {
+        const unsigned char* embData = nullptr;
+        size_t embSize = 0;
+        if (getEmbeddedFile("DEFINES.ITD", &embData, &embSize))
+        {
+            memcpy(&CVars[0], embData, CVars.size() * 2);
+        }
+        else
+        {
+            char definestPath[512];
+            strcpy(definestPath, homePath);
+            strcat(definestPath, "DEFINES.ITD");
 
-			fHandle = fopen(definestPath,"rb");
-			if(!fHandle)
-			{
-				fatalError(0,"DEFINES.ITD");
-			}
+            fHandle = fopen(definestPath, "rb");
+            if (!fHandle)
+            {
+                fatalError(0, "DEFINES.ITD");
+            }
 
-			fread(&CVars[0], CVars.size(), 2, fHandle);
-			fclose(fHandle);
-		}
+            fread(&CVars[0], CVars.size(), 2, fHandle);
+            fclose(fHandle);
+        }
 
-		for(i=0;i< CVars.size();i++)
-		{
-			CVars[i] = ((CVars[i]&0xFF)<<8) | ((CVars[i]&0xFF00)>>8);
-		}
-	}
-	//////////////////////////////////////////////
+        for (i = 0; i < CVars.size(); i++)
+        {
+            CVars[i] = ((CVars[i] & 0xFF) << 8) | ((CVars[i] & 0xFF00) >> 8);
+        }
+    }
+    //////////////////////////////////////////////
 
-	if(g_gameId == AITD1)
-	{
-		CVars[getCVarsIdx(CHOOSE_PERSO)] = choosePersoBackup;
-	}
+    if (g_gameId == AITD1)
+    {
+        CVars[getCVarsIdx(CHOOSE_PERSO)] = choosePersoBackup;
+    }
 
-	listLife = HQR_InitRessource<char>("LISTLIFE", 65000, 100);
-	listTrack = HQR_InitRessource<char>("LISTTRAK", 20000, 100);
+    listLife = HQR_InitRessource<char>("LISTLIFE", 65000, 100);
+    listTrack = HQR_InitRessource<char>("LISTTRAK", 20000, 100);
     if (g_gameId >= JACK) {
         HQ_Hybrides = HQR_InitRessource<sHybrid>("LISTHYB", 20000, 10); // TODO: recheck size for other games
     }
 
-	// TODO: missing dos memory check here
+    // TODO: missing dos memory check here
 
-	if(g_gameId == AITD1)
-	{
+    if (g_gameId == AITD1)
+    {
         HQ_Bodys = HQR_InitRessource<sBody>(listBodySelect[CVars[getCVarsIdx(CHOOSE_PERSO)]], 37000, 50); // was calculated from free mem size
         HQ_Anims = HQR_InitRessource<sAnimation>(listAnimSelect[CVars[getCVarsIdx(CHOOSE_PERSO)]], 30000, 80); // was calculated from free mem size
-	}
-	else
-	{
-		HQ_Bodys = HQR_InitRessource<sBody>("LISTBODY", 37000, 50); // was calculated from free mem size
-        HQ_Anims = HQR_InitRessource<sAnimation>("LISTANIM",30000, 80); // was calculated from free mem size
+    }
+    else
+    {
+        HQ_Bodys = HQR_InitRessource<sBody>("LISTBODY", 37000, 50); // was calculated from free mem size
+        HQ_Anims = HQR_InitRessource<sAnimation>("LISTANIM", 30000, 80); // was calculated from free mem size
 
-		HQ_Matrices = HQR_InitRessource<char>("LISTMAT",64000,5);
-	}
+        HQ_Matrices = HQR_InitRessource<char>("LISTMAT", 64000, 5);
+    }
 
 
-	for(i=0;i<NUM_MAX_OBJECT;i++)
-	{
-		ListObjets[i].indexInWorld = -1;
-	}
+    for (i = 0; i < NUM_MAX_OBJECT; i++)
+    {
+        ListObjets[i].indexInWorld = -1;
+    }
 
-	if(g_gameId == AITD1)
-	{
-		currentWorldTarget = CVars[getCVarsIdx(WORLD_NUM_PERSO)];
-	}
+    if (g_gameId == AITD1)
+    {
+        currentWorldTarget = CVars[getCVarsIdx(WORLD_NUM_PERSO)];
+    }
 }
 
 void initVarsSub1(void)
 {
-	int i;
+    int i;
 
-	for(i=0;i<5;i++)
-	{
-		messageTable[i].string = NULL;
-	}
+    for (i = 0; i < 5; i++)
+    {
+        messageTable[i].string = NULL;
+    }
 }
 
 void initVars()
 {
-	FlagGameOver = 0;
+    FlagGameOver = 0;
 
-	currentInventory = 0;
+    currentInventory = 0;
 
-	for(int i=0;i<NUM_MAX_INVENTORY;i++)
-	{
-		numObjInInventoryTable[i] = 0;
-		inHandTable[i] = -1;
-	}
+    for (int i = 0; i < NUM_MAX_INVENTORY; i++)
+    {
+        numObjInInventoryTable[i] = 0;
+        inHandTable[i] = -1;
+    }
 
-	action = 0;
+    action = 0;
 
-	genVar1 = genVar2;
-	genVar3 = genVar4;
+    genVar1 = genVar2;
+    genVar3 = genVar4;
 
-	NbPhysBoxs = 0;
-	NbLogBoxs = 0;
+    NbPhysBoxs = 0;
+    NbLogBoxs = 0;
 
-	LastSample = -1;
-	nextSample = -1;
-	LastPriority = -1;
-	currentMusic = -1;
-	nextMusic = -1;
+    LastSample = -1;
+    nextSample = -1;
+    LastPriority = -1;
+    currentMusic = -1;
+    nextMusic = -1;
 
-	lightOff = 0;
-	lightVar2 = 0;
+    lightOff = 0;
+    lightVar2 = 0;
 
-	currentCameraTargetActor = -1;
-	currentWorldTarget = -1;
+    currentCameraTargetActor = -1;
+    currentWorldTarget = -1;
 
-	statusScreenAllowed = 1;
+    statusScreenAllowed = 1;
 
-	shakingAmplitude = 0;
-	shakeVar1 = 0;
-	g_shakeOffsetX = 0.f;
-	g_shakeOffsetY = 0.f;
+    shakingAmplitude = 0;
+    shakeVar1 = 0;
+    g_shakeOffsetX = 0.f;
+    g_shakeOffsetY = 0.f;
 
-	initVarsSub1();
+    initVarsSub1();
 }
 
 void loadCamera(int cameraIdx)
 {
-	char name[16];
-	int useSpecial = -1;
+    char name[16];
+    int useSpecial = -1;
 
-	sprintf(name,"CAMERA%02d",g_currentFloor);
-	//strcat(name,".PAK");
+    sprintf(name, "CAMERA%02d", g_currentFloor);
+    //strcat(name,".PAK");
 
-	if(g_gameId == AITD1)
-	{
-		if(CVars[getCVarsIdx(KILLED_SORCERER)]==1)
-		{
-			switch(g_currentFloor)
-			{
-			case 6:
-				{
-					if(cameraIdx == 0)
-					{
-						useSpecial = AITD1_CAM06000;
-					}
-					if(cameraIdx == 5)
-					{
-						useSpecial = AITD1_CAM06005;
-					}
-					if(cameraIdx == 8)
-					{
-						useSpecial = AITD1_CAM06008;
-					}
-					break;
-				}
-			case 7:
-				{
-					if(cameraIdx == 0)
-					{
-						useSpecial = AITD1_CAM07000;
-					}
-					if(cameraIdx == 1)
-					{
-						useSpecial = AITD1_CAM07001;
-					}
-					break;
-				}
-			}
-		}
+    if (g_gameId == AITD1)
+    {
+        if (CVars[getCVarsIdx(KILLED_SORCERER)] == 1)
+        {
+            switch (g_currentFloor)
+            {
+            case 6:
+            {
+                if (cameraIdx == 0)
+                {
+                    useSpecial = AITD1_CAM06000;
+                }
+                if (cameraIdx == 5)
+                {
+                    useSpecial = AITD1_CAM06005;
+                }
+                if (cameraIdx == 8)
+                {
+                    useSpecial = AITD1_CAM06008;
+                }
+                break;
+            }
+            case 7:
+            {
+                if (cameraIdx == 0)
+                {
+                    useSpecial = AITD1_CAM07000;
+                }
+                if (cameraIdx == 1)
+                {
+                    useSpecial = AITD1_CAM07001;
+                }
+                break;
+            }
+            }
+        }
 
-		if(useSpecial != -1)
-		{
-			strcpy(name,"ITD_RESS");
-			cameraIdx = useSpecial;
-		}
-	}
+        if (useSpecial != -1)
+        {
+            strcpy(name, "ITD_RESS");
+            cameraIdx = useSpecial;
+        }
+    }
 
-	if(!LoadPak(name,cameraIdx,aux))
-	{
-		fatalError(0,name);
-	}
+    if (!LoadPak(name, cameraIdx, aux))
+    {
+        fatalError(0, name);
+    }
 
-	if(g_gameId == AITD3)
-	{
-		//memmove(aux,aux+4,64000+0x300);
-	}
+    if (g_gameId == AITD3)
+    {
+        //memmove(aux,aux+4,64000+0x300);
+    }
 
-	if(g_gameId >= JACK)
-	{
-		copyPalette(aux+64000,currentGamePalette);
+    if (g_gameId >= JACK)
+    {
+        copyPalette(aux + 64000, currentGamePalette);
 
-		if(g_gameId == AITD3)
-		{
+        if (g_gameId == AITD3)
+        {
             for (int i = 0; i < 16; i++) {
                 currentGamePalette[i][0] = defaultPaletteAITD3[i * 3 + 0];
                 currentGamePalette[i][1] = defaultPaletteAITD3[i * 3 + 1];
                 currentGamePalette[i][2] = defaultPaletteAITD3[i * 3 + 2];
             }
-		}
-		else
-		{
+        }
+        else
+        {
             for (int i = 0; i < 16; i++) {
                 currentGamePalette[i][0] = defaultPalette[i * 3 + 0];
                 currentGamePalette[i][1] = defaultPalette[i * 3 + 1];
                 currentGamePalette[i][2] = defaultPalette[i * 3 + 2];
             }
-		}
+        }
         convertPaletteIfRequired(currentGamePalette);
 
-		osystem_setPalette(&currentGamePalette);
-	}
+        osystem_setPalette(&currentGamePalette);
+    }
 
-	// Release old HD background BEFORE loading the new one.
-	// Without this, old + new both live in RAM simultaneously, which can exhaust
-	// memory on large animated backgrounds (potentially hundreds of MB each).
-	ResourceGC::flush();
-	if (g_currentAnimatedHDBackground)
-	{
-		freeHDBackground(g_currentAnimatedHDBackground);
-		g_currentAnimatedHDBackground = nullptr;
-	}
+    // Release old HD background BEFORE loading the new one.
+    // Without this, old + new both live in RAM simultaneously, which can exhaust
+    // memory on large animated backgrounds (potentially hundreds of MB each).
+    ResourceGC::flush();
+    if (g_currentAnimatedHDBackground)
+    {
+        freeHDBackground(g_currentAnimatedHDBackground);
+        g_currentAnimatedHDBackground = nullptr;
+    }
 
-	// Try to load HD background if enabled
-	HDBackgroundInfo* hdBg = loadHDBackground(name, cameraIdx);
-	if (hdBg)
-	{
-		// HD background was loaded successfully
-		updateBackgroundTextureHD(hdBg->data, hdBg->width, hdBg->height, hdBg->channels);
+    // Try to load HD background if enabled
+    // In dark rooms (no light source), try loading the _DARK variant first
+    const char* bgSuffix = nullptr;
+    if (g_gameId == AITD1 && g_roomIsDark)
+        bgSuffix = "DARK";
+    HDBackgroundInfo* hdBg = loadHDBackground(name, cameraIdx, bgSuffix);
+    if (hdBg)
+    {
+        // HD background was loaded successfully
+        updateBackgroundTextureHD(hdBg->data, hdBg->width, hdBg->height, hdBg->channels);
 
-		// If it's animated, keep it alive for animation updates
-		if (hdBg->isAnimated)
-		{
-			// This will clean up any previous animated background and set the new one
-			setCurrentAnimatedHDBackground(hdBg);
-		}
-		else
-		{
-			// Static background - clean up any previous animated background
-			setCurrentAnimatedHDBackground(nullptr);
-			// Then free the static background immediately
-			freeHDBackground(hdBg);
-		}
-	}
-	else
-	{
-		// No HD background loaded, clean up any previous animated background
-		setCurrentAnimatedHDBackground(nullptr);
+        // If it's animated, keep it alive for animation updates
+        if (hdBg->isAnimated)
+        {
+            // This will clean up any previous animated background and set the new one
+            setCurrentAnimatedHDBackground(hdBg);
+        }
+        else
+        {
+            // Static background - clean up any previous animated background
+            setCurrentAnimatedHDBackground(nullptr);
+            // Then free the static background immediately
+            freeHDBackground(hdBg);
+        }
+    }
+    else
+    {
+        // No HD background loaded, clean up any previous animated background
+        setCurrentAnimatedHDBackground(nullptr);
 
-		// No HD background, ensure we're using standard resolution
-		if (g_currentBackgroundIsHD)
-		{
-			recreateBackgroundTexture(320, 200);
-		}
-	}
+        // No HD background, ensure we're using standard resolution
+        if (g_currentBackgroundIsHD)
+        {
+            recreateBackgroundTexture(320, 200);
+        }
+    }
 }
 
 struct sMaskStruct
 {
-	u16 x1;
-	u16 y1;
-	u16 x2;
-	u16 y2;
-	u16 deltaX;
-	u16 deltaY;
+    u16 x1;
+    u16 y1;
+    u16 x2;
+    u16 y2;
+    u16 deltaX;
+    u16 deltaY;
 
-	std::array<u8, 320*200> mask;
+    std::array<u8, 320 * 200> mask;
 };
 
 std::vector<std::vector<sMaskStruct>> g_maskBuffers;
@@ -1661,125 +1665,156 @@ void loadMask(int cameraIdx)
     if (g_gameId == TIMEGATE)
         return;
 
-	char name[16];
+    char name[16];
 
     sprintf(name, "MASK%02d", g_currentFloor);
 
-	if(g_MaskPtr)
-	{
-		free(g_MaskPtr);
-	}
+    if (g_MaskPtr)
+    {
+        free(g_MaskPtr);
+    }
 
-	g_MaskPtr = (unsigned char*)loadPak(name,cameraIdx);
+    g_MaskPtr = (unsigned char*)loadPak(name, cameraIdx);
+
+    if (!g_MaskPtr)
+    {
+        printf("[MASK] Warning: loadPak returned NULL for %s index %d\n", name, cameraIdx);
+        g_maskBuffers.clear();
+        return;
+    }
 
     g_maskBuffers.clear();
     g_maskBuffers.resize(cameraDataTable[NumCamera]->numViewedRooms);
-	for(int i=0; i<cameraDataTable[NumCamera]->numViewedRooms; i++)
-	{
-		cameraViewedRoomStruct* pRoomView = &cameraDataTable[NumCamera]->viewedRoomTable[i];
-		unsigned char* pViewedRoomMask = g_MaskPtr + READ_LE_U32(g_MaskPtr + i*4);
+    for (int i = 0; i < cameraDataTable[NumCamera]->numViewedRooms; i++)
+    {
+        cameraViewedRoomStruct* pRoomView = &cameraDataTable[NumCamera]->viewedRoomTable[i];
+        unsigned char* pViewedRoomMask = g_MaskPtr + READ_LE_U32(g_MaskPtr + i * 4);
 
         g_maskBuffers[i].reserve(pRoomView->masks.size());
-		for(int j=0; j<pRoomView->masks.size(); j++)
-		{
+        for (int j = 0; j < pRoomView->masks.size(); j++)
+        {
             sMaskStruct* pDestMask = &g_maskBuffers[i].emplace_back();
-			unsigned char* pMaskData = pViewedRoomMask + READ_LE_U32(pViewedRoomMask + j*4);
+            unsigned char* pMaskData = pViewedRoomMask + READ_LE_U32(pViewedRoomMask + j * 4);
 
             pDestMask->mask.fill(0);
 
-			pDestMask->x1 = READ_LE_U16(pMaskData);
-			pMaskData += 2;
-			pDestMask->y1 = READ_LE_U16(pMaskData);
-			pMaskData += 2;
-			pDestMask->x2 = READ_LE_U16(pMaskData);
-			pMaskData += 2;
-			pDestMask->y2 = READ_LE_U16(pMaskData);
-			pMaskData += 2;
-			pDestMask->deltaX = READ_LE_U16(pMaskData);
-			pMaskData += 2;
-			pDestMask->deltaY = READ_LE_U16(pMaskData);
-			pMaskData += 2;
+            pDestMask->x1 = READ_LE_U16(pMaskData);
+            pMaskData += 2;
+            pDestMask->y1 = READ_LE_U16(pMaskData);
+            pMaskData += 2;
+            pDestMask->x2 = READ_LE_U16(pMaskData);
+            pMaskData += 2;
+            pDestMask->y2 = READ_LE_U16(pMaskData);
+            pMaskData += 2;
+            pDestMask->deltaX = READ_LE_U16(pMaskData);
+            pMaskData += 2;
+            pDestMask->deltaY = READ_LE_U16(pMaskData);
+            pMaskData += 2;
 
-			assert(pDestMask->deltaX == pDestMask->x2 - pDestMask->x1 + 1);
-			assert(pDestMask->deltaY == pDestMask->y2 - pDestMask->y1 + 1);
+            assert(pDestMask->deltaX == pDestMask->x2 - pDestMask->x1 + 1);
+            assert(pDestMask->deltaY == pDestMask->y2 - pDestMask->y1 + 1);
 
-			for(int k=0; k<pDestMask->deltaY; k++)
-			{
-				u16 uNumEntryForLine = READ_LE_U16(pMaskData);
-				pMaskData += 2;
+            for (int k = 0; k < pDestMask->deltaY; k++)
+            {
+                u16 uNumEntryForLine = READ_LE_U16(pMaskData);
+                pMaskData += 2;
 
-				unsigned char* pSourceBuffer = (unsigned char*)aux;
+                unsigned char* pSourceBuffer = (unsigned char*)aux;
 
-				int offset = pDestMask->x1 + pDestMask->y1 * 320 + k * 320;
+                int offset = pDestMask->x1 + pDestMask->y1 * 320 + k * 320;
 
-				for(int l=0; l<uNumEntryForLine; l++)
-				{
-					unsigned char uNumSkip = *(pMaskData++);
-					unsigned char uNumCopy = *(pMaskData++);
+                for (int l = 0; l < uNumEntryForLine; l++)
+                {
+                    unsigned char uNumSkip = *(pMaskData++);
+                    unsigned char uNumCopy = *(pMaskData++);
 
-					offset += uNumSkip;
+                    offset += uNumSkip;
 
-					for(int m=0; m<uNumCopy; m++)
-					{						
-                        pDestMask->mask[offset] = 0xFF;
-						offset++;
-					}
-				}
-			}
+                    for (int m = 0; m < uNumCopy; m++)
+                    {
+                        if (offset >= 0 && offset < (int)pDestMask->mask.size())
+                            pDestMask->mask[offset] = 0xFF;
+                        offset++;
+                    }
+                }
+            }
 
-			osystem_createMask(pDestMask->mask, i, j, pDestMask->x1, pDestMask->y1, pDestMask->x2, pDestMask->y2);
-		}
-	}
+            osystem_createMask(pDestMask->mask, i, j, (int)cameraDataTable[NumCamera]->viewedRoomTable[i].viewedRoomIdx, pDestMask->x1, pDestMask->y1, pDestMask->x2, pDestMask->y2);
+        }
+    }
 }
 
-void fillpoly(s16 * datas, int n, unsigned char c);
+void fillpoly(s16* datas, int n, unsigned char c);
 extern unsigned char* polyBackBuffer;
 
 void createAITD1Mask()
 {
-	for(int viewedRoomIdx=0; viewedRoomIdx<cameraDataTable[NumCamera]->numViewedRooms; viewedRoomIdx++)
-	{
-		cameraViewedRoomStruct* pcameraViewedRoomData = &cameraDataTable[NumCamera]->viewedRoomTable[viewedRoomIdx];
+    if (!room_PtrCamera[NumCamera])
+        return;
 
-		char* data2 = room_PtrCamera[NumCamera] + pcameraViewedRoomData->offsetToMask;
-		char* data = data2;
-		data+=2;
+    for (int viewedRoomIdx = 0; viewedRoomIdx < cameraDataTable[NumCamera]->numViewedRooms; viewedRoomIdx++)
+    {
+        cameraViewedRoomStruct* pcameraViewedRoomData = &cameraDataTable[NumCamera]->viewedRoomTable[viewedRoomIdx];
 
-		int numMask = *(s16*)(data2);
+        char* data2 = room_PtrCamera[NumCamera] + pcameraViewedRoomData->offsetToMask;
+        char* data = data2;
+        data += 2;
 
-		for(int maskIdx=0;maskIdx<numMask;maskIdx++)
-		{
+        int numMask = READ_LE_U16(data2);
+        if (numMask < 0 || numMask > 256)
+        {
+            printf("[MASK] Warning: invalid numMask %d for camera %d room %d\n", numMask, NumCamera, viewedRoomIdx);
+            continue;
+        }
+
+        for (int maskIdx = 0; maskIdx < numMask; maskIdx++)
+        {
             sMaskStruct theMaskStruct;
             sMaskStruct* pDestMask = &theMaskStruct;
             pDestMask->mask.fill(0);
             polyBackBuffer = pDestMask->mask.data();
 
-			int numMaskZone = READ_LE_U16(data);
-			char* src = data2 + READ_LE_U16(data+2);
+            int numMaskZone = READ_LE_U16(data);
+            char* src = data2 + READ_LE_U16(data + 2);
 
             int minX = 319;
             int maxX = 0;
             int minY = 199;
             int maxY = 0;
 
-			/*if(isBgOverlayRequired( actorPtr->zv.ZVX1 / 10, actorPtr->zv.ZVX2 / 10,
-			actorPtr->zv.ZVZ1 / 10, actorPtr->zv.ZVZ2 / 10,
-			data+4,
-			*(s16*)(data) ))*/
-			{
-				int numMaskPoly = READ_LE_U16(src);
-				src += 2;
+            /*if(isBgOverlayRequired( actorPtr->zv.ZVX1 / 10, actorPtr->zv.ZVX2 / 10,
+            actorPtr->zv.ZVZ1 / 10, actorPtr->zv.ZVZ2 / 10,
+            data+4,
+            *(s16*)(data) ))*/
+            {
+                int numMaskPoly = READ_LE_U16(src);
+                src += 2;
 
-				for(int maskPolyIdx=0;maskPolyIdx<numMaskPoly;maskPolyIdx++)
-				{
-					int numPoints = READ_LE_U16(src);
-					src+=2;
+                if (numMaskPoly > 256)
+                {
+                    printf("[MASK] Warning: invalid numMaskPoly %d for camera %d mask %d\n", numMaskPoly, NumCamera, maskIdx);
+                    polyBackBuffer = nullptr;
+                    goto nextMask;
+                }
 
-					memcpy(cameraBuffer, src, numPoints*4);
+                for (int maskPolyIdx = 0; maskPolyIdx < numMaskPoly; maskPolyIdx++)
+                {
+                    int numPoints = READ_LE_U16(src);
+                    src += 2;
 
-					fillpoly((short*)src, numPoints, 0xFF);
+                    if (numPoints > 64)
+                    {
+                        printf("[MASK] Warning: invalid numPoints %d for camera %d mask %d poly %d\n", numPoints, NumCamera, maskIdx, maskPolyIdx);
+                        polyBackBuffer = nullptr;
+                        goto nextMask;
+                    }
 
-                    for (int verticeId = 0; verticeId <numPoints; verticeId++)
+                    if (numPoints * 4 <= (int)sizeof(cameraBuffer))
+                        memcpy(cameraBuffer, src, numPoints * 4);
+
+                    fillpoly((short*)src, numPoints, 0xFF);
+
+                    for (int verticeId = 0; verticeId < numPoints; verticeId++)
                     {
                         short verticeX = *(short*)(src + verticeId * 4 + 0);
                         short verticeY = *(short*)(src + verticeId * 4 + 2);
@@ -1790,252 +1825,253 @@ void createAITD1Mask()
                         maxY = std::max<int>(maxY, verticeY);
                     }
 
-					src+=numPoints*4;
-					//drawBgOverlaySub2(param);
-				}
+                    src += numPoints * 4;
+                    //drawBgOverlaySub2(param);
+                }
 
-				//      blitOverlay(src);
+                //      blitOverlay(src);
 
                 polyBackBuffer = nullptr;
 
-			}
+            }
 
-			osystem_createMask(pDestMask->mask, viewedRoomIdx, maskIdx, minX-1, minY-1, maxX+1, maxY+1);
+            osystem_createMask(pDestMask->mask, viewedRoomIdx, maskIdx, (int)pcameraViewedRoomData->viewedRoomIdx, minX - 1, minY - 1, maxX + 1, maxY + 1);
 
-			int numOverlay = READ_LE_U16(data);
-			data+=2;
-			data+=((numOverlay*4)+1)*2;
-		}
+            nextMask:
+            int numOverlay = READ_LE_U16(data);
+            data += 2;
+            data += ((numOverlay * 4) + 1) * 2;
+        }
 
-		/*		unsigned char* pViewedRoomMask = g_MaskPtr + READ_LE_U32(g_MaskPtr + i*4);
+        /*		unsigned char* pViewedRoomMask = g_MaskPtr + READ_LE_U32(g_MaskPtr + i*4);
 
-		for(int j=0; j<pRoomView->numMask; j++)
-		{
-		unsigned char* pMaskData = pViewedRoomMask + READ_LE_U32(pViewedRoomMask + j*4);
+        for(int j=0; j<pRoomView->numMask; j++)
+        {
+        unsigned char* pMaskData = pViewedRoomMask + READ_LE_U32(pViewedRoomMask + j*4);
 
-		maskStruct* pDestMask = &g_maskBuffers[i][j];
+        maskStruct* pDestMask = &g_maskBuffers[i][j];
 
-		memset(pDestMask->mask, 0, 320*200);
+        memset(pDestMask->mask, 0, 320*200);
 
-		pDestMask->x1 = READ_LE_U16(pMaskData);
-		pMaskData += 2;
-		pDestMask->y1 = READ_LE_U16(pMaskData);
-		pMaskData += 2;
-		pDestMask->x2 = READ_LE_U16(pMaskData);
-		pMaskData += 2;
-		pDestMask->y2 = READ_LE_U16(pMaskData);
-		pMaskData += 2;
-		pDestMask->deltaX = READ_LE_U16(pMaskData);
-		pMaskData += 2;
-		pDestMask->deltaY = READ_LE_U16(pMaskData);
-		pMaskData += 2;
+        pDestMask->x1 = READ_LE_U16(pMaskData);
+        pMaskData += 2;
+        pDestMask->y1 = READ_LE_U16(pMaskData);
+        pMaskData += 2;
+        pDestMask->x2 = READ_LE_U16(pMaskData);
+        pMaskData += 2;
+        pDestMask->y2 = READ_LE_U16(pMaskData);
+        pMaskData += 2;
+        pDestMask->deltaX = READ_LE_U16(pMaskData);
+        pMaskData += 2;
+        pDestMask->deltaY = READ_LE_U16(pMaskData);
+        pMaskData += 2;
 
-		assert(pDestMask->deltaX == pDestMask->x2 - pDestMask->x1 + 1);
-		assert(pDestMask->deltaY == pDestMask->y2 - pDestMask->y1 + 1);
+        assert(pDestMask->deltaX == pDestMask->x2 - pDestMask->x1 + 1);
+        assert(pDestMask->deltaY == pDestMask->y2 - pDestMask->y1 + 1);
 
-		for(int k=0; k<pDestMask->deltaY; k++)
-		{
-		u16 uNumEntryForLine = READ_LE_U16(pMaskData);
-		pMaskData += 2;
+        for(int k=0; k<pDestMask->deltaY; k++)
+        {
+        u16 uNumEntryForLine = READ_LE_U16(pMaskData);
+        pMaskData += 2;
 
-		unsigned char* pDestBuffer = pDestMask->mask;
-		unsigned char* pSourceBuffer = (unsigned char*)aux;
+        unsigned char* pDestBuffer = pDestMask->mask;
+        unsigned char* pSourceBuffer = (unsigned char*)aux;
 
-		int offset = pDestMask->x1 + pDestMask->y1 * 320 + k * 320;
+        int offset = pDestMask->x1 + pDestMask->y1 * 320 + k * 320;
 
-		for(int l=0; l<uNumEntryForLine; l++)
-		{
-		unsigned char uNumSkip = *(pMaskData++);
-		unsigned char uNumCopy = *(pMaskData++);
+        for(int l=0; l<uNumEntryForLine; l++)
+        {
+        unsigned char uNumSkip = *(pMaskData++);
+        unsigned char uNumCopy = *(pMaskData++);
 
-		offset += uNumSkip;
+        offset += uNumSkip;
 
-		for(int m=0; m<uNumCopy; m++)
-		{						
-		pDestBuffer[offset] = 0xFF;
-		offset++;
-		}
-		}
-		}
+        for(int m=0; m<uNumCopy; m++)
+        {
+        pDestBuffer[offset] = 0xFF;
+        offset++;
+        }
+        }
+        }
 
-		osystem_createMask(pDestMask->mask, i, j, (unsigned char*)aux, pDestMask->x1, pDestMask->y1, pDestMask->x2, pDestMask->y2);
-		}*/
-	}
+        osystem_createMask(pDestMask->mask, i, j, (unsigned char*)aux, pDestMask->x1, pDestMask->y1, pDestMask->x2, pDestMask->y2);
+        }*/
+    }
 
-	polyBackBuffer = NULL;
+    polyBackBuffer = NULL;
 }
 
 
 void SetAngleCamera(int x, int y, int z)
 {
-	transformX = x&0x3FF;
-	if(transformX)
-	{
-		transformXCos = cosTable[transformX];
-		transformXSin = cosTable[(transformX+0x100)&0x3FF];
-		transformUseX = true;
-	}
-	else
-	{
-		transformUseX = false;
-	}
+    transformX = x & 0x3FF;
+    if (transformX)
+    {
+        transformXCos = cosTable[transformX];
+        transformXSin = cosTable[(transformX + 0x100) & 0x3FF];
+        transformUseX = true;
+    }
+    else
+    {
+        transformUseX = false;
+    }
 
-	transformY = y&0x3FF;
-	if(transformY)
-	{
-		transformYCos = cosTable[transformY];
-		transformYSin = cosTable[(transformY+0x100)&0x3FF];
-		transformUseY = true;
-	}
-	else
-	{
-		transformUseY = false;
-	}
+    transformY = y & 0x3FF;
+    if (transformY)
+    {
+        transformYCos = cosTable[transformY];
+        transformYSin = cosTable[(transformY + 0x100) & 0x3FF];
+        transformUseY = true;
+    }
+    else
+    {
+        transformUseY = false;
+    }
 
-	transformZ = z&0x3FF;
-	if(transformZ)
-	{
-		transformZCos = cosTable[transformZ];
-		transformZSin = cosTable[(transformZ+0x100)&0x3FF];
-		transformUseZ = true;
-	}
-	else
-	{
-		transformUseZ = false;
-	}
+    transformZ = z & 0x3FF;
+    if (transformZ)
+    {
+        transformZCos = cosTable[transformZ];
+        transformZSin = cosTable[(transformZ + 0x100) & 0x3FF];
+        transformUseZ = true;
+    }
+    else
+    {
+        transformUseZ = false;
+    }
 }
 
 void SetPosCamera(int x, int y, int z)
 {
-	translateX = x;
-	translateY = y;
-	translateZ = z;
+    translateX = x;
+    translateY = y;
+    translateZ = z;
 }
 
 void SetProjection(int centerX, int centerY, int x, int y, int z)
 {
-	cameraCenterX = centerX;
-	cameraCenterY = centerY;
+    cameraCenterX = centerX;
+    cameraCenterY = centerY;
 
-	cameraPerspective = x;
-	cameraFovX = y;
-	cameraFovY = z;
+    cameraPerspective = x;
+    cameraFovX = y;
+    cameraFovY = z;
 }
 
 int isInViewList(int value)
 {
-	char* ptr = currentCameraVisibilityList;
-	int var;
+    char* ptr = currentCameraVisibilityList;
+    int var;
 
-	while((var=*(ptr++))!=-1)
-	{
-		if(value == var)
-		{
-			return(1);
-		}
-	}
+    while ((var = *(ptr++)) != -1)
+    {
+        if (value == var)
+        {
+            return(1);
+        }
+    }
 
-	return(0);
+    return(0);
 }
 
 // setup visibility list
 void InitViewedRoomList()
 {
-	u32 i;
-	int j;
-	int var_10;
+    u32 i;
+    int j;
+    int var_10;
 
-	char* dataTabPos = currentCameraVisibilityList;
-	char* dataTabEnd = currentCameraVisibilityList + sizeof(currentCameraVisibilityList) - 1;
+    char* dataTabPos = currentCameraVisibilityList;
+    char* dataTabEnd = currentCameraVisibilityList + sizeof(currentCameraVisibilityList) - 1;
 
-	*dataTabPos = -1;
+    *dataTabPos = -1;
 
-	// visibility list: add linked rooms
-	for(i=0;i<roomDataTable[currentRoom].numSceZone;i++)
-	{
-		if(roomDataTable[currentRoom].sceZoneTable[i].type == 0)
-		{
-			var_10 = roomDataTable[currentRoom].sceZoneTable[i].parameter;
-			if(!isInViewList(var_10))
-			{
-				if(dataTabPos >= dataTabEnd) break;
-				*(dataTabPos++) = var_10;
-				*(dataTabPos) = -1;
-			}
-		}
-	}
+    // visibility list: add linked rooms
+    for (i = 0; i < roomDataTable[currentRoom].numSceZone; i++)
+    {
+        if (roomDataTable[currentRoom].sceZoneTable[i].type == 0)
+        {
+            var_10 = roomDataTable[currentRoom].sceZoneTable[i].parameter;
+            if (!isInViewList(var_10))
+            {
+                if (dataTabPos >= dataTabEnd) break;
+                *(dataTabPos++) = var_10;
+                *(dataTabPos) = -1;
+            }
+        }
+    }
 
-	// visibility list: add room seen by the current camera
-	for(j=0;j<cameraDataTable[NumCamera]->numViewedRooms;j++)
-	{
-		if(!isInViewList(cameraDataTable[NumCamera]->viewedRoomTable[j].viewedRoomIdx))
-		{
-			if(dataTabPos >= dataTabEnd) break;
-			*(dataTabPos++) = (char)cameraDataTable[NumCamera]->viewedRoomTable[j].viewedRoomIdx;
-			*(dataTabPos) = -1;
-		}
-	}
+    // visibility list: add room seen by the current camera
+    for (j = 0; j < cameraDataTable[NumCamera]->numViewedRooms; j++)
+    {
+        if (!isInViewList(cameraDataTable[NumCamera]->viewedRoomTable[j].viewedRoomIdx))
+        {
+            if (dataTabPos >= dataTabEnd) break;
+            *(dataTabPos++) = (char)cameraDataTable[NumCamera]->viewedRoomTable[j].viewedRoomIdx;
+            *(dataTabPos) = -1;
+        }
+    }
 }
 
 void DeleteObjet(int index) // remove actor
 {
-	tObject *actorPtr = &ListObjets[index];
+    tObject* actorPtr = &ListObjets[index];
 
-	if(actorPtr->indexInWorld == -2) // flow
-	{
-		actorPtr->indexInWorld = -1;
+    if (actorPtr->indexInWorld == -2) // flow
+    {
+        actorPtr->indexInWorld = -1;
 
-		if(actorPtr->ANIM == 4 )
-		{
-			CVars[getCVarsIdx(FOG_FLAG)] = 0;
-		}
+        if (actorPtr->ANIM == 4)
+        {
+            CVars[getCVarsIdx(FOG_FLAG)] = 0;
+        }
 
-		HQ_Free_Malloc(HQ_Memory,actorPtr->frame);
-	}
-	else
-	{
-		if(actorPtr->indexInWorld >= 0)
-		{
-			tWorldObject* objectPtr = &ListWorldObjets[actorPtr->indexInWorld];
+        HQ_Free_Malloc(HQ_Memory, actorPtr->frame);
+    }
+    else
+    {
+        if (actorPtr->indexInWorld >= 0)
+        {
+            tWorldObject* objectPtr = &ListWorldObjets[actorPtr->indexInWorld];
 
-			objectPtr->objIndex = -1;
-			actorPtr->indexInWorld = -1;
+            objectPtr->objIndex = -1;
+            actorPtr->indexInWorld = -1;
 
-			objectPtr->body = actorPtr->bodyNum;
-			objectPtr->anim = actorPtr->ANIM;
-			objectPtr->frame = actorPtr->frame;
-			objectPtr->animType = actorPtr->animType;
-			objectPtr->animInfo = actorPtr->animInfo;
-			objectPtr->flags = actorPtr->objectType & ~AF_BOXIFY;
-			objectPtr->flags |= AF_SPECIAL * actorPtr->dynFlags; // ugly hack, need rewrite
-			objectPtr->life = actorPtr->life;
-			objectPtr->lifeMode = actorPtr->lifeMode;
-			objectPtr->trackMode = actorPtr->trackMode;
+            objectPtr->body = actorPtr->bodyNum;
+            objectPtr->anim = actorPtr->ANIM;
+            objectPtr->frame = actorPtr->frame;
+            objectPtr->animType = actorPtr->animType;
+            objectPtr->animInfo = actorPtr->animInfo;
+            objectPtr->flags = actorPtr->objectType & ~AF_BOXIFY;
+            objectPtr->flags |= AF_SPECIAL * actorPtr->dynFlags; // ugly hack, need rewrite
+            objectPtr->life = actorPtr->life;
+            objectPtr->lifeMode = actorPtr->lifeMode;
+            objectPtr->trackMode = actorPtr->trackMode;
 
-			if(objectPtr->trackMode)
-			{
-				objectPtr->trackNumber = actorPtr->trackNumber;
-				objectPtr->positionInTrack = actorPtr->positionInTrack;
-				if(g_gameId != AITD1)
-				{
-					objectPtr->mark = actorPtr->MARK;
-				}
-			}
+            if (objectPtr->trackMode)
+            {
+                objectPtr->trackNumber = actorPtr->trackNumber;
+                objectPtr->positionInTrack = actorPtr->positionInTrack;
+                if (g_gameId != AITD1)
+                {
+                    objectPtr->mark = actorPtr->MARK;
+                }
+            }
 
-			objectPtr->x = actorPtr->roomX + actorPtr->stepX;
-			objectPtr->y = actorPtr->roomY + actorPtr->stepY;
-			objectPtr->z = actorPtr->roomZ + actorPtr->stepZ;
+            objectPtr->x = actorPtr->roomX + actorPtr->stepX;
+            objectPtr->y = actorPtr->roomY + actorPtr->stepY;
+            objectPtr->z = actorPtr->roomZ + actorPtr->stepZ;
 
-			objectPtr->alpha = actorPtr->alpha;
-			objectPtr->beta = actorPtr->beta;
-			objectPtr->gamma = actorPtr->gamma;
+            objectPtr->alpha = actorPtr->alpha;
+            objectPtr->beta = actorPtr->beta;
+            objectPtr->gamma = actorPtr->gamma;
 
-			objectPtr->stage = actorPtr->stage;
-			objectPtr->room = actorPtr->room;
+            objectPtr->stage = actorPtr->stage;
+            objectPtr->room = actorPtr->room;
 
-			FlagGenereAffList = 1;
-		}
-	}
+            FlagGenereAffList = 1;
+        }
+    }
 }
 
 bool pointRotateEnable = true;
@@ -2049,116 +2085,116 @@ int pointRotateSinZ;
 
 void setupPointRotate(int alpha, int beta, int gamma)
 {
-	pointRotateEnable = true;
+    pointRotateEnable = true;
 
-	pointRotateCosX = cosTable[alpha&0x3FF];
-	pointRotateSinX = cosTable[((alpha&0x3FF) + 0x100) & 0x3FF];
+    pointRotateCosX = cosTable[alpha & 0x3FF];
+    pointRotateSinX = cosTable[((alpha & 0x3FF) + 0x100) & 0x3FF];
 
-	pointRotateCosY = cosTable[beta&0x3FF];
-	pointRotateSinY = cosTable[((beta&0x3FF) + 0x100) & 0x3FF];
+    pointRotateCosY = cosTable[beta & 0x3FF];
+    pointRotateSinY = cosTable[((beta & 0x3FF) + 0x100) & 0x3FF];
 
-	pointRotateCosZ = cosTable[gamma&0x3FF];
-	pointRotateSinZ = cosTable[((gamma&0x3FF) + 0x100) & 0x3FF];
+    pointRotateCosZ = cosTable[gamma & 0x3FF];
+    pointRotateSinZ = cosTable[((gamma & 0x3FF) + 0x100) & 0x3FF];
 }
 
 void pointRotate(int x, int y, int z, int* destX, int* destY, int* destZ)
 {
-	if(pointRotateEnable)
-	{
-		{
-			int tempX = x;
-			int tempY = y;
-			x = ((((tempX * pointRotateSinZ) - ( tempY * pointRotateCosZ)))>>16)<<1;
-			y = ((((tempX * pointRotateCosZ) + ( tempY * pointRotateSinZ)))>>16)<<1;
-		}
+    if (pointRotateEnable)
+    {
+        {
+            int tempX = x;
+            int tempY = y;
+            x = ((((tempX * pointRotateSinZ) - (tempY * pointRotateCosZ))) >> 16) << 1;
+            y = ((((tempX * pointRotateCosZ) + (tempY * pointRotateSinZ))) >> 16) << 1;
+        }
 
-		{
-			int tempX = x;
-			int tempZ = z;
+        {
+            int tempX = x;
+            int tempZ = z;
 
-			x = ((((tempX * pointRotateSinY) - (tempZ * pointRotateCosY)))>>16)<<1;
-			z = ((((tempX * pointRotateCosY) + (tempZ * pointRotateSinY)))>>16)<<1;
-		}
+            x = ((((tempX * pointRotateSinY) - (tempZ * pointRotateCosY))) >> 16) << 1;
+            z = ((((tempX * pointRotateCosY) + (tempZ * pointRotateSinY))) >> 16) << 1;
+        }
 
-		{
-			int tempY = y;
-			int tempZ = z;
-			y = ((((tempY * pointRotateSinX ) - (tempZ * pointRotateCosX)))>>16)<<1;
-			z = ((((tempY * pointRotateCosX ) + (tempZ * pointRotateSinX)))>>16)<<1;
-		}
+        {
+            int tempY = y;
+            int tempZ = z;
+            y = ((((tempY * pointRotateSinX) - (tempZ * pointRotateCosX))) >> 16) << 1;
+            z = ((((tempY * pointRotateCosX) + (tempZ * pointRotateSinX))) >> 16) << 1;
+        }
 
-		*destX = x;
-		*destY = y;
-		*destZ = z;
-	}
+        *destX = x;
+        *destY = y;
+        *destZ = z;
+    }
 }
 
 void CopyZV(ZVStruct* source, ZVStruct* dest)
 {
-	memcpy(dest,source,sizeof(ZVStruct));
+    memcpy(dest, source, sizeof(ZVStruct));
 }
 
 void RefreshAux2(void)
 {
-	FastCopyScreen(aux,aux2);
+    FastCopyScreen(aux, aux2);
 
-	//TODO: implementer la suite
+    //TODO: implementer la suite
 }
 
 void InitDeplacement(int trackMode, int trackNumber)
 {
-	currentProcessedActorPtr->trackMode = trackMode;
+    currentProcessedActorPtr->trackMode = trackMode;
 
-	switch(trackMode)
-	{
-	case 2:
-		{
-			currentProcessedActorPtr->trackNumber = trackNumber;
-			currentProcessedActorPtr->MARK = -1;
-			// Reset speed interpolator when switching to follow mode to ensure movement starts properly
-			currentProcessedActorPtr->speedChange.numSteps = 0;
-			break;
-		}
-	case 3:
-		{
-			currentProcessedActorPtr->trackNumber = trackNumber;
-			currentProcessedActorPtr->positionInTrack = 0;
-			currentProcessedActorPtr->MARK = -1;
-			// Reset speed interpolator so there is no leftover state from a prior
-			// trackMode (e.g. follow-mode speedChange mid-ramp) that would produce
-			// incorrect movement speed at the start of the patrol track.
-			currentProcessedActorPtr->speedChange.numSteps = 0;
-			break;
-		}
-	}
+    switch (trackMode)
+    {
+    case 2:
+    {
+        currentProcessedActorPtr->trackNumber = trackNumber;
+        currentProcessedActorPtr->MARK = -1;
+        // Reset speed interpolator when switching to follow mode to ensure movement starts properly
+        currentProcessedActorPtr->speedChange.numSteps = 0;
+        break;
+    }
+    case 3:
+    {
+        currentProcessedActorPtr->trackNumber = trackNumber;
+        currentProcessedActorPtr->positionInTrack = 0;
+        currentProcessedActorPtr->MARK = -1;
+        // Reset speed interpolator so there is no leftover state from a prior
+        // trackMode (e.g. follow-mode speedChange mid-ramp) that would produce
+        // incorrect movement speed at the start of the patrol track.
+        currentProcessedActorPtr->speedChange.numSteps = 0;
+        break;
+    }
+    }
 }
 
 s16 ObjSalleRel = 0;
 
 int IsInCamera(int roomNumber)
 {
-	int numZone = cameraDataTable[NumCamera]->numViewedRooms;
+    int numZone = cameraDataTable[NumCamera]->numViewedRooms;
 
-	for(int i=0;i<numZone;i++)
-	{
-		if(cameraDataTable[NumCamera]->viewedRoomTable[i].viewedRoomIdx == roomNumber)
-		{
-			ObjSalleRel = i;
-			return(1);
-		}
-	}
+    for (int i = 0; i < numZone; i++)
+    {
+        if (cameraDataTable[NumCamera]->viewedRoomTable[i].viewedRoomIdx == roomNumber)
+        {
+            ObjSalleRel = i;
+            return(1);
+        }
+    }
 
-	ObjSalleRel = -1;
+    ObjSalleRel = -1;
 
-	return 0;
+    return 0;
 }
 
 int IsInCamRectTestAITD2(int X, int Z) // TODO: not 100% exact
 {
-	// if(changeCameraSub1(X,X,Z,Z,&cameraDataTable[currentCamera]->cameraZoneDefTable[cameraVisibilityVar]))
-	return 1;
+    // if(changeCameraSub1(X,X,Z,Z,&cameraDataTable[currentCamera]->cameraZoneDefTable[cameraVisibilityVar]))
+    return 1;
 
-	return 0;
+    return 0;
 }
 
 void updateAllActorAndObjectsAITD2()
@@ -2308,70 +2344,70 @@ void updateAllActorAndObjectsAITD2()
     }
     //FlagGenereActiveList = true;
 }
-					
+
 
 void GenereActiveList()
 {
-	if(g_gameId > JACK)
-	{
-		updateAllActorAndObjectsAITD2();
-		return;
-	}
+    if (g_gameId > JACK)
+    {
+        updateAllActorAndObjectsAITD2();
+        return;
+    }
 
-	for(int i=0;i<NUM_MAX_OBJECT;i++)
-	{
+    for (int i = 0; i < NUM_MAX_OBJECT; i++)
+    {
         tObject* currentActor = &ListObjets[i];
         if (currentActor->indexInWorld == -1)
             continue;
 
-		if(currentActor->stage == g_currentFloor)
-		{
-			if(currentActor->life != -1)
-			{
-				switch(currentActor->lifeMode)
-				{
-				case 0: // STAGE
+        if (currentActor->stage == g_currentFloor)
+        {
+            if (currentActor->life != -1)
+            {
+                switch (currentActor->lifeMode)
+                {
+                case 0: // STAGE
                     continue;
-				case 1: // ROOM
-					if(currentActor->room == currentRoom)
-					{
+                case 1: // ROOM
+                    if (currentActor->room == currentRoom)
+                    {
                         continue;
-					}
-					break;
-				case 2: // CAMERA
-					if(isInViewList(currentActor->room))
-					{
+                    }
+                    break;
+                case 2: // CAMERA
+                    if (isInViewList(currentActor->room))
+                    {
                         continue;
-					}
-					break;
-				default:
-					{
-						break;
-					}
-				}
-			}
-			else
-			{
-				if(isInViewList(currentActor->room))
-				{
+                    }
+                    break;
+                default:
+                {
+                    break;
+                }
+                }
+            }
+            else
+            {
+                if (isInViewList(currentActor->room))
+                {
                     continue;
-				}
-			}
-		}
+                }
+            }
+        }
 
         DeleteObjet(i);
-	}
+    }
 
-	for(int i=0;i<maxObjects;i++)
-	{
+    for (int i = 0; i < maxObjects; i++)
+    {
         tWorldObject* currentObject = &ListWorldObjets[i];
-		if(currentObject->objIndex != -1) {
-			if(currentWorldTarget == i)
-			{
-				currentCameraTargetActor = currentObject->objIndex;
-			}
+        if (currentObject->objIndex != -1) {
+            if (currentWorldTarget == i)
+            {
+                currentCameraTargetActor = currentObject->objIndex;
+            }
             continue;
-		}
+        }
 
         if (currentObject->stage != g_currentFloor) {
             continue;
@@ -2408,105 +2444,105 @@ void GenereActiveList()
             }
         }
 
-        currentObject->objIndex = InitObjet( currentObject->body, currentObject->typeZV, currentObject->foundName,
-				currentObject->flags & ~AF_SPECIAL,
-				currentObject->x, currentObject->y, currentObject->z,
-				currentObject->stage, currentObject->room,
-				currentObject->alpha, currentObject->beta, currentObject->gamma,
-				currentObject->anim,
-				currentObject->frame, currentObject->animType, currentObject->animInfo);
+        currentObject->objIndex = InitObjet(currentObject->body, currentObject->typeZV, currentObject->foundName,
+            currentObject->flags & ~AF_SPECIAL,
+            currentObject->x, currentObject->y, currentObject->z,
+            currentObject->stage, currentObject->room,
+            currentObject->alpha, currentObject->beta, currentObject->gamma,
+            currentObject->anim,
+            currentObject->frame, currentObject->animType, currentObject->animInfo);
 
-		if(currentObject->objIndex != -1)
-		{
-			currentProcessedActorPtr = &ListObjets[currentObject->objIndex];
-			currentProcessedActorIdx = currentObject->objIndex;
+        if (currentObject->objIndex != -1)
+        {
+            currentProcessedActorPtr = &ListObjets[currentObject->objIndex];
+            currentProcessedActorIdx = currentObject->objIndex;
 
-			if(currentWorldTarget == i)
-			{
-				currentCameraTargetActor = currentProcessedActorIdx;
-			}
+            if (currentWorldTarget == i)
+            {
+                currentCameraTargetActor = currentProcessedActorIdx;
+            }
 
-			currentProcessedActorPtr->dynFlags = (currentObject->flags & 0x20) / 0x20; // recheck
-			currentProcessedActorPtr->life = currentObject->life;
-			currentProcessedActorPtr->lifeMode = currentObject->lifeMode;
+            currentProcessedActorPtr->dynFlags = (currentObject->flags & 0x20) / 0x20; // recheck
+            currentProcessedActorPtr->life = currentObject->life;
+            currentProcessedActorPtr->lifeMode = currentObject->lifeMode;
 
-			currentProcessedActorPtr->indexInWorld = i;
+            currentProcessedActorPtr->indexInWorld = i;
 
-			InitDeplacement(currentObject->trackMode, currentObject->trackNumber);
+            InitDeplacement(currentObject->trackMode, currentObject->trackNumber);
 
-			currentProcessedActorPtr->positionInTrack = currentObject->positionInTrack;
+            currentProcessedActorPtr->positionInTrack = currentObject->positionInTrack;
 
-			FlagGenereAffList = 1;
-		}
-	}
+            FlagGenereAffList = 1;
+        }
+    }
 
-	//  FlagGenereActiveList = 0;
+    //  FlagGenereActiveList = 0;
 
-	//TODO: object update
+    //TODO: object update
 }
 
 int checkActorInRoom(int room)
 {
-	int i;
+    int i;
 
-	for(i=0;i<cameraDataTable[NumCamera]->numViewedRooms;i++)
-	{
-		if(cameraDataTable[NumCamera]->viewedRoomTable[i].viewedRoomIdx == room)
-		{
-			return(1);
-		}
-	}
+    for (i = 0; i < cameraDataTable[NumCamera]->numViewedRooms; i++)
+    {
+        if (cameraDataTable[NumCamera]->viewedRoomTable[i].viewedRoomIdx == room)
+        {
+            return(1);
+        }
+    }
 
-	return(0);
+    return(0);
 }
 
 void GenereAffList()
 {
-	NbAffObjets = 0;
+    NbAffObjets = 0;
 
-	for(int i=0;i< ListObjets.size();i++)
-	{
+    for (int i = 0; i < ListObjets.size(); i++)
+    {
         tObject* actorPtr = &ListObjets[i];
-		if(actorPtr->indexInWorld != -1 && actorPtr->bodyNum != -1)
-		{
-			if(checkActorInRoom(actorPtr->room))
-			{
-				Index[NbAffObjets] = i;
-				if(!(actorPtr->objectType & (AF_SPECIAL | AF_ANIMATED)))
-				{
-					actorPtr->objectType |= AF_BOXIFY;
-					//  FlagRefreshAux2 = 1;
-				}
-				NbAffObjets++;
-			}
-		}
-	}
+        if (actorPtr->indexInWorld != -1 && actorPtr->bodyNum != -1)
+        {
+            if (checkActorInRoom(actorPtr->room))
+            {
+                Index[NbAffObjets] = i;
+                if (!(actorPtr->objectType & (AF_SPECIAL | AF_ANIMATED)))
+                {
+                    actorPtr->objectType |= AF_BOXIFY;
+                    //  FlagRefreshAux2 = 1;
+                }
+                NbAffObjets++;
+            }
+        }
+    }
 }
 
 void InitView()
 {
-	int x;
-	int y;
-	int z;
+    int x;
+    int y;
+    int z;
 
-	SaveTimerAnim();
+    SaveTimerAnim();
 
     resetAnim2D();
 
-	NumCamera = NewNumCamera;
+    NumCamera = NewNumCamera;
 
-	assert(NewNumCamera < roomDataTable[currentRoom].numCameraInRoom);
+    assert(NewNumCamera < roomDataTable[currentRoom].numCameraInRoom);
 
-	loadCamera(roomDataTable[currentRoom].cameraIdxTable[NewNumCamera]);
-	if(g_gameId >= JACK)
-	{  
-		loadMask(roomDataTable[currentRoom].cameraIdxTable[NewNumCamera]);
-	}
-	else
-	{
-		createAITD1Mask();
-	}
-	cameraBackgroundChanged = true;
+    loadCamera(roomDataTable[currentRoom].cameraIdxTable[NewNumCamera]);
+    if (g_gameId >= JACK)
+    {
+        loadMask(roomDataTable[currentRoom].cameraIdxTable[NewNumCamera]);
+    }
+    else
+    {
+        createAITD1Mask();
+    }
+    cameraBackgroundChanged = true;
 
     if (g_gameId >= JACK) {
         load2dAnims(roomDataTable[currentRoom].cameraIdxTable[NewNumCamera]);
@@ -2514,260 +2550,260 @@ void InitView()
 
     cameraDataStruct* pCamera = cameraDataTable[NumCamera];
 
-	SetAngleCamera(pCamera->alpha,pCamera->beta,pCamera->gamma);
+    SetAngleCamera(pCamera->alpha, pCamera->beta, pCamera->gamma);
 
 #ifdef FITD_DEBUGGER
-	if(debuggerVar_topCamera)
-		SetAngleCamera(0x100,0,0);
+    if (debuggerVar_topCamera)
+        SetAngleCamera(0x100, 0, 0);
 #endif
 
-	x = (pCamera->x - roomDataTable[currentRoom].worldX)*10;
-	y = (roomDataTable[currentRoom].worldY - pCamera->y)*10;
-	z = (roomDataTable[currentRoom].worldZ - pCamera->z)*10;
+    x = (pCamera->x - roomDataTable[currentRoom].worldX) * 10;
+    y = (roomDataTable[currentRoom].worldY - pCamera->y) * 10;
+    z = (roomDataTable[currentRoom].worldZ - pCamera->z) * 10;
 
 #ifdef FITD_DEBUGGER
-	if(debuggerVar_topCamera)
-	{
-		if(currentCameraTargetActor != -1)
-		{
-			x = ListObjets[currentCameraTargetActor].worldX + ListObjets[currentCameraTargetActor].stepX;
-			y = debufferVar_topCameraZoom;
-			z = ListObjets[currentCameraTargetActor].worldZ + ListObjets[currentCameraTargetActor].stepZ;
-		}
-	}
+    if (debuggerVar_topCamera)
+    {
+        if (currentCameraTargetActor != -1)
+        {
+            x = ListObjets[currentCameraTargetActor].worldX + ListObjets[currentCameraTargetActor].stepX;
+            y = debufferVar_topCameraZoom;
+            z = ListObjets[currentCameraTargetActor].worldZ + ListObjets[currentCameraTargetActor].stepZ;
+        }
+    }
 #endif
-	SetPosCamera(x,y,z); // setup camera position
+    SetPosCamera(x, y, z); // setup camera position
 
-	SetProjection(160,100,pCamera->focal1,pCamera->focal2,pCamera->focal3); // setup projection
+    SetProjection(160, 100, pCamera->focal1, pCamera->focal2, pCamera->focal3); // setup projection
 
 #ifdef FITD_DEBUGGER
-	if(debuggerVar_topCamera)
-		SetProjection(160,100,1000,100,100);
+    if (debuggerVar_topCamera)
+        SetProjection(160, 100, 1000, 100, 100);
 #endif
 
-	InitViewedRoomList();
-	GenereActiveList();
-	GenereAffList();
-	//  TriListObjet();
-	RefreshAux2();
-	/*  InitScreenCoors();
-	*/
-	if(FlagInitView==2)
-	{
-		flagRedraw = 2;
-	}
-	else
-	{
-		if(flagRedraw!=2)
-		{
-			flagRedraw = 1;
-		}
-	}
+    InitViewedRoomList();
+    GenereActiveList();
+    GenereAffList();
+    //  TriListObjet();
+    RefreshAux2();
+    /*  InitScreenCoors();
+    */
+    if (FlagInitView == 2)
+    {
+        flagRedraw = 2;
+    }
+    else
+    {
+        if (flagRedraw != 2)
+        {
+            flagRedraw = 1;
+        }
+    }
 
-	FlagInitView = 0;
-	RestoreTimerAnim();
+    FlagInitView = 0;
+    RestoreTimerAnim();
 
-    for (int i = 0; i < currentCameraZoneList[NumCamera]->hybrids.size(); i++) {
+    if (currentCameraZoneList[NumCamera]) for (int i = 0; i < currentCameraZoneList[NumCamera]->hybrids.size(); i++) {
         startAnim2d(i);
     }
 }
 
 s16 GiveDistance2D(int x1, int z1, int x2, int z2)
 {
-	//int axBackup = x1;
-	x1 -= x2;
-	if((s16)x1 < 0)
-	{
-		x1 = -(s16)x1;
-	}
+    //int axBackup = x1;
+    x1 -= x2;
+    if ((s16)x1 < 0)
+    {
+        x1 = -(s16)x1;
+    }
 
-	z1 -= z2;
-	if((s16)z1 < 0)
-	{
-		z1 = -(s16)z1;
-	}
+    z1 -= z2;
+    if ((s16)z1 < 0)
+    {
+        z1 = -(s16)z1;
+    }
 
-	if((x1+z1)> 0xFFFF)
-	{
-		return(0x7D00);
-	}
-	else
-	{
-		return(x1+z1);
-	}
+    if ((x1 + z1) > 0xFFFF)
+    {
+        return(0x7D00);
+    }
+    else
+    {
+        return(x1 + z1);
+    }
 }
 
 void InitRealValue(s16 startValue, s16 endValue, s16 time, RealValue* realValue)
 {
-	realValue->startValue = startValue;
-	realValue->endValue = endValue;
-	realValue->numSteps = time;
-	realValue->memoTicks = timer;
+    realValue->startValue = startValue;
+    realValue->endValue = endValue;
+    realValue->numSteps = time;
+    realValue->memoTicks = timer;
 }
 
 s16 updateActorRotation(RealValue* rotatePtr)
 {
-	int timeDif;
-	int angleDif;
+    int timeDif;
+    int angleDif;
 
-	if(!rotatePtr->numSteps)
-		return(rotatePtr->endValue);
+    if (!rotatePtr->numSteps)
+        return(rotatePtr->endValue);
 
-	timeDif = timer - rotatePtr->memoTicks;
+    timeDif = timer - rotatePtr->memoTicks;
 
-	if(timeDif>rotatePtr->numSteps)
-	{
-		rotatePtr->numSteps = 0;
-		return(rotatePtr->endValue);
-	}
+    if (timeDif > rotatePtr->numSteps)
+    {
+        rotatePtr->numSteps = 0;
+        return(rotatePtr->endValue);
+    }
 
-	angleDif = (rotatePtr->endValue&0x3FF) - (rotatePtr->startValue&0x3FF);
+    angleDif = (rotatePtr->endValue & 0x3FF) - (rotatePtr->startValue & 0x3FF);
 
-	if(angleDif<=0x200)
-	{
-		if(angleDif>=-0x200)
-		{
-			int angle = (rotatePtr->endValue&0x3FF) - (rotatePtr->startValue&0x3FF);
-			return (rotatePtr->startValue&0x3FF) + (angle*timeDif)/rotatePtr->numSteps;
-		}
-		else
-		{
-			s16 angle = ((rotatePtr->endValue&0x3FF)+0x400) - ((rotatePtr->startValue&0x3FF));
-			return (((rotatePtr->startValue&0x3FF)) + ((angle*timeDif)/rotatePtr->numSteps));
-		}
-	}
-	else
-	{
-		int angle = (rotatePtr->endValue&0x3FF) - ((rotatePtr->startValue&0x3FF)+0x400);
-		return ((angle*timeDif)/rotatePtr->numSteps) + ((rotatePtr->startValue&0x3FF));
-	}
+    if (angleDif <= 0x200)
+    {
+        if (angleDif >= -0x200)
+        {
+            int angle = (rotatePtr->endValue & 0x3FF) - (rotatePtr->startValue & 0x3FF);
+            return (rotatePtr->startValue & 0x3FF) + (angle * timeDif) / rotatePtr->numSteps;
+        }
+        else
+        {
+            s16 angle = ((rotatePtr->endValue & 0x3FF) + 0x400) - ((rotatePtr->startValue & 0x3FF));
+            return (((rotatePtr->startValue & 0x3FF)) + ((angle * timeDif) / rotatePtr->numSteps));
+        }
+    }
+    else
+    {
+        int angle = (rotatePtr->endValue & 0x3FF) - ((rotatePtr->startValue & 0x3FF) + 0x400);
+        return ((angle * timeDif) / rotatePtr->numSteps) + ((rotatePtr->startValue & 0x3FF));
+    }
 }
 
 void removeFromBGIncrust(int actorIdx)
 {
-	tObject* actorPtr = &ListObjets[actorIdx];
+    tObject* actorPtr = &ListObjets[actorIdx];
 
-	actorPtr->objectType &= ~AF_BOXIFY;
+    actorPtr->objectType &= ~AF_BOXIFY;
 
-	//  FlagRefreshAux2 = 1;
+    //  FlagRefreshAux2 = 1;
 
-	BBox3D1 = actorPtr->screenXMin;
+    BBox3D1 = actorPtr->screenXMin;
 
-	if(BBox3D1 > -1)
-	{
-		BBox3D2 = actorPtr->screenYMin;
-		BBox3D3 = actorPtr->screenXMax;
-		BBox3D4 = actorPtr->screenYMax;
+    if (BBox3D1 > -1)
+    {
+        BBox3D2 = actorPtr->screenYMin;
+        BBox3D3 = actorPtr->screenXMax;
+        BBox3D4 = actorPtr->screenYMax;
 
-		//deleteSubSub();
-	}
+        //deleteSubSub();
+    }
 }
 
 int findObjectInInventory(int objIdx)
 {
-	for(int i=0;i<numObjInInventoryTable[currentInventory];i++)
-	{
-		if(inventoryTable[currentInventory][i] == objIdx)
-		{
-			return(i);
-		}
-	}
+    for (int i = 0; i < numObjInInventoryTable[currentInventory]; i++)
+    {
+        if (inventoryTable[currentInventory][i] == objIdx)
+        {
+            return(i);
+        }
+    }
 
-	return(-1);
+    return(-1);
 }
 
 void DeleteInventoryObjet(int objIdx)
 {
-	int inventoryIdx;
+    int inventoryIdx;
 
-	inventoryIdx = findObjectInInventory(objIdx);
+    inventoryIdx = findObjectInInventory(objIdx);
 
-	if(inventoryIdx != -1)
-	{
-		memmove(&inventoryTable[currentInventory][inventoryIdx],&inventoryTable[currentInventory][inventoryIdx+1],(30-inventoryIdx-1)*2);
+    if (inventoryIdx != -1)
+    {
+        memmove(&inventoryTable[currentInventory][inventoryIdx], &inventoryTable[currentInventory][inventoryIdx + 1], (30 - inventoryIdx - 1) * 2);
 
-		numObjInInventoryTable[currentInventory]--;
-	}
+        numObjInInventoryTable[currentInventory]--;
+    }
 
-	ListWorldObjets[objIdx].foundFlag &= 0x7FFF;
+    ListWorldObjets[objIdx].foundFlag &= 0x7FFF;
 }
 
 void deleteObject(int objIdx)
 {
-	tWorldObject* objPtr;
-	int actorIdx;
-	tObject* actorPtr;
+    tWorldObject* objPtr;
+    int actorIdx;
+    tObject* actorPtr;
 
-	objPtr = &ListWorldObjets[objIdx];
-	actorIdx = objPtr->objIndex;
+    objPtr = &ListWorldObjets[objIdx];
+    actorIdx = objPtr->objIndex;
 
-	if(actorIdx != -1)
-	{
-		actorPtr = &ListObjets[actorIdx];
+    if (actorIdx != -1)
+    {
+        actorPtr = &ListObjets[actorIdx];
 
-		actorPtr->room = -1;
-		actorPtr->stage = -1;
+        actorPtr->room = -1;
+        actorPtr->stage = -1;
 
-		//    FlagGenereActiveList = 1;
+        //    FlagGenereActiveList = 1;
 
-		if(actorPtr->objectType & AF_BOXIFY)
-		{
-			removeFromBGIncrust(actorIdx);
-		}
-	}
+        if (actorPtr->objectType & AF_BOXIFY)
+        {
+            removeFromBGIncrust(actorIdx);
+        }
+    }
 
-	objPtr->room = -1;
-	objPtr->stage = -1;
+    objPtr->room = -1;
+    objPtr->stage = -1;
 
-	DeleteInventoryObjet(objIdx);
+    DeleteInventoryObjet(objIdx);
 }
 
 #ifdef FITD_DEBUGGER
 void line(int x1, int y1, int x2, int y2, char c);
 
-void drawProjectedLine(s32 x1s, s32 y1s, s32 z1s, s32 x2s, s32 y2s, s32 z2s,int c)
+void drawProjectedLine(s32 x1s, s32 y1s, s32 z1s, s32 x2s, s32 y2s, s32 z2s, int c)
 {
-	float x1 = (float)x1s;
-	float x2 = (float)x2s;
-	float y1 = (float)y1s;
-	float y2 = (float)y2s;
-	float z1 = (float)z1s;
-	float z2 = (float)z2s;
+    float x1 = (float)x1s;
+    float x2 = (float)x2s;
+    float y1 = (float)y1s;
+    float y2 = (float)y2s;
+    float z1 = (float)z1s;
+    float z2 = (float)z2s;
 
-	float transformedX1;
-	float transformedX2;
+    float transformedX1;
+    float transformedX2;
 
-	float transformedY1;
-	float transformedY2;
+    float transformedY1;
+    float transformedY2;
 
-	x1 -= translateX;
-	x2 -= translateX;
+    x1 -= translateX;
+    x2 -= translateX;
 
 #if !defined(AITD_UE4)
-	y1 -= translateY;
-	y2 -= translateY;
+    y1 -= translateY;
+    y2 -= translateY;
 #endif
 
-	z1 -= translateZ;
-	z2 -= translateZ;
+    z1 -= translateZ;
+    z2 -= translateZ;
 
 #if defined(AITD_UE4)
     osystem_draw3dLine(x1, y1, z1, x2, y2, z2, c);
 #else
-	transformPoint(&x1,&y1,&z1);
-	transformPoint(&x2,&y2,&z2);
+    transformPoint(&x1, &y1, &z1);
+    transformPoint(&x2, &y2, &z2);
 
-	z1 += cameraPerspective;
-	z2 += cameraPerspective;
+    z1 += cameraPerspective;
+    z2 += cameraPerspective;
 
-	transformedX1 = ((x1 * cameraFovX) / (float)z1) + cameraCenterX;
-	transformedX2 = ((x2 * cameraFovX) / (float)z2) + cameraCenterX;
+    transformedX1 = ((x1 * cameraFovX) / (float)z1) + cameraCenterX;
+    transformedX2 = ((x2 * cameraFovX) / (float)z2) + cameraCenterX;
 
-	transformedY1 = ((y1 * cameraFovY) / (float)z1) + cameraCenterY;
-	transformedY2 = ((y2 * cameraFovY) / (float)z2) + cameraCenterY;
+    transformedY1 = ((y1 * cameraFovY) / (float)z1) + cameraCenterY;
+    transformedY2 = ((y2 * cameraFovY) / (float)z2) + cameraCenterY;
 
-	if(z1>0 && z2>0)
-		osystem_draw3dLine(transformedX1,transformedY1,z1,transformedX2,transformedY2,z2,c);
+    if (z1 > 0 && z2 > 0)
+        osystem_draw3dLine(transformedX1, transformedY1, z1, transformedX2, transformedY2, z2, c);
 #endif
 }
 
@@ -2792,637 +2828,652 @@ void drawZv(const ZVStruct& localZv) {
 
 void drawZv(tObject* actorPtr)
 {
-	ZVStruct localZv;
+    ZVStruct localZv;
 
-	if(currentCameraTargetActor < 0 || currentCameraTargetActor >= NUM_MAX_OBJECT)
-		return;
+    if (currentCameraTargetActor < 0 || currentCameraTargetActor >= NUM_MAX_OBJECT)
+        return;
 
-	if( actorPtr->room != ListObjets[currentCameraTargetActor].room )
-	{
-		if (ListObjets[currentCameraTargetActor].room == -1) {
-			return;
-		}
-		CopyZV(&actorPtr->zv,&localZv);
-		AdjustZV(&localZv, actorPtr->room, ListObjets[currentCameraTargetActor].room);
-	}
-	else
-	{
-		CopyZV(&actorPtr->zv,&localZv);
-	}
+    if (actorPtr->room != ListObjets[currentCameraTargetActor].room)
+    {
+        if (ListObjets[currentCameraTargetActor].room == -1) {
+            return;
+        }
+        CopyZV(&actorPtr->zv, &localZv);
+        AdjustZV(&localZv, actorPtr->room, ListObjets[currentCameraTargetActor].room);
+    }
+    else
+    {
+        CopyZV(&actorPtr->zv, &localZv);
+    }
 
     drawZv(localZv);
 }
 
 void drawConverZone(cameraZoneEntryStruct* zonePtr)
 {
-	int i;
+    int i;
 
-	for(i=0;i<zonePtr->numPoints-1;i++)
-	{
-		drawProjectedLine(zonePtr->pointTable[i].x*10,0,zonePtr->pointTable[i].y*10,zonePtr->pointTable[i+1].x*10,0,zonePtr->pointTable[i+1].y*10,20);
-	}
+    for (i = 0; i < zonePtr->numPoints - 1; i++)
+    {
+        drawProjectedLine(zonePtr->pointTable[i].x * 10, 0, zonePtr->pointTable[i].y * 10, zonePtr->pointTable[i + 1].x * 10, 0, zonePtr->pointTable[i + 1].y * 10, 20);
+    }
 
-	// loop first and last
+    // loop first and last
 
-	i = zonePtr->numPoints-1;
-	drawProjectedLine(zonePtr->pointTable[0].x*10,0,zonePtr->pointTable[0].y*10,zonePtr->pointTable[i].x*10,0,zonePtr->pointTable[i].y*10,20);
+    i = zonePtr->numPoints - 1;
+    drawProjectedLine(zonePtr->pointTable[0].x * 10, 0, zonePtr->pointTable[0].y * 10, zonePtr->pointTable[i].x * 10, 0, zonePtr->pointTable[i].y * 10, 20);
 }
 
 void drawConverZones()
 {
-	int i;
-	for(i=0;i<numCameraInRoom;i++)
-	{
-		int j;
-		for(j=0;j<cameraDataTable[i]->numViewedRooms;j++)
-		{
-			int k;
+    int i;
+    for (i = 0; i < numCameraInRoom; i++)
+    {
+        int j;
+        for (j = 0; j < cameraDataTable[i]->numViewedRooms; j++)
+        {
+            int k;
 
-			if(cameraDataTable[i]->viewedRoomTable[j].viewedRoomIdx == currentRoom)
-			{
-				for(k=0;k<cameraDataTable[i]->viewedRoomTable[j].coverZones.size();k++)
-				{
-					drawConverZone(&cameraDataTable[i]->viewedRoomTable[j].coverZones[k]);
-				}
-			}
-		}
-	}
+            if (cameraDataTable[i]->viewedRoomTable[j].viewedRoomIdx == currentRoom)
+            {
+                for (k = 0; k < cameraDataTable[i]->viewedRoomTable[j].coverZones.size(); k++)
+                {
+                    drawConverZone(&cameraDataTable[i]->viewedRoomTable[j].coverZones[k]);
+                }
+            }
+        }
+    }
 }
 
 void drawAAQuad(s32 X1, s32 X2, s32 Z1, s32 Z2)
 {
-	drawProjectedLine(X1, 0, Z1, X1, 0, Z2, 20);
-	drawProjectedLine(X1, 0, Z2, X2, 0, Z2, 20);
-	drawProjectedLine(X2, 0, Z2, X2, 0, Z1, 20);
-	drawProjectedLine(X2, 0, Z1, X1, 0, Z1, 20);
+    drawProjectedLine(X1, 0, Z1, X1, 0, Z2, 20);
+    drawProjectedLine(X1, 0, Z2, X2, 0, Z2, 20);
+    drawProjectedLine(X2, 0, Z2, X2, 0, Z1, 20);
+    drawProjectedLine(X2, 0, Z1, X1, 0, Z1, 20);
 }
 
 void drawMaskZone(cameraMaskStruct* maskZonePtr)
 {
-	for(int i=0; i<maskZonePtr->numTestRect; i++)
-	{
-		drawAAQuad(maskZonePtr->rectTests[i].zoneX1*10, maskZonePtr->rectTests[i].zoneX2*10, maskZonePtr->rectTests[i].zoneZ1*10, maskZonePtr->rectTests[i].zoneZ2*10);
-	}
+    for (int i = 0; i < maskZonePtr->numTestRect; i++)
+    {
+        drawAAQuad(maskZonePtr->rectTests[i].zoneX1 * 10, maskZonePtr->rectTests[i].zoneX2 * 10, maskZonePtr->rectTests[i].zoneZ1 * 10, maskZonePtr->rectTests[i].zoneZ2 * 10);
+    }
 }
 
 void drawMaskZones()
 {
-	{
-		cameraDataStruct* pCamera = cameraDataTable[NumCamera];
+    {
+        cameraDataStruct* pCamera = cameraDataTable[NumCamera];
 
-		for(int j=0;j<pCamera->numViewedRooms;j++)
-		{
-			int k;
+        for (int j = 0; j < pCamera->numViewedRooms; j++)
+        {
+            int k;
 
-			//if(cameraDataTable[i]->viewedRoomTable[j].viewedRoomIdx == currentDisplayedRoom)
-			{
-				for(k=0;k<pCamera->viewedRoomTable[j].masks.size();k++)
-				{
-					drawMaskZone(&pCamera->viewedRoomTable[j].masks[k]);
-				}
-			}
-		}
-	}
+            //if(cameraDataTable[i]->viewedRoomTable[j].viewedRoomIdx == currentDisplayedRoom)
+            {
+                for (k = 0; k < pCamera->viewedRoomTable[j].masks.size(); k++)
+                {
+                    drawMaskZone(&pCamera->viewedRoomTable[j].masks[k]);
+                }
+            }
+        }
+    }
 }
 
 #define DEPTH_THRESHOLD 1000
 
-void drawProjectedQuad(float x1,float x2, float x3, float x4, float y1,float y2, float y3, float y4, float z1,float z2, float z3, float z4, int color, int transprency)
+void drawProjectedQuad(float x1, float x2, float x3, float x4, float y1, float y2, float y3, float y4, float z1, float z2, float z3, float z4, int color, int transprency)
 {
-	float transformedX1;
-	float transformedX2;
-	float transformedX3;
-	float transformedX4;
+    float transformedX1;
+    float transformedX2;
+    float transformedX3;
+    float transformedX4;
 
-	float transformedY1;
-	float transformedY2;
-	float transformedY3;
-	float transformedY4;
+    float transformedY1;
+    float transformedY2;
+    float transformedY3;
+    float transformedY4;
 
-	x1 -= translateX;
-	x2 -= translateX;
-	x3 -= translateX;
-	x4 -= translateX;
+    x1 -= translateX;
+    x2 -= translateX;
+    x3 -= translateX;
+    x4 -= translateX;
 
-	y1 -= translateY;
-	y2 -= translateY;
-	y3 -= translateY;
-	y4 -= translateY;
+    y1 -= translateY;
+    y2 -= translateY;
+    y3 -= translateY;
+    y4 -= translateY;
 
-	z1 -= translateZ;
-	z2 -= translateZ;
-	z3 -= translateZ;
-	z4 -= translateZ;
+    z1 -= translateZ;
+    z2 -= translateZ;
+    z3 -= translateZ;
+    z4 -= translateZ;
 
-	transformPoint(&x1,&y1,&z1);
-	transformPoint(&x2,&y2,&z2);
-	transformPoint(&x3,&y3,&z3);
-	transformPoint(&x4,&y4,&z4); 
+    transformPoint(&x1, &y1, &z1);
+    transformPoint(&x2, &y2, &z2);
+    transformPoint(&x3, &y3, &z3);
+    transformPoint(&x4, &y4, &z4);
 
-	z1 += cameraPerspective;
-	z2 += cameraPerspective;
-	z3 += cameraPerspective;
-	z4 += cameraPerspective;
+    z1 += cameraPerspective;
+    z2 += cameraPerspective;
+    z3 += cameraPerspective;
+    z4 += cameraPerspective;
 
-	transformedX1 = ((x1 * cameraFovX) / (float)z1) + cameraCenterX;
-	transformedX2 = ((x2 * cameraFovX) / (float)z2) + cameraCenterX;
-	transformedX3 = ((x3 * cameraFovX) / (float)z3) + cameraCenterX;
-	transformedX4 = ((x4 * cameraFovX) / (float)z4) + cameraCenterX;
+    transformedX1 = ((x1 * cameraFovX) / (float)z1) + cameraCenterX;
+    transformedX2 = ((x2 * cameraFovX) / (float)z2) + cameraCenterX;
+    transformedX3 = ((x3 * cameraFovX) / (float)z3) + cameraCenterX;
+    transformedX4 = ((x4 * cameraFovX) / (float)z4) + cameraCenterX;
 
-	transformedY1 = ((y1 * cameraFovY) / (float)z1) + cameraCenterY;
-	transformedY2 = ((y2 * cameraFovY) / (float)z2) + cameraCenterY;
-	transformedY3 = ((y3 * cameraFovY) / (float)z3) + cameraCenterY;
-	transformedY4 = ((y4 * cameraFovY) / (float)z4) + cameraCenterY;
+    transformedY1 = ((y1 * cameraFovY) / (float)z1) + cameraCenterY;
+    transformedY2 = ((y2 * cameraFovY) / (float)z2) + cameraCenterY;
+    transformedY3 = ((y3 * cameraFovY) / (float)z3) + cameraCenterY;
+    transformedY4 = ((y4 * cameraFovY) / (float)z4) + cameraCenterY;
 
-	if(z1>DEPTH_THRESHOLD && z2>DEPTH_THRESHOLD && z3>DEPTH_THRESHOLD && z4>DEPTH_THRESHOLD)
-	{
-		osystem_draw3dQuad(transformedX1,transformedY1,z1, transformedX2,transformedY2,z2, transformedX3,transformedY3,z3, transformedX4,transformedY4,z4, color, transprency);
-	}
+    if (z1 > DEPTH_THRESHOLD && z2 > DEPTH_THRESHOLD && z3 > DEPTH_THRESHOLD && z4 > DEPTH_THRESHOLD)
+    {
+        osystem_draw3dQuad(transformedX1, transformedY1, z1, transformedX2, transformedY2, z2, transformedX3, transformedY3, z3, transformedX4, transformedY4, z4, color, transprency);
+    }
 
-	//osystem_draw3dQuad(x1,y1,z1, x2,y2,z2, x3,y3,z3, x4,y4,z4, color);
+    //osystem_draw3dQuad(x1,y1,z1, x2,y2,z2, x3,y3,z3, x4,y4,z4, color);
 }
 
-void drawProjectedBox(int x1,int x2,int y1,int y2,int z1,int z2, int color, int transprency)
+void drawProjectedBox(int x1, int x2, int y1, int y2, int z1, int z2, int color, int transprency)
 {
-	//bottom
-	drawProjectedQuad((float)x1,(float)x1,(float)x2,(float)x2,(float)y1,(float)y1,(float)y1,(float)y1,(float)z1,(float)z2,(float)z2,(float)z1,color,transprency);
-	//top
-	drawProjectedQuad((float)x1,(float)x1,(float)x2,(float)x2,(float)y2,(float)y2,(float)y2,(float)y2,(float)z1,(float)z2,(float)z2,(float)z1,color,transprency);
-	//left
-	drawProjectedQuad((float)x1,(float)x1,(float)x1,(float)x1,(float)y1,(float)y2,(float)y2,(float)y1,(float)z1,(float)z1,(float)z2,(float)z2,color,transprency);
-	//right
-	drawProjectedQuad((float)x2,(float)x2,(float)x2,(float)x2,(float)y1,(float)y2,(float)y2,(float)y1,(float)z1,(float)z1,(float)z2,(float)z2,color,transprency);
-	//front
-	drawProjectedQuad((float)x1,(float)x2,(float)x2,(float)x1,(float)y1,(float)y1,(float)y2,(float)y2,(float)z1,(float)z1,(float)z1,(float)z1,color,transprency);
-	//back
-	drawProjectedQuad((float)x1,(float)x2,(float)x2,(float)x1,(float)y1,(float)y1,(float)y2,(float)y2,(float)z2,(float)z2,(float)z2,(float)z2,color,transprency);
+    //bottom
+    drawProjectedQuad((float)x1, (float)x1, (float)x2, (float)x2, (float)y1, (float)y1, (float)y1, (float)y1, (float)z1, (float)z2, (float)z2, (float)z1, color, transprency);
+    //top
+    drawProjectedQuad((float)x1, (float)x1, (float)x2, (float)x2, (float)y2, (float)y2, (float)y2, (float)y2, (float)z1, (float)z2, (float)z2, (float)z1, color, transprency);
+    //left
+    drawProjectedQuad((float)x1, (float)x1, (float)x1, (float)x1, (float)y1, (float)y2, (float)y2, (float)y1, (float)z1, (float)z1, (float)z2, (float)z2, color, transprency);
+    //right
+    drawProjectedQuad((float)x2, (float)x2, (float)x2, (float)x2, (float)y1, (float)y2, (float)y2, (float)y1, (float)z1, (float)z1, (float)z2, (float)z2, color, transprency);
+    //front
+    drawProjectedQuad((float)x1, (float)x2, (float)x2, (float)x1, (float)y1, (float)y1, (float)y2, (float)y2, (float)z1, (float)z1, (float)z1, (float)z1, color, transprency);
+    //back
+    drawProjectedQuad((float)x1, (float)x2, (float)x2, (float)x1, (float)y1, (float)y1, (float)y2, (float)y2, (float)z2, (float)z2, (float)z2, (float)z2, color, transprency);
 }
 
 void drawRoomZv(ZVStruct* zoneData, int color, int transparency)
 {
-	ZVStruct cameraZv = {-100,100,-100,100,-100,100};
+    ZVStruct cameraZv = { -100,100,-100,100,-100,100 };
 
-	cameraZv.ZVX1 += translateX;
-	cameraZv.ZVX2 += translateX;
+    cameraZv.ZVX1 += translateX;
+    cameraZv.ZVX2 += translateX;
 
-	cameraZv.ZVY1 += translateY;
-	cameraZv.ZVY2 += translateY;
+    cameraZv.ZVY1 += translateY;
+    cameraZv.ZVY2 += translateY;
 
-	cameraZv.ZVZ1 += translateZ;
-	cameraZv.ZVZ2 += translateZ;
+    cameraZv.ZVZ1 += translateZ;
+    cameraZv.ZVZ2 += translateZ;
 
-	if(CubeIntersect(&cameraZv,zoneData))
-	{
-		return;
-	}
+    if (CubeIntersect(&cameraZv, zoneData))
+    {
+        return;
+    }
 
-	drawProjectedBox(zoneData->ZVX1,zoneData->ZVX2,zoneData->ZVY1,zoneData->ZVY2,zoneData->ZVZ1,zoneData->ZVZ2,color,transparency);
+    drawProjectedBox(zoneData->ZVX1, zoneData->ZVX2, zoneData->ZVY1, zoneData->ZVY2, zoneData->ZVZ1, zoneData->ZVZ2, color, transparency);
 }
 
 void drawRoomZvLine(ZVStruct* zoneData, int color)
 {
-	ZVStruct cameraZv = {-100,100,-100,100,-100,100};
+    ZVStruct cameraZv = { -100,100,-100,100,-100,100 };
 
-	cameraZv.ZVX1 += translateX;
-	cameraZv.ZVX2 += translateX;
+    cameraZv.ZVX1 += translateX;
+    cameraZv.ZVX2 += translateX;
 
-	cameraZv.ZVY1 += translateY;
-	cameraZv.ZVY2 += translateY;
+    cameraZv.ZVY1 += translateY;
+    cameraZv.ZVY2 += translateY;
 
-	cameraZv.ZVZ1 += translateZ;
-	cameraZv.ZVZ2 += translateZ;
+    cameraZv.ZVZ1 += translateZ;
+    cameraZv.ZVZ2 += translateZ;
 
-	if(CubeIntersect(&cameraZv,zoneData))
-	{
-		return;
-	}
+    if (CubeIntersect(&cameraZv, zoneData))
+    {
+        return;
+    }
 
-	drawProjectedLine(zoneData->ZVX1,zoneData->ZVY1,zoneData->ZVZ1,zoneData->ZVX1,zoneData->ZVY1,zoneData->ZVZ2,color);
-	drawProjectedLine(zoneData->ZVX1,zoneData->ZVY1,zoneData->ZVZ2,zoneData->ZVX2,zoneData->ZVY1,zoneData->ZVZ2,color);
-	drawProjectedLine(zoneData->ZVX2,zoneData->ZVY1,zoneData->ZVZ2,zoneData->ZVX2,zoneData->ZVY1,zoneData->ZVZ1,color);
-	drawProjectedLine(zoneData->ZVX2,zoneData->ZVY1,zoneData->ZVZ1,zoneData->ZVX1,zoneData->ZVY1,zoneData->ZVZ1,color);
+    drawProjectedLine(zoneData->ZVX1, zoneData->ZVY1, zoneData->ZVZ1, zoneData->ZVX1, zoneData->ZVY1, zoneData->ZVZ2, color);
+    drawProjectedLine(zoneData->ZVX1, zoneData->ZVY1, zoneData->ZVZ2, zoneData->ZVX2, zoneData->ZVY1, zoneData->ZVZ2, color);
+    drawProjectedLine(zoneData->ZVX2, zoneData->ZVY1, zoneData->ZVZ2, zoneData->ZVX2, zoneData->ZVY1, zoneData->ZVZ1, color);
+    drawProjectedLine(zoneData->ZVX2, zoneData->ZVY1, zoneData->ZVZ1, zoneData->ZVX1, zoneData->ZVY1, zoneData->ZVZ1, color);
 
-	drawProjectedLine(zoneData->ZVX1,zoneData->ZVY2,zoneData->ZVZ1,zoneData->ZVX1,zoneData->ZVY2,zoneData->ZVZ2,color);
-	drawProjectedLine(zoneData->ZVX1,zoneData->ZVY2,zoneData->ZVZ2,zoneData->ZVX2,zoneData->ZVY2,zoneData->ZVZ2,color);
-	drawProjectedLine(zoneData->ZVX2,zoneData->ZVY2,zoneData->ZVZ2,zoneData->ZVX2,zoneData->ZVY2,zoneData->ZVZ1,color);
-	drawProjectedLine(zoneData->ZVX2,zoneData->ZVY2,zoneData->ZVZ1,zoneData->ZVX1,zoneData->ZVY2,zoneData->ZVZ1,color);
+    drawProjectedLine(zoneData->ZVX1, zoneData->ZVY2, zoneData->ZVZ1, zoneData->ZVX1, zoneData->ZVY2, zoneData->ZVZ2, color);
+    drawProjectedLine(zoneData->ZVX1, zoneData->ZVY2, zoneData->ZVZ2, zoneData->ZVX2, zoneData->ZVY2, zoneData->ZVZ2, color);
+    drawProjectedLine(zoneData->ZVX2, zoneData->ZVY2, zoneData->ZVZ2, zoneData->ZVX2, zoneData->ZVY2, zoneData->ZVZ1, color);
+    drawProjectedLine(zoneData->ZVX2, zoneData->ZVY2, zoneData->ZVZ1, zoneData->ZVX1, zoneData->ZVY2, zoneData->ZVZ1, color);
 
-	drawProjectedLine(zoneData->ZVX1,zoneData->ZVY1,zoneData->ZVZ1,zoneData->ZVX1,zoneData->ZVY2,zoneData->ZVZ1,color);
-	drawProjectedLine(zoneData->ZVX1,zoneData->ZVY1,zoneData->ZVZ2,zoneData->ZVX1,zoneData->ZVY2,zoneData->ZVZ2,color);
-	drawProjectedLine(zoneData->ZVX2,zoneData->ZVY1,zoneData->ZVZ2,zoneData->ZVX2,zoneData->ZVY2,zoneData->ZVZ2,color);
-	drawProjectedLine(zoneData->ZVX2,zoneData->ZVY1,zoneData->ZVZ1,zoneData->ZVX2,zoneData->ZVY2,zoneData->ZVZ1,color);
+    drawProjectedLine(zoneData->ZVX1, zoneData->ZVY1, zoneData->ZVZ1, zoneData->ZVX1, zoneData->ZVY2, zoneData->ZVZ1, color);
+    drawProjectedLine(zoneData->ZVX1, zoneData->ZVY1, zoneData->ZVZ2, zoneData->ZVX1, zoneData->ZVY2, zoneData->ZVZ2, color);
+    drawProjectedLine(zoneData->ZVX2, zoneData->ZVY1, zoneData->ZVZ2, zoneData->ZVX2, zoneData->ZVY2, zoneData->ZVZ2, color);
+    drawProjectedLine(zoneData->ZVX2, zoneData->ZVY1, zoneData->ZVZ1, zoneData->ZVX2, zoneData->ZVY2, zoneData->ZVZ1, color);
 }
 
-void drawZone(char* zoneData,int color)
+void drawZone(char* zoneData, int color)
 {
-	int x1;
-	int x2;
+    int x1;
+    int x2;
 
-	int y1;
-	int y2;
+    int y1;
+    int y2;
 
-	int z1;
-	int z2;
+    int z1;
+    int z2;
 
-	int type;
+    int type;
 
-	ZVStruct tempZv;
+    ZVStruct tempZv;
 
-	ZVStruct cameraZv = {-100,100,-100,100,-100,100};
+    ZVStruct cameraZv = { -100,100,-100,100,-100,100 };
 
-	type = *(s16*)(zoneData+0xE);
+    type = *(s16*)(zoneData + 0xE);
 
-	x1 = *( s16*)(zoneData+0x0);
-	x2 = *( s16*)(zoneData+0x2);
-	y1 = *( s16*)(zoneData+0x4);
-	y2 = *( s16*)(zoneData+0x6);
-	z1 = *( s16*)(zoneData+0x8);
-	z2 = *( s16*)(zoneData+0xA);
+    x1 = *(s16*)(zoneData + 0x0);
+    x2 = *(s16*)(zoneData + 0x2);
+    y1 = *(s16*)(zoneData + 0x4);
+    y2 = *(s16*)(zoneData + 0x6);
+    z1 = *(s16*)(zoneData + 0x8);
+    z2 = *(s16*)(zoneData + 0xA);
 
-	cameraZv.ZVX1 += translateX;
-	cameraZv.ZVX2 += translateX;
+    cameraZv.ZVX1 += translateX;
+    cameraZv.ZVX2 += translateX;
 
-	cameraZv.ZVY1 += translateY;
-	cameraZv.ZVY2 += translateY;
+    cameraZv.ZVY1 += translateY;
+    cameraZv.ZVY2 += translateY;
 
-	cameraZv.ZVZ1 += translateZ;
-	cameraZv.ZVZ2 += translateZ;
+    cameraZv.ZVZ1 += translateZ;
+    cameraZv.ZVZ2 += translateZ;
 
-	tempZv.ZVX1 = READ_LE_S16(zoneData+0x00);
-	tempZv.ZVX2 = READ_LE_S16(zoneData+0x02);
-	tempZv.ZVY1 = READ_LE_S16(zoneData+0x04);
-	tempZv.ZVY2 = READ_LE_S16(zoneData+0x06);
-	tempZv.ZVZ1 = READ_LE_S16(zoneData+0x08);
-	tempZv.ZVZ2 = READ_LE_S16(zoneData+0x0A);
+    tempZv.ZVX1 = READ_LE_S16(zoneData + 0x00);
+    tempZv.ZVX2 = READ_LE_S16(zoneData + 0x02);
+    tempZv.ZVY1 = READ_LE_S16(zoneData + 0x04);
+    tempZv.ZVY2 = READ_LE_S16(zoneData + 0x06);
+    tempZv.ZVZ1 = READ_LE_S16(zoneData + 0x08);
+    tempZv.ZVZ2 = READ_LE_S16(zoneData + 0x0A);
 
-	if(CubeIntersect(&cameraZv,&tempZv))
-	{
-		return;
-	}
+    if (CubeIntersect(&cameraZv, &tempZv))
+    {
+        return;
+    }
 
-	drawProjectedBox(x1,x2,y1,y2,z1,z2,type,255);
+    drawProjectedBox(x1, x2, y1, y2, z1, z2, type, 255);
 }
 
-void drawOverlayZone(char* zoneData,int color)
+void drawOverlayZone(char* zoneData, int color)
 {
-	int x1;
-	int x2;
+    int x1;
+    int x2;
 
-	int y1;
-	int y2;
+    int y1;
+    int y2;
 
-	int z1;
-	int z2;
+    int z1;
+    int z2;
 
-	x1 = *( s16*)(zoneData+0x0) * 10;
-	z1 = *( s16*)(zoneData+0x2) * 10;
-	x2 = *( s16*)(zoneData+0x4) * 10;
-	z2 = *( s16*)(zoneData+0x6) * 10;
+    x1 = *(s16*)(zoneData + 0x0) * 10;
+    z1 = *(s16*)(zoneData + 0x2) * 10;
+    x2 = *(s16*)(zoneData + 0x4) * 10;
+    z2 = *(s16*)(zoneData + 0x6) * 10;
 
-	y1=0;
-	y2=0;
+    y1 = 0;
+    y2 = 0;
 
-	drawProjectedBox(x1,x2,y1,y2,z1,z2,color,255);
+    drawProjectedBox(x1, x2, y1, y2, z1, z2, color, 255);
 }
 
 void drawSceZone(int roomNumber)
 {
-	u32 i;
-	ZVStruct dataLocal;
+    u32 i;
+    ZVStruct dataLocal;
 
-	for(i=0;i<roomDataTable[roomNumber].numSceZone;i++)
-	{
-		memcpy(&dataLocal,&roomDataTable[roomNumber].sceZoneTable[i].zv,sizeof(ZVStruct));
-		if(roomNumber!=currentRoom)
-		{
-			AdjustZV(&dataLocal,roomNumber,currentRoom);
-		}
+    for (i = 0; i < roomDataTable[roomNumber].numSceZone; i++)
+    {
+        memcpy(&dataLocal, &roomDataTable[roomNumber].sceZoneTable[i].zv, sizeof(ZVStruct));
+        if (roomNumber != currentRoom)
+        {
+            AdjustZV(&dataLocal, roomNumber, currentRoom);
+        }
 
-//		if(roomDataTable[roomNumber].sceZoneTable[i].parameter == 4)
-//			if(roomDataTable[roomNumber].sceZoneTable[i].type)
-			{
-				drawRoomZv(&dataLocal,20,40);
-			}
-	}
+        //		if(roomDataTable[roomNumber].sceZoneTable[i].parameter == 4)
+        //			if(roomDataTable[roomNumber].sceZoneTable[i].type)
+        {
+            drawRoomZv(&dataLocal, 20, 40);
+        }
+    }
 }
 
 void drawHardCol(int roomNumber)
 {
-	ZVStruct dataLocal;
+    ZVStruct dataLocal;
 
-	for(u32 i=0;i<roomDataTable[roomNumber].numHardCol;i++)
-	{
-		/*if(roomDataTable[roomNumber].hardColTable[i].type != 9)
-			continue;*/
+    for (u32 i = 0; i < roomDataTable[roomNumber].numHardCol; i++)
+    {
+        /*if(roomDataTable[roomNumber].hardColTable[i].type != 9)
+            continue;*/
 
-		CopyZV(&roomDataTable[roomNumber].hardColTable[i].zv,&dataLocal);
+        CopyZV(&roomDataTable[roomNumber].hardColTable[i].zv, &dataLocal);
 
-		if(roomNumber!=currentRoom)
-		{
-			AdjustZV(&dataLocal,roomNumber,currentRoom);
-		}
+        if (roomNumber != currentRoom)
+        {
+            AdjustZV(&dataLocal, roomNumber, currentRoom);
+        }
 
-		switch(roomDataTable[roomNumber].hardColTable[i].type)
-		{
-		case 0: // objects
-			drawRoomZv(&dataLocal,9,150);
-			break;
-		case 1: // walls
-			drawRoomZv(&dataLocal,100,255);
-			break;
-		case 2: // dummy
-			drawRoomZv(&dataLocal,180,255);
-			break;
-		case 3: // ground/climb
-			drawRoomZv(&dataLocal,70,255);
-			break;
-		case 4: // over door zones
-			drawRoomZv(&dataLocal,50,255);
-			break;
-		case 9: // scenario
-			drawRoomZv(&dataLocal,60,255);
-			break;
-		case 10: // monsters
-			drawRoomZv(&dataLocal,80,255);
-			break;
-		default:
-			drawRoomZv(&dataLocal,40,40);
-			break;
-		}
+        switch (roomDataTable[roomNumber].hardColTable[i].type)
+        {
+        case 0: // objects
+            drawRoomZv(&dataLocal, 9, 150);
+            break;
+        case 1: // walls
+            drawRoomZv(&dataLocal, 100, 255);
+            break;
+        case 2: // dummy
+            drawRoomZv(&dataLocal, 180, 255);
+            break;
+        case 3: // ground/climb
+            drawRoomZv(&dataLocal, 70, 255);
+            break;
+        case 4: // over door zones
+            drawRoomZv(&dataLocal, 50, 255);
+            break;
+        case 9: // scenario
+            drawRoomZv(&dataLocal, 60, 255);
+            break;
+        case 10: // monsters
+            drawRoomZv(&dataLocal, 80, 255);
+            break;
+        default:
+            drawRoomZv(&dataLocal, 40, 40);
+            break;
+        }
 
-	}
+    }
 }
 #endif
 
 
-int isBgOverlayRequired( int X1, int X2, int Z1, int Z2, char* data, int param )
+int isBgOverlayRequired(int X1, int X2, int Z1, int Z2, char* data, int param)
 {
-	int i;
-	for(i=0;i<param;i++)
-	{
-		////////////////////////////////////// DEBUG
-		//  drawOverlayZone(data, 80);
-		/////////////////////////////////////
+    int i;
+    for (i = 0; i < param; i++)
+    {
+        ////////////////////////////////////// DEBUG
+        //  drawOverlayZone(data, 80);
+        /////////////////////////////////////
 
-		int zoneX1 = *(s16*)(data);
-		int zoneZ1 = *(s16*)(data+2);
-		int zoneX2 = *(s16*)(data+4);
-		int zoneZ2 = *(s16*)(data+6);
+        int zoneX1 = *(s16*)(data);
+        int zoneZ1 = *(s16*)(data + 2);
+        int zoneX2 = *(s16*)(data + 4);
+        int zoneZ2 = *(s16*)(data + 6);
 
-		if(X1 >= zoneX1 && Z1 >= zoneZ1 && X2 <= zoneX2 && Z2 <= zoneZ2)
-		{
-			return(1);
-		}
+        if (X1 >= zoneX1 && Z1 >= zoneZ1 && X2 <= zoneX2 && Z2 <= zoneZ2)
+        {
+            return(1);
+        }
 
-		data+=0x8;
-	}
+        data += 0x8;
+    }
 
-	return(0);
+    return(0);
 }
 
 void drawBgOverlay(tObject* actorPtr)
 {
-	char* data;
-	char* data2;
+    char* data;
+    char* data2;
 
-	int numOverlayZone;
+    int numOverlayZone;
 
-	actorPtr->screenXMin = BBox3D1;
-	actorPtr->screenYMin = BBox3D2;
-	actorPtr->screenXMax = BBox3D3;
-	actorPtr->screenYMax = BBox3D4;
+    actorPtr->screenXMin = BBox3D1;
+    actorPtr->screenYMin = BBox3D2;
+    actorPtr->screenXMax = BBox3D3;
+    actorPtr->screenYMax = BBox3D4;
 
-	//if(actorPtr->trackMode != 1)
-	//	return;
+    //if(actorPtr->trackMode != 1)
+    //	return;
 
-	SetClip(BBox3D1, BBox3D2, BBox3D3, BBox3D4);
+    SetClip(BBox3D1, BBox3D2, BBox3D3, BBox3D4);
 
-	cameraDataStruct* pCamera = cameraDataTable[NumCamera];
+    cameraDataStruct* pCamera = cameraDataTable[NumCamera];
 
-	// look for the correct room data of that camera
-	cameraViewedRoomStruct* pcameraViewedRoomData = NULL;
-	int relativeCameraIndex = -1;
-	for(int i=0; i<pCamera->numViewedRooms; i++)
-	{
-		if(pCamera->viewedRoomTable[i].viewedRoomIdx == actorPtr->room)
-		{
-			pcameraViewedRoomData = &pCamera->viewedRoomTable[i];
-			relativeCameraIndex = i;
-			break;
-		}
-	}
-	if(pcameraViewedRoomData == NULL)
-		return;
+    // look for the correct room data of that camera
+    cameraViewedRoomStruct* pcameraViewedRoomData = NULL;
+    int relativeCameraIndex = -1;
+    for (int i = 0; i < pCamera->numViewedRooms; i++)
+    {
+        if (pCamera->viewedRoomTable[i].viewedRoomIdx == actorPtr->room)
+        {
+            pcameraViewedRoomData = &pCamera->viewedRoomTable[i];
+            relativeCameraIndex = i;
+            break;
+        }
+    }
+    if (pcameraViewedRoomData == NULL)
+        return;
 
-	if(g_gameId == AITD1)
-	{
-		data2 = room_PtrCamera[NumCamera] + pcameraViewedRoomData->offsetToMask;
-		data = data2;
-		data+=2;
+    if (g_gameId == AITD1)
+    {
+        data2 = room_PtrCamera[NumCamera] + pcameraViewedRoomData->offsetToMask;
+        data = data2;
+        data += 2;
 
-		numOverlayZone = *(s16*)(data2);
+        numOverlayZone = *(s16*)(data2);
 
-		for(int i=0;i<numOverlayZone;i++)
-		{
-			int numOverlay;
-			char* src = data2 + *(u16*)(data+2);
+        for (int i = 0; i < numOverlayZone; i++)
+        {
+            int numOverlay;
+            char* src = data2 + *(u16*)(data + 2);
 
-			if(isBgOverlayRequired( actorPtr->zv.ZVX1 / 10, actorPtr->zv.ZVX2 / 10,
-				actorPtr->zv.ZVZ1 / 10, actorPtr->zv.ZVZ2 / 10,
-				data+4,
-				*(s16*)(data) ))
-			{
-				osystem_setClip(clipLeft, clipTop, clipRight, clipBottom);
-				osystem_drawMask(relativeCameraIndex, i);
-				osystem_clearClip();
+            if (isBgOverlayRequired(actorPtr->zv.ZVX1 / 10, actorPtr->zv.ZVX2 / 10,
+                actorPtr->zv.ZVZ1 / 10, actorPtr->zv.ZVZ2 / 10,
+                data + 4,
+                *(s16*)(data)))
+            {
+                osystem_setClip(clipLeft, clipTop, clipRight, clipBottom);
+                osystem_drawMask(relativeCameraIndex, i);
+                osystem_clearClip();
 
-				/*
-				int j;
-				numOverlay = *(s16*)src;
-				src += 2;
+                /*
+                int j;
+                numOverlay = *(s16*)src;
+                src += 2;
 
-				for(j=0;j<numOverlay;j++)
-				{
-				int param = *(s16*)(src);
-				src+=2;
+                for(j=0;j<numOverlay;j++)
+                {
+                int param = *(s16*)(src);
+                src+=2;
 
-				memcpy(cameraBuffer, src, param*4);
+                memcpy(cameraBuffer, src, param*4);
 
-				src+=param*4;
+                src+=param*4;
 
-				drawBgOverlaySub2(param);
-				}
-				*/
+                drawBgOverlaySub2(param);
+                }
+                */
 
-				//      blitOverlay(src);
-			}
+                //      blitOverlay(src);
+            }
 
-			numOverlay = *(s16*)(data);
-			data+=2;
-			data+=((numOverlay*4)+1)*2;
-		}
-	}
-	else
-	{
-		for(int i=0;i<pcameraViewedRoomData->masks.size();i++)
-		{
-			cameraMaskStruct* pMaskZones = &pcameraViewedRoomData->masks[i];
+            numOverlay = *(s16*)(data);
+            data += 2;
+            data += ((numOverlay * 4) + 1) * 2;
+        }
+    }
+    else
+    {
+        for (int i = 0; i < pcameraViewedRoomData->masks.size(); i++)
+        {
+            cameraMaskStruct* pMaskZones = &pcameraViewedRoomData->masks[i];
 
-			for(int j=0; j<pMaskZones->numTestRect; j++)
-			{
-				rectTestStruct* pRect = &pMaskZones->rectTests[j];
+            for (int j = 0; j < pMaskZones->numTestRect; j++)
+            {
+                rectTestStruct* pRect = &pMaskZones->rectTests[j];
 
-				int actorX1 = actorPtr->zv.ZVX1 / 10;
-				int actorX2 = actorPtr->zv.ZVX2 / 10;
-				int actorZ1 = actorPtr->zv.ZVZ1 / 10;
-				int actorZ2 = actorPtr->zv.ZVZ2 / 10;
+                int actorX1 = actorPtr->zv.ZVX1 / 10;
+                int actorX2 = actorPtr->zv.ZVX2 / 10;
+                int actorZ1 = actorPtr->zv.ZVZ1 / 10;
+                int actorZ2 = actorPtr->zv.ZVZ2 / 10;
 
-				if(actorX1 >= pRect->zoneX1 && actorZ1 >= pRect->zoneZ1 && actorX2 <= pRect->zoneX2 && actorZ2 <= pRect->zoneZ2)
-				{
-					osystem_setClip(clipLeft, clipTop, clipRight, clipBottom);
-					osystem_drawMask(relativeCameraIndex, i);
-					osystem_clearClip();
-					break;
-				}
-			}
-		}
-	}
+                if (actorX1 >= pRect->zoneX1 && actorZ1 >= pRect->zoneZ1 && actorX2 <= pRect->zoneX2 && actorZ2 <= pRect->zoneZ2)
+                {
+                    osystem_setClip(clipLeft, clipTop, clipRight, clipBottom);
+                    osystem_drawMask(relativeCameraIndex, i);
+                    osystem_clearClip();
+                    break;
+                }
+            }
+        }
+    }
 
-	SetClip(0,0,319,199);
+    SetClip(0, 0, 319, 199);
 }
+
+extern void clearCurrentAtlas();
 
 void AffSpecialObjet(int actorIdx) // draw flow
 {
-	tObject* actorPtr = &ListObjets[actorIdx];
+    // Clear atlas so particles use palette-based colors, not a stale model atlas
+    clearCurrentAtlas();
 
-	int mode = actorPtr->ANIM;
+    tObject* actorPtr = &ListObjets[actorIdx];
 
-	// increment frame counter and check lifetime
-	actorPtr->numOfFrames++;
-	if (actorPtr->END_FRAME > 0 && actorPtr->numOfFrames >= actorPtr->END_FRAME)
-	{
-		DeleteObjet(actorIdx);
-		return;
-	}
+    int mode = actorPtr->ANIM;
 
-	// Guard against division by zero when END_FRAME is not set
-	if (actorPtr->END_FRAME <= 0)
-	{
-		DeleteObjet(actorIdx);
-		return;
-	}
+    // increment frame counter and check lifetime
+    actorPtr->numOfFrames++;
+    if (actorPtr->END_FRAME > 0 && actorPtr->numOfFrames >= actorPtr->END_FRAME)
+    {
+        DeleteObjet(actorIdx);
+        return;
+    }
 
-	// modes 2 (impact) and 3 (flash) have no particle data, draw a simple point
-	if (mode == 2 || mode == 3)
-	{
-		float wx = (float)actorPtr->worldX;
-		float wy = (float)actorPtr->worldY;
-		float wz = (float)actorPtr->worldZ;
+    // Guard against division by zero when END_FRAME is not set
+    if (actorPtr->END_FRAME <= 0)
+    {
+        DeleteObjet(actorIdx);
+        return;
+    }
 
-		wx -= translateX;
-		wy -= translateY;
-		wz -= translateZ;
+    // modes 2 (impact) and 3 (flash) have no particle data, draw a simple point
+    if (mode == 2 || mode == 3)
+    {
+        float wx = (float)actorPtr->worldX;
+        float wy = (float)actorPtr->worldY;
+        float wz = (float)actorPtr->worldZ;
 
-		transformPoint(&wx, &wy, &wz);
+        wx -= translateX;
+        wy -= translateY;
+        wz -= translateZ;
 
-		float depth = wz + cameraPerspective;
-		if (depth <= 50)
-			return;
+        transformPoint(&wx, &wy, &wz);
 
-		float sx = ((wx * cameraFovX) / depth) + cameraCenterX;
-		float sy = ((wy * cameraFovY) / depth) + cameraCenterY;
+        float depth = wz + cameraPerspective;
+        if (depth <= 50)
+            return;
 
-		// fade size over lifetime
-		float lifeRatio = 1.0f - (float)actorPtr->numOfFrames / (float)actorPtr->END_FRAME;
-		float pointSize = (mode == 3) ? 40.f * lifeRatio : 20.f * lifeRatio;
-		float transformedSize = (pointSize * (float)cameraFovX) / depth;
-		u8 color = (mode == 3) ? 0xFF : 0x90;
+        float sx = ((wx * cameraFovX) / depth) + cameraCenterX;
+        float sy = ((wy * cameraFovY) / depth) + cameraCenterY;
 
-		if (transformedSize > 0.1f)
-			osystem_drawPoint(sx, sy, depth, color, 0, transformedSize);
-		return;
-	}
+        // fade size over lifetime
+        float lifeRatio = 1.0f - (float)actorPtr->numOfFrames / (float)actorPtr->END_FRAME;
+        float pointSize = (mode == 3) ? 65.f * lifeRatio : 35.f * lifeRatio;
+        float transformedSize = (pointSize * (float)cameraFovX) / depth;
+        u8 color = (mode == 3) ? 0xFF : 0x90;
 
-	// modes 0 (evaporate/bubble), 1 (blood), 4 (smoke) have particle data in HQ_Memory
-	char* data = HQ_PtrMalloc(HQ_Memory, actorPtr->frame);
-	if (!data)
-	{
-		DeleteObjet(actorIdx);
-		return;
-	}
+        if (transformedSize > 0.1f)
+            osystem_drawPoint(sx, sy, depth, color, 0, transformedSize);
+        osystem_flushPendingPrimitives();
+        return;
+    }
 
-	s16 color = *(s16*)(data);
-	s16 numPoints = *(s16*)(data + 2);
-	s16* positions = (s16*)(data + 4);
+    // modes 0 (evaporate/bubble), 1 (blood), 4 (smoke) have particle data in HQ_Memory
+    char* data = HQ_PtrMalloc(HQ_Memory, actorPtr->frame);
+    if (!data)
+    {
+        DeleteObjet(actorIdx);
+        return;
+    }
 
-	if (mode == 0) color = 0x5A; // evaporate: purple
-	if (mode == 1) color = 0x22; // blood: dark red
+    s16 color = *(s16*)(data);
+    s16 numPoints = *(s16*)(data + 2);
+    s16* positions = (s16*)(data + 4);
 
-	// animate particles: update positions each frame
-	for (int i = 0; i < numPoints; i++)
-	{
-		switch (mode)
-		{
-		case 0: // evaporate: particles rise upward and spread outward
-			positions[i * 3 + 1] -= 3; // rise (Y is inverted in AITD)
-			positions[i * 3 + 0] += (rand() % 3) - 1; // slight X drift
-			positions[i * 3 + 2] += (rand() % 3) - 1; // slight Z drift
-			break;
-		case 1: // blood: particles fall downward
-			positions[i * 3 + 1] += 2; // fall
-			positions[i * 3 + 0] += (rand() % 3) - 1;
-			positions[i * 3 + 2] += (rand() % 3) - 1;
-			break;
-		case 4: // smoke: particles drift upward slowly
-			positions[i * 3 + 1] -= 2; // rise slowly
-			positions[i * 3 + 0] += (rand() % 5) - 2; // more horizontal drift
-			positions[i * 3 + 2] += (rand() % 5) - 2;
-			break;
-		}
-	}
+    if (mode == 0) color = 0x5A; // evaporate: purple
+    if (mode == 1) color = 0x28; // blood: bright red
 
-	float baseX = (float)actorPtr->worldX;
-	float baseY = (float)actorPtr->worldY;
-	float baseZ = (float)actorPtr->worldZ;
+    // animate particles: update positions each frame
+    for (int i = 0; i < numPoints; i++)
+    {
+        switch (mode)
+        {
+        case 0: // evaporate: particles rise upward and spread outward
+            positions[i * 3 + 1] -= 3; // rise (Y is inverted in AITD)
+            positions[i * 3 + 0] += (rand() % 3) - 1; // slight X drift
+            positions[i * 3 + 2] += (rand() % 3) - 1; // slight Z drift
+            break;
+        case 1: // blood: splatter outward from center with gravity
+        {
+            int px = positions[i * 3 + 0];
+            int pz = positions[i * 3 + 2];
+            // Push outward fast from center based on current position
+            int spreadX = (px > 0) ? (rand() % 8) + 3 : -((rand() % 8) + 3);
+            int spreadZ = (pz > 0) ? (rand() % 8) + 3 : -((rand() % 8) + 3);
+            positions[i * 3 + 0] += spreadX + (rand() % 5) - 2;
+            positions[i * 3 + 1] += 6; // gravity pull
+            positions[i * 3 + 2] += spreadZ + (rand() % 5) - 2;
+            break;
+        }
+        case 4: // smoke: particles drift upward slowly
+            positions[i * 3 + 1] -= 2; // rise slowly
+            positions[i * 3 + 0] += (rand() % 5) - 2; // more horizontal drift
+            positions[i * 3 + 2] += (rand() % 5) - 2;
+            break;
+        }
+    }
 
-	BBox3D1 = 32000;
-	BBox3D2 = 32000;
-	BBox3D3 = -32000;
-	BBox3D4 = -32000;
+    float baseX = (float)actorPtr->worldX;
+    float baseY = (float)actorPtr->worldY;
+    float baseZ = (float)actorPtr->worldZ;
 
-	float lifeRatio = 1.0f - (float)actorPtr->numOfFrames / (float)actorPtr->END_FRAME;
-	float baseSize = (mode == 1) ? 35.f : (mode == 0) ? 40.f : 20.f;
-	float pointSize = baseSize * lifeRatio;
-	if (pointSize < 1.f)
-		pointSize = 1.f;
+    BBox3D1 = 32000;
+    BBox3D2 = 32000;
+    BBox3D3 = -32000;
+    BBox3D4 = -32000;
 
-	for (int i = 0; i < numPoints; i++)
-	{
-		float wx = baseX + (float)positions[i * 3 + 0];
-		float wy = baseY + (float)positions[i * 3 + 1];
-		float wz = baseZ + (float)positions[i * 3 + 2];
+    float lifeRatio = 1.0f - (float)actorPtr->numOfFrames / (float)actorPtr->END_FRAME;
+    float baseSize = (mode == 1) ? 55.f : (mode == 0) ? 65.f : 20.f;
+    float pointSize = baseSize * lifeRatio;
+    if (pointSize < 1.f)
+        pointSize = 1.f;
 
-		wx -= translateX;
-		wy -= translateY;
-		wz -= translateZ;
+    for (int i = 0; i < numPoints; i++)
+    {
+        float wx = baseX + (float)positions[i * 3 + 0];
+        float wy = baseY + (float)positions[i * 3 + 1];
+        float wz = baseZ + (float)positions[i * 3 + 2];
 
-		transformPoint(&wx, &wy, &wz);
+        wx -= translateX;
+        wy -= translateY;
+        wz -= translateZ;
 
-		float depth = wz + cameraPerspective;
-		if (depth <= 50)
-			continue;
+        transformPoint(&wx, &wy, &wz);
 
-		float sx = ((wx * cameraFovX) / depth) + cameraCenterX;
-		float sy = ((wy * cameraFovY) / depth) + cameraCenterY;
+        float depth = wz + cameraPerspective;
+        if (depth <= 50)
+            continue;
 
-		if (sx < BBox3D1) BBox3D1 = (int)sx;
-		if (sx > BBox3D3) BBox3D3 = (int)sx;
-		if (sy < BBox3D2) BBox3D2 = (int)sy;
-		if (sy > BBox3D4) BBox3D4 = (int)sy;
+        float sx = ((wx * cameraFovX) / depth) + cameraCenterX;
+        float sy = ((wy * cameraFovY) / depth) + cameraCenterY;
 
-		float transformedSize = (pointSize * (float)cameraFovX) / depth;
-		osystem_drawPoint(sx, sy, depth, (u8)color, 0, transformedSize);
-	}
+        if (sx < BBox3D1) BBox3D1 = (int)sx;
+        if (sx > BBox3D3) BBox3D3 = (int)sx;
+        if (sy < BBox3D2) BBox3D2 = (int)sy;
+        if (sy > BBox3D4) BBox3D4 = (int)sy;
+
+        float transformedSize = (pointSize * (float)cameraFovX) / depth;
+        osystem_drawPoint(sx, sy, depth, (u8)color, 0, transformedSize);
+    }
+
+    osystem_flushPendingPrimitives();
 }
 
 void getHotPoint(int hotPointIdx, sBody* bodyPtr, point3dStruct* hotPoint)
@@ -3431,125 +3482,213 @@ void getHotPoint(int hotPointIdx, sBody* bodyPtr, point3dStruct* hotPoint)
     hotPoint->y = 0;
     hotPoint->z = 0;
 
-	if(bodyPtr->m_flags &2)
-	{
-		ASSERT(hotPointIdx < bodyPtr->m_groups.size());
+    if (bodyPtr->m_flags & 2)
+    {
+        ASSERT(hotPointIdx < bodyPtr->m_groups.size());
 
-		if(hotPointIdx < bodyPtr->m_groups.size())
-		{
+        if (hotPointIdx < bodyPtr->m_groups.size())
+        {
             auto& group = bodyPtr->m_groups[hotPointIdx];
 
-			int pointIdx = group.m_baseVertices; // first point
+            int pointIdx = group.m_baseVertices; // first point
             *hotPoint = pointBuffer[pointIdx];
-		}
-	}
+        }
+    }
+}
+
+void drawShadowMaskStencilPrepass()
+{
+    // Only clip shadows behind masks that are covering the player (actor 0).
+    // This prevents shadows from leaking through foreground elements the
+    // player is behind, without incorrectly clipping shadows when the player
+    // is in front of the mask element.
+    if (ListObjets.empty())
+        return;
+
+    tObject* playerPtr = &ListObjets[0];
+    if (playerPtr->indexInWorld == -1 || playerPtr->bodyNum == -1)
+        return;
+
+    cameraDataStruct* pCamera = cameraDataTable[NumCamera];
+
+    // Find the camera view entry for the player's room
+    cameraViewedRoomStruct* pcameraViewedRoomData = NULL;
+    int relativeCameraIndex = -1;
+    for (int i = 0; i < pCamera->numViewedRooms; i++)
+    {
+        if (pCamera->viewedRoomTable[i].viewedRoomIdx == playerPtr->room)
+        {
+            pcameraViewedRoomData = &pCamera->viewedRoomTable[i];
+            relativeCameraIndex = i;
+            break;
+        }
+    }
+    if (pcameraViewedRoomData == NULL)
+        return;
+
+    if (g_gameId == AITD1)
+    {
+        char* data2 = room_PtrCamera[NumCamera] + pcameraViewedRoomData->offsetToMask;
+        char* data = data2 + 2;
+        int numOverlayZone = *(s16*)(data2);
+
+        for (int i = 0; i < numOverlayZone; i++)
+        {
+            if (isBgOverlayRequired(playerPtr->zv.ZVX1 / 10, playerPtr->zv.ZVX2 / 10,
+                playerPtr->zv.ZVZ1 / 10, playerPtr->zv.ZVZ2 / 10,
+                data + 4,
+                *(s16*)(data)))
+            {
+                osystem_drawMaskStencilPrepass(relativeCameraIndex, i);
+            }
+
+            int numOverlay = *(s16*)(data);
+            data += 2;
+            data += ((numOverlay * 4) + 1) * 2;
+        }
+    }
+    else
+    {
+        for (int i = 0; i < (int)pcameraViewedRoomData->masks.size(); i++)
+        {
+            cameraMaskStruct* pMaskZones = &pcameraViewedRoomData->masks[i];
+
+            for (int j = 0; j < pMaskZones->numTestRect; j++)
+            {
+                rectTestStruct* pRect = &pMaskZones->rectTests[j];
+
+                int actorX1 = playerPtr->zv.ZVX1 / 10;
+                int actorX2 = playerPtr->zv.ZVX2 / 10;
+                int actorZ1 = playerPtr->zv.ZVZ1 / 10;
+                int actorZ2 = playerPtr->zv.ZVZ2 / 10;
+
+                if (actorX1 >= pRect->zoneX1 && actorZ1 >= pRect->zoneZ1 && actorX2 <= pRect->zoneX2 && actorZ2 <= pRect->zoneZ2)
+                {
+                    osystem_drawMaskStencilPrepass(relativeCameraIndex, i);
+                    break;
+                }
+            }
+        }
+    }
 }
 
 void drawSceneObjects()
 {
-	SetClip(0,0,319,199);
+    SetClip(0, 0, 319, 199);
 
-	for(int i=0;i<NbAffObjets;i++)
-	{
-		int currentDrawActor = Index[i];
-		if (currentDrawActor & 0x8000)
-			continue;
+    // Stencil pre-pass: mark mask foreground pixels with stencil=2
+    // so that shadow rendering (which tests stencil==0) is rejected there.
+    // Only marks masks that are covering the player.
+    drawShadowMaskStencilPrepass();
 
-		tObject* actorPtr = &ListObjets[currentDrawActor];
+    for (int i = 0; i < NbAffObjets; i++)
+    {
+        int currentDrawActor = Index[i];
+        if (currentDrawActor & 0x8000)
+            continue;
 
-		if (actorPtr->objectType & AF_SPECIAL)
-			continue;
+        tObject* actorPtr = &ListObjets[currentDrawActor];
 
-		if (actorPtr->objectType & AF_OBJ_2D)
-			continue;
+        if (actorPtr->objectType & AF_SPECIAL)
+            continue;
 
-		sBody* bodyPtr = HQR_Get(HQ_Bodys, actorPtr->bodyNum);
-		if (!bodyPtr)
-			continue;
+        if (actorPtr->objectType & AF_OBJ_2D)
+            continue;
 
-		bool shouldDrawShadows = (actorPtr->room == currentRoom) &&
-			((actorPtr->life > 0) || (actorPtr->lifeMode != 0) || (currentDrawActor == 0));
+        sBody* bodyPtr = HQR_Get(HQ_Bodys, actorPtr->bodyNum);
+        if (!bodyPtr)
+            continue;
 
-		// Non-character objects (doors, etc.) only cast shadows while moving
-		if (shouldDrawShadows && bodyPtr && !(bodyPtr->m_flags & INFO_ANIM))
-		{
-			bool isMoving = (actorPtr->stepX != 0 || actorPtr->stepY != 0 || actorPtr->stepZ != 0) ||
-				(actorPtr->objectType & AF_ANIMATED);
-			if (!isMoving)
-				shouldDrawShadows = false;
-		}
+        bool shouldDrawShadows = (actorPtr->room == currentRoom) &&
+            ((actorPtr->life > 0) || (actorPtr->lifeMode != 0) || (currentDrawActor == 0));
 
-		if (shouldDrawShadows)
-		{
-			drawBlobShadow(actorPtr->worldX + actorPtr->stepX, actorPtr->worldY + actorPtr->stepY, actorPtr->worldZ + actorPtr->stepZ, actorPtr->alpha, actorPtr->beta, actorPtr->gamma, bodyPtr);
-		}
+        // Non-character objects (doors, etc.) only cast shadows while moving
+        if (shouldDrawShadows && bodyPtr && !(bodyPtr->m_flags & INFO_ANIM))
+        {
+            bool isMoving = (actorPtr->stepX != 0 || actorPtr->stepY != 0 || actorPtr->stepZ != 0) ||
+                (actorPtr->objectType & AF_ANIMATED);
+            if (!isMoving)
+                shouldDrawShadows = false;
+        }
 
-		AffObjet(actorPtr->worldX + actorPtr->stepX, actorPtr->worldY + actorPtr->stepY, actorPtr->worldZ + actorPtr->stepZ, actorPtr->alpha, actorPtr->beta, actorPtr->gamma, bodyPtr);
+        if (shouldDrawShadows)
+        {
+            drawBlobShadow(actorPtr->worldX + actorPtr->stepX, actorPtr->worldY + actorPtr->stepY, actorPtr->worldZ + actorPtr->stepZ, actorPtr->alpha, actorPtr->beta, actorPtr->gamma, bodyPtr);
+        }
 
-		if (shouldDrawShadows)
-		{
-			drawPlanarShadow(actorPtr->worldX + actorPtr->stepX, actorPtr->worldY + actorPtr->stepY, actorPtr->worldZ + actorPtr->stepZ, actorPtr->alpha, actorPtr->beta, actorPtr->gamma, bodyPtr);
-		}
+        setCurrentBodyNum(actorPtr->bodyNum, bodyPtr, HQ_Bodys->string);
+        AffObjet(actorPtr->worldX + actorPtr->stepX, actorPtr->worldY + actorPtr->stepY, actorPtr->worldZ + actorPtr->stepZ, actorPtr->alpha, actorPtr->beta, actorPtr->gamma, bodyPtr);
 
-		if (BBox3D1 < 0) BBox3D1 = 0;
-		if (BBox3D3 > 319) BBox3D3 = 319;
-		if (BBox3D2 < 0) BBox3D2 = 0;
-		if (BBox3D4 > 199) BBox3D4 = 199;
+        if (shouldDrawShadows)
+        {
+            drawPlanarShadow(actorPtr->worldX + actorPtr->stepX, actorPtr->worldY + actorPtr->stepY, actorPtr->worldZ + actorPtr->stepZ, actorPtr->alpha, actorPtr->beta, actorPtr->gamma, bodyPtr);
+            drawWallPlanarShadow(actorPtr->worldX + actorPtr->stepX, actorPtr->worldY + actorPtr->stepY, actorPtr->worldZ + actorPtr->stepZ, actorPtr->alpha, actorPtr->beta, actorPtr->gamma, bodyPtr, actorPtr->room);
+        }
 
-		if (BBox3D1 <= 319 && BBox3D2 <= 199 && BBox3D3 >= 0 && BBox3D4 >= 0)
-		{
+        if (BBox3D1 < 0) BBox3D1 = 0;
+        if (BBox3D3 > 319) BBox3D3 = 319;
+        if (BBox3D2 < 0) BBox3D2 = 0;
+        if (BBox3D4 > 199) BBox3D4 = 199;
+
+        if (BBox3D1 <= 319 && BBox3D2 <= 199 && BBox3D3 >= 0 && BBox3D4 >= 0)
+        {
 #ifdef FITD_DEBUGGER
-			if (backgroundMode == backgroundModeEnum_2D)
+            if (backgroundMode == backgroundModeEnum_2D)
 #endif
-			{
-				drawBgOverlay(actorPtr);
-			}
-		}
-	}
+            {
+                drawBgOverlay(actorPtr);
+            }
+        }
+    }
 
-	SetClip(0,0,319,199);
+    SetClip(0, 0, 319, 199);
 }
 
 void AllRedraw(int flagFlip)
 {
     uiLayer.fill(0);
 
-	//if(flagFlip == 2)
-	{
-		if(cameraBackgroundChanged)
-		{
-			osystem_CopyBlockPhys((unsigned char*)aux,0,0,320,200);
-			// Re-draw the background quad now that the texture has been updated.
-			// osystem_startFrame() already submitted a background quad at the
-			// start of the frame using the old/stale texture, so re-submit it
-			// to prevent a single-frame pop-in (e.g. returning from the pause menu).
-			osystem_drawBackground();
-			cameraBackgroundChanged = false;
-		}
-	}
+    //if(flagFlip == 2)
+    {
+        if (cameraBackgroundChanged)
+        {
+            osystem_CopyBlockPhys((unsigned char*)aux, 0, 0, 320, 200);
+            // Re-draw the background quad now that the texture has been updated.
+            // osystem_startFrame() already submitted a background quad at the
+            // start of the frame using the old/stale texture, so re-submit it
+            // to prevent a single-frame pop-in (e.g. returning from the pause menu).
+            osystem_drawBackground();
+            cameraBackgroundChanged = false;
+        }
+    }
 
-	if(flagFlip== 0)
-	{
-		//ClsAuxLog();
-	}
-	else
-	{
-		NbPhysBoxs = 0;
-		FastCopyScreen(aux2,logicalScreen);
-	}
+    if (flagFlip == 0)
+    {
+        //ClsAuxLog();
+    }
+    else
+    {
+        NbPhysBoxs = 0;
+        FastCopyScreen(aux2, logicalScreen);
+    }
 
-	SetClip(0,0,319,199);
-	NbLogBoxs = 0;
+    SetClip(0, 0, 319, 199);
+    NbLogBoxs = 0;
 
- // Safety: If the object draw list is empty, force regeneration (prevents 3D objects from disappearing)
-	if (NbAffObjets == 0 && !lightOff) {
-		GenereActiveList();
-		GenereAffList();
-	}
+    // Safety: If the object draw list is empty, force regeneration (prevents 3D objects from disappearing)
+    if (NbAffObjets == 0 && !lightOff) {
+        GenereActiveList();
+        GenereAffList();
+    }
 
-	for(int i=0;i<NbAffObjets + NbAnim2D && i < (int)Index.size();i++)
-	{
-		int currentDrawActor = Index[i];
+    // Stencil pre-pass: mark mask foreground pixels with stencil=2
+    // so that shadow rendering (which tests stencil==0) is rejected there.
+    // Only marks masks that are covering the player.
+    drawShadowMaskStencilPrepass();
+
+    for (int i = 0; i < NbAffObjets + NbAnim2D && i < (int)Index.size(); i++)
+    {
+        int currentDrawActor = Index[i];
         if (currentDrawActor & 0x8000) {
             // Anim2d
             SetClip(0, 0, 319, 199);
@@ -3573,52 +3712,54 @@ void AllRedraw(int flagFlip)
                 }
                 else
                 {
-					if (actorPtr->objectType & AF_OBJ_2D) {
-						sHybrid* pHybrid = HQR_Get(HQ_Hybrides, actorPtr->ANIM);
-						if (pHybrid && actorPtr->bodyNum >= 0 && actorPtr->bodyNum < (int)pHybrid->animations.size()) {
-							auto& anim = pHybrid->animations[actorPtr->bodyNum];
-							if (actorPtr->frame >= 0 && actorPtr->frame < (int)anim.anims.size()) {
-								s16 numHybrid = anim.anims[actorPtr->frame].id;
-								AffHyb(numHybrid, 0, 0, pHybrid);
-							}
-						}
+                    if (actorPtr->objectType & AF_OBJ_2D) {
+                        sHybrid* pHybrid = HQR_Get(HQ_Hybrides, actorPtr->ANIM);
+                        if (pHybrid && actorPtr->bodyNum >= 0 && actorPtr->bodyNum < (int)pHybrid->animations.size()) {
+                            auto& anim = pHybrid->animations[actorPtr->bodyNum];
+                            if (actorPtr->frame >= 0 && actorPtr->frame < (int)anim.anims.size()) {
+                                s16 numHybrid = anim.anims[actorPtr->frame].id;
+                                AffHyb(numHybrid, 0, 0, pHybrid);
+                            }
+                        }
 
                         // TODO: bounding volume
                     }
-					else
-					{
-						sBody* bodyPtr = HQR_Get(HQ_Bodys, actorPtr->bodyNum);
-						if (!bodyPtr) continue;
+                    else
+                    {
+                        sBody* bodyPtr = HQR_Get(HQ_Bodys, actorPtr->bodyNum);
+                        if (!bodyPtr) continue;
 
-						if (HQ_Load)
-						{
-							//          initAnimInBody(actorPtr->FRAME, HQR_Get(listAnim, actorPtr->ANIM), bodyPtr);
-						}
+                        if (HQ_Load)
+                        {
+                            //          initAnimInBody(actorPtr->FRAME, HQR_Get(listAnim, actorPtr->ANIM), bodyPtr);
+                        }
 
-						// Only draw shadows for living characters (player and enemies) in the current room
-						bool shouldDrawShadows = (actorPtr->room == currentRoom) &&
-												 ((actorPtr->life > 0) || (actorPtr->lifeMode != 0) || (currentDrawActor == 0));
+                        // Only draw shadows for living characters (player and enemies) in the current room
+                        bool shouldDrawShadows = (actorPtr->room == currentRoom) &&
+                            ((actorPtr->life > 0) || (actorPtr->lifeMode != 0) || (currentDrawActor == 0));
 
-						// Non-character objects (doors, etc.) only cast shadows while moving
-						if (shouldDrawShadows && bodyPtr && !(bodyPtr->m_flags & INFO_ANIM))
-						{
-							bool isMoving = (actorPtr->stepX != 0 || actorPtr->stepY != 0 || actorPtr->stepZ != 0) ||
-								(actorPtr->objectType & AF_ANIMATED);
-							if (!isMoving)
-								shouldDrawShadows = false;
-						}
+                        // Non-character objects (doors, etc.) only cast shadows while moving
+                        if (shouldDrawShadows && bodyPtr && !(bodyPtr->m_flags & INFO_ANIM))
+                        {
+                            bool isMoving = (actorPtr->stepX != 0 || actorPtr->stepY != 0 || actorPtr->stepZ != 0) ||
+                                (actorPtr->objectType & AF_ANIMATED);
+                            if (!isMoving)
+                                shouldDrawShadows = false;
+                        }
 
-						if (shouldDrawShadows)
-						{
-							drawBlobShadow(actorPtr->worldX + actorPtr->stepX, actorPtr->worldY + actorPtr->stepY, actorPtr->worldZ + actorPtr->stepZ, actorPtr->alpha, actorPtr->beta, actorPtr->gamma, bodyPtr);
-						}
+                        if (shouldDrawShadows)
+                        {
+                            drawBlobShadow(actorPtr->worldX + actorPtr->stepX, actorPtr->worldY + actorPtr->stepY, actorPtr->worldZ + actorPtr->stepZ, actorPtr->alpha, actorPtr->beta, actorPtr->gamma, bodyPtr);
+                        }
 
-						AffObjet(actorPtr->worldX + actorPtr->stepX, actorPtr->worldY + actorPtr->stepY, actorPtr->worldZ + actorPtr->stepZ, actorPtr->alpha, actorPtr->beta, actorPtr->gamma, bodyPtr);
+                        setCurrentBodyNum(actorPtr->bodyNum, bodyPtr, HQ_Bodys->string);
+                        AffObjet(actorPtr->worldX + actorPtr->stepX, actorPtr->worldY + actorPtr->stepY, actorPtr->worldZ + actorPtr->stepZ, actorPtr->alpha, actorPtr->beta, actorPtr->gamma, bodyPtr);
 
-						if (shouldDrawShadows)
-						{
-							drawPlanarShadow(actorPtr->worldX + actorPtr->stepX, actorPtr->worldY + actorPtr->stepY, actorPtr->worldZ + actorPtr->stepZ, actorPtr->alpha, actorPtr->beta, actorPtr->gamma, bodyPtr);
-						}
+                        if (shouldDrawShadows)
+                        {
+                            drawPlanarShadow(actorPtr->worldX + actorPtr->stepX, actorPtr->worldY + actorPtr->stepY, actorPtr->worldZ + actorPtr->stepZ, actorPtr->alpha, actorPtr->beta, actorPtr->gamma, bodyPtr);
+                            drawWallPlanarShadow(actorPtr->worldX + actorPtr->stepX, actorPtr->worldY + actorPtr->stepY, actorPtr->worldZ + actorPtr->stepZ, actorPtr->alpha, actorPtr->beta, actorPtr->gamma, bodyPtr, actorPtr->room);
+                        }
 
 
                         if (actorPtr->animActionType != 0)
@@ -3669,7 +3810,7 @@ void AllRedraw(int flagFlip)
                 }
             }
         }
-	}
+    }
 
 #ifdef FITD_DEBUGGER
     {
@@ -3703,106 +3844,118 @@ void AllRedraw(int flagFlip)
     }
 #endif
 
-	if(drawTextOverlay())
-	{
-		//addToRedrawBox();
-	}
+    if (drawTextOverlay())
+    {
+        //addToRedrawBox();
+    }
 
-	if(!lightOff)
-	{
-		if(flagFlip)
-		{
-			if(flagFlip==2 || lightVar2)
-			{
-				//makeBlackPalette();
-				osystem_flip(NULL);
-				FadeInPhys(0x10,0);
-				lightVar2 = 0;
-			}
-			else
-			{
-				//osystem_flip(NULL);
-			}
-		}
-		else
-		{
-			//mainDrawSub1();
-		}
-	}
-	else
-	{
-	}
+    // Draw hotspot overlay (magnifying glass) when near interactive objects
+    if (isHotspotOverlayVisible())
+    {
+        static bool s_loggedDraw = false;
+        if (!s_loggedDraw)
+        {
+            printf(MAIN_TAG "Drawing hotspot overlay (first time)\n");
+            s_loggedDraw = true;
+        }
+        osystem_drawHotspotOverlay(getHotspotOverlayOpacity());
+    }
 
-	//    osystem_stopFrame();
+    if (!lightOff)
+    {
+        if (flagFlip)
+        {
+            if (flagFlip == 2 || lightVar2)
+            {
+                //makeBlackPalette();
+                osystem_flip(NULL);
+                FadeInPhys(0x10, 0);
+                lightVar2 = 0;
+            }
+            else
+            {
+                //osystem_flip(NULL);
+            }
+        }
+        else
+        {
+            //mainDrawSub1();
+        }
+    }
+    else
+    {
+    }
 
-	//	osystem_flip(NULL);
+    //    osystem_stopFrame();
 
-	flagRedraw = 0;
+    //	osystem_flip(NULL);
+
+    flagRedraw = 0;
 }
 
 void walkStep(int angle1, int angle2, int angle3)
 {
-	Rotate(angle3,angle1,angle2,&animMoveZ,&animMoveX);
+    Rotate(angle3, angle1, angle2, &animMoveZ, &animMoveX);
 }
 
 void addActorToBgInscrust(int actorIdx)
 {
-	ListObjets[actorIdx].objectType |= AF_BOXIFY + AF_DRAWABLE;
-	ListObjets[actorIdx].objectType &= ~AF_ANIMATED;
+    ListObjets[actorIdx].objectType |= AF_BOXIFY + AF_DRAWABLE;
+    ListObjets[actorIdx].objectType &= ~AF_ANIMATED;
 
-	//FlagRefreshAux2 = 1;
+    //FlagRefreshAux2 = 1;
 }
 
-int CubeIntersect(ZVStruct* zvPtr1,ZVStruct* zvPtr2)
+int CubeIntersect(ZVStruct* zvPtr1, ZVStruct* zvPtr2)
 {
-	if(zvPtr1->ZVX1 >= zvPtr2->ZVX2)
-		return 0;
+    if (zvPtr1->ZVX1 >= zvPtr2->ZVX2)
+        return 0;
 
-	if(zvPtr2->ZVX1 >= zvPtr1->ZVX2)
-		return 0;
+    if (zvPtr2->ZVX1 >= zvPtr1->ZVX2)
+        return 0;
 
-	if(zvPtr1->ZVY1 >= zvPtr2->ZVY2)
-		return 0;
+    if (zvPtr1->ZVY1 >= zvPtr2->ZVY2)
+        return 0;
 
-	if(zvPtr2->ZVY1 >= zvPtr1->ZVY2)
-		return 0;
+    if (zvPtr2->ZVY1 >= zvPtr1->ZVY2)
+        return 0;
 
-	if(zvPtr1->ZVZ1 >= zvPtr2->ZVZ2)
-		return 0;
+    if (zvPtr1->ZVZ1 >= zvPtr2->ZVZ2)
+        return 0;
 
-	if(zvPtr2->ZVZ1 >= zvPtr1->ZVZ2)
-		return 0;
+    if (zvPtr2->ZVZ1 >= zvPtr1->ZVZ2)
+        return 0;
 
-	return 1;
+    return 1;
 }
 
 void AdjustZV(ZVStruct* zvPtr, int startRoom, int destRoom)
 {
-	unsigned int Xdif = 10*(roomDataTable[destRoom].worldX - roomDataTable[startRoom].worldX);
-	unsigned int Ydif = 10*(roomDataTable[destRoom].worldY - roomDataTable[startRoom].worldY);
-	unsigned int Zdif = 10*(roomDataTable[destRoom].worldZ - roomDataTable[startRoom].worldZ);
+    unsigned int Xdif = 10 * (roomDataTable[destRoom].worldX - roomDataTable[startRoom].worldX);
+    unsigned int Ydif = 10 * (roomDataTable[destRoom].worldY - roomDataTable[startRoom].worldY);
+    unsigned int Zdif = 10 * (roomDataTable[destRoom].worldZ - roomDataTable[startRoom].worldZ);
 
-	zvPtr->ZVX1 -= Xdif;
-	zvPtr->ZVX2 -= Xdif;
-	zvPtr->ZVY1 += Ydif;
-	zvPtr->ZVY2 += Ydif;
-	zvPtr->ZVZ1 += Zdif;
-	zvPtr->ZVZ2 += Zdif;
+    zvPtr->ZVX1 -= Xdif;
+    zvPtr->ZVX2 -= Xdif;
+    zvPtr->ZVY1 += Ydif;
+    zvPtr->ZVY2 += Ydif;
+    zvPtr->ZVZ1 += Zdif;
+    zvPtr->ZVZ2 += Zdif;
 }
 
 int CheckObjectCol(int actorIdx, ZVStruct* zvPtr)
 {
-	int currentCollisionSlot = 0;
-    
-	int actorRoom = ListObjets[actorIdx].room;
+    int currentCollisionSlot = 0;
 
-	for(int i=0;i<3;i++)
-	{
-		currentProcessedActorPtr->COL[i] = -1;
-	}
+    int actorRoom = ListObjets[actorIdx].room;
 
-	for(int i=0;i<NUM_MAX_OBJECT;i++)
-	{
+    for (int i = 0; i < 3; i++)
+    {
+        currentProcessedActorPtr->COL[i] = -1;
+    }
+
+    for (int i = 0; i < NUM_MAX_OBJECT; i++)
+    {
         tObject* currentActor = &ListObjets.at(i);
 
         if (currentActor->indexInWorld == -1)
@@ -3838,196 +3991,196 @@ int CheckObjectCol(int actorIdx, ZVStruct* zvPtr)
                     return(3);
             }
         }
-	}
+    }
 
-	return(currentCollisionSlot);
+    return(currentCollisionSlot);
 }
 
 void take(int objIdx)
 {
-	tWorldObject* objPtr = &ListWorldObjets[objIdx];
+    tWorldObject* objPtr = &ListWorldObjets[objIdx];
 
-	if(numObjInInventoryTable[currentInventory] >= INVENTORY_SIZE)
-		return;
+    if (numObjInInventoryTable[currentInventory] >= INVENTORY_SIZE)
+        return;
 
-	if(numObjInInventoryTable[currentInventory] == 0)
-	{
-		inventoryTable[currentInventory][0] = objIdx;
-	}
-	else
-	{
-		int i;
+    if (numObjInInventoryTable[currentInventory] == 0)
+    {
+        inventoryTable[currentInventory][0] = objIdx;
+    }
+    else
+    {
+        int i;
 
-		for(i=numObjInInventoryTable[currentInventory];i>0;i--)
-		{
-			inventoryTable[currentInventory][i+1] = inventoryTable[currentInventory][i];
-		}
+        for (i = numObjInInventoryTable[currentInventory]; i > 0; i--)
+        {
+            inventoryTable[currentInventory][i + 1] = inventoryTable[currentInventory][i];
+        }
 
-		inventoryTable[currentInventory][1] = objIdx;
-	}
+        inventoryTable[currentInventory][1] = objIdx;
+    }
 
-	numObjInInventoryTable[currentInventory]++;
+    numObjInInventoryTable[currentInventory]++;
 
-	action = 0x800;
+    action = 0x800;
 
-	{
-		s16 savedShakingAmplitude = shakingAmplitude;
-		s16 savedShakeVar1 = shakeVar1;
-		executeFoundLife(objIdx);
-		shakingAmplitude = savedShakingAmplitude;
-		shakeVar1 = savedShakeVar1;
-	}
+    {
+        s16 savedShakingAmplitude = shakingAmplitude;
+        s16 savedShakeVar1 = shakeVar1;
+        executeFoundLife(objIdx);
+        shakingAmplitude = savedShakingAmplitude;
+        shakeVar1 = savedShakeVar1;
+    }
 
-	if(objPtr->objIndex != -1)
-	{
-		DeleteObjet(objPtr->objIndex);
-	}
+    if (objPtr->objIndex != -1)
+    {
+        DeleteObjet(objPtr->objIndex);
+    }
 
-	objPtr->foundFlag &= 0xBFFF;
-	objPtr->foundFlag |= 0x8000;
+    objPtr->foundFlag &= 0xBFFF;
+    objPtr->foundFlag |= 0x8000;
 
-	objPtr->room = -1;
-	objPtr->stage = -1;
+    objPtr->room = -1;
+    objPtr->stage = -1;
 }
 
 void Glisser(int flag)
 {
-	switch(flag)
-	{
-	case 1:
-	case 2:
-		{
-			hardColStepZ = 0;
-			break;
-		}
-	case 4:
-	case 8:
-		{
-			hardColStepX = 0;
-			break;
-		}
-	default:
-		{
-			break;
-		}
-	}
+    switch (flag)
+    {
+    case 1:
+    case 2:
+    {
+        hardColStepZ = 0;
+        break;
+    }
+    case 4:
+    case 8:
+    {
+        hardColStepX = 0;
+        break;
+    }
+    default:
+    {
+        break;
+    }
+    }
 }
 
 void GereCollision(ZVStruct* oldZv, ZVStruct* animatedZv, ZVStruct* fixZv)
 {
-	s32 oldpos = 0;
-	s32 oldtype;
-	s32 halfX;
-	s32 halfZ;
-	s32 pos;
-	s32 type;
+    s32 oldpos = 0;
+    s32 oldtype;
+    s32 halfX;
+    s32 halfZ;
+    s32 pos;
+    s32 type;
 
-	if(oldZv->ZVX2 > fixZv->ZVX1)
-	{
-		if(fixZv->ZVX2 <= oldZv->ZVX1)
-		{
-			oldpos = 8; // right
-		}
+    if (oldZv->ZVX2 > fixZv->ZVX1)
+    {
+        if (fixZv->ZVX2 <= oldZv->ZVX1)
+        {
+            oldpos = 8; // right
+        }
         else {
             oldpos = 0; // center
         }
-	}
-	else
-	{
-		oldpos = 4; // left
-	}
+    }
+    else
+    {
+        oldpos = 4; // left
+    }
 
-	if(oldZv->ZVZ2 > fixZv->ZVZ1)
-	{
-		if(oldZv->ZVZ1 >= fixZv->ZVZ2)
-		{
-			oldpos |= 2;
-		}
+    if (oldZv->ZVZ2 > fixZv->ZVZ1)
+    {
+        if (oldZv->ZVZ1 >= fixZv->ZVZ2)
+        {
+            oldpos |= 2;
+        }
         else {
             oldpos |= 0; // center
         }
-	}
-	else
-	{
-		oldpos |= 1;
-	}
+    }
+    else
+    {
+        oldpos |= 1;
+    }
 
-	if( (oldpos == 5) || (oldpos == 9) || (oldpos == 6) || (oldpos == 10) )
-	{
-		oldtype = 2; // corner
-	}
-	else
-	{
-		if(oldpos == 0)
-		{
-			oldtype = 0;
+    if ((oldpos == 5) || (oldpos == 9) || (oldpos == 6) || (oldpos == 10))
+    {
+        oldtype = 2; // corner
+    }
+    else
+    {
+        if (oldpos == 0)
+        {
+            oldtype = 0;
 
-			hardColStepZ = 0;
-			hardColStepX = 0;
+            hardColStepZ = 0;
+            hardColStepX = 0;
 
-			return;
-		}
-		else
-		{
-			oldtype = 1; // corner
-		}
-	}
+            return;
+        }
+        else
+        {
+            oldtype = 1; // corner
+        }
+    }
 
-	halfX = (animatedZv->ZVX1 + animatedZv->ZVX2) / 2;
-	halfZ = (animatedZv->ZVZ1 + animatedZv->ZVZ2) / 2;
+    halfX = (animatedZv->ZVX1 + animatedZv->ZVX2) / 2;
+    halfZ = (animatedZv->ZVZ1 + animatedZv->ZVZ2) / 2;
 
-	if(fixZv->ZVX1 > halfX)
-	{
-		pos = 4; // left
-	}
-	else
-	{
-		if(fixZv->ZVX2 < halfX)
-		{
-			pos = 0; // center
-		}
-		else
-		{
-			pos = 8; // right
-		}
-	}
+    if (fixZv->ZVX1 > halfX)
+    {
+        pos = 4; // left
+    }
+    else
+    {
+        if (fixZv->ZVX2 < halfX)
+        {
+            pos = 0; // center
+        }
+        else
+        {
+            pos = 8; // right
+        }
+    }
 
-	if(fixZv->ZVZ1 > halfZ)
-	{
-		pos |= 1; // up
-	}
-	else
-	{
-		if(fixZv->ZVZ2 < halfZ)
-		{
-			pos |= 0; // center
-		}
-		else
-		{
-			pos |= 2; // bellow
-		}
-	}
+    if (fixZv->ZVZ1 > halfZ)
+    {
+        pos |= 1; // up
+    }
+    else
+    {
+        if (fixZv->ZVZ2 < halfZ)
+        {
+            pos |= 0; // center
+        }
+        else
+        {
+            pos |= 2; // bellow
+        }
+    }
 
-	if( (pos == 5) || (pos == 9) || (pos == 6) || (pos == 10) )
-	{
-		type = 2; // corner
-	}
-	else
-	{
-		if(pos == 0)
-		{
-			type = 0; // center
-		}
-		else
-		{
-			type = 1; // border
-		}
-	}
+    if ((pos == 5) || (pos == 9) || (pos == 6) || (pos == 10))
+    {
+        type = 2; // corner
+    }
+    else
+    {
+        if (pos == 0)
+        {
+            type = 0; // center
+        }
+        else
+        {
+            type = 1; // border
+        }
+    }
 
-	if(oldtype == 1) // border
-	{
-		Glisser(oldpos);
-	}
+    if (oldtype == 1) // border
+    {
+        Glisser(oldpos);
+    }
     else
     {
         if ((type == 1) && (pos & oldpos))
@@ -4035,7 +4188,7 @@ void GereCollision(ZVStruct* oldZv, ZVStruct* animatedZv, ZVStruct* fixZv)
             Glisser(pos);
         }
         else {
-            if ((pos == oldpos) || (pos+oldpos == 15))
+            if ((pos == oldpos) || (pos + oldpos == 15))
             {
                 int Xmod = abs(animatedZv->ZVX1 - oldZv->ZVX1); // recheck
                 int Zmod = abs(animatedZv->ZVZ1 - oldZv->ZVZ1);
@@ -4067,1240 +4220,1288 @@ void GereCollision(ZVStruct* oldZv, ZVStruct* animatedZv, ZVStruct* fixZv)
 
 int AsmCheckListCol(ZVStruct* zvPtr, roomDataStruct* pRoomData)
 {
-	u16 i;
-	int hardColVar = 0;
-	hardColStruct* pCurrentEntry = pRoomData->hardColTable.data();
+    u16 i;
+    int hardColVar = 0;
+    hardColStruct* pCurrentEntry = pRoomData->hardColTable.data();
 
 #ifdef FITD_DEBUGGER
-	if(debuggerVar_noHardClip)
-		return 0;
+    if (debuggerVar_noHardClip)
+        return 0;
 #endif
 
-	for(i=0;i<pRoomData->numHardCol;i++)
-	{
-		if(((pCurrentEntry->zv.ZVX1) < (zvPtr->ZVX2)) && ((zvPtr->ZVX1) < (pCurrentEntry->zv.ZVX2)))
-		{
-			if(((pCurrentEntry->zv.ZVY1) < (zvPtr->ZVY2)) && ((zvPtr->ZVY1) < (pCurrentEntry->zv.ZVY2)))
-			{
-				if(((pCurrentEntry->zv.ZVZ1) < (zvPtr->ZVZ2)) && ((zvPtr->ZVZ1) < (pCurrentEntry->zv.ZVZ2)))
-				{
-					ASSERT(hardColVar < 10);
-					hardColTable[hardColVar++] = pCurrentEntry;
-				}
-			}
-		}
+    for (i = 0; i < pRoomData->numHardCol; i++)
+    {
+        if (((pCurrentEntry->zv.ZVX1) < (zvPtr->ZVX2)) && ((zvPtr->ZVX1) < (pCurrentEntry->zv.ZVX2)))
+        {
+            if (((pCurrentEntry->zv.ZVY1) < (zvPtr->ZVY2)) && ((zvPtr->ZVY1) < (pCurrentEntry->zv.ZVY2)))
+            {
+                if (((pCurrentEntry->zv.ZVZ1) < (zvPtr->ZVZ2)) && ((zvPtr->ZVZ1) < (pCurrentEntry->zv.ZVZ2)))
+                {
+                    ASSERT(hardColVar < 10);
+                    if (hardColVar < 10)
+                    {
+                        hardColTable[hardColVar++] = pCurrentEntry;
+                    }
+                }
+            }
+        }
 
-		pCurrentEntry++;
-	}
+        pCurrentEntry++;
+    }
 
-	return hardColVar;
+    return hardColVar;
 }
 
 void menuWaitVSync()
-{
-}
+{}
 
 int testCrossProduct(int x1, int z1, int x2, int z2, int x3, int z3, int x4, int z4)
 {
-	int returnFlag = 0;
+    int returnFlag = 0;
 
-	int xAB = x1 - x2;
-	int yCD = z3 - z4;
-	int xCD = x3 - x4;
-	int yAB = z1 - z2;
+    int xAB = x1 - x2;
+    int yCD = z3 - z4;
+    int xCD = x3 - x4;
+    int yAB = z1 - z2;
 
-	int xAC = x1 - x3;
-	int yAC = z1 - z3;
+    int xAC = x1 - x3;
+    int yAC = z1 - z3;
 
-	int DotProduct = (xAB * yCD) - (xCD * yAC);
+    int DotProduct = (xAB * yCD) - (xCD * yAC);
 
-	if(DotProduct)
-	{
-		int Dda = xAC*yCD - xCD*yAC;
-		int Dmu = -xAB*yAC + xAC*yAB;
+    if (DotProduct)
+    {
+        int Dda = xAC * yCD - xCD * yAC;
+        int Dmu = -xAB * yAC + xAC * yAB;
 
-		if(DotProduct<0)
-		{
-			DotProduct = -DotProduct;
-			Dda = -Dda;
-			Dmu = -Dmu;
-		}
+        if (DotProduct < 0)
+        {
+            DotProduct = -DotProduct;
+            Dda = -Dda;
+            Dmu = -Dmu;
+        }
 
-		if(Dda >= 0 && Dmu >= 0 && DotProduct >= Dda && DotProduct >= Dmu)
-			returnFlag = 1;
+        if (Dda >= 0 && Dmu >= 0 && DotProduct >= Dda && DotProduct >= Dmu)
+            returnFlag = 1;
 
-	}
+    }
 
-	return(returnFlag);
+    return(returnFlag);
 }
 
 int isInPoly(int x1, int x2, int z1, int z2, cameraViewedRoomStruct* pCameraZoneDef)
 {
-	int xMid = (x1+x2)/2;
-	int zMid = (z1+z2)/2;
+    int xMid = (x1 + x2) / 2;
+    int zMid = (z1 + z2) / 2;
 
-	int i;
+    int i;
 
-	for(i=0;i<pCameraZoneDef->coverZones.size();i++)
-	{
-		int j;
-		int flag = 0;
+    for (i = 0; i < pCameraZoneDef->coverZones.size(); i++)
+    {
+        int j;
+        int flag = 0;
 
-		for(j=0;j<pCameraZoneDef->coverZones[i].numPoints;j++)
-		{
-			int zoneX1;
-			int zoneZ1;
-			int zoneX2;
-			int zoneZ2;
+        for (j = 0; j < pCameraZoneDef->coverZones[i].numPoints; j++)
+        {
+            int zoneX1;
+            int zoneZ1;
+            int zoneX2;
+            int zoneZ2;
 
-			zoneX1= pCameraZoneDef->coverZones[i].pointTable[j].x;
-			zoneZ1= pCameraZoneDef->coverZones[i].pointTable[j].y;
-			zoneX2= pCameraZoneDef->coverZones[i].pointTable[j+1].x;
-			zoneZ2= pCameraZoneDef->coverZones[i].pointTable[j+1].y;
+            zoneX1 = pCameraZoneDef->coverZones[i].pointTable[j].x;
+            zoneZ1 = pCameraZoneDef->coverZones[i].pointTable[j].y;
+            zoneX2 = pCameraZoneDef->coverZones[i].pointTable[j + 1].x;
+            zoneZ2 = pCameraZoneDef->coverZones[i].pointTable[j + 1].y;
 
-			if(testCrossProduct(xMid,zMid,xMid-10000,zMid,zoneX1,zoneZ1,zoneX2,zoneZ2))
-			{
-				flag |= 1;
-			}
+            if (testCrossProduct(xMid, zMid, xMid - 10000, zMid, zoneX1, zoneZ1, zoneX2, zoneZ2))
+            {
+                flag |= 1;
+            }
 
-			if(testCrossProduct(xMid,zMid,xMid+10000,zMid,zoneX1,zoneZ1,zoneX2,zoneZ2))
-			{
-				flag |= 2;
-			}
-		}
+            if (testCrossProduct(xMid, zMid, xMid + 10000, zMid, zoneX1, zoneZ1, zoneX2, zoneZ2))
+            {
+                flag |= 2;
+            }
+        }
 
-		if(flag == 3)
-		{
-			return(1);
-		}
-	}
+        if (flag == 3)
+        {
+            return(1);
+        }
+    }
 
-	return(0);
+    return(0);
 }
 
 int findBestCamera(void)
 {
-	int foundAngle = 32000;
-	int foundCamera = -1;
+    int foundAngle = 32000;
+    int foundCamera = -1;
 
-	if(currentCameraTargetActor < 0 || currentCameraTargetActor >= NUM_MAX_OBJECT)
-		return -1;
+    if (currentCameraTargetActor < 0 || currentCameraTargetActor >= NUM_MAX_OBJECT)
+        return -1;
 
-	tObject* actorPtr = &ListObjets[currentCameraTargetActor];
+    tObject* actorPtr = &ListObjets[currentCameraTargetActor];
 
-	int x1 = actorPtr->zv.ZVX1/10;
-	int x2 = actorPtr->zv.ZVX2/10;
-	int z1 = actorPtr->zv.ZVZ1/10;
-	int z2 = actorPtr->zv.ZVZ2/10;
+    int x1 = actorPtr->zv.ZVX1 / 10;
+    int x2 = actorPtr->zv.ZVX2 / 10;
+    int z1 = actorPtr->zv.ZVZ1 / 10;
+    int z2 = actorPtr->zv.ZVZ2 / 10;
 
-	int i;
+    int i;
 
-	for(i=0;i<numCameraInRoom;i++)
-	{
-		ASSERT(i<NUM_MAX_CAMERA_IN_ROOM);
-        if(currentCameraZoneList[i])
-		if(isInPoly(x1,x2,z1,z2,currentCameraZoneList[i])) // if in camera zone ?
-		{
-			// we try to select the best camera that looks behind the player
-			int newAngle = actorPtr->beta + (((cameraDataTable[i]->beta)+0x200)&0x3FF);
+    for (i = 0; i < numCameraInRoom; i++)
+    {
+        ASSERT(i < NUM_MAX_CAMERA_IN_ROOM);
+        if (currentCameraZoneList[i])
+            if (isInPoly(x1, x2, z1, z2, currentCameraZoneList[i])) // if in camera zone ?
+            {
+                // we try to select the best camera that looks behind the player
+                int newAngle = actorPtr->beta + (((cameraDataTable[i]->beta) + 0x200) & 0x3FF);
 
-			if(newAngle <0 )
-			{
-				newAngle = -newAngle;
-			}
+                if (newAngle < 0)
+                {
+                    newAngle = -newAngle;
+                }
 
-			if(newAngle < foundAngle)
-			{
-				foundAngle = newAngle;
-				foundCamera = i;
-			}
-		}
-	}
+                if (newAngle < foundAngle)
+                {
+                    foundAngle = newAngle;
+                    foundCamera = i;
+                }
+            }
+    }
 
-	return(foundCamera);
+    return(foundCamera);
 }
 
 void GereSwitchCamera(void)
 {
-	int localCurrentCam = NumCamera;
-	int newCamera;
+    int localCurrentCam = NumCamera;
+    int newCamera;
 
-	if(NumCamera!=-1)
-	{
+    if (NumCamera != -1)
+    {
         if (currentCameraTargetActor == -1)
         {
             // TODO: Happens at the start of AITD3, likely a bug
             return;
         }
 
-		tObject* actorPtr;
-		int zvx1;
-		int zvx2;
-		int zvz1;
-		int zvz2;
+        tObject* actorPtr;
+        int zvx1;
+        int zvx2;
+        int zvz1;
+        int zvz2;
 
-		actorPtr = &ListObjets[currentCameraTargetActor];
+        actorPtr = &ListObjets[currentCameraTargetActor];
 
-		zvx1 = actorPtr->zv.ZVX1/10;
-		zvx2 = actorPtr->zv.ZVX2/10;
+        zvx1 = actorPtr->zv.ZVX1 / 10;
+        zvx2 = actorPtr->zv.ZVX2 / 10;
 
-		zvz1 = actorPtr->zv.ZVZ1/10;
-		zvz2 = actorPtr->zv.ZVZ2/10;
+        zvz1 = actorPtr->zv.ZVZ1 / 10;
+        zvz2 = actorPtr->zv.ZVZ2 / 10;
 
-		if(isInPoly(zvx1,zvx2,zvz1,zvz2,currentCameraZoneList[NumCamera])) // is still in current camera zone ?
-		{
-			return;
-		}
-	}
+        if (currentCameraZoneList[NumCamera] && isInPoly(zvx1, zvx2, zvz1, zvz2, currentCameraZoneList[NumCamera])) // is still in current camera zone ?
+        {
+            return;
+        }
+    }
 
 #ifdef FITD_DEBUGGER
-	//printf("Exited current camera cover zone...\n");
+    //printf("Exited current camera cover zone...\n");
 #endif
 
-	newCamera = findBestCamera(); // find new camera
+    newCamera = findBestCamera(); // find new camera
 
-	if(newCamera!=-1)
-	{
-		localCurrentCam = newCamera;
-	}
+    if (newCamera != -1)
+    {
+        localCurrentCam = newCamera;
+    }
 
-	if(NumCamera != localCurrentCam)
-	{
-		NewNumCamera = localCurrentCam;
-		FlagInitView = 1;
-	}
+    if (NumCamera != localCurrentCam)
+    {
+        NewNumCamera = localCurrentCam;
+        FlagInitView = 1;
+    }
 
 #ifdef FITD_DEBUGGER
-	/* if(newCamera == -1)
-	{
-	printf("No new camera found...\n");
-	}*/
+    /* if(newCamera == -1)
+    {
+    printf("No new camera found...\n");
+    }*/
 #endif
 }
 
 bool isPointInZV(int x, int y, int z, ZVStruct* pZV)
 {
-	if(pZV->ZVX1 <= x && pZV->ZVX2 >= x)
-	{
-		if(pZV->ZVY1 <= y && pZV->ZVY2 >= y)
-		{
-			if(pZV->ZVZ1 <= z && pZV->ZVZ2 >= z)
-			{
-				return(true);
-			}
-		}
-	}
+    if (pZV->ZVX1 <= x && pZV->ZVX2 >= x)
+    {
+        if (pZV->ZVY1 <= y && pZV->ZVY2 >= y)
+        {
+            if (pZV->ZVZ1 <= z && pZV->ZVZ2 >= z)
+            {
+                return(true);
+            }
+        }
+    }
 
-	return false;
+    return false;
 }
 
 sceZoneStruct* processActor2Sub(int x, int y, int z, roomDataStruct* pRoomData)
 {
-	u32 i;
-	sceZoneStruct* pCurrentZone;  
+    u32 i;
+    sceZoneStruct* pCurrentZone;
 
-	pCurrentZone = pRoomData->sceZoneTable.data();
+    pCurrentZone = pRoomData->sceZoneTable.data();
 
-	for(i=0;i<pRoomData->numSceZone;i++)
-	{
-		if(pCurrentZone->zv.ZVX1 <= x && pCurrentZone->zv.ZVX2 >= x)
-		{
-			if(pCurrentZone->zv.ZVY1 <= y && pCurrentZone->zv.ZVY2 >= y)
-			{
-				if(pCurrentZone->zv.ZVZ1 <= z && pCurrentZone->zv.ZVZ2 >= z)
-				{
-					return(pCurrentZone);
-				}
-			}
-		}
+    for (i = 0; i < pRoomData->numSceZone; i++)
+    {
+        if (pCurrentZone->zv.ZVX1 <= x && pCurrentZone->zv.ZVX2 >= x)
+        {
+            if (pCurrentZone->zv.ZVY1 <= y && pCurrentZone->zv.ZVY2 >= y)
+            {
+                if (pCurrentZone->zv.ZVZ1 <= z && pCurrentZone->zv.ZVZ2 >= z)
+                {
+                    return(pCurrentZone);
+                }
+            }
+        }
 
-		pCurrentZone++;
-	}
+        pCurrentZone++;
+    }
 
-	return(NULL);
+    return(NULL);
 
 }
 
 void GereDec()
 {
-	bool onceMore = false;
-	bool flagFloorChange = false;
-	int zoneIdx = 0;
+    bool onceMore = false;
+    bool flagFloorChange = false;
+    int zoneIdx = 0;
 
-	do
-	{
-		onceMore = false;
-		if (currentProcessedActorPtr->room < 0 || currentProcessedActorPtr->room >= getNumberOfRoom())
-			return;
-		roomDataStruct* pRoomData = &roomDataTable[currentProcessedActorPtr->room];
-		for(u32 i=0;i<pRoomData->numSceZone;i++)
-		{
-			sceZoneStruct* pCurrentZone = &pRoomData->sceZoneTable[i];
+    do
+    {
+        onceMore = false;
+        if (currentProcessedActorPtr->room < 0 || currentProcessedActorPtr->room >= getNumberOfRoom())
+            return;
+        roomDataStruct* pRoomData = &roomDataTable[currentProcessedActorPtr->room];
+        for (u32 i = 0; i < pRoomData->numSceZone; i++)
+        {
+            sceZoneStruct* pCurrentZone = &pRoomData->sceZoneTable[i];
 
-			if(isPointInZV(	currentProcessedActorPtr->roomX + currentProcessedActorPtr->stepX,
-				currentProcessedActorPtr->roomY + currentProcessedActorPtr->stepY,
-				currentProcessedActorPtr->roomZ + currentProcessedActorPtr->stepZ,
-				&pCurrentZone->zv))
-			{
-				switch(pCurrentZone->type)
-				{
-				case 0:
-					{
-						int oldRoom = currentProcessedActorPtr->room;
+            if (isPointInZV(currentProcessedActorPtr->roomX + currentProcessedActorPtr->stepX,
+                currentProcessedActorPtr->roomY + currentProcessedActorPtr->stepY,
+                currentProcessedActorPtr->roomZ + currentProcessedActorPtr->stepZ,
+                &pCurrentZone->zv))
+            {
+                switch (pCurrentZone->type)
+                {
+                case 0:
+                {
+                    int oldRoom = currentProcessedActorPtr->room;
 
-						currentProcessedActorPtr->room = (short)pCurrentZone->parameter;
+                    currentProcessedActorPtr->room = (short)pCurrentZone->parameter;
 
-                        int x = (roomDataTable[currentProcessedActorPtr->room].worldX - roomDataTable[oldRoom].worldX) * 10;
-                        int y = (roomDataTable[currentProcessedActorPtr->room].worldY - roomDataTable[oldRoom].worldY) * 10;
-                        int z = (roomDataTable[currentProcessedActorPtr->room].worldZ - roomDataTable[oldRoom].worldZ) * 10;
+                    int x = (roomDataTable[currentProcessedActorPtr->room].worldX - roomDataTable[oldRoom].worldX) * 10;
+                    int y = (roomDataTable[currentProcessedActorPtr->room].worldY - roomDataTable[oldRoom].worldY) * 10;
+                    int z = (roomDataTable[currentProcessedActorPtr->room].worldZ - roomDataTable[oldRoom].worldZ) * 10;
 
-						currentProcessedActorPtr->roomX -= x;
-						currentProcessedActorPtr->roomY += y;
-						currentProcessedActorPtr->roomZ += z;
+                    currentProcessedActorPtr->roomX -= x;
+                    currentProcessedActorPtr->roomY += y;
+                    currentProcessedActorPtr->roomZ += z;
 
-						currentProcessedActorPtr->zv.ZVX1 -= x;
-						currentProcessedActorPtr->zv.ZVX2 -= x;
+                    currentProcessedActorPtr->zv.ZVX1 -= x;
+                    currentProcessedActorPtr->zv.ZVX2 -= x;
 
-						currentProcessedActorPtr->zv.ZVY1 += y;
-						currentProcessedActorPtr->zv.ZVY2 += y;
+                    currentProcessedActorPtr->zv.ZVY1 += y;
+                    currentProcessedActorPtr->zv.ZVY2 += y;
 
-						currentProcessedActorPtr->zv.ZVZ1 += z;
-						currentProcessedActorPtr->zv.ZVZ2 += z;
+                    currentProcessedActorPtr->zv.ZVZ1 += z;
+                    currentProcessedActorPtr->zv.ZVZ2 += z;
 
-						onceMore = true;
-						if(currentProcessedActorIdx == currentCameraTargetActor)
-						{
-							FlagChangeSalle = 1;
-							NewNumSalle = (short)pCurrentZone->parameter;
-                            if (g_gameId > AITD1)
-                            {
-                                ChangeSalle(NewNumSalle);
+                    onceMore = true;
+                    if (currentProcessedActorIdx == currentCameraTargetActor)
+                    {
+                        FlagChangeSalle = 1;
+                        NewNumSalle = (short)pCurrentZone->parameter;
+                        if (g_gameId > AITD1)
+                        {
+                            ChangeSalle(NewNumSalle);
 
-                                // Hack: this wasn't in the original game, but is required here, or else we would use the current camera index in the new room and potentially go out of bound
-                                InitView();
-                            }
-						}
-						else
-						{
-							FlagGenereAffList = 1;
-						}
+                            // Hack: this wasn't in the original game, but is required here, or else we would use the current camera index in the new room and potentially go out of bound
+                            InitView();
+                        }
+                    }
+                    else
+                    {
+                        FlagGenereAffList = 1;
+                    }
 
-						startChrono(&currentProcessedActorPtr->ROOM_CHRONO);
+                    startChrono(&currentProcessedActorPtr->ROOM_CHRONO);
 
 
-						break;
-					}
-				case 8:
-					{
-						assert(g_gameId != AITD1);
-						if(g_gameId != AITD1)
-						{
-							currentProcessedActorPtr->hardMat = (short)pCurrentZone->parameter;
-						}
-						break;
-					}
-				case 9: // Scenar
-					{
-						if((g_gameId == AITD1) || !flagFloorChange)
-						{
-							currentProcessedActorPtr->HARD_DEC = (short)pCurrentZone->parameter;
-						}
-						break;
-					}
-				case 10: // stage
-					{
-							int idxW = currentProcessedActorPtr->indexInWorld;
-							if(idxW < 0 || idxW >= (int)ListWorldObjets.size())
-								break;
+                    break;
+                }
+                case 8:
+                {
+                    assert(g_gameId != AITD1);
+                    if (g_gameId != AITD1)
+                    {
+                        currentProcessedActorPtr->hardMat = (short)pCurrentZone->parameter;
+                    }
+                    break;
+                }
+                case 9: // Scenar
+                {
+                    if ((g_gameId == AITD1) || !flagFloorChange)
+                    {
+                        currentProcessedActorPtr->HARD_DEC = (short)pCurrentZone->parameter;
+                    }
+                    break;
+                }
+                case 10: // stage
+                {
+                    int idxW = currentProcessedActorPtr->indexInWorld;
+                    if (idxW < 0 || idxW >= (int)ListWorldObjets.size())
+                        break;
 
-							int life = ListWorldObjets[idxW].floorLife;
+                    int life = ListWorldObjets[idxW].floorLife;
 
-							if(life==-1)
-								return;
+                    if (life == -1)
+                        return;
 
-							currentProcessedActorPtr->life = life;
+                    currentProcessedActorPtr->life = life;
 
-							currentProcessedActorPtr->HARD_DEC = (short)pCurrentZone->parameter;
-							flagFloorChange = true;
-							break;
-						}
-				}
+                    currentProcessedActorPtr->HARD_DEC = (short)pCurrentZone->parameter;
+                    flagFloorChange = true;
+                    break;
+                }
+                }
 
-				if(g_gameId == AITD1) // AITD1 stops at the first zone
-					return;
-			}
-			if(onceMore)
-				break;
-		}
-	}while(onceMore);
+                if (g_gameId == AITD1) // AITD1 stops at the first zone
+                    return;
+            }
+            if (onceMore)
+                break;
+        }
+    } while (onceMore);
 }
 
-int checkLineProjectionWithActors( int actorIdx, int X, int Y, int Z, int beta, int room, int param )
+int checkLineProjectionWithActors(int actorIdx, int X, int Y, int Z, int beta, int room, int param)
 {
-	ZVStruct localZv;
-	int foundFlag = -2;
-	int tempX;
-	int tempZ;
+    ZVStruct localZv;
+    int foundFlag = -2;
+    int tempX;
+    int tempZ;
 
-	localZv.ZVX1 = X - param;
-	localZv.ZVX2 = X + param;
-	localZv.ZVY1 = Y - param;
-	localZv.ZVY2 = Y + param;
-	localZv.ZVZ1 = Z - param;
-	localZv.ZVZ2 = Z + param;
+    localZv.ZVX1 = X - param;
+    localZv.ZVX2 = X + param;
+    localZv.ZVY1 = Y - param;
+    localZv.ZVY2 = Y + param;
+    localZv.ZVZ1 = Z - param;
+    localZv.ZVZ2 = Z + param;
 
-	walkStep(param * 2, 0, beta);
+    walkStep(param * 2, 0, beta);
 
-	int iterationLimit = 2000;
-	while(foundFlag == -2)
-	{
-		if(--iterationLimit <= 0)
-		{
-			foundFlag = -1;
-			break;
-		}
+    int iterationLimit = 2000;
+    while (foundFlag == -2)
+    {
+        if (--iterationLimit <= 0)
+        {
+            foundFlag = -1;
+            break;
+        }
 
-		localZv.ZVX1 += animMoveX;
-		localZv.ZVX2 += animMoveX;
+        localZv.ZVX1 += animMoveX;
+        localZv.ZVX2 += animMoveX;
 
-		localZv.ZVZ1 += animMoveZ;
-		localZv.ZVZ2 += animMoveZ;
+        localZv.ZVZ1 += animMoveZ;
+        localZv.ZVZ2 += animMoveZ;
 
-		tempX = X;
-		tempZ = Z;
+        tempX = X;
+        tempZ = Z;
 
-		X += animMoveX;
-		Z += animMoveZ;
+        X += animMoveX;
+        Z += animMoveZ;
 
-		if(X > 20000 || X < -20000 || Z > 20000 || Z < -20000)
-		{
-			foundFlag = -1;
-			break;
-		}
+        if (X > 20000 || X < -20000 || Z > 20000 || Z < -20000)
+        {
+            foundFlag = -1;
+            break;
+        }
 
-		for(int i=0;i<ListObjets.size();i++)
-		{
-			tObject* actorCheckPtr = &ListObjets[i];
-			if(actorCheckPtr->indexInWorld != -1 && i != actorIdx && !(actorCheckPtr->objectType & AF_SPECIAL))
-			{
-				ZVStruct* zvPtr = &actorCheckPtr->zv;
+        for (int i = 0; i < ListObjets.size(); i++)
+        {
+            tObject* actorCheckPtr = &ListObjets[i];
+            if (actorCheckPtr->indexInWorld != -1 && i != actorIdx && !(actorCheckPtr->objectType & AF_SPECIAL))
+            {
+                ZVStruct* zvPtr = &actorCheckPtr->zv;
 
-				if(room != actorCheckPtr->room)
-				{
-					ZVStruct localZv2;
+                if (room != actorCheckPtr->room)
+                {
+                    ZVStruct localZv2;
 
-					CopyZV(&localZv, &localZv2);
-					AdjustZV(&localZv2, room, actorCheckPtr->room);
+                    CopyZV(&localZv, &localZv2);
+                    AdjustZV(&localZv2, room, actorCheckPtr->room);
 
-					if(!CubeIntersect(&localZv2,zvPtr))
-					{
-						continue;
-					}
-				}
-				else
-				{
-					if(!CubeIntersect(&localZv,zvPtr))
-					{
-						continue;
-					}
-				}
+                    if (!CubeIntersect(&localZv2, zvPtr))
+                    {
+                        continue;
+                    }
+                }
+                else
+                {
+                    if (!CubeIntersect(&localZv, zvPtr))
+                    {
+                        continue;
+                    }
+                }
 
-				foundFlag = i;
-				break;
-			}
-		}
+                foundFlag = i;
+                break;
+            }
+        }
 
-		if(foundFlag == -2 && AsmCheckListCol(&localZv, &roomDataTable[room]) > 0)
-		{
-			foundFlag = -1;
-		}
-	}
+        if (foundFlag == -2 && AsmCheckListCol(&localZv, &roomDataTable[room]) > 0)
+        {
+            foundFlag = -1;
+        }
+    }
 
-	animMoveX = tempX;
-	animMoveY = Y;
-	animMoveZ = tempZ;
+    animMoveX = tempX;
+    animMoveY = Y;
+    animMoveZ = tempZ;
 
-	return(foundFlag);
+    return(foundFlag);
 }
 
 void PutAtObjet(int objIdx, int objIdxToPutAt)
 {
-	tWorldObject* objPtr = &ListWorldObjets[objIdx];
-	tWorldObject* objPtrToPutAt = &ListWorldObjets[objIdxToPutAt];
+    tWorldObject* objPtr = &ListWorldObjets[objIdx];
+    tWorldObject* objPtrToPutAt = &ListWorldObjets[objIdxToPutAt];
 
-	if(objPtrToPutAt->objIndex != -1)
-	{
-		tObject* actorToPutAtPtr = &ListObjets[objPtrToPutAt->objIndex];
+    if (objPtrToPutAt->objIndex != -1)
+    {
+        tObject* actorToPutAtPtr = &ListObjets[objPtrToPutAt->objIndex];
 
-		DeleteInventoryObjet(objIdx);
+        DeleteInventoryObjet(objIdx);
 
-		if(objPtr->objIndex == -1)
-		{
-			objPtr->x = actorToPutAtPtr->roomX;
-			objPtr->y = actorToPutAtPtr->roomY;
-			objPtr->z = actorToPutAtPtr->roomZ;
-			objPtr->room = actorToPutAtPtr->room;
-			objPtr->stage = actorToPutAtPtr->stage;
-			objPtr->alpha = actorToPutAtPtr->alpha;
-			objPtr->beta = actorToPutAtPtr->beta;
-			objPtr->gamma = actorToPutAtPtr->gamma;
+        if (objPtr->objIndex == -1)
+        {
+            objPtr->x = actorToPutAtPtr->roomX;
+            objPtr->y = actorToPutAtPtr->roomY;
+            objPtr->z = actorToPutAtPtr->roomZ;
+            objPtr->room = actorToPutAtPtr->room;
+            objPtr->stage = actorToPutAtPtr->stage;
+            objPtr->alpha = actorToPutAtPtr->alpha;
+            objPtr->beta = actorToPutAtPtr->beta;
+            objPtr->gamma = actorToPutAtPtr->gamma;
 
-			objPtr->foundFlag |= 0x4000;
-			objPtr->flags |= 0x80;
+            objPtr->foundFlag |= 0x4000;
+            objPtr->flags |= 0x80;
 
-			//      FlagGenereActiveList = 1;
-			//      FlagRefreshAux2 = 1;
-		}
-		else
-		{
-			currentProcessedActorPtr->roomX = actorToPutAtPtr->roomX;
-			currentProcessedActorPtr->roomY = actorToPutAtPtr->roomY;
-			currentProcessedActorPtr->roomZ = actorToPutAtPtr->roomZ;
-			currentProcessedActorPtr->room = actorToPutAtPtr->room;
-			currentProcessedActorPtr->stage = actorToPutAtPtr->stage;
-			currentProcessedActorPtr->alpha = actorToPutAtPtr->alpha;
-			currentProcessedActorPtr->beta = actorToPutAtPtr->beta;
-			currentProcessedActorPtr->gamma = actorToPutAtPtr->gamma;
+            //      FlagGenereActiveList = 1;
+            //      FlagRefreshAux2 = 1;
+        }
+        else
+        {
+            currentProcessedActorPtr->roomX = actorToPutAtPtr->roomX;
+            currentProcessedActorPtr->roomY = actorToPutAtPtr->roomY;
+            currentProcessedActorPtr->roomZ = actorToPutAtPtr->roomZ;
+            currentProcessedActorPtr->room = actorToPutAtPtr->room;
+            currentProcessedActorPtr->stage = actorToPutAtPtr->stage;
+            currentProcessedActorPtr->alpha = actorToPutAtPtr->alpha;
+            currentProcessedActorPtr->beta = actorToPutAtPtr->beta;
+            currentProcessedActorPtr->gamma = actorToPutAtPtr->gamma;
 
-			ListWorldObjets[currentProcessedActorPtr->indexInWorld].foundFlag |= 0x4000;
-			ListWorldObjets[currentProcessedActorPtr->indexInWorld].flags |= 0x80;
+            ListWorldObjets[currentProcessedActorPtr->indexInWorld].foundFlag |= 0x4000;
+            ListWorldObjets[currentProcessedActorPtr->indexInWorld].flags |= 0x80;
 
-			//      FlagGenereActiveList = 1;
-			//      FlagRefreshAux2 = 1;
-		}
+            //      FlagGenereActiveList = 1;
+            //      FlagRefreshAux2 = 1;
+        }
 
-	}
-	else
-	{
-		DeleteInventoryObjet(objIdx);
+    }
+    else
+    {
+        DeleteInventoryObjet(objIdx);
 
-		if(objPtr->objIndex == -1)
-		{
-			objPtr->x = objPtrToPutAt->x;
-			objPtr->y = objPtrToPutAt->y;
-			objPtr->z = objPtrToPutAt->z;
-			objPtr->room = objPtrToPutAt->room;
-			objPtr->stage = objPtrToPutAt->stage;
-			objPtr->alpha = objPtrToPutAt->alpha;
-			objPtr->beta = objPtrToPutAt->beta;
-			objPtr->gamma = objPtrToPutAt->gamma;
+        if (objPtr->objIndex == -1)
+        {
+            objPtr->x = objPtrToPutAt->x;
+            objPtr->y = objPtrToPutAt->y;
+            objPtr->z = objPtrToPutAt->z;
+            objPtr->room = objPtrToPutAt->room;
+            objPtr->stage = objPtrToPutAt->stage;
+            objPtr->alpha = objPtrToPutAt->alpha;
+            objPtr->beta = objPtrToPutAt->beta;
+            objPtr->gamma = objPtrToPutAt->gamma;
 
-			objPtr->foundFlag |= 0x4000;
-			objPtr->flags |= 0x80;
+            objPtr->foundFlag |= 0x4000;
+            objPtr->flags |= 0x80;
 
-			//      FlagGenereActiveList = 1;
-			//      FlagRefreshAux2 = 1;
-		}
-		else
-		{
-			currentProcessedActorPtr->roomX = objPtrToPutAt->x;
-			currentProcessedActorPtr->roomY = objPtrToPutAt->y;
-			currentProcessedActorPtr->roomZ = objPtrToPutAt->z;
-			currentProcessedActorPtr->room = objPtrToPutAt->room;
-			currentProcessedActorPtr->stage = objPtrToPutAt->stage;
-			currentProcessedActorPtr->alpha = objPtrToPutAt->alpha;
-			currentProcessedActorPtr->beta = objPtrToPutAt->beta;
-			currentProcessedActorPtr->gamma = objPtrToPutAt->gamma;
+            //      FlagGenereActiveList = 1;
+            //      FlagRefreshAux2 = 1;
+        }
+        else
+        {
+            currentProcessedActorPtr->roomX = objPtrToPutAt->x;
+            currentProcessedActorPtr->roomY = objPtrToPutAt->y;
+            currentProcessedActorPtr->roomZ = objPtrToPutAt->z;
+            currentProcessedActorPtr->room = objPtrToPutAt->room;
+            currentProcessedActorPtr->stage = objPtrToPutAt->stage;
+            currentProcessedActorPtr->alpha = objPtrToPutAt->alpha;
+            currentProcessedActorPtr->beta = objPtrToPutAt->beta;
+            currentProcessedActorPtr->gamma = objPtrToPutAt->gamma;
 
-			ListWorldObjets[currentProcessedActorPtr->indexInWorld].foundFlag |= 0x4000;
-			ListWorldObjets[currentProcessedActorPtr->indexInWorld].flags |= 0x80;
+            ListWorldObjets[currentProcessedActorPtr->indexInWorld].foundFlag |= 0x4000;
+            ListWorldObjets[currentProcessedActorPtr->indexInWorld].flags |= 0x80;
 
-			//      FlagGenereActiveList = 1;
-			//      FlagRefreshAux2 = 1;
-		}
-	}
+            //      FlagGenereActiveList = 1;
+            //      FlagRefreshAux2 = 1;
+        }
+    }
 }
 
 void throwStoppedAt(int x, int z)
 {
-	int x2;
-	int y2;
-	int z2;
-	int foundPosition;
-	int step;
+    int x2;
+    int y2;
+    int z2;
+    int foundPosition;
+    int step;
 
-	ZVStruct zvCopy;
-	ZVStruct zvLocal;
+    ZVStruct zvCopy;
+    ZVStruct zvLocal;
 
-	sBody* bodyPtr = HQR_Get(HQ_Bodys,currentProcessedActorPtr->bodyNum);
+    sBody* bodyPtr = HQR_Get(HQ_Bodys, currentProcessedActorPtr->bodyNum);
 
-	GiveZVObjet(bodyPtr,&zvLocal);
+    GiveZVObjet(bodyPtr, &zvLocal);
 
-	x2 = x;
-	y2 = (currentProcessedActorPtr->roomY/2000)*2000;
-	z2 = z;
+    x2 = x;
+    y2 = (currentProcessedActorPtr->roomY / 2000) * 2000;
+    z2 = z;
 
-	foundPosition = 0;
-	step = 0;
+    foundPosition = 0;
+    step = 0;
 
-	while(!foundPosition)
-	{
-		if(step > 20000)
-		{
-			foundPosition = 1;
-			break;
-		}
+    while (!foundPosition)
+    {
+        if (step > 20000)
+        {
+            foundPosition = 1;
+            break;
+        }
 
-		walkStep(0,-step,currentProcessedActorPtr->beta+0x200);
-		CopyZV(&zvLocal,&zvCopy);
+        walkStep(0, -step, currentProcessedActorPtr->beta + 0x200);
+        CopyZV(&zvLocal, &zvCopy);
 
-		x2 = x + animMoveX;
-		z2 = z + animMoveZ;
+        x2 = x + animMoveX;
+        z2 = z + animMoveZ;
 
-		zvCopy.ZVX1 += x2;
-		zvCopy.ZVX2 += x2;
+        zvCopy.ZVX1 += x2;
+        zvCopy.ZVX2 += x2;
 
-		zvCopy.ZVY1 += y2;
-		zvCopy.ZVY2 += y2;
+        zvCopy.ZVY1 += y2;
+        zvCopy.ZVY2 += y2;
 
-		zvCopy.ZVZ1 += z2;
-		zvCopy.ZVZ2 += z2;
+        zvCopy.ZVZ1 += z2;
+        zvCopy.ZVZ2 += z2;
 
-		if(!AsmCheckListCol(&zvCopy,&roomDataTable[currentProcessedActorPtr->room]))
-		{
-			foundPosition = 1;
-		}
+        if (!AsmCheckListCol(&zvCopy, &roomDataTable[currentProcessedActorPtr->room]))
+        {
+            foundPosition = 1;
+        }
 
-		if(foundPosition)
-		{
-			if(y2<-500)
-			{
-				zvCopy.ZVY1 += 100; // is the object reachable ? (100 is Carnby height. If hard col at Y + 100, carnby can't reach that spot)
-				zvCopy.ZVY2 += 100;
+        if (foundPosition)
+        {
+            if (y2 < -500)
+            {
+                zvCopy.ZVY1 += 100; // is the object reachable ? (100 is Carnby height. If hard col at Y + 100, carnby can't reach that spot)
+                zvCopy.ZVY2 += 100;
 
-				if(!AsmCheckListCol(&zvCopy,&roomDataTable[currentProcessedActorPtr->room]))
-				{
-					y2 += 2000;
-					foundPosition = 0;
-				}
-				else
-				{
-					zvCopy.ZVY1 -= 100;
-					zvCopy.ZVY2 -= 100;
-				}
-			}
-		}
-		else
-		{
-			step+=100;
-		}
-	}
+                if (!AsmCheckListCol(&zvCopy, &roomDataTable[currentProcessedActorPtr->room]))
+                {
+                    y2 += 2000;
+                    foundPosition = 0;
+                }
+                else
+                {
+                    zvCopy.ZVY1 -= 100;
+                    zvCopy.ZVY2 -= 100;
+                }
+            }
+        }
+        else
+        {
+            step += 100;
+        }
+    }
 
-	currentProcessedActorPtr->worldX = x2;
-	currentProcessedActorPtr->roomX = x2;
-	currentProcessedActorPtr->worldY = y2;
-	currentProcessedActorPtr->roomY = y2;
-	currentProcessedActorPtr->worldZ = z2;
-	currentProcessedActorPtr->roomZ = z2;
+    currentProcessedActorPtr->worldX = x2;
+    currentProcessedActorPtr->roomX = x2;
+    currentProcessedActorPtr->worldY = y2;
+    currentProcessedActorPtr->roomY = y2;
+    currentProcessedActorPtr->worldZ = z2;
+    currentProcessedActorPtr->roomZ = z2;
 
-	currentProcessedActorPtr->stepX = 0;
-	currentProcessedActorPtr->stepZ = 0;
+    currentProcessedActorPtr->stepX = 0;
+    currentProcessedActorPtr->stepZ = 0;
 
-	currentProcessedActorPtr->animActionType = 0;
-	currentProcessedActorPtr->speed = 0;
-	currentProcessedActorPtr->gamma = 0;
+    currentProcessedActorPtr->animActionType = 0;
+    currentProcessedActorPtr->speed = 0;
+    currentProcessedActorPtr->gamma = 0;
 
-	GiveZVObjet(bodyPtr,&currentProcessedActorPtr->zv);
+    GiveZVObjet(bodyPtr, &currentProcessedActorPtr->zv);
 
-	currentProcessedActorPtr->zv.ZVX1 += x2;
-	currentProcessedActorPtr->zv.ZVX2 += x2;
-	currentProcessedActorPtr->zv.ZVY1 += y2;
-	currentProcessedActorPtr->zv.ZVY2 += y2;
-	currentProcessedActorPtr->zv.ZVZ1 += z2;
-	currentProcessedActorPtr->zv.ZVZ2 += z2;
+    currentProcessedActorPtr->zv.ZVX1 += x2;
+    currentProcessedActorPtr->zv.ZVX2 += x2;
+    currentProcessedActorPtr->zv.ZVY1 += y2;
+    currentProcessedActorPtr->zv.ZVY2 += y2;
+    currentProcessedActorPtr->zv.ZVZ1 += z2;
+    currentProcessedActorPtr->zv.ZVZ2 += z2;
 
-	ListWorldObjets[currentProcessedActorPtr->indexInWorld].foundFlag |= 0x4000;
-	ListWorldObjets[currentProcessedActorPtr->indexInWorld].foundFlag &= 0xEFFF;
+    ListWorldObjets[currentProcessedActorPtr->indexInWorld].foundFlag |= 0x4000;
+    ListWorldObjets[currentProcessedActorPtr->indexInWorld].foundFlag &= 0xEFFF;
 
-	addActorToBgInscrust(currentProcessedActorIdx);
+    addActorToBgInscrust(currentProcessedActorIdx);
 }
 
 void startGame(int startupFloor, int startupRoom, int allowSystemMenu)
 {
-	LoadWorld();
-	initVars();
+    LoadWorld();
+    initVars();
 
-	LoadEtage(startupFloor);
+    LoadEtage(startupFloor);
 
-	NumCamera = -1;
+    NumCamera = -1;
 
-	ChangeSalle(startupRoom);
+    ChangeSalle(startupRoom);
 
-	NewNumCamera = 0;
-	FlagInitView = 2;
+    NewNumCamera = 0;
+    FlagInitView = 2;
 
-	InitView();
+    InitView();
 
-	PlayWorld(allowSystemMenu, 1);
+    PlayWorld(allowSystemMenu, 1);
 
-	/*freeScene();
+    /*freeScene();
 
-	fadeOut(8,0);*/
+    fadeOut(8,0);*/
 }
 
 // Scales an RGBA source image to fill exactly the pixel region (x1,y1)-(x2,y2) inclusive
 // in logicalScreen, using bilinear interpolation + nearest-palette matching.
 // Used exclusively by the save/load slot selection screen.
 static void fillSavePreviewToFrame(int x1, int y1, int x2, int y2,
-								   unsigned char* sourceBuffer, int srcWidth, int srcHeight)
+    unsigned char* sourceBuffer, int srcWidth, int srcHeight)
 {
-	int destW = x2 - x1 + 1;
-	int destH = y2 - y1 + 1;
-	if (destW <= 0 || destH <= 0 || !sourceBuffer) return;
+    int destW = x2 - x1 + 1;
+    int destH = y2 - y1 + 1;
+    if (destW <= 0 || destH <= 0 || !sourceBuffer) return;
 
-	float scaleX = (destW > 1) ? (float)(srcWidth  - 1) / (float)(destW - 1) : 0.0f;
-	float scaleY = (destH > 1) ? (float)(srcHeight - 1) / (float)(destH - 1) : 0.0f;
+    float scaleX = (destW > 1) ? (float)(srcWidth - 1) / (float)(destW - 1) : 0.0f;
+    float scaleY = (destH > 1) ? (float)(srcHeight - 1) / (float)(destH - 1) : 0.0f;
 
-	for (int y = 0; y < destH; y++)
-	{
-		for (int x = 0; x < destW; x++)
-		{
-			float srcXf = x * scaleX;
-			float srcYf = y * scaleY;
+    for (int y = 0; y < destH; y++)
+    {
+        for (int x = 0; x < destW; x++)
+        {
+            float srcXf = x * scaleX;
+            float srcYf = y * scaleY;
 
-			int srcX0 = (int)srcXf;
-			int srcY0 = (int)srcYf;
-			int srcX1c = (srcX0 + 1 < srcWidth)  ? srcX0 + 1 : srcX0;
-			int srcY1c = (srcY0 + 1 < srcHeight) ? srcY0 + 1 : srcY0;
+            int srcX0 = (int)srcXf;
+            int srcY0 = (int)srcYf;
+            int srcX1c = (srcX0 + 1 < srcWidth) ? srcX0 + 1 : srcX0;
+            int srcY1c = (srcY0 + 1 < srcHeight) ? srcY0 + 1 : srcY0;
 
-			float fx  = srcXf - srcX0;
-			float fy  = srcYf - srcY0;
-			float fx1 = 1.0f - fx;
-			float fy1 = 1.0f - fy;
+            float fx = srcXf - srcX0;
+            float fy = srcYf - srcY0;
+            float fx1 = 1.0f - fx;
+            float fy1 = 1.0f - fy;
 
-			int idx00 = (srcY0  * srcWidth + srcX0)  * 4;
-			int idx10 = (srcY0  * srcWidth + srcX1c) * 4;
-			int idx01 = (srcY1c * srcWidth + srcX0)  * 4;
-			int idx11 = (srcY1c * srcWidth + srcX1c) * 4;
+            int idx00 = (srcY0 * srcWidth + srcX0) * 4;
+            int idx10 = (srcY0 * srcWidth + srcX1c) * 4;
+            int idx01 = (srcY1c * srcWidth + srcX0) * 4;
+            int idx11 = (srcY1c * srcWidth + srcX1c) * 4;
 
-			float r = (sourceBuffer[idx00+0]*fx1 + sourceBuffer[idx10+0]*fx)*fy1
-					+ (sourceBuffer[idx01+0]*fx1 + sourceBuffer[idx11+0]*fx)*fy;
-			float g = (sourceBuffer[idx00+1]*fx1 + sourceBuffer[idx10+1]*fx)*fy1
-					+ (sourceBuffer[idx01+1]*fx1 + sourceBuffer[idx11+1]*fx)*fy;
-			float b = (sourceBuffer[idx00+2]*fx1 + sourceBuffer[idx10+2]*fx)*fy1
-					+ (sourceBuffer[idx01+2]*fx1 + sourceBuffer[idx11+2]*fx)*fy;
+            float r = (sourceBuffer[idx00 + 0] * fx1 + sourceBuffer[idx10 + 0] * fx) * fy1
+                + (sourceBuffer[idx01 + 0] * fx1 + sourceBuffer[idx11 + 0] * fx) * fy;
+            float g = (sourceBuffer[idx00 + 1] * fx1 + sourceBuffer[idx10 + 1] * fx) * fy1
+                + (sourceBuffer[idx01 + 1] * fx1 + sourceBuffer[idx11 + 1] * fx) * fy;
+            float b = (sourceBuffer[idx00 + 2] * fx1 + sourceBuffer[idx10 + 2] * fx) * fy1
+                + (sourceBuffer[idx01 + 2] * fx1 + sourceBuffer[idx11 + 2] * fx) * fy;
 
-			int ri = (int)(r + 0.5f);
-			int gi = (int)(g + 0.5f);
-			int bi = (int)(b + 0.5f);
+            int ri = (int)(r + 0.5f);
+            int gi = (int)(g + 0.5f);
+            int bi = (int)(b + 0.5f);
 
-			int bestIdx = 0, bestDist = 999999;
-			for (int i = 16; i < 256; i++)
-			{
-				int pr = currentGamePalette[i][0];
-				int pg = currentGamePalette[i][1];
-				int pb = currentGamePalette[i][2];
-				int dist = (ri-pr)*(ri-pr) + (gi-pg)*(gi-pg) + (bi-pb)*(bi-pb);
-				if (dist < bestDist) { bestDist = dist; bestIdx = i; }
-			}
+            int bestIdx = 0, bestDist = 999999;
+            for (int i = 16; i < 256; i++)
+            {
+                int pr = currentGamePalette[i][0];
+                int pg = currentGamePalette[i][1];
+                int pb = currentGamePalette[i][2];
+                int dist = (ri - pr) * (ri - pr) + (gi - pg) * (gi - pg) + (bi - pb) * (bi - pb);
+                if (dist < bestDist) { bestDist = dist; bestIdx = i; }
+            }
 
-			int dstX = x1 + x;
-			int dstY = y1 + y;
-			if (dstX >= 0 && dstX < 320 && dstY >= 0 && dstY < 200)
-				logicalScreen[dstY * 320 + dstX] = (char)bestIdx;
-		}
-	}
+            int dstX = x1 + x;
+            int dstY = y1 + y;
+            if (dstX >= 0 && dstX < 320 && dstY >= 0 && dstY < 200)
+                logicalScreen[dstY * 320 + dstX] = (char)bestIdx;
+        }
+    }
 }
 
 int parseAllSaves(int arg)
 {
-	const int NUM_SAVE_SLOTS = 9; // Slots 0-8 (slot 9 would overflow menu)
-	bool saveExists[NUM_SAVE_SLOTS];
-	int currentSelectedSlot = 0;
-	int selectedSlot = -1;
-	char buffer[512];
-	int initialDelay = 15; // Frames to wait before accepting Enter/click to prevent accidental selection
-	static u32 s_saveMenuSelTime = 0; // For pulsing highlight effect
+    const int NUM_SAVE_SLOTS = 9; // Slots 0-8 (slot 9 would overflow menu)
+    bool saveExists[NUM_SAVE_SLOTS];
+    int currentSelectedSlot = 0;
+    int selectedSlot = -1;
+    char buffer[512];
+    int initialDelay = 15; // Frames to wait before accepting Enter/click to prevent accidental selection
+    static Uint64 s_saveMenuSelTime = 0; // For pulsing highlight effect
 
-	// Preview image state
-	unsigned char* previewImageData = NULL;
-	int previewImageW = 0;
-	int previewImageH = 0;
-	int lastPreviewSlot = -1; // Track which slot's preview is loaded
+    // HD mode detection
+    bool useHD = g_remasterConfig.graphics.enableHDBackgrounds;
 
-	// Clear any stale TTF text from previous menu (e.g. ESC menu)
-	clearTTFTextQueue();
+    // Preview image state
+    unsigned char* previewImageData = NULL;
+    int previewImageW = 0;
+    int previewImageH = 0;
+    int lastPreviewSlot = -1; // Track which slot's preview is loaded
 
-	// Notify TTF that we're entering save/load screen
-	notifyTTFMenuStateChanged(true, true);
+    // Clear any stale TTF text from previous menu (e.g. ESC menu)
+    clearTTFTextQueue();
 
-	// Scan for existing save files
-	for(int i = 0; i < NUM_SAVE_SLOTS; i++)
-	{
-		strcpy(buffer, homePath);
-		char saveFile[32];
-		sprintf(saveFile, "SAVE%d.ITD", i);
-		strcat(buffer, saveFile);
-		saveExists[i] = fileExists(buffer);
-	}
+    // Notify TTF that we're entering save/load screen
+    notifyTTFMenuStateChanged(true, true);
 
-	// Wait for initial key release to prevent instant selection
-	while(key || JoyD || Click)
-	{
-		process_events();
-	}
+    // Scan for existing save files
+    for (int i = 0; i < NUM_SAVE_SLOTS; i++)
+    {
+        strcpy(buffer, homePath);
+        char saveFile[32];
+        sprintf(saveFile, "SAVE%d.ITD", i);
+        strcat(buffer, saveFile);
+        saveExists[i] = fileExists(buffer);
+    }
 
-	// Draw save/load menu
-	while(selectedSlot == -1)
-	{
-		// Load preview PNG when slot selection changes
-		if(lastPreviewSlot != currentSelectedSlot)
-		{
-			if(previewImageData)
-			{
-				stbi_image_free(previewImageData);
-				previewImageData = NULL;
-			}
-			previewImageW = 0;
-			previewImageH = 0;
+    // Wait for initial key release to prevent instant selection
+    while (key || JoyD || Click)
+    {
+        process_events();
+    }
 
-			if(saveExists[currentSelectedSlot])
-			{
-				char pngPath[512];
-				strcpy(pngPath, homePath);
-				char pngFile[32];
-				sprintf(pngFile, "SAVE%d.png", currentSelectedSlot);
-				strcat(pngPath, pngFile);
-				int channels = 0;
-				previewImageData = stbi_load(pngPath, &previewImageW, &previewImageH, &channels, 4);
-			}
-			lastPreviewSlot = currentSelectedSlot;
-		}
+    // Draw save/load menu
+    while (selectedSlot == -1)
+    {
+        // Load preview PNG when slot selection changes
+        if (lastPreviewSlot != currentSelectedSlot)
+        {
+            if (previewImageData)
+            {
+                stbi_image_free(previewImageData);
+                previewImageData = NULL;
+            }
+            previewImageW = 0;
+            previewImageH = 0;
 
-		// Clear screen and draw frame
-		AffBigCadre(160, 100, 280, 180);
+            if (saveExists[currentSelectedSlot])
+            {
+                char pngPath[512];
+                strcpy(pngPath, homePath);
+                char pngFile[32];
+                sprintf(pngFile, "SAVE%d.png", currentSelectedSlot);
+                strcat(pngPath, pngFile);
+                int channels = 0;
+                previewImageData = stbi_load(pngPath, &previewImageW, &previewImageH, &channels, 4);
+            }
+            lastPreviewSlot = currentSelectedSlot;
+
+            // Update HD preview texture for GPU rendering
+            if (useHD)
+            {
+                if (previewImageData && previewImageW > 0 && previewImageH > 0)
+                {
+                    osystem_updateSaveSlotPreviewTexture(previewImageData, previewImageW, previewImageH);
+                }
+                else
+                {
+                    // No preview available - use a 1x1 black pixel so the preview area
+                    // shows a solid black box instead of the frozen scene (which would
+                    // cause an infinite screenshot effect).
+                    static unsigned char blackPixel[4] = {0, 0, 0, 255};
+                    osystem_updateSaveSlotPreviewTexture(blackPixel, 1, 1);
+                }
+            }
+        }
+
+        // Clear screen and draw frame (skip in HD mode - overlay provides UI)
+        if (!useHD)
+        {
+            AffBigCadre(160, 100, 280, 180);
+        }
 
 
-		// Draw title (use existing text messages if available, otherwise draw slots)
-		int startY = 30;
-		int lineHeight = 16;
+        // Draw title (use existing text messages if available, otherwise draw slots)
+        int startY = 30;
+        int lineHeight = 16;
 
-		// Display save slots (narrowed to left side to make room for preview)
-		for(int i = 0; i < NUM_SAVE_SLOTS; i++)
-		{
-			int yPos = startY + (i * lineHeight);
+        // Display save slots (narrowed to left side to make room for preview)
+        for (int i = 0; i < NUM_SAVE_SLOTS; i++)
+        {
+            int yPos = startY + (i * lineHeight);
 
-			// Format slot text
-			if(saveExists[i])
-			{
-				sprintf(buffer, "Slot %d", i);
-			}
-			else
-			{
-				sprintf(buffer, "Slot %d - Empty", i);
-			}
+            // Format slot text
+            if (saveExists[i])
+            {
+                sprintf(buffer, "Slot %d", i);
+            }
+            else
+            {
+                sprintf(buffer, "Slot %d - Empty", i);
+            }
 
-			// Highlight selected slot with pulsing effect
-			if(i == currentSelectedSlot)
-			{
-				u32 now = SDL_GetTicks();
-				// Calculate selection pop effect
-				int pop = 0;
-				if(now - s_saveMenuSelTime < 250)
-				{
-					float t = (float)(now - s_saveMenuSelTime) / 250.0f;
-					pop = (int)(sinf(t * 3.14159f) * 6.0f);
-				}
-				// Pulsing highlight color
-				char color = (char)(100 + (int)(fabsf(sinf((float)now * 0.004f)) * 8.0f));
-				AffRect(28, yPos - 1 - pop/2, 160 + pop*2, yPos + 14 + pop, color);
+            // Highlight selected slot with pulsing effect
+            if (i == currentSelectedSlot)
+            {
+                Uint64 now = SDL_GetTicks();
+                // Calculate selection pop effect
+                int pop = 0;
+                if (now - s_saveMenuSelTime < 250)
+                {
+                    float t = (float)(now - s_saveMenuSelTime) / 250.0f;
+                    pop = (int)(sinf(t * 3.14159f) * 6.0f);
+                }
+                // Pulsing highlight color
+                char color = (char)(100 + (int)(fabsf(sinf((float)now * 0.004f)) * 8.0f));
+                AffRect(28, yPos - 1 - pop / 2, 160 + pop * 2, yPos + 14 + pop, color);
 
-				// Draw text with highlight
-				SetFont(PtrFont, 15);
-				PrintFont(30, yPos, logicalScreen, (u8*)buffer);
-			}
-			else
-			{
-				// Draw normal text
-				SetFont(PtrFont, 4);
-				PrintFont(30, yPos, logicalScreen, (u8*)buffer);
-			}
-		}
+                // Draw text with highlight
+                SetFont(PtrFont, 15);
+                PrintFont(30, yPos, logicalScreen, (u8*)buffer);
+            }
+            else
+            {
+                // Draw normal text
+                SetFont(PtrFont, 4);
+                PrintFont(30, yPos, logicalScreen, (u8*)buffer);
+            }
+        }
 
-		// Draw preview box on the right side
-		AffBigCadre(235, 80, 120, 90);
+        // Draw preview box and preview image (skip in HD mode - overlay provides preview window)
+        if (!useHD)
+        {
+            // Draw preview box on the right side
+            AffBigCadre(235, 80, 120, 90);
 
-		if(previewImageData && previewImageW > 0 && previewImageH > 0)
-		{
-			// Fill from the content area top (WindowY1=43) all the way down to y=126,
-			// just before the bottom bar sprite at y=127. This covers the 10-pixel black
-			// gap that exists between WindowY2=116 and the visible bottom golden bar.
-			// Corner sprites live at x=175-182 / x=287+ so x=183-286 is clear to overwrite.
-			fillSavePreviewToFrame(183, 43, 286, 126, previewImageData, previewImageW, previewImageH);
-		}
-		else if(saveExists[currentSelectedSlot])
-		{
-			// Save exists but no preview PNG - show "No Preview" text
-			SetFont(PtrFont, 4);
-			PrintFont(185, 70, logicalScreen, (u8*)"No Preview");
-		}
+            if (previewImageData && previewImageW > 0 && previewImageH > 0)
+            {
+                // Fill from the content area top (WindowY1=43) all the way down to y=126,
+                // just before the bottom bar sprite at y=127. This covers the 10-pixel black
+                // gap that exists between WindowY2=116 and the visible bottom golden bar.
+                // Corner sprites live at x=175-182 / x=287+ so x=183-286 is clear to overwrite.
+                fillSavePreviewToFrame(183, 43, 286, 126, previewImageData, previewImageW, previewImageH);
+            }
+            else
+            {
+                // Fill preview area with black to prevent stale framebuffer content
+                for (int py = 43; py <= 126; py++)
+                    for (int px = 183; px <= 286; px++)
+                        logicalScreen[py * 320 + px] = 0;
+                SetFont(PtrFont, 4);
+                PrintFont(185, 70, logicalScreen, (u8*)"No Preview");
+            }
+        }
 
-		// Refresh display
-		osystem_CopyBlockPhys((unsigned char*)logicalScreen, 0, 0, 320, 200);
-		osystem_startFrame();
-		process_events();
-		flushScreen();
-		osystem_drawBackground();
+        // Refresh display
+        osystem_CopyBlockPhys((unsigned char*)logicalScreen, 0, 0, 320, 200);
+        osystem_startFrame();
 
-		// Decrement initial delay
-		if(initialDelay > 0)
-			initialDelay--;
+        if (useHD)
+        {
+            // Always draw the save slot preview quad (shows the loaded PNG,
+            // or a black box when no preview exists).  We intentionally do NOT
+            // draw the frozen scene preview here because it would show the
+            // live game frame and cause an infinite screenshot effect.
+            osystem_drawSaveSlotPreviewHD(183.f, 43.f, 300.f, 127.f);
 
-		// Handle input
-		int localKey = key;
-		int localClick = Click;
-		int localJoyD = JoyD;
+            // Draw SaveRestoreScreen.png HD overlay on top
+            osystem_drawSaveRestoreBackground();
+        }
 
-		if(!AntiRebond)
-		{
-			// Enter key or mouse click - select current slot (only after initial delay)
-			if((localKey == 0x1C || localClick) && initialDelay == 0)
-			{
-				// For load mode (arg == 0), only allow selection if save exists
-				if(arg == 0 && !saveExists[currentSelectedSlot])
-				{
-					// Can't load from empty slot, do nothing
-				}
-				else
-				{
-					selectedSlot = currentSelectedSlot;
-				}
-				AntiRebond = 1;
-			}
-			// Escape key - cancel
-			else if(localKey == 0x1B)
-			{
-				selectedSlot = -1;
-				break;
-			}
-			// Up arrow
-			else if(localJoyD == 1)
-			{
-				currentSelectedSlot--;
-				if(currentSelectedSlot < 0)
-					currentSelectedSlot = NUM_SAVE_SLOTS - 1;
-				notifyTTFMenuSelectionChanged();
-				s_saveMenuSelTime = SDL_GetTicks();
-				AntiRebond = 1;
-			}
-			// Down arrow
-			else if(localJoyD == 2)
-			{
-				currentSelectedSlot++;
-				if(currentSelectedSlot >= NUM_SAVE_SLOTS)
-					currentSelectedSlot = 0;
-				notifyTTFMenuSelectionChanged();
-				s_saveMenuSelTime = SDL_GetTicks();
-				AntiRebond = 1;
-			}
-		}
-		else
-		{
-			// Reset anti-rebond when keys are released
-			if(!localKey && !localJoyD && !localClick)
-			{
-				AntiRebond = 0;
-			}
-		}
+        osystem_drawUILayer();
+        process_events();
+        flushScreen();
 
-		osystem_flip(NULL);
-	}
+        // Decrement initial delay
+        if (initialDelay > 0)
+            initialDelay--;
 
-	// Free preview image
-	if(previewImageData)
-	{
-		stbi_image_free(previewImageData);
-		previewImageData = NULL;
-	}
+        // Handle input
+        int localKey = key;
+        int localClick = Click;
+        int localJoyD = JoyD;
 
-	// Wait for key release
-	while(key || JoyD || Click)
-	{
-		process_events();
-	}
+        if (!AntiRebond)
+        {
+            // Enter key or mouse click - select current slot (only after initial delay)
+            if ((localKey == 0x1C || localClick) && initialDelay == 0)
+            {
+                // For load mode (arg == 0), only allow selection if save exists
+                if (arg == 0 && !saveExists[currentSelectedSlot])
+                {
+                    // Can't load from empty slot, do nothing
+                }
+                else
+                {
+                    selectedSlot = currentSelectedSlot;
+                }
+                AntiRebond = 1;
+            }
+            // Escape key - cancel
+            else if (localKey == 0x1B)
+            {
+                selectedSlot = -1;
+                break;
+            }
+            // Up arrow
+            else if (localJoyD == 1)
+            {
+                currentSelectedSlot--;
+                if (currentSelectedSlot < 0)
+                    currentSelectedSlot = NUM_SAVE_SLOTS - 1;
+                notifyTTFMenuSelectionChanged();
+                s_saveMenuSelTime = SDL_GetTicks();
+                AntiRebond = 1;
+            }
+            // Down arrow
+            else if (localJoyD == 2)
+            {
+                currentSelectedSlot++;
+                if (currentSelectedSlot >= NUM_SAVE_SLOTS)
+                    currentSelectedSlot = 0;
+                notifyTTFMenuSelectionChanged();
+                s_saveMenuSelTime = SDL_GetTicks();
+                AntiRebond = 1;
+            }
+        }
+        else
+        {
+            // Reset anti-rebond when keys are released
+            if (!localKey && !localJoyD && !localClick)
+            {
+                AntiRebond = 0;
+            }
+        }
 
-	// Clear TTF text when leaving save/load screen
-	notifyTTFMenuSelectionChanged();
+        osystem_flip(NULL);
+    }
 
-	return selectedSlot;
+    // Free preview image
+    if (previewImageData)
+    {
+        stbi_image_free(previewImageData);
+        previewImageData = NULL;
+    }
+
+    // Clean up HD preview texture
+    osystem_destroySaveSlotPreviewTexture();
+
+    // Wait for key release
+    while (key || JoyD || Click)
+    {
+        process_events();
+    }
+
+    // Clear TTF text when leaving save/load screen
+    notifyTTFMenuSelectionChanged();
+
+    return selectedSlot;
 }
 
 void detectGame(void)
 {
-	const char* gameName = NULL;
+    const char* gameName = NULL;
 
-	if(fileExists("AITD2.flag"))
-	{
-		g_gameId = AITD2;
-		CVars.resize(70);
-		currentCVarTable = AITD2KnownCVars;
-		gameName = "Alone in the Dark 2";
-	}
-	else if(fileExists("LISTBOD2.PAK"))
-	{
-		g_gameId = AITD1;
-		CVars.resize(45);
-		currentCVarTable = AITD1KnownCVars;
-		gameName = "Alone in the Dark";
-	}
-	else if(fileExists("PERE.PAK"))
-	{
-		g_gameId = JACK;
-		CVars.resize(70);
-		currentCVarTable = AITD2KnownCVars;
-		gameName = "Jack in the Dark";
-	}
-	else if(fileExists("MER.PAK"))
-	{
-		g_gameId = AITD2;
-		CVars.resize(70);
-		currentCVarTable = AITD2KnownCVars;
-		gameName = "Alone in the Dark 2";
-	}
-	else if(fileExists("AN1.PAK"))
-	{
-		g_gameId = AITD3;
-		CVars.resize(70);
-		currentCVarTable = AITD2KnownCVars;
-		gameName = "Alone in the Dark 3";
-	}
-	else if(fileExists("PURSUIT.PAK"))
-	{
-		g_gameId = TIMEGATE;
-		CVars.resize(100); // TODO: figure this
-		currentCVarTable = AITD2KnownCVars; // TODO: figure this
-		gameName = "Time Gate";
-	}
-	else
-	{
-		printf(MAIN_ERR "FATAL: Game detection failed..." CON_RESET "\n");
-		assert(0);
-		return;
-	}
+    if (fileExists("AITD2.flag"))
+    {
+        g_gameId = AITD2;
+        CVars.resize(70);
+        currentCVarTable = AITD2KnownCVars;
+        gameName = "Alone in the Dark 2";
+    }
+    else if (fileExists("LISTBOD2.PAK"))
+    {
+        g_gameId = AITD1;
+        CVars.resize(45);
+        currentCVarTable = AITD1KnownCVars;
+        gameName = "Alone in the Dark";
+    }
+    else if (fileExists("PERE.PAK"))
+    {
+        g_gameId = JACK;
+        CVars.resize(70);
+        currentCVarTable = AITD2KnownCVars;
+        gameName = "Jack in the Dark";
+    }
+    else if (fileExists("MER.PAK"))
+    {
+        g_gameId = AITD2;
+        CVars.resize(70);
+        currentCVarTable = AITD2KnownCVars;
+        gameName = "Alone in the Dark 2";
+    }
+    else if (fileExists("AN1.PAK"))
+    {
+        g_gameId = AITD3;
+        CVars.resize(70);
+        currentCVarTable = AITD2KnownCVars;
+        gameName = "Alone in the Dark 3";
+    }
+    else if (fileExists("PURSUIT.PAK"))
+    {
+        g_gameId = TIMEGATE;
+        CVars.resize(100); // TODO: figure this
+        currentCVarTable = AITD2KnownCVars; // TODO: figure this
+        gameName = "Time Gate";
+    }
+    else
+    {
+        printf(MAIN_ERR "FATAL: Game detection failed..." CON_RESET "\n");
+        assert(0);
+        return;
+    }
 
-	loadVersionString();
+    loadVersionString();
 
-	std::string titleStr = gameName;
-	if(!g_versionString.empty())
-	{
-		titleStr += " - " + g_versionString;
-	}
+    std::string titleStr = gameName;
+    if (!g_versionString.empty())
+    {
+        titleStr += " - " + g_versionString;
+    }
 
-	printf(MAIN_TAG "%s\n", titleStr.c_str());
+    printf(MAIN_TAG "%s\n", titleStr.c_str());
 #ifndef AITD_UE4
-	SDL_SetWindowTitle(gWindowBGFX, titleStr.c_str());
+    SDL_SetWindowTitle(gWindowBGFX, titleStr.c_str());
 #endif
 }
 
 extern "C" {
-	int FitdMain(int argc, char* argv[]);
-	void setCurrentContext(void);
+    int FitdMain(int argc, char* argv[]);
+    void setCurrentContext(void);
 }
 
 int FitdMain(int argc, char* argv[])
 {
-	// Load remaster configuration early, before any systems that depend on it
-	loadRemasterConfig();
+    // Load remaster configuration early, before any systems that depend on it
+    loadRemasterConfig();
 
 #ifndef AITD_UE4
-	initBgfxGlue(argc, argv);
+    initBgfxGlue(argc, argv);
 #endif
 
-	osystem_startOfFrame();
+    osystem_startOfFrame();
 
-	//  int protectionToBeDone = 1;
+    //  int protectionToBeDone = 1;
 
-	OpenProgram();
+    OpenProgram();
 
-	paletteFill(currentGamePalette,0,0,0);
+    paletteFill(currentGamePalette, 0, 0, 0);
 
-	loadPalette();
+    loadPalette();
 
-	// Apply the loaded palette to the renderer
-	osystem_setPalette(&currentGamePalette);
+    // Apply the loaded palette to the renderer
+    osystem_setPalette(&currentGamePalette);
 
-	switch(g_gameId)
-	{
-	case AITD1:
-		startAITD1();
-		break;
-	case JACK:
-		startJACK();
-		break;
-	case AITD2:
-		startAITD2();
-		break;
-	case AITD3:
-		startAITD3();
-		break;
+    switch (g_gameId)
+    {
+    case AITD1:
+        startAITD1();
+        break;
+    case JACK:
+        startJACK();
+        break;
+    case AITD2:
+        startAITD2();
+        break;
+    case AITD3:
+        startAITD3();
+        break;
     case TIMEGATE:
         startGame(0, 5, 1);
         break;
-	default:
-		assert(0);
-		break;
-	}
+    default:
+        assert(0);
+        break;
+    }
 
-	return(0);
+    return(0);
 }
 
 int drawTextOverlay(void)
 {
-	int var_14 = 0;
-	int var_10 = 183;
-	messageStruct* currentMessage;
+    int var_14 = 0;
+    int var_10 = 183;
+    messageStruct* currentMessage;
 
-	BBox3D4 = 199;
-	BBox3D1 = 319;
-	BBox3D3 = 0;
+    BBox3D4 = 199;
+    BBox3D1 = 319;
+    BBox3D3 = 0;
 
-	currentMessage = messageTable;
+    currentMessage = messageTable;
 
-	if(lightOff==0)
-	{
-		int i;
+    if (lightOff == 0)
+    {
+        int i;
 
-		for(i=0;i<5;i++)
-		{
-			if(currentMessage->string)
-			{
-				int width = currentMessage->string->width;
-				int X = 160 - width/2;
-				int Y = X + width;
+        for (i = 0; i < 5; i++)
+        {
+            if (currentMessage->string)
+            {
+                int width = currentMessage->string->width;
+                int X = 160 - width / 2;
+                int Y = X + width;
 
-				if(X<BBox3D1)
-				{
-					BBox3D1 = X;
-				}
+                if (X < BBox3D1)
+                {
+                    BBox3D1 = X;
+                }
 
-				if(Y>BBox3D3)
-				{
-					BBox3D3 = Y;
-				}
+                if (Y > BBox3D3)
+                {
+                    BBox3D3 = Y;
+                }
 
-				if((currentMessage->time++)>55)
-				{
-					currentMessage->string = NULL;
-				}
-				else
-				{
-					if(currentMessage->time<26)
-					{
-						SetFont(PtrFont,16);
-					}
-					else
-					{
-						SetFont(PtrFont,16+(currentMessage->time-26)/2);
-					}
+                if ((currentMessage->time++) > 55)
+                {
+                    currentMessage->string = NULL;
+                }
+                else
+                {
+                    if (currentMessage->time < 26)
+                    {
+                        SetFont(PtrFont, 16);
+                    }
+                    else
+                    {
+                        SetFont(PtrFont, 16 + (currentMessage->time - 26) / 2);
+                    }
 
-					PrintFont(X,var_10+1,logicalScreen,currentMessage->string->textPtr);
-				}
+                    PrintFont(X, var_10 + 1, logicalScreen, currentMessage->string->textPtr);
+                }
 
-				var_10 -= 16;
-				var_14 = 1;
+                var_10 -= 16;
+                var_14 = 1;
 
-			}
+            }
 
-			currentMessage++;
-		}
-	}
-	else
-	{
-	}
+            currentMessage++;
+        }
+    }
+    else
+    {
+    }
 
-	BBox3D2 = var_10;
-	return(var_14);
+    BBox3D2 = var_10;
+    return(var_14);
 }
 
 void makeMessage(int messageIdx)
 {
-	textEntryStruct* messagePtr;
+    textEntryStruct* messagePtr;
 
-	messagePtr = getTextFromIdx(messageIdx);
+    messagePtr = getTextFromIdx(messageIdx);
 
-	if(messagePtr)
-	{
-		int i;
+    if (messagePtr)
+    {
+        int i;
 
-		for(i=0;i<5;i++)
-		{
-			if(messageTable[i].string == messagePtr)
-			{
-				messageTable[i].time = 0;
-				return;
-			}
-		}
+        for (i = 0; i < 5; i++)
+        {
+            if (messageTable[i].string == messagePtr)
+            {
+                messageTable[i].time = 0;
+                return;
+            }
+        }
 
-		for(i=0;i<5;i++)
-		{
-			if(messageTable[i].string == NULL)
-			{
-				messageTable[i].string = messagePtr;
-				messageTable[i].time = 0;
-				return;
-			}
-		}
-	}
+        for (i = 0; i < 5; i++)
+        {
+            if (messageTable[i].string == NULL)
+            {
+                messageTable[i].string = messagePtr;
+                messageTable[i].time = 0;
+                return;
+            }
+        }
+    }
 }
 
-void hit(int animNumber,int arg_2,int arg_4,int arg_6,int hitForce,int arg_A)
+void hit(int animNumber, int arg_2, int arg_4, int arg_6, int hitForce, int arg_A)
 {
-	if(InitAnim(animNumber, 0, arg_A))
-	{
-		currentProcessedActorPtr->animActionANIM = animNumber;
-		currentProcessedActorPtr->animActionFRAME = arg_2;
-		currentProcessedActorPtr->animActionType = 1;
-		currentProcessedActorPtr->animActionParam = arg_6;
-		currentProcessedActorPtr->hotPointID = arg_4;
-		currentProcessedActorPtr->hitForce = hitForce;
-	}
+    if (InitAnim(animNumber, 0, arg_A))
+    {
+        currentProcessedActorPtr->animActionANIM = animNumber;
+        currentProcessedActorPtr->animActionFRAME = arg_2;
+        currentProcessedActorPtr->animActionType = 1;
+        currentProcessedActorPtr->animActionParam = arg_6;
+        currentProcessedActorPtr->hotPointID = arg_4;
+        currentProcessedActorPtr->hitForce = hitForce;
+    }
 }
 
 void SetClip(int left, int top, int right, int bottom)
 {
-	clipLeft = left;
-	clipTop = top;
-	clipRight = right;
-	clipBottom = bottom;
+    clipLeft = left;
+    clipTop = top;
+    clipRight = right;
+    clipBottom = bottom;
 }
 
 extern "C" {
-	void Sound_Quit(void);
+    void Sound_Quit(void);
 }
 
 void cleanupAndExit(void)
 {
-	shutdownController();
+    shutdownController();
 
-	Sound_Quit();
+    Sound_Quit();
 
-	// Clean up HD background resources before shutdown to prevent heap corruption
-	extern void cleanupHDBackgroundResources();
-	cleanupHDBackgroundResources();
+    // Clean up HD background resources before shutdown to prevent heap corruption
+    extern void cleanupHDBackgroundResources();
+    cleanupHDBackgroundResources();
 
-	// Close audio archive
-	extern void closeAudioArchive();
-	closeAudioArchive();
+    // Close audio archive
+    extern void closeAudioArchive();
+    closeAudioArchive();
 
-	ResourceGC::onShutdown();
+    ResourceGC::onShutdown();
 
-	HQR_Free(listMus);
-	HQR_Free(listSamp);
-	HQR_Free(HQ_Memory);
-	HQR_Free(listLife);
-	HQR_Free(listTrack);
-	HQR_Free(HQ_Bodys);
-	HQR_Free(HQ_Anims);
+    HQR_Free(listMus);
+    HQR_Free(listSamp);
+    HQR_Free(HQ_Memory);
+    HQR_Free(listLife);
+    HQR_Free(listTrack);
+    HQR_Free(HQ_Bodys);
+    HQR_Free(HQ_Anims);
 
-	/* free(tabTextes);
-	free(aux);
-	free(aux2);
-	free(bufferAnim);
+    /* free(tabTextes);
+    free(aux);
+    free(aux2);
+    free(bufferAnim);
 
-	free(screen); */
+    free(screen); */
 
-	destroyMusicDriver();
+    destroyMusicDriver();
 
-	exit(0);
+    exit(0);
 }
 

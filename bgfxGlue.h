@@ -16,6 +16,9 @@ void deleteBgfxGlue();
 
 void StartFrame();
 void EndFrame();
+void renderFrameWithText();
+void startFrameForIntroText();
+void renderIntroFrameWithText();
 
 extern int gFrameLimit;
 extern bool gCloseApp;
@@ -23,5 +26,6 @@ extern bool gCloseApp;
 extern SDL_Window* gWindowBGFX;
 
 extern bool gIsFullscreen;
+extern bool g_pendingFullscreenToggle;
 void toggleFullscreen();
 

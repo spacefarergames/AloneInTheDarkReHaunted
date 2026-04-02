@@ -264,7 +264,7 @@ static void drawControlRow(int y, KeyAction action, bool selected, bool remappin
 // ============================================================================
 // Controls submenu
 // ============================================================================
-void processControlsMenu()
+void processControlsMenu(bool hdMode)
 {
 	int exitMenu = 0;
 	int currentEntry = 0;
@@ -290,7 +290,18 @@ void processControlsMenu()
 		clearTTFTextQueue();
 
 		// Draw frame - use full 320x200 to clear stale system menu text
-		AffBigCadre(160, 100, 320, 200);
+		// In HD mode, FullScreenFrame.png provides the background overlay.
+		if (!hdMode)
+		{
+			AffBigCadre(160, 100, 320, 200);
+		}
+		else
+		{
+			WindowX1 = 8;
+			WindowY1 = 8;
+			WindowX2 = 311;
+			WindowY2 = 191;
+		}
 
 		int topY = WindowY1 + 4;
 
@@ -392,7 +403,19 @@ void processControlsMenu()
 		menuWaitVSync();
 		osystem_CopyBlockPhys((unsigned char*)logicalScreen, 0, 0, 320, 200);
 		osystem_startFrame();
+		if (hdMode)
+		{
+			osystem_drawFullScreenFrame();
+		}
 		process_events();
+
+		// Handle window resize - the resize flag is consumed by the rendering system
+		// No special action needed here as the menu will redraw on next iteration
+		if (g_windowWasResized)
+		{
+			resetWindowResizeFlag();
+		}
+
 		flushScreen();
 		osystem_drawBackground();
 

@@ -10,3 +10,6 @@
 extern "C" {
 void PlayWorld(int allowSystemMenu, int deltaTime);
 }
+
+bool isHotspotOverlayVisible();
+float getHotspotOverlayOpacity();

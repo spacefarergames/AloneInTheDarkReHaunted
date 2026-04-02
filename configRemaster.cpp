@@ -31,6 +31,8 @@ void initDefaultRemasterConfig()
     g_remasterConfig.graphics.enableFiltering = true;
     g_remasterConfig.graphics.enableBlurredMenu = false;
     g_remasterConfig.graphics.menuBlurAmount = 5.0f;
+    g_remasterConfig.graphics.enableHints = true;
+    g_remasterConfig.graphics.enableArtwork = true;
 
     // Post-processing defaults
     g_remasterConfig.postProcessing.enableBloom = true;
@@ -45,6 +47,14 @@ void initDefaultRemasterConfig()
     g_remasterConfig.postProcessing.enableVignette = false;
     g_remasterConfig.postProcessing.vignetteIntensity = 0.35f;
     g_remasterConfig.postProcessing.vignetteRadius = 0.75f;
+    // SSGI defaults
+    g_remasterConfig.postProcessing.enableSSGI = false;
+    g_remasterConfig.postProcessing.ssgiRadius = 300.0f;
+    g_remasterConfig.postProcessing.ssgiIntensity = 0.6f;
+    g_remasterConfig.postProcessing.ssgiNumSamples = 16;
+    // Light Probe defaults
+    g_remasterConfig.postProcessing.enableLightProbes = false;
+    g_remasterConfig.postProcessing.lightProbeIntensity = 0.5f;
 
     // External music defaults
     g_remasterConfig.music.enableExternalMusic = false;
@@ -75,6 +85,10 @@ void initDefaultRemasterConfig()
     g_remasterConfig.controls.keyBindings[8] = SDL_SCANCODE_E;
     g_remasterConfig.controls.gamepadBindings[7] = SDL_GAMEPAD_BUTTON_LEFT_SHOULDER;
     g_remasterConfig.controls.gamepadBindings[8] = SDL_GAMEPAD_BUTTON_RIGHT_SHOULDER;
+
+    // Mask dumping/loading defaults
+    g_remasterConfig.masks.dumpEnabled = false;    // Don't auto-dump masks during normal gameplay
+    g_remasterConfig.masks.loadEnabled = true;     // Always load hand-edited HD masks if available
 }
 
 void loadRemasterConfig()
@@ -125,7 +139,11 @@ void loadRemasterConfig()
                 g_remasterConfig.graphics.enableBlurredMenu = (strcmp(value, "true") == 0 || strcmp(value, "1") == 0);
             else if (strcmp(key, "graphics.menuBlurAmount") == 0)
                 g_remasterConfig.graphics.menuBlurAmount = (float)atof(value);
-            
+            else if (strcmp(key, "gameplay.hints") == 0)
+                g_remasterConfig.graphics.enableHints = (strcmp(value, "true") == 0 || strcmp(value, "1") == 0);
+            else if (strcmp(key, "graphics.useArtwork") == 0)
+                g_remasterConfig.graphics.enableArtwork = (strcmp(value, "true") == 0 || strcmp(value, "1") == 0);
+
             // External music settings
             else if (strcmp(key, "music.external") == 0)
                 g_remasterConfig.music.enableExternalMusic = (strcmp(value, "true") == 0 || strcmp(value, "1") == 0);
@@ -183,6 +201,20 @@ void loadRemasterConfig()
                 g_remasterConfig.postProcessing.vignetteIntensity = (float)atof(value);
             else if (strcmp(key, "postprocessing.vignetteRadius") == 0)
                 g_remasterConfig.postProcessing.vignetteRadius = (float)atof(value);
+            // SSGI settings
+            else if (strcmp(key, "postprocessing.ssgi") == 0)
+                g_remasterConfig.postProcessing.enableSSGI = (strcmp(value, "true") == 0 || strcmp(value, "1") == 0);
+            else if (strcmp(key, "postprocessing.ssgiRadius") == 0)
+                g_remasterConfig.postProcessing.ssgiRadius = (float)atof(value);
+            else if (strcmp(key, "postprocessing.ssgiIntensity") == 0)
+                g_remasterConfig.postProcessing.ssgiIntensity = (float)atof(value);
+            else if (strcmp(key, "postprocessing.ssgiNumSamples") == 0)
+                g_remasterConfig.postProcessing.ssgiNumSamples = atoi(value);
+            // Light Probe settings
+            else if (strcmp(key, "postprocessing.lightProbes") == 0)
+                g_remasterConfig.postProcessing.enableLightProbes = (strcmp(value, "true") == 0 || strcmp(value, "1") == 0);
+            else if (strcmp(key, "postprocessing.lightProbeIntensity") == 0)
+                g_remasterConfig.postProcessing.lightProbeIntensity = (float)atof(value);
 
             // Controls settings
             else if (strcmp(key, "controls.key.up") == 0)
@@ -221,6 +253,12 @@ void loadRemasterConfig()
                 g_remasterConfig.controls.gamepadBindings[7] = atoi(value);
             else if (strcmp(key, "controls.pad.quickturnright") == 0)
                 g_remasterConfig.controls.gamepadBindings[8] = atoi(value);
+
+            // Mask dumping/loading settings
+            else if (strcmp(key, "masks.dump") == 0)
+                g_remasterConfig.masks.dumpEnabled = (strcmp(value, "true") == 0 || strcmp(value, "1") == 0);
+            else if (strcmp(key, "masks.load") == 0)
+                g_remasterConfig.masks.loadEnabled = (strcmp(value, "true") == 0 || strcmp(value, "1") == 0);
         }
     }
 
@@ -257,7 +295,9 @@ void saveRemasterConfig()
     fprintf(file, "graphics.backgroundScale = %d\n", g_remasterConfig.graphics.backgroundScale);
     fprintf(file, "graphics.filtering = %s\n", g_remasterConfig.graphics.enableFiltering ? "true" : "false");
     fprintf(file, "graphics.blurredMenu = %s\n", g_remasterConfig.graphics.enableBlurredMenu ? "true" : "false");
-    fprintf(file, "graphics.menuBlurAmount = %.1f\n\n", g_remasterConfig.graphics.menuBlurAmount);
+    fprintf(file, "graphics.menuBlurAmount = %.1f\n", g_remasterConfig.graphics.menuBlurAmount);
+    fprintf(file, "gameplay.hints = %s\n", g_remasterConfig.graphics.enableHints ? "true" : "false");
+    fprintf(file, "graphics.useArtwork = %s\n\n", g_remasterConfig.graphics.enableArtwork ? "true" : "false");
 
     fprintf(file, "# External Music Settings\n");
     fprintf(file, "music.external = %s\n", g_remasterConfig.music.enableExternalMusic ? "true" : "false");
@@ -282,6 +322,14 @@ void saveRemasterConfig()
     fprintf(file, "postprocessing.vignette = %s\n", g_remasterConfig.postProcessing.enableVignette ? "true" : "false");
     fprintf(file, "postprocessing.vignetteIntensity = %.2f\n", g_remasterConfig.postProcessing.vignetteIntensity);
     fprintf(file, "postprocessing.vignetteRadius = %.2f\n", g_remasterConfig.postProcessing.vignetteRadius);
+    // SSGI settings
+    fprintf(file, "postprocessing.ssgi = %s\n", g_remasterConfig.postProcessing.enableSSGI ? "true" : "false");
+    fprintf(file, "postprocessing.ssgiRadius = %.1f\n", g_remasterConfig.postProcessing.ssgiRadius);
+    fprintf(file, "postprocessing.ssgiIntensity = %.2f\n", g_remasterConfig.postProcessing.ssgiIntensity);
+    fprintf(file, "postprocessing.ssgiNumSamples = %d\n", g_remasterConfig.postProcessing.ssgiNumSamples);
+    // Light Probe settings
+    fprintf(file, "postprocessing.lightProbes = %s\n", g_remasterConfig.postProcessing.enableLightProbes ? "true" : "false");
+    fprintf(file, "postprocessing.lightProbeIntensity = %.2f\n", g_remasterConfig.postProcessing.lightProbeIntensity);
 
     fprintf(file, "\n# Controls Settings\n");
     fprintf(file, "controls.key.up = %d\n", g_remasterConfig.controls.keyBindings[0]);
@@ -302,6 +350,10 @@ void saveRemasterConfig()
     fprintf(file, "controls.key.quickturnright = %d\n", g_remasterConfig.controls.keyBindings[8]);
     fprintf(file, "controls.pad.quickturnleft = %d\n", g_remasterConfig.controls.gamepadBindings[7]);
     fprintf(file, "controls.pad.quickturnright = %d\n", g_remasterConfig.controls.gamepadBindings[8]);
+
+    fprintf(file, "\n# Mask Dumping/Loading Settings\n");
+    fprintf(file, "masks.dump = %s\n", g_remasterConfig.masks.dumpEnabled ? "true" : "false");
+    fprintf(file, "masks.load = %s\n", g_remasterConfig.masks.loadEnabled ? "true" : "false");
 
     fclose(file);
     printf(CFG_OK "Remaster config saved\n");

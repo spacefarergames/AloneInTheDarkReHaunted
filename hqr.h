@@ -9,11 +9,29 @@
 
 #pragma once
 
-template <typename T>
-struct hqrSubEntryStruct;
+#include <string>
+#include <vector>
+#include "config.h"
 
 template <typename T>
-struct hqrEntryStruct;
+struct hqrSubEntryStruct
+{
+    s16 key;
+    s16 size;
+    unsigned int lastTimeUsed;
+    T* ptr;
+};
+
+template <typename T>
+struct hqrEntryStruct
+{
+    std::string string;
+    u16 maxFreeData;
+    u16 sizeFreeData;
+    u16 numMaxEntry;
+    u16 numUsedEntry;
+    std::vector<hqrSubEntryStruct<T>> entries;
+};
 
 template <typename T>
 T* HQR_Get(hqrEntryStruct<T>* hqrPtr, int index);

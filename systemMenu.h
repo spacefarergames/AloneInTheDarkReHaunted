@@ -11,6 +11,7 @@
 #define _SYSTEMMENU_H_
 
 void processSystemMenu(void);
+void processMapScreen(void);
 void scaleDownImage(int destX, int destY, char* sourceBuffer);
 void scaleDownImageHD(int destX, int destY, unsigned char* sourceBuffer, int srcWidth, int srcHeight);
 

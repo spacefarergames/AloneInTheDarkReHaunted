@@ -18,6 +18,8 @@
 #include "configRemaster.h"
 #include "consoleLog.h"
 #include "postProcessing.h"
+#include "lightProbes.h"
+#include "dustParticles.h"
 #include "debugger.h"
 
 #if BX_PLATFORM_OSX
@@ -37,6 +39,10 @@ bool gCloseApp = false;
 float gVolume = 1.f;
 
 bool gIsFullscreen = false;
+bool g_pendingFullscreenToggle = false;
+
+// For dust particle system - we need the current floor
+extern s16 g_currentFloor;
 
 void toggleFullscreen()
 {
@@ -98,8 +104,8 @@ void StartFrame()
         {
             bgfx::reset(outputResolution[0], outputResolution[1], BGFX_RESET_VSYNC);
 
-            // Resize post-processing framebuffers if active
-            if (g_postProcessing && (g_remasterConfig.postProcessing.enableBloom || g_remasterConfig.postProcessing.enableFilmGrain || g_remasterConfig.postProcessing.enableSSAO))
+            // Resize post-processing framebuffers (always active for scene capture)
+            if (g_postProcessing)
             {
                 g_postProcessing->resize(outputResolution[0], outputResolution[1]);
             }
@@ -127,19 +133,58 @@ void StartFrame()
     }
     */
 
-    // Begin post-processing if any effect is enabled
-    if (g_postProcessing && (g_remasterConfig.postProcessing.enableBloom || g_remasterConfig.postProcessing.enableFilmGrain || g_remasterConfig.postProcessing.enableSSAO))
+    // Always route rendering through the offscreen framebuffer so m_mainColorTex
+    // contains the composited scene (needed for pause-menu preview in all modes).
+    if (g_postProcessing)
     {
-        g_postProcessing->setBloomEnabled(g_remasterConfig.postProcessing.enableBloom);
-        g_postProcessing->setBloomThreshold(g_remasterConfig.postProcessing.bloomThreshold);
-        g_postProcessing->setBloomIntensity(g_remasterConfig.postProcessing.bloomIntensity);
-        g_postProcessing->setFilmGrainEnabled(g_remasterConfig.postProcessing.enableFilmGrain);
-        g_postProcessing->setFilmGrainIntensity(g_remasterConfig.postProcessing.filmGrainIntensity);
-        g_postProcessing->setSSAOEnabled(g_remasterConfig.postProcessing.enableSSAO);
-        g_postProcessing->setSSAORadius(g_remasterConfig.postProcessing.ssaoRadius);
-        g_postProcessing->setSSAOIntensity(g_remasterConfig.postProcessing.ssaoIntensity);
-        g_postProcessing->setBloomPasses(g_remasterConfig.postProcessing.bloomPasses);
+        // Apply effect settings when effects are enabled
+        if (g_remasterConfig.postProcessing.enableBloom || g_remasterConfig.postProcessing.enableFilmGrain || g_remasterConfig.postProcessing.enableSSAO || g_remasterConfig.postProcessing.enableSSGI)
+        {
+            g_postProcessing->setBloomEnabled(g_remasterConfig.postProcessing.enableBloom);
+            g_postProcessing->setBloomThreshold(g_remasterConfig.postProcessing.bloomThreshold);
+            g_postProcessing->setBloomIntensity(g_remasterConfig.postProcessing.bloomIntensity);
+            g_postProcessing->setFilmGrainEnabled(g_remasterConfig.postProcessing.enableFilmGrain);
+            g_postProcessing->setFilmGrainIntensity(g_remasterConfig.postProcessing.filmGrainIntensity);
+            g_postProcessing->setSSAOEnabled(g_remasterConfig.postProcessing.enableSSAO);
+            g_postProcessing->setSSAORadius(g_remasterConfig.postProcessing.ssaoRadius);
+            g_postProcessing->setSSAOIntensity(g_remasterConfig.postProcessing.ssaoIntensity);
+            g_postProcessing->setBloomPasses(g_remasterConfig.postProcessing.bloomPasses);
+
+            // SSGI settings
+            g_postProcessing->setSSGIEnabled(g_remasterConfig.postProcessing.enableSSGI);
+            g_postProcessing->setSSGIRadius(g_remasterConfig.postProcessing.ssgiRadius);
+            g_postProcessing->setSSGIIntensity(g_remasterConfig.postProcessing.ssgiIntensity);
+            g_postProcessing->setSSGINumSamples(g_remasterConfig.postProcessing.ssgiNumSamples);
+
+            // Light Probe settings
+            g_postProcessing->setLightProbesEnabled(g_remasterConfig.postProcessing.enableLightProbes);
+            g_postProcessing->setLightProbeIntensity(g_remasterConfig.postProcessing.lightProbeIntensity);
+        }
+
         g_postProcessing->beginScene();
+    }
+
+    // Update dust particles - enable only on floor 0 (attic)
+    if (g_dustParticles)
+    {
+        static Uint64 lastUpdateTime = SDL_GetPerformanceCounter();
+        Uint64 currentTime = SDL_GetPerformanceCounter();
+        float deltaTime = (float)(currentTime - lastUpdateTime) / (float)SDL_GetPerformanceFrequency();
+        lastUpdateTime = currentTime;
+
+        // Enable dust particles only in the attic (ETAGE00)
+        bool isAttic = (g_currentFloor == 0);
+
+        // Debug: print floor change
+        static s16 lastFloor = -999;
+        if (lastFloor != g_currentFloor)
+        {
+            printf("[DUST] Floor changed to %d, dust %s\n", g_currentFloor, isAttic ? "ENABLED" : "disabled");
+            lastFloor = g_currentFloor;
+        }
+
+        g_dustParticles->setEnabled(isAttic);
+        g_dustParticles->update(deltaTime);
     }
 
     bgfx::setViewRect(0, 0, 0, outputResolution[0], outputResolution[1]);
@@ -157,6 +202,12 @@ void EndFrame()
     }
 #endif
 
+    // Render dust particles (attic atmosphere effect)
+    if (g_dustParticles && g_dustParticles->isEnabled())
+    {
+        g_dustParticles->render(0);
+    }
+
     // Render vignette overlay (darkened screen edges for cinematic look)
     osystem_drawVignette();
 
@@ -166,8 +217,9 @@ void EndFrame()
     // Always call imguiEndFrame() to render ImGui windows to bgfx
     imguiEndFrame();
 
-    // Apply post-processing effects if any effect is enabled
-    if (g_postProcessing && (g_remasterConfig.postProcessing.enableBloom || g_remasterConfig.postProcessing.enableFilmGrain || g_remasterConfig.postProcessing.enableSSAO))
+    // Composite the offscreen framebuffer to the backbuffer (applies PP effects if enabled,
+    // otherwise does a simple pass-through). Always active for scene snapshot capture.
+    if (g_postProcessing)
     {
         g_postProcessing->endScene();
     }
@@ -335,11 +387,37 @@ int initBgfxGlue(int argc, char* argv[])
 
     printf(BGFX_OK "Post-processing system initialized (effects will activate when HD backgrounds are enabled)\n");
 
+    // Initialize light probe system
+    g_lightProbeManager = new LightProbeManager();
+    g_lightProbeManager->init();
+
+    printf(BGFX_OK "Light Probe system initialized\n");
+
+    // Initialize dust particle system
+    g_dustParticles = new DustParticleSystem();
+    g_dustParticles->init();
+
+    printf(BGFX_OK "Dust particle system initialized\n");
+
     return true;
 }
 
 void deleteBgfxGlue()
 {
+    // Shutdown dust particle system
+    if (g_dustParticles)
+    {
+        delete g_dustParticles;
+        g_dustParticles = nullptr;
+    }
+
+    // Shutdown light probe system
+    if (g_lightProbeManager)
+    {
+        delete g_lightProbeManager;
+        g_lightProbeManager = nullptr;
+    }
+
     // Shutdown post-processing system
     if (g_postProcessing)
     {

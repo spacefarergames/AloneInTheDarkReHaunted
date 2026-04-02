@@ -9,6 +9,12 @@
 
 #include "common.h"
 #include "consoleLog.h"
+#include "modelAtlas.h"
+#include "hdBackground.h"
+
+extern int numSpheresPrimitives;
+
+void osystem_fillPolyTextured(float* buffer, int numPoint, float* uvs, bgfx::TextureHandle texture);
 
 /* Projection:
 
@@ -47,6 +53,9 @@ struct primEntryStruct
 	u16 size;
 	u16 numOfVertices;
 	primTypeEnum type;
+	int originalPrimIndex;
+	bool isRampPrim;  // Track if this primitive is ramp-shaded (material 3-6)
+	bool nearClipped;  // Flagged by floating polygon detection (suppressed at render time)
 	rendererPointStruct vertices[NUM_MAX_VERTEX_IN_PRIM];
 };
 
@@ -55,6 +64,36 @@ struct primEntryStruct
 primEntryStruct primTable[NUM_MAX_PRIM_ENTRY];
 
 u32 positionInPrimEntry = 0;
+
+// Current model atlas data for textured rendering (set per AffObjet call)
+static ModelAtlasData* s_currentAtlas = nullptr;
+static int s_currentPrimIndex = 0;
+static bool s_modelHasTexturedPrims = false;  // Track if model has textured primitives (type 9/10)
+
+// Near-camera floating polygon clipping thresholds.
+// When a model is close to the camera, small detail polygons (eyes, nostrils)
+// that are geometrically offset from the face surface toward the camera can
+// appear as floating colored patches. These constants control detection.
+static const float NEAR_POLY_CLIP_Z          = 300.f;   // Enhanced near-clip zone (camera-space Z)
+static const float NEAR_POLY_MAX_SCREEN_FRAC = 0.50f;   // Max screen-space extent as fraction of viewport
+static const float NEAR_POLY_MAX_Z_RANGE     = 200.f;   // Max Z spread across a single polygon's vertices
+
+// Post-processing: detect small detail polygons (eyes, nostrils) overlapping
+// larger polygons (face). A tiny polygon whose screen bbox fits inside a
+// significantly larger polygon's screen bbox is suppressed.
+static const float FLOATING_POLY_AREA_MAX    = 500.f;   // Max rest-pose triangle area to consider "detail"
+static const float FLOATING_POLY_AREA_RATIO  = 4.0f;    // Containing polygon must be this many times larger
+static const float FLOATING_POLY_MAX_EXTENT  = 30.f;    // Max rest-pose bbox extent (any axis) for "detail"
+
+ModelAtlasData* getCurrentAtlas()
+{
+    return s_currentAtlas;
+}
+
+void clearCurrentAtlas()
+{
+    s_currentAtlas = nullptr;
+}
 
 int BBox3D1=0;
 int BBox3D2=0;
@@ -698,16 +737,21 @@ void processPrim_Line(int primType, sPrimitive* ptr, char** out)
     }
 }
 
-void processPrim_Poly(int primType, sPrimitive* ptr, char** out)
+void processPrim_Poly(int primType, sPrimitive* ptr, char** out, int originalPrimIndex)
 {
     primEntryStruct* pCurrentPrimEntry = &primTable[positionInPrimEntry];
 
     ASSERT(positionInPrimEntry < NUM_MAX_PRIM_ENTRY);
 
-    pCurrentPrimEntry->type = primTypeEnum_Poly;
+    // Preserve original primitive type (important for distinguishing flat vs textured polys)
+    pCurrentPrimEntry->type = (primTypeEnum)primType;
     pCurrentPrimEntry->numOfVertices = ptr->m_points.size();
     pCurrentPrimEntry->color = ptr->m_color;
     pCurrentPrimEntry->material = ptr->m_material;
+    pCurrentPrimEntry->originalPrimIndex = originalPrimIndex;  // Set directly to avoid indexing issues with depth culling
+
+    // Track if this is a ramp-shaded primitive (material 3-6)
+    pCurrentPrimEntry->isRampPrim = (primType == primTypeEnum_Poly && ptr->m_material >= 3 && ptr->m_material <= 6);
 
     float depth = 32000.f;
     ASSERT(pCurrentPrimEntry->numOfVertices < NUM_MAX_VERTEX_IN_PRIM);
@@ -732,10 +776,65 @@ void processPrim_Poly(int primType, sPrimitive* ptr, char** out)
     if (depth > 100)
 #endif
     {
-        positionInPrimEntry++;
+        bool clipPoly = false;
 
-        numOfPrimitiveToRender++;
-        ASSERT(positionInPrimEntry < NUM_MAX_PRIM_ENTRY);
+        // Enhanced near-camera polygon clipping:
+        // Detect polygons close to the camera that are severely distorted
+        // by perspective or span the near-plane region.
+        if (depth < NEAR_POLY_CLIP_Z)
+        {
+            float maxZ = depth;
+            float minSX = 1e30f, maxSX = -1e30f;
+            float minSY = 1e30f, maxSY = -1e30f;
+
+            for (int j = 0; j < pCurrentPrimEntry->numOfVertices; j++)
+            {
+                float sx = pCurrentPrimEntry->vertices[j].X;
+                float sy = pCurrentPrimEntry->vertices[j].Y;
+                float sz = pCurrentPrimEntry->vertices[j].Z;
+
+                // Sentinel vertex from near-plane clipping in AnimNuage
+                if (sx <= -9999.f && sy <= -9999.f && sz <= -9999.f)
+                {
+                    clipPoly = true;
+                    break;
+                }
+
+                if (sx < minSX) minSX = sx;
+                if (sx > maxSX) maxSX = sx;
+                if (sy < minSY) minSY = sy;
+                if (sy > maxSY) maxSY = sy;
+                if (sz > maxZ) maxZ = sz;
+            }
+
+            if (!clipPoly)
+            {
+                // Z range check: large spread means severe perspective distortion
+                float zRange = maxZ - depth;
+                if (zRange > NEAR_POLY_MAX_Z_RANGE)
+                    clipPoly = true;
+            }
+
+            if (!clipPoly)
+            {
+                // Screen extent check: polygon covers too much of the viewport
+                float screenW = maxSX - minSX;
+                float screenH = maxSY - minSY;
+                if (screenW > 320.f * NEAR_POLY_MAX_SCREEN_FRAC ||
+                    screenH > 200.f * NEAR_POLY_MAX_SCREEN_FRAC)
+                {
+                    clipPoly = true;
+                }
+            }
+        }
+
+        if (!clipPoly)
+        {
+            positionInPrimEntry++;
+
+            numOfPrimitiveToRender++;
+            ASSERT(positionInPrimEntry < NUM_MAX_PRIM_ENTRY);
+        }
     }
 }
 
@@ -859,6 +958,33 @@ void primType5(int primType, char** ptr, char** out) // draw out of hardClip
 
 void line(int x1, int y1, int x2, int y2, char c);
 
+// Mirror UV into [0,1] range so ramp textures never sample transparent atlas padding
+static float mirrorUV(float v)
+{
+    if (v < 0.0f) v = -v;
+    int i = (int)v;
+    float frac = v - (float)i;
+    if (i & 1) frac = 1.0f - frac;
+    // Keep a small margin away from exact edges to avoid bleeding
+    const float eps = 0.005f;
+    if (frac < eps) frac = eps;
+    if (frac > 1.0f - eps) frac = 1.0f - eps;
+    return frac;
+}
+
+// Sample CPU-side RGBA pixel data at a UV coordinate and return true if transparent (alpha == 0)
+static bool isAtlasUVTransparent(const std::vector<unsigned char>& pixelData, int texW, int texH, float u, float v)
+{
+    if (pixelData.empty() || texW <= 0 || texH <= 0)
+        return true;
+    int px = (int)(u * (float)texW);
+    int py = (int)(v * (float)texH);
+    if (px < 0) px = 0; if (px >= texW) px = texW - 1;
+    if (py < 0) py = 0; if (py >= texH) py = texH - 1;
+    int idx = (py * texW + px) * 4;
+    return pixelData[idx + 3] == 0;
+}
+
 void renderLine(primEntryStruct* pEntry) // line
 {
     osystem_draw3dLine( pEntry->vertices[0].X,pEntry->vertices[0].Y,pEntry->vertices[0].Z,
@@ -868,7 +994,118 @@ void renderLine(primEntryStruct* pEntry) // line
 
 void renderPoly(primEntryStruct* pEntry) // poly
 {
-    osystem_fillPoly((float*)pEntry->vertices,pEntry->numOfVertices, pEntry->color, pEntry->material);
+    // Multi-layered rendering: always render the flat base color first, then overlay
+    // the atlas texture on top. Transparent atlas pixels naturally let the base show through.
+
+    // Always render the base material layer first
+    osystem_fillPoly((float*)pEntry->vertices, pEntry->numOfVertices, pEntry->color, pEntry->material);
+
+    if (!s_currentAtlas)
+        return;
+
+    // Overlay atlas texture on top of the base layer where UVs are available
+
+    // Textured polygon primitives (type 9/10) - use flat atlas overlay
+    if (pEntry->type == processPrim_PolyTexture9 || pEntry->type == processPrim_PolyTexture10)
+    {
+        if (bgfx::isValid(s_currentAtlas->flatTexture)
+            && pEntry->originalPrimIndex < (int)s_currentAtlas->flatPolyUVs.size())
+        {
+            AtlasPolyUVs& uvs = s_currentAtlas->flatPolyUVs[pEntry->originalPrimIndex];
+            if (!uvs.u.empty() && (int)uvs.u.size() >= pEntry->numOfVertices)
+            {
+                float uvArray[NUM_MAX_VERTEX_IN_PRIM * 2];
+                for (int i = 0; i < pEntry->numOfVertices; i++)
+                {
+                    uvArray[i * 2 + 0] = uvs.u[i];
+                    uvArray[i * 2 + 1] = uvs.v[i];
+                }
+                osystem_fillPolyTextured((float*)pEntry->vertices, pEntry->numOfVertices, uvArray, s_currentAtlas->flatTexture);
+            }
+        }
+        return;
+    }
+
+    // Flat-shaded polygons (material 0) - try flat atlas then main atlas overlay
+    if (pEntry->type == primTypeEnum_Poly && pEntry->material == 0)
+    {
+        if (bgfx::isValid(s_currentAtlas->flatTexture)
+            && pEntry->originalPrimIndex < (int)s_currentAtlas->flatPolyUVs.size())
+        {
+            AtlasPolyUVs& uvs = s_currentAtlas->flatPolyUVs[pEntry->originalPrimIndex];
+            if (!uvs.u.empty() && (int)uvs.u.size() >= pEntry->numOfVertices)
+            {
+                float uvArray[NUM_MAX_VERTEX_IN_PRIM * 2];
+                for (int i = 0; i < pEntry->numOfVertices; i++)
+                {
+                    uvArray[i * 2 + 0] = uvs.u[i];
+                    uvArray[i * 2 + 1] = uvs.v[i];
+                }
+                osystem_fillPolyTextured((float*)pEntry->vertices, pEntry->numOfVertices, uvArray, s_currentAtlas->flatTexture);
+                return;
+            }
+        }
+
+        if (bgfx::isValid(s_currentAtlas->texture)
+            && pEntry->originalPrimIndex < (int)s_currentAtlas->polyUVs.size())
+        {
+            AtlasPolyUVs& uvs = s_currentAtlas->polyUVs[pEntry->originalPrimIndex];
+            if (!uvs.u.empty() && (int)uvs.u.size() >= pEntry->numOfVertices)
+            {
+                float uvArray[NUM_MAX_VERTEX_IN_PRIM * 2];
+                for (int i = 0; i < pEntry->numOfVertices; i++)
+                {
+                    uvArray[i * 2 + 0] = uvs.u[i];
+                    uvArray[i * 2 + 1] = uvs.v[i];
+                }
+                osystem_fillPolyTextured((float*)pEntry->vertices, pEntry->numOfVertices, uvArray, s_currentAtlas->texture);
+            }
+        }
+        return;
+    }
+
+    // Ramp-shaded polygons (material 3-6) - ramp atlas overlay with mirrored UVs
+    if (pEntry->type == primTypeEnum_Poly && pEntry->isRampPrim
+        && pEntry->material >= 3 && pEntry->material <= 6)
+    {
+        if (bgfx::isValid(s_currentAtlas->rampTexture)
+            && pEntry->originalPrimIndex < (int)s_currentAtlas->rampPolyUVs.size())
+        {
+            AtlasPolyUVs& uvs = s_currentAtlas->rampPolyUVs[pEntry->originalPrimIndex];
+            if (!uvs.u.empty() && (int)uvs.u.size() >= pEntry->numOfVertices)
+            {
+                float uvArray[NUM_MAX_VERTEX_IN_PRIM * 2];
+                for (int i = 0; i < pEntry->numOfVertices; i++)
+                {
+                    uvArray[i * 2 + 0] = mirrorUV(uvs.u[i]);
+                    uvArray[i * 2 + 1] = mirrorUV(uvs.v[i]);
+                }
+                osystem_fillPolyTextured((float*)pEntry->vertices, pEntry->numOfVertices, uvArray, s_currentAtlas->rampTexture);
+            }
+        }
+        return;
+    }
+
+    // Other material polygons (material 1: dither, material 2: transparent) - other atlas overlay
+    if (pEntry->type == primTypeEnum_Poly && (pEntry->material == 1 || pEntry->material == 2))
+    {
+        if (bgfx::isValid(s_currentAtlas->otherTexture)
+            && pEntry->originalPrimIndex < (int)s_currentAtlas->otherPolyUVs.size())
+        {
+            AtlasPolyUVs& uvs = s_currentAtlas->otherPolyUVs[pEntry->originalPrimIndex];
+            if (!uvs.u.empty() && (int)uvs.u.size() >= pEntry->numOfVertices)
+            {
+                float uvArray[NUM_MAX_VERTEX_IN_PRIM * 2];
+                for (int i = 0; i < pEntry->numOfVertices; i++)
+                {
+                    uvArray[i * 2 + 0] = uvs.u[i];
+                    uvArray[i * 2 + 1] = uvs.v[i];
+                }
+                osystem_fillPolyTextured((float*)pEntry->vertices, pEntry->numOfVertices, uvArray, s_currentAtlas->otherTexture);
+            }
+        }
+        return;
+    }
 }
 
 void renderZixel(primEntryStruct* pEntry) // point
@@ -897,6 +1134,8 @@ void renderSphere(primEntryStruct* pEntry) // sphere
 
     transformedSize = (((float)pEntry->size * (float)cameraFovX) / (float)(pEntry->vertices[0].Z+cameraPerspective));
 
+    numSpheresPrimitives++;  // Track sphere index for atlas grid lookup
+
     osystem_drawSphere(pEntry->vertices[0].X,pEntry->vertices[0].Y,pEntry->vertices[0].Z,pEntry->color, pEntry->material, transformedSize);
 }
 
@@ -909,24 +1148,46 @@ void defaultRenderFunction(primEntryStruct* buffer)
 typedef void (*renderFunction)(primEntryStruct* buffer);
 
 renderFunction renderFunctions[]={
-    renderLine, // line
-    renderPoly, // poly
-    renderPoint, // point
-    renderSphere, // sphere
-    nullptr,
-    nullptr,
-    renderBigPoint,
-	renderZixel,
+	renderLine, // line (0)
+	renderPoly, // poly (1)
+	renderPoint, // point (2)
+	renderSphere, // sphere (3)
+	nullptr, // disk (4)
+	nullptr, // cylinder (5)
+	renderBigPoint, // bigpoint (6)
+	renderZixel, // zixel (7)
+	nullptr, // polyTexture8 (8) - unsupported
+	renderPoly, // polyTexture9 (9) - textured polygon
+	renderPoly, // polyTexture10 (10) - textured polygon
 };
+
+void setCurrentBodyNum(int bodyNum, sBody* pBody, const std::string& hqrName)
+{
+    // Only load texture atlases when HD backgrounds are enabled
+    if (isHDBackgroundEnabled())
+    {
+        s_currentAtlas = loadModelAtlas(bodyNum, pBody, hqrName);
+    }
+    else
+    {
+        s_currentAtlas = nullptr;
+    }
+}
 
 int AffObjet(int x,int y,int z,int alpha,int beta,int gamma, sBody* pBody)
 {
+    if (!pBody)
+        return 2;
+
     int numPrim;
     int i;
     char* out;
 
     // reinit the 2 static tables
     positionInPrimEntry = 0;
+    s_modelHasTexturedPrims = false;
+    // Clear primitive table to ensure fields are initialized
+    memset(primTable, 0, sizeof(primTable));
     //
 
     BBox3D1 = 0x7FFF;
@@ -988,13 +1249,26 @@ int AffObjet(int x,int y,int z,int alpha,int beta,int gamma, sBody* pBody)
             return(2);
         }
 
-        out = primBuffer;
+		out = primBuffer;
+
+		// Pre-scan: detect if model has textured primitives (must be done before processing)
+		for(i=0;i<numPrim;i++)
+		{
+			primTypeEnum primType = pBody->m_primitives[i].m_type;
+			if (primType == processPrim_PolyTexture9 || primType == processPrim_PolyTexture10)
+			{
+				s_modelHasTexturedPrims = true;
+				break;
+			}
+		}
 
 		// create the list of all primitives to render
-        for(i=0;i<numPrim;i++)
-        {
-            sPrimitive* pPrimitive = &pBody->m_primitives[i];
-            primTypeEnum primType = pPrimitive->m_type;
+		for(i=0;i<numPrim;i++)
+		{
+			sPrimitive* pPrimitive = &pBody->m_primitives[i];
+			primTypeEnum primType = pPrimitive->m_type;
+
+			u32 prevPos = positionInPrimEntry;
 
 			switch(primType)
 			{
@@ -1002,7 +1276,7 @@ int AffObjet(int x,int y,int z,int alpha,int beta,int gamma, sBody* pBody)
 				processPrim_Line(primType, pPrimitive,&out);
 				break;
 			case primTypeEnum_Poly:
-				processPrim_Poly(primType, pPrimitive,&out);
+				processPrim_Poly(primType, pPrimitive, &out, i);
 				break;
 			case primTypeEnum_Point:
 			case primTypeEnum_BigPoint:
@@ -1012,90 +1286,217 @@ int AffObjet(int x,int y,int z,int alpha,int beta,int gamma, sBody* pBody)
 			case primTypeEnum_Sphere:
 				processPrim_Sphere(primType, pPrimitive,&out);
 				break;
-            case processPrim_PolyTexture9:
-            case processPrim_PolyTexture10:
-                processPrim_Poly(primType, pPrimitive, &out);
-                break;
+			case processPrim_PolyTexture9:
+			case processPrim_PolyTexture10:
+				processPrim_Poly(primType, pPrimitive, &out, i);
+				break;
 			default:
 				return 0;
 				assert(0);
 			}
 
-        }
+			// Track which original primitive this entry came from (for atlas UV lookup)
+			// NOTE: originalPrimIndex is now set directly in processPrim_Poly to avoid
+			// index mismatches when depth culling filters out primitives
+			if (positionInPrimEntry > prevPos)
+			{
+				// Verify the index was set correctly (should be set for poly types)
+				ASSERT(primTable[prevPos].originalPrimIndex == i || 
+					   (primType != primTypeEnum_Poly && primType != processPrim_PolyTexture9 && primType != processPrim_PolyTexture10));
+			}
+		}
 
-#if 0
-        // TODO: poly sorting by depth
-#ifdef USE_GL2
-        source = renderBuffer;
-#else
-        inBuffer = renderBuffer;
-        outBuffer = sortedBuffer;
+		if(!numOfPrimitiveToRender)
+		{
+			BBox3D3 = -32000;
+			BBox3D4 = -32000;
+			BBox3D1 = 32000;
+			BBox3D2 = 32000;
+			return(1); // model ok, but out of screen
+		}
 
-        for(i=0;i<numOfPolyToRender;i++)
-        {
-            int j;
-            int bestIdx;
-            int bestDepth = -32000;
-            char* readBuffer = renderBuffer;
+		// --- Floating detail polygon detection ---
+		// Detect small detail polygons (eyes, nostrils) that overlap larger
+		// polygons (face). Uses rest-pose model-space area to identify tiny
+		// polygons, then checks screen-space bbox containment to confirm they
+		// sit within a larger polygon. Works at any distance and camera angle.
+		//
+		// Key discriminator: vertex isolation. Floating geometry (eyes) uses
+		// vertices that no other polygon in the model references. Connected
+		// mesh polygons (lips, chin, cheek) share vertices with neighbors.
+		{
+			// Build per-vertex reference count across ALL model primitives.
+			// Connected mesh vertices are referenced by multiple polygons (refcount >= 2).
+			// Floating geometry vertices are referenced by only one polygon (refcount == 1).
+			u8 vertexRefCount[NUM_MAX_POINT_IN_POINT_BUFFER];
+			memset(vertexRefCount, 0, sizeof(vertexRefCount));
+			for (int pk = 0; pk < numPrim; pk++)
+			{
+				sPrimitive& prim = pBody->m_primitives[pk];
+				for (int v = 0; v < (int)prim.m_points.size(); v++)
+				{
+					u16 vi = prim.m_points[v];
+					if (vi < NUM_MAX_POINT_IN_POINT_BUFFER && vertexRefCount[vi] < 255)
+						vertexRefCount[vi]++;
+				}
+			}
 
-            for(j=0;j<numOfPolyToRender;j++)
-            {
-                int depth = READ_LE_S16(readBuffer);
+			float polyAreas[NUM_MAX_PRIM_ENTRY];
+			memset(polyAreas, 0, sizeof(polyAreas));
 
-                if(depth>bestDepth)
-                {
-                    bestIdx = j;
-                    bestDepth = depth;
-                }
+			// Compute rest-pose model-space area for each polygon
+			for (int pi = 0; pi < numOfPrimitiveToRender; pi++)
+			{
+				primEntryStruct& pe = primTable[pi];
+				if (pe.numOfVertices < 3) continue;
+				if (pe.type != primTypeEnum_Poly &&
+					pe.type != processPrim_PolyTexture9 &&
+					pe.type != processPrim_PolyTexture10) continue;
 
-                readBuffer+=10;
-            }
+				int origIdx = pe.originalPrimIndex;
+				if (origIdx < 0 || origIdx >= (int)pBody->m_primitives.size())
+					continue;
+				sPrimitive& origPrim = pBody->m_primitives[origIdx];
+				if ((int)origPrim.m_points.size() < 3)
+					continue;
 
-            memcpy(outBuffer,renderBuffer+10*bestIdx,10);
-            *(s16*)(renderBuffer+10*bestIdx) = -32000;
-            outBuffer+=10;
-        }
-        source = sortedBuffer;
+				int vi0 = origPrim.m_points[0];
+				int vi1 = origPrim.m_points[1];
+				int vi2 = origPrim.m_points[2];
+				if (vi0 >= (int)pBody->m_vertices.size() ||
+					vi1 >= (int)pBody->m_vertices.size() ||
+					vi2 >= (int)pBody->m_vertices.size())
+					continue;
 
-#endif
-#endif
+				float e1x = (float)(pBody->m_vertices[vi1].x - pBody->m_vertices[vi0].x);
+				float e1y = (float)(pBody->m_vertices[vi1].y - pBody->m_vertices[vi0].y);
+				float e1z = (float)(pBody->m_vertices[vi1].z - pBody->m_vertices[vi0].z);
+				float e2x = (float)(pBody->m_vertices[vi2].x - pBody->m_vertices[vi0].x);
+				float e2y = (float)(pBody->m_vertices[vi2].y - pBody->m_vertices[vi0].y);
+				float e2z = (float)(pBody->m_vertices[vi2].z - pBody->m_vertices[vi0].z);
+				float crx = e1y * e2z - e1z * e2y;
+				float cry = e1z * e2x - e1x * e2z;
+				float crz = e1x * e2y - e1y * e2x;
+				polyAreas[pi] = sqrtf(crx * crx + cry * cry + crz * crz) * 0.5f;
+			}
 
-        //  
+			// Flag small, isolated polygons whose screen bbox is contained
+			// within a larger polygon (floating detail geometry)
+			for (int pi = 0; pi < numOfPrimitiveToRender; pi++)
+			{
+				primEntryStruct& pe = primTable[pi];
+				if (pe.numOfVertices < 3) continue;
+				if (pe.type != primTypeEnum_Poly &&
+					pe.type != processPrim_PolyTexture9 &&
+					pe.type != processPrim_PolyTexture10) continue;
+				if (polyAreas[pi] >= FLOATING_POLY_AREA_MAX || polyAreas[pi] <= 0.f)
+					continue;
 
-        if(!numOfPrimitiveToRender)
-        {
-            BBox3D3 = -32000;
-            BBox3D4 = -32000;
-            BBox3D1 = 32000;
-            BBox3D2 = 32000;
-            return(1); // model ok, but out of screen
-        }
+				int origIdxP = pe.originalPrimIndex;
+				if (origIdxP < 0 || origIdxP >= (int)pBody->m_primitives.size())
+					continue;
+				sPrimitive& origPrimP = pBody->m_primitives[origIdxP];
 
-        //  source += 10 * 1;
-        for(i=0;i<numOfPrimitiveToRender;i++)
-        {
-            int type = primTable[i].type;
-            if(type >= 0 && type < (int)(sizeof(renderFunctions)/sizeof(renderFunctions[0])) && renderFunctions[type])
-            {
-                renderFunctions[type](&primTable[i]);
-            }
-        }
+				// Vertex isolation check: floating geometry uses vertices that
+				// no other polygon references. Connected mesh polygons share
+				// vertices with neighbors (refcount >= 2). Only consider
+				// polygons where ALL vertices are exclusive (refcount == 1).
+				{
+					bool isIsolated = true;
+					for (int v = 0; v < (int)origPrimP.m_points.size(); v++)
+					{
+						u16 vi = origPrimP.m_points[v];
+						if (vi < NUM_MAX_POINT_IN_POINT_BUFFER && vertexRefCount[vi] > 1)
+						{
+							isIsolated = false;
+							break;
+						}
+					}
+					if (!isIsolated) continue;
+				}
 
-        //DEBUG
-        /*  for(i=0;i<numPointInPoly;i++)
-        {
-        int x;
-        int y;
+				// Check rest-pose model-space extent
+				{
+					float bMinX = 1e30f, bMaxX = -1e30f;
+					float bMinY = 1e30f, bMaxY = -1e30f;
+					float bMinZ = 1e30f, bMaxZ = -1e30f;
+					for (int v = 0; v < (int)origPrimP.m_points.size(); v++)
+					{
+						int vi = origPrimP.m_points[v];
+						if (vi >= (int)pBody->m_vertices.size()) continue;
+						float mx = (float)pBody->m_vertices[vi].x;
+						float my = (float)pBody->m_vertices[vi].y;
+						float mz = (float)pBody->m_vertices[vi].z;
+						if (mx < bMinX) bMinX = mx; if (mx > bMaxX) bMaxX = mx;
+						if (my < bMinY) bMinY = my; if (my > bMaxY) bMaxY = my;
+						if (mz < bMinZ) bMinZ = mz; if (mz > bMaxZ) bMaxZ = mz;
+					}
+					float maxExt = bMaxX - bMinX;
+					if (bMaxY - bMinY > maxExt) maxExt = bMaxY - bMinY;
+					if (bMaxZ - bMinZ > maxExt) maxExt = bMaxZ - bMinZ;
+					if (maxExt > FLOATING_POLY_MAX_EXTENT)
+						continue;
+				}
 
-        x = renderPointList[i*3];
-        y = renderPointList[i*3+1];
+				// Screen bounding box of the small polygon
+				float pMinX = 1e30f, pMaxX = -1e30f;
+				float pMinY = 1e30f, pMaxY = -1e30f;
+				bool pValid = true;
+				for (int v = 0; v < pe.numOfVertices; v++)
+				{
+					if (pe.vertices[v].X <= -9999.f) { pValid = false; break; }
+					if (pe.vertices[v].X < pMinX) pMinX = pe.vertices[v].X;
+					if (pe.vertices[v].X > pMaxX) pMaxX = pe.vertices[v].X;
+					if (pe.vertices[v].Y < pMinY) pMinY = pe.vertices[v].Y;
+					if (pe.vertices[v].Y > pMaxY) pMaxY = pe.vertices[v].Y;
+				}
+				if (!pValid) continue;
 
-        if(x>=0 && x < 319 && y>=0 && y<199)
-        {
-        screen[y*320+x] = 15;
-        }
-        }*/
-        //
+				// Check against every larger polygon
+				for (int pj = 0; pj < numOfPrimitiveToRender; pj++)
+				{
+					if (pj == pi) continue;
+					if (polyAreas[pj] < polyAreas[pi] * FLOATING_POLY_AREA_RATIO)
+						continue;
+
+					primEntryStruct& qe = primTable[pj];
+					if (qe.numOfVertices < 3) continue;
+
+					float qMinX = 1e30f, qMaxX = -1e30f;
+					float qMinY = 1e30f, qMaxY = -1e30f;
+					bool qValid = true;
+					for (int v = 0; v < qe.numOfVertices; v++)
+					{
+						if (qe.vertices[v].X <= -9999.f) { qValid = false; break; }
+						if (qe.vertices[v].X < qMinX) qMinX = qe.vertices[v].X;
+						if (qe.vertices[v].X > qMaxX) qMaxX = qe.vertices[v].X;
+						if (qe.vertices[v].Y < qMinY) qMinY = qe.vertices[v].Y;
+						if (qe.vertices[v].Y > qMaxY) qMaxY = qe.vertices[v].Y;
+					}
+					if (!qValid) continue;
+
+					const float margin = 2.0f;
+					if (pMinX >= qMinX - margin && pMaxX <= qMaxX + margin &&
+						pMinY >= qMinY - margin && pMaxY <= qMaxY + margin)
+					{
+						pe.nearClipped = true;
+						break;
+					}
+				}
+			}
+		}
+
+				// Render primitives in order
+		for(i=0;i<numOfPrimitiveToRender;i++)
+		{
+			if (primTable[i].nearClipped)
+				continue;
+			int type = primTable[i].type;
+			if(type >= 0 && type < (int)(sizeof(renderFunctions)/sizeof(renderFunctions[0])) && renderFunctions[type])
+			{
+				renderFunctions[type](&primTable[i]);
+			}
+		}
 
         osystem_flushPendingPrimitives();
         return(0);
@@ -1324,3 +1725,258 @@ void drawPlanarShadow(int x, int y, int z, int alpha, int beta, int gamma, sBody
     osystem_flushPendingPrimitives();
     g_submitShadowStencil = false;
 }
+
+// Maximum distance (in world units) from actor to consider a wall for shadow projection
+#define WALL_SHADOW_MAX_DIST 2000.0f
+
+void drawWallPlanarShadow(int x, int y, int z, int alpha, int beta, int gamma, sBody* bodyPtr, int actorRoom)
+{
+    if (!g_wallShadowEnabled || !g_planarShadowEnabled)
+        return;
+
+    if (g_shadowLightDirY == 0.0f)
+        return;
+
+    if (actorRoom < 0 || actorRoom >= (int)roomDataTable.size())
+        return;
+
+    const roomDataStruct& roomData = roomDataTable[actorRoom];
+
+    // Convert wall coordinates from room-local to current-room world space
+    int roomOffX = 0, roomOffY = 0, roomOffZ = 0;
+    if (actorRoom != currentRoom)
+    {
+        roomOffX = (int)((roomDataTable[actorRoom].worldX - roomDataTable[currentRoom].worldX) * 10);
+        roomOffY = (int)((roomDataTable[currentRoom].worldY - roomDataTable[actorRoom].worldY) * 10);
+        roomOffZ = (int)((roomDataTable[currentRoom].worldZ - roomDataTable[actorRoom].worldZ) * 10);
+    }
+
+    const bool isAnimated = (bodyPtr->m_flags & INFO_ANIM) != 0;
+
+    // Model rotation trig (same as drawPlanarShadow)
+    bool localNoRot;
+    int localCosA = 0, localSinA = 0;
+    int localCosB = 0, localSinB = 0;
+    int localCosG = 0, localSinG = 0;
+
+    if (!alpha && !beta && !gamma)
+    {
+        localNoRot = true;
+    }
+    else
+    {
+        localNoRot = false;
+        localCosA = cosTable[alpha & 0x3FF];
+        localSinA = cosTable[(alpha + 0x100) & 0x3FF];
+        localCosB = cosTable[beta & 0x3FF];
+        localSinB = cosTable[(beta + 0x100) & 0x3FF];
+        localCosG = cosTable[gamma & 0x3FF];
+        localSinG = cosTable[(gamma + 0x100) & 0x3FF];
+    }
+
+    const float actorWorldX = (float)x;
+    const float actorWorldY = (float)y;
+    const float actorWorldZ = (float)z;
+
+    for (u32 wi = 0; wi < roomData.numHardCol; wi++)
+    {
+        const hardColStruct& hardCol = roomData.hardColTable[wi];
+        if (hardCol.type != 1) // only walls
+            continue;
+
+        // Wall AABB in world space (current room coordinates)
+        float wallX1 = (float)(hardCol.zv.ZVX1 * 10 - roomOffX);
+        float wallX2 = (float)(hardCol.zv.ZVX2 * 10 - roomOffX);
+        float wallY1 = (float)(hardCol.zv.ZVY1 * 10 + roomOffY);
+        float wallY2 = (float)(hardCol.zv.ZVY2 * 10 + roomOffY);
+        float wallZ1 = (float)(hardCol.zv.ZVZ1 * 10 + roomOffZ);
+        float wallZ2 = (float)(hardCol.zv.ZVZ2 * 10 + roomOffZ);
+
+        // Skip walls too far from actor
+        float closestX = actorWorldX < wallX1 ? wallX1 : (actorWorldX > wallX2 ? wallX2 : actorWorldX);
+        float closestZ = actorWorldZ < wallZ1 ? wallZ1 : (actorWorldZ > wallZ2 ? wallZ2 : actorWorldZ);
+        float dx = actorWorldX - closestX;
+        float dz = actorWorldZ - closestZ;
+        if (dx * dx + dz * dz > WALL_SHADOW_MAX_DIST * WALL_SHADOW_MAX_DIST)
+            continue;
+
+        // Determine which face(s) of the wall AABB face the actor.
+        // We project onto each facing vertical face separately.
+        // For each face we define: axis (0=X, 2=Z), plane coordinate,
+        // and the perpendicular min/max bounds + vertical bounds.
+        struct WallFace
+        {
+            int axis;       // 0 = X-plane, 2 = Z-plane
+            float planeVal; // the X or Z coordinate of this face
+            float perpMin;  // min bound on the perpendicular axis
+            float perpMax;  // max bound on the perpendicular axis
+            float yMin;     // vertical min
+            float yMax;     // vertical max
+        };
+
+        WallFace faces[4];
+        int numFaces = 0;
+
+        // -X face (normal pointing -X): actor must be at X < wallX1
+        if (actorWorldX < wallX1)
+            faces[numFaces++] = { 0, wallX1, wallZ1, wallZ2, wallY1, wallY2 };
+        // +X face (normal pointing +X): actor must be at X > wallX2
+        if (actorWorldX > wallX2)
+            faces[numFaces++] = { 0, wallX2, wallZ1, wallZ2, wallY1, wallY2 };
+        // -Z face (normal pointing -Z): actor must be at Z < wallZ1
+        if (actorWorldZ < wallZ1)
+            faces[numFaces++] = { 2, wallZ1, wallX1, wallX2, wallY1, wallY2 };
+        // +Z face (normal pointing +Z): actor must be at Z > wallZ2
+        if (actorWorldZ > wallZ2)
+            faces[numFaces++] = { 2, wallZ2, wallX1, wallX2, wallY1, wallY2 };
+
+        for (int fi = 0; fi < numFaces; fi++)
+        {
+            const WallFace& face = faces[fi];
+
+            // For each polygon in the model, project onto this wall face
+            for (int pi = 0; pi < (int)bodyPtr->m_primitives.size(); pi++)
+            {
+                const sPrimitive* pPrim = &bodyPtr->m_primitives[pi];
+                if (pPrim->m_type != primTypeEnum_Poly)
+                    continue;
+
+                const int numVerts = (int)pPrim->m_points.size();
+                if (numVerts < 3 || numVerts >= NUM_MAX_VERTEX_IN_PRIM)
+                    continue;
+
+                float shadowVerts[NUM_MAX_VERTEX_IN_PRIM * 3];
+                bool valid = true;
+                int clippedCount = 0;
+
+                for (int vi = 0; vi < numVerts; vi++)
+                {
+                    const u16 vertexIdx = pPrim->m_points[vi];
+
+                    float localX, localY, localZ;
+
+                    if (isAnimated)
+                    {
+                        localX = (float)pointBuffer[vertexIdx].x;
+                        localY = (float)pointBuffer[vertexIdx].y;
+                        localZ = (float)pointBuffer[vertexIdx].z;
+                    }
+                    else
+                    {
+                        localX = (float)bodyPtr->m_vertices[vertexIdx].x;
+                        localY = (float)bodyPtr->m_vertices[vertexIdx].y;
+                        localZ = (float)bodyPtr->m_vertices[vertexIdx].z;
+
+                        if (!localNoRot)
+                        {
+                            // Y rotation
+                            {
+                                float tx = localX, tz = localZ;
+                                localX = (((localSinB * tx) - (localCosB * tz)) / 65536.f) * 2.f;
+                                localZ = (((localCosB * tx) + (localSinB * tz)) / 65536.f) * 2.f;
+                            }
+                            // Z rotation
+                            {
+                                float tx = localX, ty = localY;
+                                localX = (((localSinG * tx) - (localCosG * ty)) / 65536.f) * 2.f;
+                                localY = (((localCosG * tx) + (localSinG * ty)) / 65536.f) * 2.f;
+                            }
+                            // X rotation
+                            {
+                                float ty = localY, tz = localZ;
+                                localY = (((localSinA * ty) - (localCosA * tz)) / 65536.f) * 2.f;
+                                localZ = (((localCosA * ty) + (localSinA * tz)) / 65536.f) * 2.f;
+                            }
+                        }
+                    }
+
+                    // Vertex world position (before projection)
+                    float vertWorldX = localX + actorWorldX;
+                    float vertWorldY = localY + actorWorldY;
+                    float vertWorldZ = localZ + actorWorldZ;
+
+                    // Project along light direction onto the wall face plane.
+                    // For X-plane: solve vertWorldX + t * lightDirX = planeVal
+                    // For Z-plane: solve vertWorldZ + t * lightDirZ = planeVal
+                    float t;
+                    if (face.axis == 0) // X-plane
+                    {
+                        if (g_shadowLightDirX == 0.0f) { valid = false; break; }
+                        t = (face.planeVal - vertWorldX) / g_shadowLightDirX;
+                    }
+                    else // Z-plane
+                    {
+                        if (g_shadowLightDirZ == 0.0f) { valid = false; break; }
+                        t = (face.planeVal - vertWorldZ) / g_shadowLightDirZ;
+                    }
+
+                    // Shadow must be cast forward along light (t > 0)
+                    if (t <= 0.0f) { valid = false; break; }
+
+                    float hitX = vertWorldX + t * g_shadowLightDirX;
+                    float hitY = vertWorldY + t * g_shadowLightDirY;
+                    float hitZ = vertWorldZ + t * g_shadowLightDirZ;
+
+                    // Clamp to wall face bounds
+                    float perpVal = (face.axis == 0) ? hitZ : hitX;
+                    if (perpVal < face.perpMin) perpVal = face.perpMin;
+                    if (perpVal > face.perpMax) perpVal = face.perpMax;
+                    if (face.axis == 0) hitZ = perpVal; else hitX = perpVal;
+
+                    if (hitY < face.yMin) hitY = face.yMin;
+                    if (hitY > face.yMax) hitY = face.yMax;
+
+                    // Check if point hit the floor instead (t for floor is shorter)
+                    float tFloor = -localY / g_shadowLightDirY;
+                    if (tFloor > 0.0f && tFloor < t)
+                    {
+                        clippedCount++;
+                    }
+
+                    // Camera-space transform
+                    float X = hitX - (float)translateX;
+                    float Y = hitY - (float)translateY;
+                    float Z = hitZ - (float)translateZ;
+
+                    transformPoint(&X, &Y, &Z);
+
+                    Z += (float)cameraPerspective;
+
+                    if (Z <= 50.0f)
+                    {
+                        valid = false;
+                        break;
+                    }
+
+                    float screenX = ((X * (float)cameraFovX) / Z) + (float)cameraCenterX;
+                    float screenY = ((Y * (float)cameraFovY) / Z) + (float)cameraCenterY;
+
+                    if (screenX < -320.f || screenX > 640.f || screenY < -200.f || screenY > 400.f)
+                    {
+                        valid = false;
+                        break;
+                    }
+
+                    shadowVerts[vi * 3 + 0] = screenX;
+                    shadowVerts[vi * 3 + 1] = screenY;
+                    shadowVerts[vi * 3 + 2] = Z + 5.0f;
+                }
+
+                // Skip if all vertices would have hit the floor instead
+                if (clippedCount == numVerts)
+                    valid = false;
+
+                if (valid)
+                {
+                    osystem_fillPoly(shadowVerts, numVerts, 0x00, 2);
+                }
+            }
+
+            g_submitShadowStencil = true;
+            osystem_flushPendingPrimitives();
+            g_submitShadowStencil = false;
+        }
+    }
+}
+
+

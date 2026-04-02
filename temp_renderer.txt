@@ -165,7 +165,8 @@ int g_screenWidth = 0;
 int g_screenHeight = 0;
 
 void osystem_preinigGL()
-{}
+{
+}
 
 void osystem_initGL(int screenWidth, int screenHeight)
 {
@@ -2449,37 +2450,38 @@ std::array<unsigned char, 320 * 200> uiLayer;
 
 void osystem_CopyBlockPhys(unsigned char* videoBuffer, int left, int top, int right, int bottom)
 {
-    unsigned char* in = (unsigned char*)&videoBuffer[0] + left + top * 320;
+	unsigned char* in = (unsigned char*)&videoBuffer[0] + left + top * 320;
 
-    while ((right - left) % 4)
-    {
-        right++;
-    }
+	while ((right - left) % 4)
+	{
+		right++;
+	}
 
-    while ((bottom - top) % 4)
-    {
-        bottom++;
-    }
+	while ((bottom - top) % 4)
+	{
+		bottom++;
+	}
 
-    // Clamp to screen bounds after alignment rounding
-    if (right > 320) right = 320;
-    if (bottom > 200) bottom = 200;
+	// Clamp to screen bounds after alignment rounding
+	if (right > 320) right = 320;
+	if (bottom > 200) bottom = 200;
 
-    for (int i = top; i < bottom; i++)
-    {
-        in = (unsigned char*)&videoBuffer[0] + left + i * 320;
-        unsigned char* out2 = physicalScreen + left + i * 320;
-        for (int j = left; j < right; j++)
-        {
-            *(out2++) = *(in++);
-        }
-    }
+	for (int i = top; i < bottom; i++)
+	{
+		in = (unsigned char*)&videoBuffer[0] + left + i * 320;
+		unsigned char* out2 = physicalScreen + left + i * 320;
+		for (int j = left; j < right; j++)
+		{
+			*(out2++) = *(in++);
+		}
+	}
 
-    bgfx::updateTexture2D(g_backgroundTexture, 0, 0, 0, 0, 320, 200, bgfx::copy(physicalScreen, 320 * 200));
+	bgfx::updateTexture2D(g_backgroundTexture, 0, 0, 0, 0, 320, 200, bgfx::copy(physicalScreen, 320 * 200));
 }
 
 void osystem_refreshFrontTextureBuffer()
-{}
+{
+}
 
 void osystem_initBuffer()
 {
@@ -2525,7 +2527,8 @@ void osystem_clearClip()
 }
 
 void osystem_stopFrame()
-{}
+{
+}
 
 void osystem_flushPendingPrimitives()
 {
@@ -2537,7 +2540,7 @@ void osystem_flushPendingPrimitives()
             pos[0] += g_shakeOffsetX;
             pos[1] += g_shakeOffsetY;
         }
-        };
+    };
 
     if (numUsedFlatVertices)
     {
@@ -2617,7 +2620,7 @@ void osystem_flushPendingPrimitives()
 
         // noise texture
         static bgfx::TextureHandle noiseTexture = BGFX_INVALID_HANDLE;
-        if (!bgfx::isValid(noiseTexture))
+        if(!bgfx::isValid(noiseTexture))
         {
             const int noiseTextureDim = 256;
             std::array<u8, noiseTextureDim* noiseTextureDim> noiseTextureData;
@@ -2671,7 +2674,7 @@ void osystem_flushPendingPrimitives()
         bgfx::submit(gameViewId, getRampShader());
     }
 
-    if (numUsedSpheres)
+    if(numUsedSpheres)
     {
         bgfx::VertexLayout layout;
         layout
@@ -2684,7 +2687,7 @@ void osystem_flushPendingPrimitives()
         bgfx::TransientVertexBuffer transientBuffer;
         bgfx::allocTransientVertexBuffer(&transientBuffer, numUsedSpheres, layout);
 
-        memcpy(transientBuffer.data, &sphereVertices[0], sizeof(sphereVertex) * numUsedSpheres);
+        memcpy(transientBuffer.data, &sphereVertices[0], sizeof(sphereVertex)* numUsedSpheres);
         applyShakeToVertices(transientBuffer.data, numUsedSpheres, sizeof(sphereVertex));
 
         bgfx::setState(0 | BGFX_STATE_WRITE_RGB
@@ -3209,7 +3212,7 @@ void osystem_drawPoint(float X, float Y, float Z, u8 color, u8 material, float s
             0,2,3
     } };
 
-    for (int i = 0; i < mapping.size(); i++)
+    for(int i=0; i< mapping.size(); i++)
     {
         if (numUsedSpheres >= NUM_MAX_SPHERES_VERTICES)
         {
@@ -3285,13 +3288,11 @@ static void ensureMaskDirectory(const char* dir)
 #endif
 }
 
-static void buildMaskFilename(char* buf, size_t bufSize, const char* folder, int roomId, int actualRoomNumber, int maskId)
+static void buildMaskFilename(char* buf, size_t bufSize, const char* folder, int actualRoomNumber, int maskId)
 {
     // Organise by floor/camera/room so masks are uniquely identified:
-    //   <folder>/FLOOR##/CAM###/RID###_ROOM##_MASK##.png
-    // roomId is the internal room index (unique identifier in maskTextures array)
-    // actualRoomNumber is the real room number (not the camera-relative index)
-    // maskId is the mask index within the room
+    //   <folder>/FLOOR##/CAM###/ROOM##_MASK##.png
+    // actualRoomNumber is the real room number (not the camera-relative index).
     char floorDir[512];
     snprintf(floorDir, sizeof(floorDir), "%s/FLOOR%02d", folder, (int)g_currentFloor);
     ensureMaskDirectory(floorDir);
@@ -3300,7 +3301,7 @@ static void buildMaskFilename(char* buf, size_t bufSize, const char* folder, int
     snprintf(camDir, sizeof(camDir), "%s/FLOOR%02d/CAM%03d", folder, (int)g_currentFloor, (int)NumCamera);
     ensureMaskDirectory(camDir);
 
-    snprintf(buf, bufSize, "%s/FLOOR%02d/CAM%03d/RID%03d_ROOM%02d_MASK%02d.png", folder, (int)g_currentFloor, (int)NumCamera, roomId, actualRoomNumber, maskId);
+    snprintf(buf, bufSize, "%s/FLOOR%02d/CAM%03d/ROOM%02d_MASK%02d.png", folder, (int)g_currentFloor, (int)NumCamera, actualRoomNumber, maskId);
 }
 
 // Upscale a 320x200 R8 mask to dstW x dstH using nearest-neighbor.
@@ -3322,125 +3323,41 @@ static u8* upscaleMaskNearest(const u8* src, int dstW, int dstH)
     return dst;
 }
 
-static void dumpMaskToPng(const std::array<u8, 320 * 200>& mask, int roomId, int actualRoomNumber, int maskId)
+static void dumpMaskToPng(const std::array<u8, 320 * 200>& mask, int actualRoomNumber, int maskId)
 {
     static const char* dumpFolder = "masks_dump";
     ensureMaskDirectory(dumpFolder);
 
     char path[512];
-    buildMaskFilename(path, sizeof(path), dumpFolder, roomId, actualRoomNumber, maskId);
+    buildMaskFilename(path, sizeof(path), dumpFolder, actualRoomNumber, maskId);
 
-    // Determine output resolution and prepare background data
-    int outW = 320;
-    int outH = 200;
-    unsigned char* bgData = nullptr;
-    bool needsFreeBg = false;
-
-    // Try to get HD background data first
-    if (g_currentBackgroundIsHD && g_hdBackgroundPreviewData &&
-        g_hdBackgroundPreviewWidth > 0 && g_hdBackgroundPreviewHeight > 0)
+    // When an HD background is active, dump at its resolution so artists can
+    // paint mask detail at full size.  Otherwise fall back to 320x200.
+    if (g_currentBackgroundIsHD && g_currentBackgroundWidth > 320 && g_currentBackgroundHeight > 200)
     {
-        outW = g_hdBackgroundPreviewWidth;
-        outH = g_hdBackgroundPreviewHeight;
-        bgData = g_hdBackgroundPreviewData; // Already RGBA
-    }
-    else
-    {
-        // Fallback: convert physicalScreen (paletted 320x200) to RGBA
-        bgData = (unsigned char*)malloc(320 * 200 * 4);
-        if (bgData)
+        int hdW = g_currentBackgroundWidth;
+        int hdH = g_currentBackgroundHeight;
+        u8* hdMask = upscaleMaskNearest(mask.data(), hdW, hdH);
+        if (hdMask)
         {
-            for (int i = 0; i < 320 * 200; i++)
-            {
-                u8 palIdx = physicalScreen[i];
-                bgData[i * 4 + 0] = RGB_Pal[palIdx * 3 + 0];
-                bgData[i * 4 + 1] = RGB_Pal[palIdx * 3 + 1];
-                bgData[i * 4 + 2] = RGB_Pal[palIdx * 3 + 2];
-                bgData[i * 4 + 3] = 255;
-            }
-            needsFreeBg = true;
-        }
-    }
-
-    if (!bgData)
-    {
-        printf(RBGFX_WARN "Failed to get background data for mask dump" CON_RESET "\n");
-        return;
-    }
-
-    // Upscale mask to output resolution
-    u8* upscaledMask = nullptr;
-    if (outW != 320 || outH != 200)
-    {
-        upscaledMask = upscaleMaskNearest(mask.data(), outW, outH);
-        if (!upscaledMask)
-        {
-            if (needsFreeBg) free(bgData);
-            printf(RBGFX_WARN "Failed to upscale mask for dump" CON_RESET "\n");
+            stbi_write_png(path, hdW, hdH, 1, hdMask, hdW);
+            free(hdMask);
             return;
         }
     }
-    else
-    {
-        upscaledMask = (u8*)mask.data(); // No upscale needed
-    }
 
-    // Composite: background RGBA + mask overlay (semi-transparent red tint on masked pixels)
-    unsigned char* compositedImage = (unsigned char*)malloc((size_t)outW * outH * 4);
-    if (!compositedImage)
-    {
-        if (upscaledMask != mask.data()) free(upscaledMask);
-        if (needsFreeBg) free(bgData);
-        printf(RBGFX_WARN "Failed to allocate composited image buffer" CON_RESET "\n");
-        return;
-    }
-
-    for (int i = 0; i < outW * outH; i++)
-    {
-        u8 maskValue = upscaledMask[i];
-        // Background RGB values
-        u8 bgR = bgData[i * 4 + 0];
-        u8 bgG = bgData[i * 4 + 1];
-        u8 bgB = bgData[i * 4 + 2];
-
-        if (maskValue > 0)
-        {
-            // Mask is active: blend with semi-transparent red overlay (50% opacity)
-            float maskAlpha = 0.5f;
-            compositedImage[i * 4 + 0] = (u8)(bgR * (1.0f - maskAlpha) + 255 * maskAlpha);
-            compositedImage[i * 4 + 1] = (u8)(bgG * (1.0f - maskAlpha));
-            compositedImage[i * 4 + 2] = (u8)(bgB * (1.0f - maskAlpha));
-            compositedImage[i * 4 + 3] = 255;
-        }
-        else
-        {
-            // No mask: use background as-is
-            compositedImage[i * 4 + 0] = bgR;
-            compositedImage[i * 4 + 1] = bgG;
-            compositedImage[i * 4 + 2] = bgB;
-            compositedImage[i * 4 + 3] = 255;
-        }
-    }
-
-    // Write composited RGBA PNG
-    stbi_write_png(path, outW, outH, 4, compositedImage, outW * 4);
-
-    printf(RBGFX_OK "Dumped composited mask: %s (%dx%d)" CON_RESET "\n", path, outW, outH);
-
-    // Cleanup
-    free(compositedImage);
-    if (upscaledMask != mask.data()) free(upscaledMask);
-    if (needsFreeBg) free(bgData);
+    // Fallback: write at original 320x200
+    stbi_write_png(path, 320, 200, 1, mask.data(), 320);
 }
 
 // Try to load a replacement mask PNG from masks_hd/.
 // Returns true and fills outData / outW / outH on success.  The data is kept
 // at its native resolution (HD).  Caller must free outData.
-static bool loadReplacementMask(int roomId, int actualRoomNumber, int maskId, u8** outData, int* outW, int* outH)
+static bool loadReplacementMask(int actualRoomNumber, int maskId, u8** outData, int* outW, int* outH)
 {
     static const char* hdFolder = "masks_hd";
     char path[512];
-    buildMaskFilename(path, sizeof(path), hdFolder, roomId, actualRoomNumber, maskId);
+    buildMaskFilename(path, sizeof(path), hdFolder, actualRoomNumber, maskId);
 
     int w, h, channels;
     unsigned char* data = stbi_load(path, &w, &h, &channels, 1); // force single channel
@@ -3484,20 +3401,12 @@ void osystem_createMask(const std::array<u8, 320 * 200>& mask, int roomId, int m
     if (g_currentBackgroundIsHD)
     {
         // Dump the generated mask to masks_dump/ at HD resolution for reference/editing
-        // (controlled by remaster config - disabled by default for clean gameplay)
-        if (g_remasterConfig.masks.dumpEnabled)
-        {
-            dumpMaskToPng(mask, roomId, actualRoomNumber, maskId);
-        }
+        dumpMaskToPng(mask, actualRoomNumber, maskId);
 
         // Check for a hand-edited replacement in masks_hd/ (kept at native HD resolution)
-        // (controlled by remaster config - enabled by default to load artist edits)
-        if (g_remasterConfig.masks.loadEnabled)
+        if (loadReplacementMask(actualRoomNumber, maskId, &replacementData, &maskW, &maskH))
         {
-            if (loadReplacementMask(roomId, actualRoomNumber, maskId, &replacementData, &maskW, &maskH))
-            {
-                maskData = replacementData;
-            }
+            maskData = replacementData;
         }
     }
 
@@ -4194,6 +4103,7 @@ void osystem_destroyMapTexture()
     }
     g_mapLoadedFloor = -1;
 }
+
 
 
 

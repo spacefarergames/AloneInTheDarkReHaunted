@@ -173,6 +173,12 @@ void playSound(int num)
 	if(!soundEnabled)
 		return;
 
+	// Skip re-triggering the same sample if it is still playing.
+	// Life script opcodes (LM_SAMPLE, LM_ANIM_SAMPLE) fire every game tick,
+	// so without this guard the sound restarts from the beginning each frame.
+	if(num == LastSample && osystem_isSamplePlaying())
+		return;
+
 	char sampleFileName[256] = "";
 	if (g_gameId == TIMEGATE)
 	{
@@ -192,6 +198,7 @@ void playSound(int num)
 		return;
 
 	osystem_playSample(ptr, size);
+	LastSample = num;
 }
 
 void playSoundLooping(int num)
@@ -200,6 +207,11 @@ void playSoundLooping(int num)
 		return;
 
 	if(!soundEnabled)
+		return;
+
+	// Skip re-triggering the same looping sample if it is still playing.
+	static int s_lastLoopingSample = -1;
+	if(num == s_lastLoopingSample && osystem_isSamplePlaying())
 		return;
 
 	char sampleFileName[256] = "";
@@ -221,6 +233,7 @@ void playSoundLooping(int num)
 		return;
 
 	osystem_playLoopingSample(ptr, size);
+	s_lastLoopingSample = num;
 }
 
 ////////////////////////

@@ -36,9 +36,15 @@ struct ControllerState
 
 extern ControllerState g_controllerState;
 
+// Window resize flag - set when window is resized/maximized/fullscreened
+extern bool g_windowWasResized;
+
 extern "C" {
 void readKeyboard(void);
 }
+
+// Reset the window resize flag (call after handling resize)
+void resetWindowResizeFlag();
 
 // Controller functions
 void initController();

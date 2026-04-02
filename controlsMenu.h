@@ -55,6 +55,6 @@ const char* getGamepadAxisName(SDL_GamepadAxis axis, bool positive);
 const char* getActionName(KeyAction action);
 
 // Process the controls submenu
-void processControlsMenu();
+void processControlsMenu(bool hdMode = false);
 
 #endif

@@ -1087,13 +1087,19 @@ int makeSaveFile(int entry)
     fclose(fHandle);
 
     // Save screenshot PNG alongside save file
+    std::filesystem::path pngPath = std::filesystem::path(homePath) / ("SAVE" + std::to_string(entry) + ".png");
     unsigned char* previewData = osystem_getScenePreviewData();
     int previewW = osystem_getScenePreviewWidth();
     int previewH = osystem_getScenePreviewHeight();
     if (previewData && previewW > 0 && previewH > 0)
     {
-        std::filesystem::path pngPath = std::filesystem::path(homePath) / ("SAVE" + std::to_string(entry) + ".png");
         writePNG(pngPath.string().c_str(), previewData, previewW, previewH);
+    }
+    else
+    {
+        // Remove stale preview PNG so old screenshots don't persist
+        std::error_code ec;
+        std::filesystem::remove(pngPath, ec);
     }
 
     return 1;

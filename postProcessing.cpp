@@ -20,7 +20,7 @@ extern float farVal;
 
 PostProcessing* g_postProcessing = nullptr;
 
-// Post-processing uses bgfx views 198-203 to avoid conflicts with the main game views
+// Post-processing uses bgfx views 198-210 to avoid conflicts with the main game views
 static const bgfx::ViewId kViewSSAO       = 198;
 static const bgfx::ViewId kViewSSAOBlur   = 199;
 static const bgfx::ViewId kViewBrightPass = 200;
@@ -28,7 +28,9 @@ static const bgfx::ViewId kViewBlurH     = 201;
 static const bgfx::ViewId kViewBlurV     = 202;
 static const bgfx::ViewId kViewBlurH2    = 203;
 static const bgfx::ViewId kViewBlurV2    = 204;
-static const bgfx::ViewId kViewComposite = 205;
+static const bgfx::ViewId kViewSSGI       = 206;
+static const bgfx::ViewId kViewSSGIBlur   = 207;
+static const bgfx::ViewId kViewComposite = 210;
 
 PostProcessing::PostProcessing()
 {
@@ -49,6 +51,7 @@ void PostProcessing::init(int width, int height)
     s_texBloom = bgfx::createUniform("s_texBloom", bgfx::UniformType::Sampler);
     s_texDepth = bgfx::createUniform("s_texDepth", bgfx::UniformType::Sampler);
     s_texAO = bgfx::createUniform("s_texAO", bgfx::UniformType::Sampler);
+    s_texSSGI = bgfx::createUniform("s_texSSGI", bgfx::UniformType::Sampler);
 
     u_bloomParams = bgfx::createUniform("u_bloomParams", bgfx::UniformType::Vec4);
     u_filmGrainParams = bgfx::createUniform("u_filmGrainParams", bgfx::UniformType::Vec4);
@@ -56,6 +59,7 @@ void PostProcessing::init(int width, int height)
     u_time = bgfx::createUniform("u_time", bgfx::UniformType::Vec4);
     u_ssaoParams = bgfx::createUniform("u_ssaoParams", bgfx::UniformType::Vec4);
     u_depthParams = bgfx::createUniform("u_depthParams", bgfx::UniformType::Vec4);
+    u_ssgiParams = bgfx::createUniform("u_ssgiParams", bgfx::UniformType::Vec4);
 
     createFramebuffers(width, height);
     createShaders();
@@ -71,23 +75,27 @@ void PostProcessing::shutdown()
     if (bgfx::isValid(s_texBloom)) bgfx::destroy(s_texBloom);
     if (bgfx::isValid(s_texDepth)) bgfx::destroy(s_texDepth);
     if (bgfx::isValid(s_texAO)) bgfx::destroy(s_texAO);
+    if (bgfx::isValid(s_texSSGI)) bgfx::destroy(s_texSSGI);
     if (bgfx::isValid(u_bloomParams)) bgfx::destroy(u_bloomParams);
     if (bgfx::isValid(u_filmGrainParams)) bgfx::destroy(u_filmGrainParams);
     if (bgfx::isValid(u_blurDirection)) bgfx::destroy(u_blurDirection);
     if (bgfx::isValid(u_time)) bgfx::destroy(u_time);
     if (bgfx::isValid(u_ssaoParams)) bgfx::destroy(u_ssaoParams);
     if (bgfx::isValid(u_depthParams)) bgfx::destroy(u_depthParams);
+    if (bgfx::isValid(u_ssgiParams)) bgfx::destroy(u_ssgiParams);
 
     s_texColor = BGFX_INVALID_HANDLE;
     s_texBloom = BGFX_INVALID_HANDLE;
     s_texDepth = BGFX_INVALID_HANDLE;
     s_texAO = BGFX_INVALID_HANDLE;
+    s_texSSGI = BGFX_INVALID_HANDLE;
     u_bloomParams = BGFX_INVALID_HANDLE;
     u_filmGrainParams = BGFX_INVALID_HANDLE;
     u_blurDirection = BGFX_INVALID_HANDLE;
     u_time = BGFX_INVALID_HANDLE;
     u_ssaoParams = BGFX_INVALID_HANDLE;
     u_depthParams = BGFX_INVALID_HANDLE;
+    u_ssgiParams = BGFX_INVALID_HANDLE;
 }
 
 void PostProcessing::resize(int width, int height)
@@ -141,6 +149,19 @@ void PostProcessing::createFramebuffers(int width, int height)
         BGFX_TEXTURE_RT | BGFX_SAMPLER_U_CLAMP | BGFX_SAMPLER_V_CLAMP);
     bgfx::TextureHandle blurVAttach[] = { m_blurV_Tex };
     m_blurV_FB = bgfx::createFrameBuffer(1, blurVAttach, false);
+
+    // SSGI render targets (half resolution for performance)
+    int ssgiWidth = width / 2;
+    int ssgiHeight = height / 2;
+    m_ssgiTex = bgfx::createTexture2D(ssgiWidth, ssgiHeight, false, 1, bgfx::TextureFormat::RGBA8,
+        BGFX_TEXTURE_RT | BGFX_SAMPLER_U_CLAMP | BGFX_SAMPLER_V_CLAMP);
+    bgfx::TextureHandle ssgiAttach[] = { m_ssgiTex };
+    m_ssgiFB = bgfx::createFrameBuffer(1, ssgiAttach, false);
+
+    m_ssgiBlurTex = bgfx::createTexture2D(ssgiWidth, ssgiHeight, false, 1, bgfx::TextureFormat::RGBA8,
+        BGFX_TEXTURE_RT | BGFX_SAMPLER_U_CLAMP | BGFX_SAMPLER_V_CLAMP);
+    bgfx::TextureHandle ssgiBlurAttach[] = { m_ssgiBlurTex };
+    m_ssgiBlurFB = bgfx::createFrameBuffer(1, ssgiBlurAttach, false);
 }
 
 void PostProcessing::destroyFramebuffers()
@@ -152,6 +173,8 @@ void PostProcessing::destroyFramebuffers()
     if (bgfx::isValid(m_blurV_FB)) bgfx::destroy(m_blurV_FB);
     if (bgfx::isValid(m_ssaoFB)) bgfx::destroy(m_ssaoFB);
     if (bgfx::isValid(m_ssaoBlurFB)) bgfx::destroy(m_ssaoBlurFB);
+    if (bgfx::isValid(m_ssgiFB)) bgfx::destroy(m_ssgiFB);
+    if (bgfx::isValid(m_ssgiBlurFB)) bgfx::destroy(m_ssgiBlurFB);
 
     // Destroy textures separately since FB doesn't own them
     if (bgfx::isValid(m_mainColorTex)) bgfx::destroy(m_mainColorTex);
@@ -161,6 +184,8 @@ void PostProcessing::destroyFramebuffers()
     if (bgfx::isValid(m_blurV_Tex)) bgfx::destroy(m_blurV_Tex);
     if (bgfx::isValid(m_ssaoTex)) bgfx::destroy(m_ssaoTex);
     if (bgfx::isValid(m_ssaoBlurTex)) bgfx::destroy(m_ssaoBlurTex);
+    if (bgfx::isValid(m_ssgiTex)) bgfx::destroy(m_ssgiTex);
+    if (bgfx::isValid(m_ssgiBlurTex)) bgfx::destroy(m_ssgiBlurTex);
 
     m_mainFB = BGFX_INVALID_HANDLE;
     m_brightPassFB = BGFX_INVALID_HANDLE;
@@ -168,6 +193,8 @@ void PostProcessing::destroyFramebuffers()
     m_blurV_FB = BGFX_INVALID_HANDLE;
     m_ssaoFB = BGFX_INVALID_HANDLE;
     m_ssaoBlurFB = BGFX_INVALID_HANDLE;
+    m_ssgiFB = BGFX_INVALID_HANDLE;
+    m_ssgiBlurFB = BGFX_INVALID_HANDLE;
 
     m_mainColorTex = BGFX_INVALID_HANDLE;
     m_mainDepthTex = BGFX_INVALID_HANDLE;
@@ -176,6 +203,8 @@ void PostProcessing::destroyFramebuffers()
     m_blurV_Tex = BGFX_INVALID_HANDLE;
     m_ssaoTex = BGFX_INVALID_HANDLE;
     m_ssaoBlurTex = BGFX_INVALID_HANDLE;
+    m_ssgiTex = BGFX_INVALID_HANDLE;
+    m_ssgiBlurTex = BGFX_INVALID_HANDLE;
 }
 
 void PostProcessing::createShaders()
@@ -185,6 +214,8 @@ void PostProcessing::createShaders()
     m_compositeShader = loadBgfxProgram("postprocess_vs", "composite_ps");
     m_ssaoShader = loadBgfxProgram("postprocess_vs", "ssao_ps");
     m_ssaoBlurShader = loadBgfxProgram("postprocess_vs", "ssao_blur_ps");
+    m_ssgiShader = loadBgfxProgram("postprocess_vs", "ssgi_ps");
+    m_ssgiBlurShader = loadBgfxProgram("postprocess_vs", "ssgi_blur_ps");
 }
 
 void PostProcessing::destroyShaders()
@@ -194,12 +225,16 @@ void PostProcessing::destroyShaders()
     if (bgfx::isValid(m_compositeShader)) bgfx::destroy(m_compositeShader);
     if (bgfx::isValid(m_ssaoShader)) bgfx::destroy(m_ssaoShader);
     if (bgfx::isValid(m_ssaoBlurShader)) bgfx::destroy(m_ssaoBlurShader);
+    if (bgfx::isValid(m_ssgiShader)) bgfx::destroy(m_ssgiShader);
+    if (bgfx::isValid(m_ssgiBlurShader)) bgfx::destroy(m_ssgiBlurShader);
 
     m_brightPassShader = BGFX_INVALID_HANDLE;
     m_blurShader = BGFX_INVALID_HANDLE;
     m_compositeShader = BGFX_INVALID_HANDLE;
     m_ssaoShader = BGFX_INVALID_HANDLE;
     m_ssaoBlurShader = BGFX_INVALID_HANDLE;
+    m_ssgiShader = BGFX_INVALID_HANDLE;
+    m_ssgiBlurShader = BGFX_INVALID_HANDLE;
 }
 
 static void renderFullscreenQuad(bgfx::ViewId viewId, bgfx::ProgramHandle program)
@@ -246,12 +281,13 @@ void PostProcessing::endScene()
     m_time += 0.016f;
 
     // If no effects enabled, just composite the scene to the backbuffer as-is
-    if (!m_bloomEnabled && !m_filmGrainEnabled && !m_ssaoEnabled)
+    if (!m_bloomEnabled && !m_filmGrainEnabled && !m_ssaoEnabled && !m_ssgiEnabled)
     {
         // Still need to composite from offscreen FB to backbuffer
         float bloomParams[4] = { m_bloomThreshold, 0.0f, 0.0f, 0.0f };
         float filmGrainParams[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
         float ssaoParams[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
+        float ssgiParams[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
         float timeParams[4] = { m_time, 0.0f, 0.0f, 0.0f };
 
         bgfx::setViewName(kViewComposite, "Composite");
@@ -262,10 +298,12 @@ void PostProcessing::endScene()
         bgfx::setUniform(u_bloomParams, bloomParams);
         bgfx::setUniform(u_filmGrainParams, filmGrainParams);
         bgfx::setUniform(u_ssaoParams, ssaoParams);
+        bgfx::setUniform(u_ssgiParams, ssgiParams);
         bgfx::setUniform(u_time, timeParams);
         bgfx::setTexture(0, s_texColor, m_mainColorTex);
         bgfx::setTexture(1, s_texBloom, m_mainColorTex); // dummy, won't contribute
         bgfx::setTexture(2, s_texAO, m_mainColorTex);    // dummy, won't contribute
+        bgfx::setTexture(3, s_texSSGI, m_mainColorTex);  // dummy, won't contribute
         renderFullscreenQuad(kViewComposite, m_compositeShader);
         return;
     }
@@ -274,6 +312,12 @@ void PostProcessing::endScene()
     if (m_ssaoEnabled)
     {
         renderSSAO();
+    }
+
+    // Apply SSGI
+    if (m_ssgiEnabled)
+    {
+        renderSSGI();
     }
 
     // Apply bloom
@@ -408,11 +452,58 @@ void PostProcessing::renderSSAO()
     }
 }
 
+void PostProcessing::renderSSGI()
+{
+    if (!m_ssgiEnabled)
+        return;
+
+    float nearVal = 10.0f;
+    float farVal = 65535.0f;
+    float depthParams[4] = { nearVal, farVal, 1.0f / (float)m_width, 1.0f / (float)m_height };
+    float ssgiParams[4] = { m_ssgiRadius, m_ssgiIntensity, (float)m_ssgiNumSamples, 0.0f };
+    float timeParams[4] = { m_time, 0.0f, 0.0f, 0.0f };
+
+    int ssgiWidth = m_width / 2;
+    int ssgiHeight = m_height / 2;
+
+    // 1. SSGI pass - compute indirect illumination from nearby surfaces
+    {
+        bgfx::setViewName(kViewSSGI, "SSGI");
+        bgfx::setViewRect(kViewSSGI, 0, 0, (uint16_t)ssgiWidth, (uint16_t)ssgiHeight);
+        bgfx::setViewFrameBuffer(kViewSSGI, m_ssgiFB);
+        bgfx::setViewClear(kViewSSGI, BGFX_CLEAR_COLOR, 0x00000000);
+
+        bgfx::setUniform(u_ssgiParams, ssgiParams);
+        bgfx::setUniform(u_depthParams, depthParams);
+        bgfx::setUniform(u_time, timeParams);
+        bgfx::setTexture(0, s_texColor, m_mainColorTex);
+        bgfx::setTexture(1, s_texDepth, m_mainDepthTex);
+        renderFullscreenQuad(kViewSSGI, m_ssgiShader);
+    }
+
+    // 2. Bilateral blur pass - smooth GI while preserving edges
+    {
+        float blurDir[4] = { 1.0f / (float)ssgiWidth, 1.0f / (float)ssgiHeight, 0.0f, 0.0f };
+
+        bgfx::setViewName(kViewSSGIBlur, "SSGI Blur");
+        bgfx::setViewRect(kViewSSGIBlur, 0, 0, (uint16_t)ssgiWidth, (uint16_t)ssgiHeight);
+        bgfx::setViewFrameBuffer(kViewSSGIBlur, m_ssgiBlurFB);
+        bgfx::setViewClear(kViewSSGIBlur, BGFX_CLEAR_COLOR, 0x00000000);
+
+        bgfx::setUniform(u_blurDirection, blurDir);
+        bgfx::setUniform(u_depthParams, depthParams);
+        bgfx::setTexture(0, s_texColor, m_ssgiTex);
+        bgfx::setTexture(1, s_texDepth, m_mainDepthTex);
+        renderFullscreenQuad(kViewSSGIBlur, m_ssgiBlurShader);
+    }
+}
+
 void PostProcessing::renderFinalComposite()
 {
     float bloomParams[4] = { m_bloomThreshold, m_bloomEnabled ? m_bloomIntensity : 0.0f, 0.0f, 0.0f };
     float filmGrainParams[4] = { m_filmGrainEnabled ? m_filmGrainIntensity : 0.0f, 0.0f, 0.0f, 0.0f };
     float ssaoParams[4] = { m_ssaoRadius, 1.0f, m_ssaoEnabled ? m_ssaoIntensity : 0.0f, 0.0f };
+    float ssgiParams[4] = { m_ssgiRadius, m_ssgiEnabled ? m_ssgiIntensity : 0.0f, 0.0f, 0.0f };
     float timeParams[4] = { m_time, 0.0f, 0.0f, 0.0f };
 
     bgfx::setViewName(kViewComposite, "Composite");
@@ -423,9 +514,11 @@ void PostProcessing::renderFinalComposite()
     bgfx::setUniform(u_bloomParams, bloomParams);
     bgfx::setUniform(u_filmGrainParams, filmGrainParams);
     bgfx::setUniform(u_ssaoParams, ssaoParams);
+    bgfx::setUniform(u_ssgiParams, ssgiParams);
     bgfx::setUniform(u_time, timeParams);
     bgfx::setTexture(0, s_texColor, m_mainColorTex);
     bgfx::setTexture(1, s_texBloom, m_bloomEnabled ? m_blurV_Tex : m_mainColorTex);
     bgfx::setTexture(2, s_texAO, m_ssaoEnabled ? m_ssaoBlurTex : m_mainColorTex);
+    bgfx::setTexture(3, s_texSSGI, m_ssgiEnabled ? m_ssgiBlurTex : m_mainColorTex);
     renderFullscreenQuad(kViewComposite, m_compositeShader);
 }
