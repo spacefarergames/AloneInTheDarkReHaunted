@@ -6,15 +6,17 @@
 *Copyright © 2026 Infogrames / Spacefarer Retro Remasters LLC*
 *Author: Jake Jackson (jake@spacefarergames.com)*
 
-![Alt text](AITDREHAUNTED(10).png)
+<img width="1386" height="884" alt="image" src="https://github.com/user-attachments/assets/7d49eb5a-8d31-4474-a939-ff9876fdc9df" />
+
 ![Alt text](AITDREHAUNTED(4).png)
-![Alt text](AITDREHAUNTED(6).png)
+<img width="982" height="706" alt="image" src="https://github.com/user-attachments/assets/b0206b5f-8026-46d0-89a6-b5dc6b7ba73e" />
+
 
 ---
 
 ## About
 
-**Alone In The Dark: Re-Haunted** is a modern remaster of the landmark 1992 survival horror game by Infogrames. Built on the reverse-engineered FITD engine, Re-Haunted preserves the original gameplay while adding modern rendering, HD backgrounds, post-processing effects, gamepad support, and quality-of-life improvements.
+**Alone In The Dark: Re-Haunted** is a modern remaster of the landmark 1992 survival horror game by Infogrames. Built on the reverse-engineered FITD engine, Re-Haunted preserves the original gameplay while adding modern rendering, Textured Models (WOW!) HD backgrounds, post-processing effects, gamepad support, and quality-of-life improvements.
 
 <img width="1536" height="1024" alt="RemasterAITDBoxWidescreen" src="https://github.com/user-attachments/assets/dfe1540b-36bd-4475-9af1-f97f600b946c" />
 
@@ -392,6 +394,7 @@ Both `backgrounds_hd.hda` and `audio.hda` use the **HDBG** binary archive format
 
 ---
 -Box Art for Steam
-![Alt text](SteamBoxArt.png)
+<img width="1024" height="1536" alt="Portrait Box Art AITD1" src="https://github.com/user-attachments/assets/f354a57f-1077-4339-aecc-2d892a30d753" />
+
 *Alone In The Dark: Re-Haunted — Because some mansions deserve to be revisited.*
 
