@@ -1,4 +1,3 @@
-# AloneInTheDarkReHaunted
 # Alone In The Dark: Re-Haunted
 
 **A faithful remaster of the original 1992 survival horror classic.**
@@ -6,392 +5,228 @@
 *Copyright © 2026 Infogrames / Spacefarer Retro Remasters LLC*
 *Author: Jake Jackson (jake@spacefarergames.com)*
 
-<img width="1386" height="884" alt="image" src="https://github.com/user-attachments/assets/7d49eb5a-8d31-4474-a939-ff9876fdc9df" />
-<img width="982" height="706" alt="image" src="https://github.com/user-attachments/assets/b0206b5f-8026-46d0-89a6-b5dc6b7ba73e" />
+**A cross-platform engine reimplementation for the classic *Alone in the Dark* trilogy (1992–1995), with modern remaster enhancements.**
+
+AITD-R (also known as *Alone In The Dark Re-Haunted*) lets you play the original *Alone in the Dark* games on modern hardware. It is a from-scratch C++ reimplementation of the Infogrames engine, built with modern rendering (bgfx), audio (SoLoud), and input (SDL3) backends. The project is released under the **GNU General Public License v2**.
+
+> **You must own the original game data** — purchase *Alone in the Dark* on [Steam](https://store.steampowered.com/app/548090/Alone_in_the_Dark_1/) or [GOG](https://www.gog.com/en/game/alone_in_the_dark_the_trilogy_123). The game data files are **not** included.
 
 ---
 
-## About
+## Screenshots
+<img width="1386" height="884" alt="image" src="https://github.com/user-attachments/assets/7d49eb5a-8d31-4474-a939-ff9876fdc9df" />
+<img width="982" height="706" alt="image" src="https://github.com/user-attachments/assets/b0206b5f-8026-46d0-89a6-b5dc6b7ba73e" />
+---
 
-**Alone In The Dark: Re-Haunted** is a modern remaster of the landmark 1992 survival horror game by Infogrames. Built on the reverse-engineered FITD engine, Re-Haunted preserves the original gameplay while adding modern rendering, Textured Models (WOW!) HD backgrounds, post-processing effects, gamepad support, and quality-of-life improvements.
+## Supported Games
 
-<img width="1536" height="1024" alt="RemasterAITDBoxWidescreen" src="https://github.com/user-attachments/assets/dfe1540b-36bd-4475-9af1-f97f600b946c" />
+| Game | Steam | GOG | Status |
+|------|-------|-----|--------|
+| Alone in the Dark 1 | [Store page](https://store.steampowered.com/app/548090/Alone_in_the_Dark_1/) | [Trilogy](https://www.gog.com/en/game/alone_in_the_dark_the_trilogy_123) | ✅ Completable
 
-## System Requirements
+Future Rehaunted projects. AKA Jack Is Back (Again!) and AITD3 are coming son.
 
-- **OS:** Windows 10/11 (64-bit)
-- **CPU:** Any modern x86-64 processor
-- **RAM:** 4 GB minimum (8 GB recommended for HD backgrounds)
-- **GPU:** DirectX 11 / OpenGL 3.2 / Vulkan compatible
-- **Storage:** ~2 GB for base game + HD assets
-- **Original game data files required** (PAK/ITD files from the original release)
+---
 
-## Building from Source
-
-### Prerequisites
-
-- CMake 3.10+
-- Visual Studio 2022 or later (MSVC)
-- C++20 compiler support
-
-### Build Steps
+## Quick Start (Windows)
 
 ```bash
-# Clone the repository
-git clone https://github.com/yaz0r/FITD.git
+# 1. Clone with submodules
+git clone --recurse-submodules https://github.com/spacefarergames/AloneInTheDarkReHaunted.git
 cd FITD
 
-# Create build directory
-mkdir build && cd build
-mkdir vs2026 && cd vs2026
-
-# Generate project files
-cmake ../..
-
-# Build (Release configuration)
-cmake --build . --config Release
+# 2. Generate the VS solution
+build\vs2022.bat          # Visual Studio 2022
+# — or —
+build\vs2026.bat          # Visual Studio 2026
 ```
 
-The executable `Tatou.exe` will be output to `build/vs2026/Fitd/Release/`.
+In Visual Studio:
 
-### Packing HD Assets
+1. Set **Fitd** as the startup project.
+2. Set the **Working Directory** (Project → Properties → Debugging) to the folder containing your game data files (e.g. your AITD1 Steam install directory).
+3. Press **F5** to build and run.
 
-HD background images and audio can be packed into single archive files for distribution:
+> The output executable is named `Tatou.exe`.
 
-```powershell
-# Pack HD backgrounds (1941 files → single .hda archive)
-powershell -ExecutionPolicy Bypass -File FitdLib/pack_backgrounds.ps1 "path/to/backgrounds_hd"
+For full multi-platform build instructions see **[BUILDING.md](BUILDING.md)**.
 
-# Pack audio files (MP3 music + WAV sound effects → single .hda archive)
-powershell -ExecutionPolicy Bypass -File FitdLib/pack_audio.ps1 "path/to/game/folder"
-```
+---
 
-## Running
+## How to Play
 
-Place `Tatou.exe` alongside the original game's data files (PAK, ITD) in the same directory. The game auto-detects which title to run based on the data files present.
+### Starting a New Game
 
-### Required Files (For Accuracy)
+1. Launch `Tatou.exe` from the game data directory (the folder containing the original `.PAK` / `.ITD` files).
+2. The engine auto-detects which game is installed based on the data files present.
+3. For AITD1: after the Infogrames logo and armadillo animation, select your character — **Edward Carnby** (detective) or **Emily Hartwood** (heiress).
+4. The game begins in the attic of Derceto Manor.
 
-- Original game PAK files (e.g., `LISTBOD2.PAK` for AITD1)
-- Original game ITD files (`DEFINES.ITD`, `OBJETS.ITD`)
-- Game can run out-of-box due to clean room reverse engineering and recomp. However, we recommend you use the PAK files from your legal copy of GOG.com or Steam version for best accuracy and stability.
+### Gameplay Basics
 
-### Optional Files
+*Alone in the Dark* is a survival-horror adventure. You explore a haunted mansion, solve puzzles, and fight (or flee from) supernatural enemies.
 
-| File | Purpose |
-|------|---------|
-| `backgrounds_hd.hda` | HD background archive (static + animated) |
-| `audio.hda` | Music and sound effects archive |
-| `backgrounds_hd/` | Loose HD background files (fallback if no archive) |
-| `*.mp3` / `*.ogg` / `*.wav` | Loose music tracks (fallback if no archive) |
-| `BLKCHCRY.TTF` | TrueType font for remastered text |
-| `version.txt` | Version string displayed in window title |
-| `aitd_remaster.cfg` | Remaster configuration file |
+- **Movement** — Walk forward, backward, and turn left/right (tank controls).
+- **Action** — Press the action key/button near objects to interact: open doors, pick up items, push objects, and fight enemies.
+- **Inventory** — Press **F1** (or access via the menu) to open your inventory. Select items to use, equip, or examine them. Combine items by placing them in your "hand" slot.
+- **Combat** — Equip a weapon from inventory, then use the action key with directional input to punch, kick, slash, or shoot. Some enemies can only be defeated with specific items or approaches.
+- **Running** — Hold forward and press the action key to run (useful for dodging enemies).
+- **Quick Turn** — Press **Q** or **E** (or shoulder buttons on a controller) to perform a quick 180° turn.
 
-## Configuration
+### Saving and Loading
 
-Settings are stored in `aitd_remaster.cfg` and can be edited in-game through the options menu.
+- Press **Escape** to open the **System Menu** during gameplay.
+- Select **Save** to write your progress to a save slot.
+- Select **Load** to restore a previous save.
+- Settings (fullscreen, sound, detail level, hints, controls) are also accessible from this menu and are saved automatically when the menu closes.
 
-### Graphics
+### Tips
 
-| Setting | Default | Description |
-|---------|---------|-------------|
-| `enableHDBackgrounds` | `false` | Enable high-definition background rendering |
-| `backgroundScale` | `2` | Background resolution multiplier (2x = 640×400) |
-| `enableFiltering` | `true` | Texture filtering on backgrounds |
-| `enableBlurredMenu` | `false` | Gaussian blur on background during menus |
+- Search everything — many items are hidden in drawers, cabinets, and on shelves.
+- Read all books and letters — they contain crucial puzzle hints and story background.
+- Not every enemy needs to be fought — sometimes running or pushing furniture to block a doorway is the best strategy.
+- Save often — Derceto is unforgiving.
 
-### Post-Processing
-
-| Setting | Default | Description |
-|---------|---------|-------------|
-| `enableBloom` | `true` | HDR bloom lighting effect |
-| `bloomThreshold` | `0.6` | Brightness threshold for bloom |
-| `bloomIntensity` | `0.5` | Bloom strength |
-| `enableFilmGrain` | `true` | Cinematic film grain overlay |
-| `filmGrainIntensity` | `0.03` | Film grain strength |
-| `enableSSAO` | `true` | Screen-space ambient occlusion |
-
-### Controller
-
-| Setting | Default | Description |
-|---------|---------|-------------|
-| `enableController` | `true` | Gamepad support (SDL3) |
-| `analogDeadzone` | `0.15` | Analog stick dead zone |
-| `analogSensitivity` | `1.0` | Analog stick sensitivity |
-| `invertYAxis` | `false` | Invert vertical axis |
-| `analogMovement` | `true` | Analog stick movement (vs. digital only) |
-
-### Font
-
-| Setting | Default | Description |
-|---------|---------|-------------|
-| `enableTTF` | `false` | TrueType font rendering |
-| `fontPath` | `BLKCHCRY.TTF` | Path to TTF font file |
-| `fontSize` | `16` | Font size in points |
-| `hideOriginalText` | `true` | Hide original bitmap text when TTF is active |
+---
 
 ## Controls
 
 ### Keyboard (Default)
 
-| Action | Key |
-|--------|-----|
-| Move Up | ↑ Arrow |
-| Move Down | ↓ Arrow |
-| Turn Left | ← Arrow |
-| Turn Right | → Arrow |
-| Action / Use | Space |
-| Inventory / Confirm | Enter |
-| Menu / Cancel | Escape |
-| Prev Inventory | Q |
-| Next Inventory | E |
+| Action | Key | Description |
+|--------|-----|-------------|
+| Move Forward | **↑** (Up Arrow) | Walk forward |
+| Move Backward | **↓** (Down Arrow) | Walk backward |
+| Turn Left | **←** (Left Arrow) | Turn left |
+| Turn Right | **→** (Right Arrow) | Turn right |
+| Action / Fight | **Space** | Interact with objects, attack in combat |
+| Confirm / Enter | **Enter** | Confirm menu selections |
+| Cancel / Menu | **Escape** | Open system menu, cancel dialogs |
+| Quick Turn Left | **Q** | 180° turn to the left |
+| Quick Turn Right | **E** | 180° turn to the right |
+| Fullscreen Toggle | **F11** or **Alt+Enter** | Toggle fullscreen / windowed mode |
+| Fullscreen Toggle | **Double-click** | Double-click the window to toggle fullscreen |
 
-### Gamepad (Default)
+> All keyboard bindings are fully rebindable via the **Controls** option in the in-game system menu, or by editing `aitd_remaster.cfg`.
 
-| Action | Button |
-|--------|--------|
-| Move | Left Stick / D-Pad |
-| Action / Use | A (South) |
-| Inventory / Confirm | Start |
-| Cancel | B (East) |
-| Prev Inventory | Left Bumper |
-| Next Inventory | Right Bumper |
+### Gamepad (Default — Xbox Layout)
 
-All key and gamepad bindings are fully remappable through the controls menu.
+| Action | Button | PlayStation Equivalent |
+|--------|--------|-----------------------|
+| Move | **Left Stick** / **D-Pad** | Left Stick / D-Pad |
+| Action / Fight | **A** | **✕ (Cross)** |
+| Confirm / Enter | **Start** | **Options** |
+| Cancel / Menu | **B** | **○ (Circle)** |
+| Quick Turn Left | **LB** | **L1** |
+| Quick Turn Right | **RB** | **R1** |
 
-## Architecture
+- Controllers are hot-pluggable — connect or disconnect at any time.
+- Analog stick deadzone and sensitivity are configurable in `aitd_remaster.cfg`.
+- All gamepad bindings are rebindable via the **Controls** menu.
 
-### Technology Stack
+### In-Game System Menu
 
-| Component | Technology |
-|-----------|-----------|
-| Language | C++20 |
-| Build System | CMake |
-| Windowing / Input | SDL3 |
-| 3D Rendering | bgfx (DirectX 11 / OpenGL / Vulkan / Metal) |
-| Audio | SoLoud (with OGG/MP3/WAV support) |
-| Image Loading | stb_image |
-| UI (Debug) | Dear ImGui |
-| Compression | zlib |
+Press **Escape** during gameplay to access:
 
-### Project Structure
+| Option | Description |
+|--------|-------------|
+| Continue | Return to the game |
+| Save | Save your game to a slot |
+| Load | Load a saved game |
+| Music On/Off | Toggle ADLIB / external music |
+| Sound On/Off | Toggle sound effects |
+| Detail Low/High | Toggle between original graphics and HD remaster mode |
+| Display: Windowed/Fullscreen | Toggle fullscreen mode (persists across sessions) |
+| Controls | Rebind keyboard and gamepad controls |
+| Hints: On/Off | Toggle interactive object hints |
+| Quit | Quit to the main menu |
+
+---
+
+## Remaster Features
+
+The *Re-Haunted* fork adds several enhancements on top of the original FITD engine:
+
+| Feature | Status | Details |
+|---------|--------|---------|
+| **HD backgrounds** | ✅ Available | Upscaled camera views (2×–8×) with PNG/TGA support, including animated backgrounds |
+| **Textured 3D models** | ✅ Available | High-quality textured replacements for core 3D models via texture atlas |
+| **TTF font rendering** | ✅ Available | Smooth anti-aliased overlay fonts via ImGui (configurable font, size, and style) |
+| **Post-processing** | ✅ Available | Bloom, film grain, SSAO, vignette, SSGI, light probes |
+| **Controller support** | ✅ Available | Xbox, PlayStation, Switch Pro, and other SDL3-compatible gamepads with rebindable controls |
+| **Fullscreen mode** | ✅ Available | Toggle via F11, Alt+Enter, double-click, or system menu; persists in config |
+| **In-game maps** | ✅ Available | Interactive mansion and underground maps with real-time position tracking |
+| **Interactive hints** | ✅ Available | Highlights interactable objects in the game world |
+| **Voice-over playback** | ✅ Available | CD voice-over for AITD1 book/letter reading sequences |
+| **HD depth masks** | ✅ Available | Hand-edited masks for correct 3D object occlusion with HD backgrounds |
+| **Atmospheric particles** | ✅ Available | Dust mote particles in the attic (floor 7) |
+| **Transparent menus** | ✅ Available | Blurred, semi-transparent system menu overlays |
+| **External music** | 🚧 In progress | OGG/MP3 track replacement via SoLoud |
+| **Crash recovery** | ✅ Available | Exception handler with crash logging to `crash_log.txt` |
+| **Auto-update checker** | ✅ Available | Non-blocking check for new GitHub releases at startup |
+
+All remaster features are configurable through `aitd_remaster.cfg` — see [`fitd_remaster.cfg.example`](fitd_remaster.cfg.example) for the full reference. Detailed documentation is available in [`REMASTER.md`](REMASTER.md).
+
+---
+
+## Configuration
+
+Copy `fitd_remaster.cfg.example` to `aitd_remaster.cfg` alongside the game data and edit to taste. Key sections:
+
+| Section | Key Settings |
+|---------|-------------|
+| **Controller** | `controller.enable`, `controller.deadzone`, `controller.sensitivity`, `controller.invertY` |
+| **Graphics** | `graphics.hdBackgrounds`, `graphics.backgroundScale`, `graphics.filtering`, `graphics.fullscreen` |
+| **Post-processing** | `postprocessing.bloom`, `postprocessing.filmGrain`, `postprocessing.ssao`, `postprocessing.vignette`, `postprocessing.ssgi`, `postprocessing.lightProbes` |
+| **Music** | `music.external`, `music.folder` |
+| **Font** | `font.enableTTF`, `font.path`, `font.size`, `font.hideOriginal` |
+| **Controls** | `controls.key.*`, `controls.pad.*` — per-action keyboard scancode and gamepad button bindings |
+| **Gameplay** | `gameplay.hints` — interactive hint overlay |
+| **Masks** | `masks.dump`, `masks.load` — HD depth mask dumping and loading |
+
+---
+
+## Project Layout
 
 ```
 FITD/
-├── Fitd/               # Executable project (Tatou.exe)
-│   ├── Tatou.rc        # Windows resource file (icon)
-│   └── Tatou.ico       # Application icon
-├── FitdLib/            # Core engine static library
-│   ├── embedded/       # Embedded PAK/ITD data (C++ byte arrays)
-│   ├── shaders/        # bgfx shader source files (.sc)
-│   ├── hdArchive.*     # HD archive format reader
-│   ├── hdBackground.*  # HD background loading (static + animated)
-│   ├── hdBackgroundRenderer.* # HD background GPU rendering
-│   ├── rendererBGFX.*  # bgfx 3D rendering pipeline
-│   ├── postProcessing.*# Bloom, film grain, SSAO
-│   ├── fontTTF.*       # TrueType font rendering
-│   ├── configRemaster.*# Remaster settings management
-│   ├── controlsMenu.*  # Input configuration UI
-│   ├── exceptionHandler.* # Crash protection & minidump
-│   ├── memoryManager.* # Allocation tracking & corruption detection
-│   ├── resourceGC.*    # Deferred resource garbage collector
-│   └── ...             # Original FITD engine source
-└── ThirdParty/         # External dependencies
-    ├── bgfx.cmake/     # bgfx rendering library
-    ├── SDL/            # SDL3 platform abstraction
-    └── soloud.cmake/   # SoLoud audio library
+├── Fitd/                  # Executable entry point (WinMain / main)
+├── FitdLib/               # Core engine static library (~75 source files)
+│   ├── shaders/           # bgfx shader programs (.sc)
+│   └── embedded/          # Embedded game data (PAK files, textures, etc.)
+├── ThirdParty/            # Git submodules
+│   ├── bgfx.cmake         # Cross-platform rendering (bgfx + bimg + bx)
+│   ├── SDL/               # SDL3 — windowing, input, audio
+│   ├── soloud.cmake       # SoLoud audio library
+│   ├── imgui/             # Dear ImGui (debug UI, TTF font overlay)
+│   └── zlib/              # Compression (HQR/PAK archives)
+├── tools/                 # Build tools (HDA archive builder, etc.)
+├── build/                 # Generated build directories
+├── .github/workflows/     # CI (CMake multi-platform)
+├── CMakeLists.txt         # Root CMake project
+├── README.md              # This file
+├── BUILDING.md            # Detailed build instructions
+├── ARCHITECTURE.md        # Codebase architecture guide
+├── REMASTER.md            # Remaster feature documentation
+├── CONTRIBUTING.md        # Contributor guidelines
+├── RELEASE_NOTES.md       # Version history and changelogs
+├── TTF_FONT_README.md     # TTF font feature documentation
+└── LICENSE                # GNU General Public License v2
 ```
 
-### Asset Archive Format (.hda)
+For a deeper dive into the code modules and data flow, see **[ARCHITECTURE.md](ARCHITECTURE.md)**.
 
-Both `backgrounds_hd.hda` and `audio.hda` share the same binary format:
+---
 
-```
-Header (12 bytes):
-  [4] Magic: "HDBG" (0x47424448 little-endian)
-  [4] Version: 1
-  [4] Entry count
+## Contributing
 
-Table of Contents (repeated per entry):
-  [2] Path length (uint16)
-  [N] Relative path (UTF-8, forward slashes)
-  [8] Data offset from file start (uint64)
-  [8] Data size in bytes (uint64)
+Contributions are welcome! Please see **[CONTRIBUTING.md](CONTRIBUTING.md)** for guidelines on setting up a development environment, coding standards, and the pull request workflow.
 
-Data Section:
-  Raw file bytes concatenated (no re-compression)
-```
-
-## Credits
-
-- **Original Game:** Infogrames (1992) — Frédérick Raynal, Franck de Girolami, et al.
-- **Reverse Engineering:** Yaz0r ([github.com/yaz0r/FITD](https://github.com/yaz0r/FITD))
-- **Remaster:** Jake Jackson / Spacefarer Retro Remasters LLC
+---
 
 ## License
 
-This project is a remaster built on the reverse-engineered FITD engine. Original game data files are required and not included. See the original [FITD repository](https://github.com/yaz0r/FITD) for engine licensing details.
+This project is licensed under the **GNU General Public License v2** — see the [LICENSE](LICENSE) file for details.
 
-# Release Notes — Alone In The Dark: Re-Haunted
-
-Version 1.0.4.2403
-Now Updated to support original CD-ROM (in drive) CD track playback, VOC decoding and ALL language support.
----
-[![YouTUbe Video](https://img.youtube.com)](https://www.youtube.com/watch?v=zUgPbQu2bHo)
-
-Version 1.0.0 — Initial Release
-
-### ✨ Remaster Features
-
-#### HD Background System
-- **High-definition pre-rendered backgrounds** replacing the original 320×200 artwork
-- **Animated backgrounds** with multi-frame playback (e.g., flickering lights, water ripples)
-- Configurable resolution scale (default 2×: 640×400)
-- Progressive frame loading with minimum-frame-for-playback threshold
-- **HD Background Archive** (`backgrounds_hd.hda`) — all 1,941 background images packed into a single file for clean distribution
-- Filesystem fallback: loose files in `backgrounds_hd/` are supported if no archive is present
-- Memory-mapped file loading on Windows for maximum I/O throughput
-- HD frame border overlays for cinematic letterboxing
-
-#### Modern Rendering Pipeline
-- **bgfx hardware-accelerated rendering** with backend support for:
-  - DirectX 11
-  - OpenGL 3.2+
-  - Vulkan
-  - Metal (macOS)
-- Background texture management with proper GPU resource lifecycle
-
-#### Post-Processing Effects
-- **Bloom** — HDR bright-pass extraction with configurable threshold and intensity
-- **Film Grain** — cinematic noise overlay for atmospheric effect
-- **Screen-Space Ambient Occlusion (SSAO)** — depth-based contact shadows
-- All effects independently toggleable with per-parameter tuning
-
-#### TrueType Font Rendering
-- Optional TTF font overlay for all in-game text (menus, dialogue, inventory)
-- Ships with `BLKCHCRY.TTF` (Blackadder-style gothic font) by default
-- Configurable font size with proper glyph spacing
-- Option to hide original bitmap text when TTF is active
-
-#### Full Gamepad Support
-- SDL3-based controller input with analog stick and D-pad support
-- Analog movement with configurable deadzone and sensitivity
-- Fully remappable keyboard and gamepad bindings through in-game menu
-- Default mappings for standard Xbox/PlayStation-style gamepads
-
-#### Remastered Audio
-- **External music playback** — MP3, OGG, and WAV music tracks replace the original AdLib/MIDI
-- **Audio Archive** (`audio.hda`) — all music tracks and UI sound effects packed into a single file
-- SoLoud audio engine with streaming playback for music
-- UI sound effects (navigation, selection, back, expand) for menu interactions
-- Filesystem fallback for loose audio files if no archive is present
-
-#### Menu System
-- **Startup menu** with new game / load game / quit options
-- **In-game pause menu** with save/load, options, and controls configuration
-- **Controls configuration menu** for remapping keyboard and gamepad bindings
-- Menu navigation sounds
-- Blurred background option during menus
-
----
-
-### 🛠 Engine Improvements
-
-#### Embedded Game Data
-- Critical PAK and ITD game data files embedded directly as C++ byte arrays
-- 37 data files compiled into the executable — eliminates dependency on loose ITD/PAK files for core engine initialization
-- Automatic fallback: embedded data is tried first, then filesystem
-
-#### Stability & Crash Protection
-- **Vectored Exception Handler (VEH)** — catches access violations, stack overflows, heap corruption, and illegal instructions
-- **SEH wrappers** on game thread entry points for belt-and-suspenders crash protection
-- **Minidump generation** on crash for post-mortem debugging
-- **PROTECTED_CALL macro** — wraps critical operations (stb_image decoding, bgfx resource creation) in structured exception handling
-- Crash log file output with timestamps and stack context
-
-#### Memory Management
-- **MemoryManager** — allocation tracker with canary-based corruption detection
-- **SAFE_MALLOC / SAFE_FREE** — tracked allocation wrappers with file/line tagging
-- **TRACK_ALLOCATION / UNTRACK_ALLOCATION** — monitors stb_image and third-party allocations
-- Debug memory log (`memory_debug.log`) with leak detection on shutdown
-
-#### Resource Lifecycle
-- **ResourceGC** — deferred garbage collector for large HD background assets
-- Prevents out-of-memory during camera transitions by scheduling old background cleanup
-- Frame-based tick with configurable delay before final free
-- Flush-on-demand before loading new large assets
-- Clean shutdown with `onShutdown()` to prevent heap corruption at exit
-
-#### Bug Fixes
-- **Sound never stops bug** — previous sound effects are now properly stopped before playing new ones, preventing overlapping/stuck audio
-- **Player stuck after cellar→caves transition** — added NULL checks in animation code to prevent crashes on missing animation data
-- **Door shadow rendering** — conditional rendering with `INFO_ANIM` check in both `AllRedraw()` and `drawSceneObjects()` to prevent visual artifacts
-- **Player stuck in walls** — `fixPlayerStuckInWall()` recovery function
-- **Stale file cleanup** — removed orphaned source files that caused build issues
-- **Double-free crashes** — explicit pointer nullification after free in HD background cleanup
-- **Frame timing** — delta time capping prevents animation speed-up after loading pauses
-
-#### Configuration System
-- **INI-style configuration file** (`aitd_remaster.cfg`) with sections for graphics, post-processing, audio, controller, font, and controls
-- Persistent save/load of all settings
-- Sensible defaults initialized on first run
-
-#### Version Detection
-- `version.txt` support — version string displayed in the window title bar
-- Automatic game detection from data files with per-game CVar table initialization
-
----
-
-### 📦 Distribution
-
-#### Archive Format (.hda)
-Both `backgrounds_hd.hda` and `audio.hda` use the **HDBG** binary archive format:
-- Single-file container with table-of-contents header
-- 64-bit offsets for archives up to 16 EB
-- Case-insensitive entry lookup
-- Prefix-based directory listing for animated background frame enumeration
-- No re-compression — raw file data stored as-is for maximum loading speed
-- PowerShell packing scripts included (`pack_backgrounds.ps1`, `pack_audio.ps1`)
-
-#### Asset Summary
-
-| Archive | Entries | Size | Contents |
-|---------|---------|------|----------|
-| `backgrounds_hd.hda` | 1,941 | ~1.8 GB | Static + animated PNG backgrounds |
-| `audio.hda` | 21 | ~40 MB | 17 MP3 music tracks + 4 WAV sound effects |
-
-#### Executable
-- **Tatou.exe** — single Windows executable with custom application icon
-- All third-party libraries statically linked
-
----
-
-### 🔧 Build Information
-
-| Component | Version |
-|-----------|---------|
-| Compiler | MSVC (Visual Studio 2026) |
-| C++ Standard | C++20 |
-| Build System | CMake 3.10+ |
-| SDL | SDL3 |
-| bgfx | Latest (via bgfx.cmake) |
-| SoLoud | Latest (via soloud.cmake) |
-| stb_image | Bundled (via bimg) |
-| zlib | Bundled |
-
----
-
-### Known Limitations
-
-- HD backgrounds require original game data files to determine camera indices
-- Post-processing effects require a GPU with shader model 4.0+ support
-- Audio archive does not support streaming from archive (music is loaded fully into memory before playback)
-- AdLib/OPL music emulation is available but external MP3/OGG tracks are recommended for best quality
-
----
--Box Art for Steam
-<img width="1024" height="1536" alt="Portrait Box Art AITD1" src="https://github.com/user-attachments/assets/f354a57f-1077-4339-aecc-2d892a30d753" />
-
-*Alone In The Dark: Re-Haunted — Because some mansions deserve to be revisited.*
+The original game data files are **not** included and must be obtained separately (e.g., from Steam or GOG).
 
