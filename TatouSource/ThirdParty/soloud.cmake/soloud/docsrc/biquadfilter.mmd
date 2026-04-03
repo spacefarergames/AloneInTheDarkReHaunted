@@ -1,0 +1,59 @@
+## SoLoud::BiquadResonantFilter
+
+The biquad resonant filter is a surprisingly cheap way to implement low
+and high pass filters, as well as some kind of band bass filter.
+
+The implementation in SoLoud is based on "Using the Biquad Resonant
+Filter", Phil Burk, Game Programming Gems 3, p. 606.
+
+The filter has three parameters - sample rate, cutoff frequency and
+resonance. These can also be adjusted on live streams, for instance to
+fade the low pass filter cutoff frequency for a outdoors/indoors
+transition effect.
+
+The resonance parameter adjusts the sharpness (or bandwidth) of the
+cutoff.
+
+    // Set up low-pass filter
+    gBQRFilter.setParams(SoLoud::BiquadResonantFilter::LOWPASS, 500, 2);  
+    // Set the filter as the second filter of the bus
+    gBus.setFilter(1, &gBQRFilter); 
+
+It's also possible to set, fade or oscillate the parameters of a "live" filter
+
+    gSoloud.fadeFilterParameter(
+      gMusicHandle, // Sound handle
+      0,            // First filter
+      SoLoud::BiquadResonantFilter::FREQUENCY, // What to adjust
+      2000,         // Target value
+      3);           // Time in seconds
+      
+Currently, four parameters can be adjusted:
+
+Parameter   Description
+----        ------------
+WET         Filter's wet signal; 1.0f for fully filtered, 0.0f for original, 0.5f for half and half.
+FREQUENCY   Filter's cutoff frequency
+RESONANCE   Filter's resonance - higher means sharper cutoff
+
+
+### BiquadResonantFilter.setParams()
+
+
+Set the parameters of the filter.
+
+    gBQRFilter.setParams(SoLoud::BiquadResonantFilter::LOWPASS, 44100, 500, 2);  
+    
+Changing the parameters does not affect "live" sounds. If invalid parameters are
+given, the function will return error.
+
+
+### Live Parameter Access
+
+All filters inherit the live parameter access functions.
+
+- BiquadResonantFilter.getParamCount()
+- BiquadResonantFilter.getParamName()
+- BiquadResonantFilter.getParamType()
+- BiquadResonantFilter.getParamMax()
+- BiquadResonantFilter.getParamMin()

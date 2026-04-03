@@ -1,0 +1,375 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="18.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <PreferredToolArchitecture>x64</PreferredToolArchitecture>
+  </PropertyGroup>
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="MinSizeRel|x64">
+      <Configuration>MinSizeRel</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="RelWithDebInfo|x64">
+      <Configuration>RelWithDebInfo</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{36AD8FB2-C021-37DC-9057-F42E58C7C8B2}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+    <WindowsTargetPlatformVersion>10.0.26100.0</WindowsTargetPlatformVersion>
+    <Platform>x64</Platform>
+    <ProjectName>bimg</ProjectName>
+    <VCProjectUpgraderObjectName>NoUpgrade</VCProjectUpgraderObjectName>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v145</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v145</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v145</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v145</PlatformToolset>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <_ProjectFileVersion>10.0.20506.1</_ProjectFileVersion>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">D:\FITD\build\ThirdParty\bgfx.cmake\cmake\bimg\Debug\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">bimg.dir\Debug\</IntDir>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">bimg</TargetName>
+    <TargetExt Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">.lib</TargetExt>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">D:\FITD\build\ThirdParty\bgfx.cmake\cmake\bimg\Release\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">bimg.dir\Release\</IntDir>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">bimg</TargetName>
+    <TargetExt Condition="'$(Configuration)|$(Platform)'=='Release|x64'">.lib</TargetExt>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">D:\FITD\build\ThirdParty\bgfx.cmake\cmake\bimg\MinSizeRel\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">bimg.dir\MinSizeRel\</IntDir>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">bimg</TargetName>
+    <TargetExt Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">.lib</TargetExt>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">D:\FITD\build\ThirdParty\bgfx.cmake\cmake\bimg\RelWithDebInfo\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">bimg.dir\RelWithDebInfo\</IntDir>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">bimg</TargetName>
+    <TargetExt Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">.lib</TargetExt>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>D:\FITD\ThirdParty\bgfx.cmake\bimg\include;D:\FITD\ThirdParty\bgfx.cmake\bimg\3rdparty\astc-encoder\include;D:\FITD\ThirdParty\bgfx.cmake\bimg\3rdparty\tinyexr\deps\miniz;D:\FITD\ThirdParty\bgfx.cmake\bx\include;D:\FITD\ThirdParty\bgfx.cmake\bx\3rdparty;D:\FITD\ThirdParty\bgfx.cmake\bx\include\compat\msvc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalOptions>%(AdditionalOptions) /Zc:__cplusplus</AdditionalOptions>
+      <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <BufferSecurityCheck></BufferSecurityCheck>
+      <CallingConvention></CallingConvention>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <ExceptionHandling>Sync</ExceptionHandling>
+      <FloatingPointModel></FloatingPointModel>
+      <ForceConformanceInForLoopScope></ForceConformanceInForLoopScope>
+      <InlineFunctionExpansion>Disabled</InlineFunctionExpansion>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+      <MinimalRebuild></MinimalRebuild>
+      <Optimization>Disabled</Optimization>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <RemoveUnreferencedCodeData></RemoveUnreferencedCodeData>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <SupportJustMyCode></SupportJustMyCode>
+      <TreatWChar_tAsBuiltInType></TreatWChar_tAsBuiltInType>
+      <UseFullPaths>false</UseFullPaths>
+      <UseStandardPreprocessor>true</UseStandardPreprocessor>
+      <WarningLevel>Level3</WarningLevel>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;BX_CONFIG_DEBUG=0;BX_CONFIG_DEBUG=1;__STDC_LIMIT_MACROS;__STDC_FORMAT_MACROS;__STDC_CONSTANT_MACROS;CMAKE_INTDIR="Debug"</PreprocessorDefinitions>
+      <ObjectFileName>$(IntDir)</ObjectFileName>
+      <ScanSourceForModuleDependencies>false</ScanSourceForModuleDependencies>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_DEBUG;_WINDOWS;BX_CONFIG_DEBUG=0;BX_CONFIG_DEBUG=1;__STDC_LIMIT_MACROS;__STDC_FORMAT_MACROS;__STDC_CONSTANT_MACROS;CMAKE_INTDIR=\"Debug\"</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>D:\FITD\ThirdParty\bgfx.cmake\bimg\include;D:\FITD\ThirdParty\bgfx.cmake\bimg\3rdparty\astc-encoder\include;D:\FITD\ThirdParty\bgfx.cmake\bimg\3rdparty\tinyexr\deps\miniz;D:\FITD\ThirdParty\bgfx.cmake\bx\include;D:\FITD\ThirdParty\bgfx.cmake\bx\3rdparty;D:\FITD\ThirdParty\bgfx.cmake\bx\include\compat\msvc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+    <Midl>
+      <AdditionalIncludeDirectories>D:\FITD\ThirdParty\bgfx.cmake\bimg\include;D:\FITD\ThirdParty\bgfx.cmake\bimg\3rdparty\astc-encoder\include;D:\FITD\ThirdParty\bgfx.cmake\bimg\3rdparty\tinyexr\deps\miniz;D:\FITD\ThirdParty\bgfx.cmake\bx\include;D:\FITD\ThirdParty\bgfx.cmake\bx\3rdparty;D:\FITD\ThirdParty\bgfx.cmake\bx\include\compat\msvc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+    <Lib>
+      <AdditionalOptions>%(AdditionalOptions) /machine:x64</AdditionalOptions>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>D:\FITD\ThirdParty\bgfx.cmake\bimg\include;D:\FITD\ThirdParty\bgfx.cmake\bimg\3rdparty\astc-encoder\include;D:\FITD\ThirdParty\bgfx.cmake\bimg\3rdparty\tinyexr\deps\miniz;D:\FITD\ThirdParty\bgfx.cmake\bx\include;D:\FITD\ThirdParty\bgfx.cmake\bx\3rdparty;D:\FITD\ThirdParty\bgfx.cmake\bx\include\compat\msvc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalOptions>%(AdditionalOptions) /Zc:__cplusplus</AdditionalOptions>
+      <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
+      <BasicRuntimeChecks>Default</BasicRuntimeChecks>
+      <BufferSecurityCheck></BufferSecurityCheck>
+      <CallingConvention></CallingConvention>
+      <ExceptionHandling>Sync</ExceptionHandling>
+      <FloatingPointModel></FloatingPointModel>
+      <ForceConformanceInForLoopScope></ForceConformanceInForLoopScope>
+      <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+      <MinimalRebuild></MinimalRebuild>
+      <Optimization>MaxSpeed</Optimization>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <RemoveUnreferencedCodeData></RemoveUnreferencedCodeData>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <SupportJustMyCode></SupportJustMyCode>
+      <TreatWChar_tAsBuiltInType></TreatWChar_tAsBuiltInType>
+      <UseFullPaths>false</UseFullPaths>
+      <UseStandardPreprocessor>true</UseStandardPreprocessor>
+      <WarningLevel>Level3</WarningLevel>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;BX_CONFIG_DEBUG=0;NDEBUG;__STDC_LIMIT_MACROS;__STDC_FORMAT_MACROS;__STDC_CONSTANT_MACROS;CMAKE_INTDIR="Release"</PreprocessorDefinitions>
+      <ObjectFileName>$(IntDir)</ObjectFileName>
+      <DebugInformationFormat>
+      </DebugInformationFormat>
+      <ScanSourceForModuleDependencies>false</ScanSourceForModuleDependencies>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;BX_CONFIG_DEBUG=0;NDEBUG;__STDC_LIMIT_MACROS;__STDC_FORMAT_MACROS;__STDC_CONSTANT_MACROS;CMAKE_INTDIR=\"Release\"</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>D:\FITD\ThirdParty\bgfx.cmake\bimg\include;D:\FITD\ThirdParty\bgfx.cmake\bimg\3rdparty\astc-encoder\include;D:\FITD\ThirdParty\bgfx.cmake\bimg\3rdparty\tinyexr\deps\miniz;D:\FITD\ThirdParty\bgfx.cmake\bx\include;D:\FITD\ThirdParty\bgfx.cmake\bx\3rdparty;D:\FITD\ThirdParty\bgfx.cmake\bx\include\compat\msvc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+    <Midl>
+      <AdditionalIncludeDirectories>D:\FITD\ThirdParty\bgfx.cmake\bimg\include;D:\FITD\ThirdParty\bgfx.cmake\bimg\3rdparty\astc-encoder\include;D:\FITD\ThirdParty\bgfx.cmake\bimg\3rdparty\tinyexr\deps\miniz;D:\FITD\ThirdParty\bgfx.cmake\bx\include;D:\FITD\ThirdParty\bgfx.cmake\bx\3rdparty;D:\FITD\ThirdParty\bgfx.cmake\bx\include\compat\msvc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+    <Lib>
+      <AdditionalOptions>%(AdditionalOptions) /machine:x64</AdditionalOptions>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>D:\FITD\ThirdParty\bgfx.cmake\bimg\include;D:\FITD\ThirdParty\bgfx.cmake\bimg\3rdparty\astc-encoder\include;D:\FITD\ThirdParty\bgfx.cmake\bimg\3rdparty\tinyexr\deps\miniz;D:\FITD\ThirdParty\bgfx.cmake\bx\include;D:\FITD\ThirdParty\bgfx.cmake\bx\3rdparty;D:\FITD\ThirdParty\bgfx.cmake\bx\include\compat\msvc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalOptions>%(AdditionalOptions) /Zc:__cplusplus</AdditionalOptions>
+      <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
+      <BasicRuntimeChecks>Default</BasicRuntimeChecks>
+      <BufferSecurityCheck></BufferSecurityCheck>
+      <CallingConvention></CallingConvention>
+      <ExceptionHandling>Sync</ExceptionHandling>
+      <FloatingPointModel></FloatingPointModel>
+      <ForceConformanceInForLoopScope></ForceConformanceInForLoopScope>
+      <InlineFunctionExpansion>OnlyExplicitInline</InlineFunctionExpansion>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+      <MinimalRebuild></MinimalRebuild>
+      <Optimization>MinSpace</Optimization>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <RemoveUnreferencedCodeData></RemoveUnreferencedCodeData>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <SupportJustMyCode></SupportJustMyCode>
+      <TreatWChar_tAsBuiltInType></TreatWChar_tAsBuiltInType>
+      <UseFullPaths>false</UseFullPaths>
+      <UseStandardPreprocessor>true</UseStandardPreprocessor>
+      <WarningLevel>Level3</WarningLevel>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;BX_CONFIG_DEBUG=0;NDEBUG;__STDC_LIMIT_MACROS;__STDC_FORMAT_MACROS;__STDC_CONSTANT_MACROS;CMAKE_INTDIR="MinSizeRel"</PreprocessorDefinitions>
+      <ObjectFileName>$(IntDir)</ObjectFileName>
+      <DebugInformationFormat>
+      </DebugInformationFormat>
+      <ScanSourceForModuleDependencies>false</ScanSourceForModuleDependencies>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;BX_CONFIG_DEBUG=0;NDEBUG;__STDC_LIMIT_MACROS;__STDC_FORMAT_MACROS;__STDC_CONSTANT_MACROS;CMAKE_INTDIR=\"MinSizeRel\"</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>D:\FITD\ThirdParty\bgfx.cmake\bimg\include;D:\FITD\ThirdParty\bgfx.cmake\bimg\3rdparty\astc-encoder\include;D:\FITD\ThirdParty\bgfx.cmake\bimg\3rdparty\tinyexr\deps\miniz;D:\FITD\ThirdParty\bgfx.cmake\bx\include;D:\FITD\ThirdParty\bgfx.cmake\bx\3rdparty;D:\FITD\ThirdParty\bgfx.cmake\bx\include\compat\msvc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+    <Midl>
+      <AdditionalIncludeDirectories>D:\FITD\ThirdParty\bgfx.cmake\bimg\include;D:\FITD\ThirdParty\bgfx.cmake\bimg\3rdparty\astc-encoder\include;D:\FITD\ThirdParty\bgfx.cmake\bimg\3rdparty\tinyexr\deps\miniz;D:\FITD\ThirdParty\bgfx.cmake\bx\include;D:\FITD\ThirdParty\bgfx.cmake\bx\3rdparty;D:\FITD\ThirdParty\bgfx.cmake\bx\include\compat\msvc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+    <Lib>
+      <AdditionalOptions>%(AdditionalOptions) /machine:x64</AdditionalOptions>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>D:\FITD\ThirdParty\bgfx.cmake\bimg\include;D:\FITD\ThirdParty\bgfx.cmake\bimg\3rdparty\astc-encoder\include;D:\FITD\ThirdParty\bgfx.cmake\bimg\3rdparty\tinyexr\deps\miniz;D:\FITD\ThirdParty\bgfx.cmake\bx\include;D:\FITD\ThirdParty\bgfx.cmake\bx\3rdparty;D:\FITD\ThirdParty\bgfx.cmake\bx\include\compat\msvc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalOptions>%(AdditionalOptions) /Zc:__cplusplus</AdditionalOptions>
+      <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
+      <BasicRuntimeChecks>Default</BasicRuntimeChecks>
+      <BufferSecurityCheck></BufferSecurityCheck>
+      <CallingConvention></CallingConvention>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <ExceptionHandling>Sync</ExceptionHandling>
+      <FloatingPointModel></FloatingPointModel>
+      <ForceConformanceInForLoopScope></ForceConformanceInForLoopScope>
+      <InlineFunctionExpansion>OnlyExplicitInline</InlineFunctionExpansion>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+      <MinimalRebuild></MinimalRebuild>
+      <Optimization>MaxSpeed</Optimization>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <RemoveUnreferencedCodeData></RemoveUnreferencedCodeData>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <SupportJustMyCode></SupportJustMyCode>
+      <TreatWChar_tAsBuiltInType></TreatWChar_tAsBuiltInType>
+      <UseFullPaths>false</UseFullPaths>
+      <UseStandardPreprocessor>true</UseStandardPreprocessor>
+      <WarningLevel>Level3</WarningLevel>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;BX_CONFIG_DEBUG=0;NDEBUG;__STDC_LIMIT_MACROS;__STDC_FORMAT_MACROS;__STDC_CONSTANT_MACROS;CMAKE_INTDIR="RelWithDebInfo"</PreprocessorDefinitions>
+      <ObjectFileName>$(IntDir)</ObjectFileName>
+      <ScanSourceForModuleDependencies>false</ScanSourceForModuleDependencies>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;BX_CONFIG_DEBUG=0;NDEBUG;__STDC_LIMIT_MACROS;__STDC_FORMAT_MACROS;__STDC_CONSTANT_MACROS;CMAKE_INTDIR=\"RelWithDebInfo\"</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>D:\FITD\ThirdParty\bgfx.cmake\bimg\include;D:\FITD\ThirdParty\bgfx.cmake\bimg\3rdparty\astc-encoder\include;D:\FITD\ThirdParty\bgfx.cmake\bimg\3rdparty\tinyexr\deps\miniz;D:\FITD\ThirdParty\bgfx.cmake\bx\include;D:\FITD\ThirdParty\bgfx.cmake\bx\3rdparty;D:\FITD\ThirdParty\bgfx.cmake\bx\include\compat\msvc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+    <Midl>
+      <AdditionalIncludeDirectories>D:\FITD\ThirdParty\bgfx.cmake\bimg\include;D:\FITD\ThirdParty\bgfx.cmake\bimg\3rdparty\astc-encoder\include;D:\FITD\ThirdParty\bgfx.cmake\bimg\3rdparty\tinyexr\deps\miniz;D:\FITD\ThirdParty\bgfx.cmake\bx\include;D:\FITD\ThirdParty\bgfx.cmake\bx\3rdparty;D:\FITD\ThirdParty\bgfx.cmake\bx\include\compat\msvc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+    <Lib>
+      <AdditionalOptions>%(AdditionalOptions) /machine:x64</AdditionalOptions>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <CustomBuild Include="D:\FITD\ThirdParty\bgfx.cmake\cmake\bimg\CMakeLists.txt">
+      <UseUtf8Encoding>Always</UseUtf8Encoding>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Building Custom Rule D:/FITD/ThirdParty/bgfx.cmake/cmake/bimg/CMakeLists.txt</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -SD:/FITD -BD:/FITD/build --check-stamp-file D:/FITD/build/ThirdParty/bgfx.cmake/cmake/bimg/CMakeFiles/generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">C:\Program Files\CMake\share\cmake-4.2\Modules\CMakeCheckCompilerFlagCommonPatterns.cmake;C:\Program Files\CMake\share\cmake-4.2\Modules\CheckCXXCompilerFlag.cmake;C:\Program Files\CMake\share\cmake-4.2\Modules\CheckCXXSourceCompiles.cmake;C:\Program Files\CMake\share\cmake-4.2\Modules\Internal\CheckCompilerFlag.cmake;C:\Program Files\CMake\share\cmake-4.2\Modules\Internal\CheckFlagCommonConfig.cmake;C:\Program Files\CMake\share\cmake-4.2\Modules\Internal\CheckSourceCompiles.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bimg\3rdparty\astc_encoder.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bimg\3rdparty\edtaa3.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bimg\3rdparty\etc1.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bimg\3rdparty\etc2.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bimg\3rdparty\iqa.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bimg\3rdparty\libsquish.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bimg\3rdparty\loadpng.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bimg\3rdparty\miniz.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bimg\3rdparty\nvtt.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bimg\3rdparty\pvrtc.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bimg\3rdparty\tinyexr.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bimg\bimg.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bimg\bimg_decode.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bimg\bimg_encode.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bimg\texturec.cmake;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">D:\FITD\build\ThirdParty\bgfx.cmake\cmake\bimg\CMakeFiles\generate.stamp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Building Custom Rule D:/FITD/ThirdParty/bgfx.cmake/cmake/bimg/CMakeLists.txt</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -SD:/FITD -BD:/FITD/build --check-stamp-file D:/FITD/build/ThirdParty/bgfx.cmake/cmake/bimg/CMakeFiles/generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">C:\Program Files\CMake\share\cmake-4.2\Modules\CMakeCheckCompilerFlagCommonPatterns.cmake;C:\Program Files\CMake\share\cmake-4.2\Modules\CheckCXXCompilerFlag.cmake;C:\Program Files\CMake\share\cmake-4.2\Modules\CheckCXXSourceCompiles.cmake;C:\Program Files\CMake\share\cmake-4.2\Modules\Internal\CheckCompilerFlag.cmake;C:\Program Files\CMake\share\cmake-4.2\Modules\Internal\CheckFlagCommonConfig.cmake;C:\Program Files\CMake\share\cmake-4.2\Modules\Internal\CheckSourceCompiles.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bimg\3rdparty\astc_encoder.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bimg\3rdparty\edtaa3.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bimg\3rdparty\etc1.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bimg\3rdparty\etc2.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bimg\3rdparty\iqa.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bimg\3rdparty\libsquish.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bimg\3rdparty\loadpng.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bimg\3rdparty\miniz.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bimg\3rdparty\nvtt.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bimg\3rdparty\pvrtc.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bimg\3rdparty\tinyexr.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bimg\bimg.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bimg\bimg_decode.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bimg\bimg_encode.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bimg\texturec.cmake;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">D:\FITD\build\ThirdParty\bgfx.cmake\cmake\bimg\CMakeFiles\generate.stamp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">Building Custom Rule D:/FITD/ThirdParty/bgfx.cmake/cmake/bimg/CMakeLists.txt</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -SD:/FITD -BD:/FITD/build --check-stamp-file D:/FITD/build/ThirdParty/bgfx.cmake/cmake/bimg/CMakeFiles/generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">C:\Program Files\CMake\share\cmake-4.2\Modules\CMakeCheckCompilerFlagCommonPatterns.cmake;C:\Program Files\CMake\share\cmake-4.2\Modules\CheckCXXCompilerFlag.cmake;C:\Program Files\CMake\share\cmake-4.2\Modules\CheckCXXSourceCompiles.cmake;C:\Program Files\CMake\share\cmake-4.2\Modules\Internal\CheckCompilerFlag.cmake;C:\Program Files\CMake\share\cmake-4.2\Modules\Internal\CheckFlagCommonConfig.cmake;C:\Program Files\CMake\share\cmake-4.2\Modules\Internal\CheckSourceCompiles.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bimg\3rdparty\astc_encoder.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bimg\3rdparty\edtaa3.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bimg\3rdparty\etc1.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bimg\3rdparty\etc2.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bimg\3rdparty\iqa.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bimg\3rdparty\libsquish.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bimg\3rdparty\loadpng.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bimg\3rdparty\miniz.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bimg\3rdparty\nvtt.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bimg\3rdparty\pvrtc.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bimg\3rdparty\tinyexr.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bimg\bimg.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bimg\bimg_decode.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bimg\bimg_encode.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bimg\texturec.cmake;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">D:\FITD\build\ThirdParty\bgfx.cmake\cmake\bimg\CMakeFiles\generate.stamp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">Building Custom Rule D:/FITD/ThirdParty/bgfx.cmake/cmake/bimg/CMakeLists.txt</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -SD:/FITD -BD:/FITD/build --check-stamp-file D:/FITD/build/ThirdParty/bgfx.cmake/cmake/bimg/CMakeFiles/generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">C:\Program Files\CMake\share\cmake-4.2\Modules\CMakeCheckCompilerFlagCommonPatterns.cmake;C:\Program Files\CMake\share\cmake-4.2\Modules\CheckCXXCompilerFlag.cmake;C:\Program Files\CMake\share\cmake-4.2\Modules\CheckCXXSourceCompiles.cmake;C:\Program Files\CMake\share\cmake-4.2\Modules\Internal\CheckCompilerFlag.cmake;C:\Program Files\CMake\share\cmake-4.2\Modules\Internal\CheckFlagCommonConfig.cmake;C:\Program Files\CMake\share\cmake-4.2\Modules\Internal\CheckSourceCompiles.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bimg\3rdparty\astc_encoder.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bimg\3rdparty\edtaa3.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bimg\3rdparty\etc1.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bimg\3rdparty\etc2.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bimg\3rdparty\iqa.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bimg\3rdparty\libsquish.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bimg\3rdparty\loadpng.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bimg\3rdparty\miniz.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bimg\3rdparty\nvtt.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bimg\3rdparty\pvrtc.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bimg\3rdparty\tinyexr.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bimg\bimg.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bimg\bimg_decode.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bimg\bimg_encode.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bimg\texturec.cmake;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">D:\FITD\build\ThirdParty\bgfx.cmake\cmake\bimg\CMakeFiles\generate.stamp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">false</LinkObjects>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bimg\3rdparty\astc-encoder\source\astcenc_averages_and_directions.cpp" />
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bimg\3rdparty\astc-encoder\source\astcenc_block_sizes.cpp" />
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bimg\3rdparty\astc-encoder\source\astcenc_color_quantize.cpp" />
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bimg\3rdparty\astc-encoder\source\astcenc_color_unquantize.cpp" />
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bimg\3rdparty\astc-encoder\source\astcenc_compress_symbolic.cpp" />
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bimg\3rdparty\astc-encoder\source\astcenc_compute_variance.cpp" />
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bimg\3rdparty\astc-encoder\source\astcenc_decompress_symbolic.cpp" />
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bimg\3rdparty\astc-encoder\source\astcenc_diagnostic_trace.cpp" />
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bimg\3rdparty\astc-encoder\source\astcenc_diagnostic_trace.h" />
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bimg\3rdparty\astc-encoder\source\astcenc_entry.cpp" />
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bimg\3rdparty\astc-encoder\source\astcenc_find_best_partitioning.cpp" />
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bimg\3rdparty\astc-encoder\source\astcenc_ideal_endpoints_and_weights.cpp" />
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bimg\3rdparty\astc-encoder\source\astcenc_image.cpp" />
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bimg\3rdparty\astc-encoder\source\astcenc_integer_sequence.cpp" />
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bimg\3rdparty\astc-encoder\source\astcenc_internal.h" />
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bimg\3rdparty\astc-encoder\source\astcenc_internal_entry.h" />
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bimg\3rdparty\astc-encoder\source\astcenc_mathlib.cpp" />
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bimg\3rdparty\astc-encoder\source\astcenc_mathlib.h" />
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bimg\3rdparty\astc-encoder\source\astcenc_mathlib_softfloat.cpp" />
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bimg\3rdparty\astc-encoder\source\astcenc_partition_tables.cpp" />
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bimg\3rdparty\astc-encoder\source\astcenc_percentile_tables.cpp" />
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bimg\3rdparty\astc-encoder\source\astcenc_pick_best_endpoint_format.cpp" />
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bimg\3rdparty\astc-encoder\source\astcenc_quantization.cpp" />
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bimg\3rdparty\astc-encoder\source\astcenc_symbolic_physical.cpp" />
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bimg\3rdparty\astc-encoder\source\astcenc_vecmathlib.h" />
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bimg\3rdparty\astc-encoder\source\astcenc_vecmathlib_avx2_8.h" />
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bimg\3rdparty\astc-encoder\source\astcenc_vecmathlib_common_4.h" />
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bimg\3rdparty\astc-encoder\source\astcenc_vecmathlib_neon_4.h" />
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bimg\3rdparty\astc-encoder\source\astcenc_vecmathlib_none_4.h" />
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bimg\3rdparty\astc-encoder\source\astcenc_vecmathlib_sse_4.h" />
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bimg\3rdparty\astc-encoder\source\astcenc_weight_align.cpp" />
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bimg\3rdparty\astc-encoder\source\astcenc_weight_quant_xfer_tables.cpp" />
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bimg\3rdparty\tinyexr\deps\miniz\miniz.c" />
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bimg\3rdparty\tinyexr\deps\miniz\miniz.h" />
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bimg\include\bimg\bimg.h" />
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bimg\include\bimg\decode.h" />
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bimg\include\bimg\encode.h" />
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bimg\src\image.cpp" />
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bimg\src\image_gnf.cpp" />
+  </ItemGroup>
+  <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="D:\FITD\build\ZERO_CHECK.vcxproj">
+      <Project>{2595C25F-C5BF-3655-AC4B-0C1EB69174EA}</Project>
+      <Name>ZERO_CHECK</Name>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </ProjectReference>
+    <ProjectReference Include="D:\FITD\build\ThirdParty\bgfx.cmake\cmake\bx\bx.vcxproj">
+      <Project>{4068D459-6017-3982-BCB2-B1CDF50D3F65}</Project>
+      <Name>bx</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

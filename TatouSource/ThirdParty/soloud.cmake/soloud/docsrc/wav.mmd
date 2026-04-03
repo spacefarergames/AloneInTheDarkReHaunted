@@ -1,0 +1,151 @@
+## SoLoud::Wav
+
+The SoLoud::Wav class represents a wave sound effect. The source files
+may be in various RIFF WAV file formats, FLAC, MP3 or Ogg Vorbis
+files.
+
+The sounds are loaded and converted to float samples, which means that
+every second of a 44100Hz stereo sound takes about 350kB of memory. The
+good side is, after loading, the use of these samples are very lightweight, as
+their processing is mostly just a memory copy.
+
+For lengthy samples like background music, you may want to use
+SoLoud::WavStream instead. The Wav is all about speed, and always
+decodes the whole sample into memory at load time.
+
+### Wav.load()
+
+The wav loader takes just one parameter, the file name:
+
+    void load(const char *aFilename); // File to load
+
+If loading fails, the sample will be silent.
+
+    SoLoud::Wav boom;
+    boom.load("boom.wav");
+
+If the loading function is called while there are instances playing, the
+result is undefined (most likely a crash).
+
+### Wav.loadMem()
+
+Alternate way of loading samples is to read from a memory buffer.
+
+    result loadMem(unsigned char *aMem, int aLength, 
+                   bool aCopy, bool aTakeOwnership);
+
+If loading fails, the sample will be silent.
+
+    SoLoud::Wav boom;
+    boom.loadMem(boomMemoryResource, boomMemoryResourceLength);
+
+SoLoud function assumes that the pointer and the data pointed will
+be valid as long as SoLoud needs them. You can use the aCopy parameter
+to tell SoLoud to take a copy of the data instead of using the pointers
+directly, and the aTakeOwnership parameter to tell SoLoud to free the
+pointer when the object is being destroyed.
+
+### Wav.loadFile()
+
+The loadFile() can be used to load audio from a SoLoud::File object. This
+is useful for integrating with virtual filesystems / packfiles, such as
+PhysFS.
+
+### Wav.loadRawWave(), Wav.loadRawWave8(), Wav.loadRawWave16()
+
+It is also possible to turn an array of raw wave data into a SoLoud Wav object
+using the loadRawWave family of functions. These functions differ primarily by the
+format of wave data they load - floats, unsigned 8 bit and signed 16 bit samples.
+
+		result loadRawWave8(unsigned char *aMem, 
+		                    unsigned int aLength, 
+							float aSamplerate = 44100.0f, 
+							unsigned int aChannels = 1);
+		result loadRawWave16(short *aMem, 
+		                     unsigned int aLength, 
+							 float aSamplerate = 44100.0f, 
+							 unsigned int aChannels = 1);
+		result loadRawWave(float *aMem, 
+		                   unsigned int aLength, 
+						   float aSamplerate = 44100.0f, 
+						   unsigned int aChannels = 1, 
+						   bool aCopy = false, 
+						   bool aTakeOwnership = true);
+
+The variant that loads float samples additionally lets you decice whether
+SoLoud should make a copy of the data (such as when the data is in stack),
+and whether SoLoud should take ownership of the data (i.e, should SoLoud
+delete the data when the object is destroyed).
+
+### Wav.setLooping()
+
+This function can be used to set the wave to loop.
+
+    gDrumloop.setLooping(1);
+    
+Calling this function will not affect "live" sound sources.
+
+
+### Wav.setFilter()
+
+As with any other audio source, you can attach filters to 
+wave audio sources.
+
+    gHipster.setFilter(0, &gLofi);
+
+### Wav.stop()
+
+You can stop all instances of a wave sound source with
+stop(). This is equivalent of calling soloud.stopAudioSource()
+with the sound source.
+
+    gHammertime.stop();
+
+### Wav.getLength()
+
+The length, in seconds, of this wave can be queried with this
+function.
+
+    double t = gRecord.getLength();
+    
+### Wav.setInaudibleBehavior()
+
+Set the inaudible behavior of the sound. By default, if a sound is
+inaudible, it's paused, and will resume when it becomes audible again.
+With this function you can tell SoLoud to either kill the sound if
+it becomes inaudible, or to keep ticking the sound even if it's 
+inaudible.
+
+	// Keep on talking even if I'm not around
+	gSpeech.setInaudibleBehavior(true, false);
+
+### Wav.setVolume()
+
+Set the default volume of the instances created from this audio source.
+
+    gTinyVoice.setVolume(0.1);
+
+### Wav.setLoopPoint(), Wav.getLoopPoint()
+
+If looping is enabled, the loop point is, by default, the start of the
+stream. The loop point can be changed, and current loop point can be
+queried with these functions.
+
+	double t = snd.getLoopPoint();
+	snd.setLoopPoint(t + 1); // skip 1 second more when looping
+	...
+	snd.setLoopPoint(0); // loop from start
+
+### Inherited 3d audio interfaces
+
+Like all other audio sources, Wav inherits the 3d audio interfaces. Please refer to the 3d audio chapter for details on:
+
+- Wav.set3dMinMaxDistance()
+- Wav.set3dAttenuation()
+- Wav.set3dDopplerFactor()
+- Wav.set3dProcessing()
+- Wav.set3dListenerRelative()
+- Wav.set3dDistanceDelay()
+- Wav.set3dCollider()
+- Wav.set3dAttenuator()
+          

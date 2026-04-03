@@ -1,0 +1,15 @@
+D:\FITD\ThirdParty\zlib\adler32.c;D:\FITD\build\vs2026\zlib\zlib-build\zlib.dir\Release\adler32.obj
+D:\FITD\ThirdParty\zlib\compress.c;D:\FITD\build\vs2026\zlib\zlib-build\zlib.dir\Release\compress.obj
+D:\FITD\ThirdParty\zlib\crc32.c;D:\FITD\build\vs2026\zlib\zlib-build\zlib.dir\Release\crc32.obj
+D:\FITD\ThirdParty\zlib\deflate.c;D:\FITD\build\vs2026\zlib\zlib-build\zlib.dir\Release\deflate.obj
+D:\FITD\ThirdParty\zlib\gzclose.c;D:\FITD\build\vs2026\zlib\zlib-build\zlib.dir\Release\gzclose.obj
+D:\FITD\ThirdParty\zlib\gzlib.c;D:\FITD\build\vs2026\zlib\zlib-build\zlib.dir\Release\gzlib.obj
+D:\FITD\ThirdParty\zlib\gzread.c;D:\FITD\build\vs2026\zlib\zlib-build\zlib.dir\Release\gzread.obj
+D:\FITD\ThirdParty\zlib\gzwrite.c;D:\FITD\build\vs2026\zlib\zlib-build\zlib.dir\Release\gzwrite.obj
+D:\FITD\ThirdParty\zlib\inflate.c;D:\FITD\build\vs2026\zlib\zlib-build\zlib.dir\Release\inflate.obj
+D:\FITD\ThirdParty\zlib\infback.c;D:\FITD\build\vs2026\zlib\zlib-build\zlib.dir\Release\infback.obj
+D:\FITD\ThirdParty\zlib\inftrees.c;D:\FITD\build\vs2026\zlib\zlib-build\zlib.dir\Release\inftrees.obj
+D:\FITD\ThirdParty\zlib\inffast.c;D:\FITD\build\vs2026\zlib\zlib-build\zlib.dir\Release\inffast.obj
+D:\FITD\ThirdParty\zlib\trees.c;D:\FITD\build\vs2026\zlib\zlib-build\zlib.dir\Release\trees.obj
+D:\FITD\ThirdParty\zlib\uncompr.c;D:\FITD\build\vs2026\zlib\zlib-build\zlib.dir\Release\uncompr.obj
+D:\FITD\ThirdParty\zlib\zutil.c;D:\FITD\build\vs2026\zlib\zlib-build\zlib.dir\Release\zutil.obj

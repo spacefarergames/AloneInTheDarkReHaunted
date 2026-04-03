@@ -1,0 +1,177 @@
+# SoLoud::Filter
+
+
+Filters can be used to modify the sound some way. Typical uses for a
+filter are to create environmental effects, like echo, or to modify the
+way the speech synthesizer sounds like.
+
+Like audio sources, filters are implemented with two classes; Filter and
+FilterInstance. These are, however, typically much simpler than those
+derived from the AudioSource and AudioInstance classes.
+
+## Filter class
+
+
+    class Example : public Filter
+    {
+    public:
+      virtual FilterInstance *createInstance();
+    };
+
+As with audio sources, the only required function is the
+createInstance().
+
+\pagebreak
+
+
+## FilterInstance class
+
+
+    class ExampleInstance : public FilterInstance
+    {
+    public:
+       virtual void initParams(int aNumParams);
+		   
+		   virtual void updateParams(float aTime);
+
+      virtual void filter(
+        float *aBuffer,     int aSamples, 
+        int aChannels,      float aSamplerate, 
+        float aTime);
+        
+      virtual void filterChannel(
+        float *aBuffer,     int aSamples, 
+        float aSamplerate,  float aTime, 
+        int aChannel,       int aChannels);
+        
+      virtual float getFilterParameter(
+        int aAttributeId);
+        
+      virtual void setFilterParameter(
+        int aAttributeId,   float aValue);
+        
+      virtual void fadeFilterParameter(
+        int aAttributeId,   float aTo, 
+        float aTime,        float aStartTime);
+        
+      virtual void oscillateFilterParameter(
+        int aAttributeId,   float aFrom, 
+        float aTo,          float aTime, 
+        float aStartTime);
+    };
+
+The filter instance has no mandatory functions, but you may want to
+implement either filter() or filterChannel() to do some actual work.
+
+### FilterInstance.initParams
+
+
+You should call this in the constructor of your filter instance, with
+the number of parameters your filter has. By convention, the first
+parameter should be the wet/dry parameter, where value 1 outputs fully
+filtered and 0 completely original sound.
+
+\pagebreak
+
+
+### FilterInstance.updateParams
+
+
+You should call this function in your filter or filterChannel functions
+to update fader values.
+
+The mNumParams member contains the parameter count.
+
+The mParamChanged member is bit-encoded field showing which parameters
+have changed. If you want to know whether parameter 3 has changed, for
+instance, you could do:
+
+    mParamChanged = 0;
+    updateParams(aTime);
+    if (mParamChanged & (1 << 3)) // param 3 changed
+
+Finally, mParam array contains the parameter values, and mParamFader
+array contains the faders for the parameters.
+
+### FilterInstance.filter()
+
+
+The filter() function is the main workhorse of a filter. It gets a
+buffer of samples, channel count, samplerate and current stream time,
+and is expected to overwrite the samples with filtered ones.
+
+If channel count is not one, the layout of the buffer is such that the
+first channel's samples come first, followed by the second channel's
+samples, etc.
+
+So if dealing with stereo samples, aBuffer first has aSamples floats for
+the first channel, followed by aSamples floats for the second channel.
+
+The default implementation calls filterChannel for every channel in the
+buffer.
+
+### FilterInstance.filterChannel()
+
+
+Most filters are simpler to write on a channel-by-channel basis, so that
+they only deal with mono samples. In this case, you may want to use the
+filterChannel() function instead. The default implementation of filter()
+calls the filterChannel() for every channel in the source.
+
+\pagebreak
+
+
+### FilterInstance.getFilterParameter()
+
+
+This function is needed to support the changing of live filter
+parameters. The default implementation uses the mParam array.
+
+Unless you do something unexpected, you shouldn't need to touch
+this function.
+
+### FilterInstance.setFilterParameter()
+
+
+This function is needed to support the changing of live filter
+parameters. The default implementation uses the mParam array.
+
+Unless you do something unexpected, you shouldn't need to touch
+this function.
+
+### FilterInstance.fadeFilterParameter()
+
+
+This function is needed to support the changing of live filter
+parameters. The default implementation uses the mParamFader array.
+
+Unless you do something unexpected, you shouldn't need to touch
+this function.
+
+### FilterInstance.oscillateFilterParameter()
+
+
+This function is needed to support the changing of live filter
+parameters. The default implementation uses the mParamFader array.
+
+Unless you do something unexpected, you shouldn't need to touch
+this function.
+
+
+### Live Parameter Access
+
+All filters inherit the live parameter access functions.
+
+- getParamCount()
+- getParamName()
+- getParamType()
+- getParamMax()
+- getParamMin()
+
+These functions are mostly useful at runtime, to get information about
+filters without knowing which filter you're talking with, such as
+with an editor. See "Filter Folio" demo as an example.
+
+The max/min values are suggestions; filters may function outside
+the suggested ranges, but in some cases (especially with value zero)
+may lead to very bad audio or possibly even crashes.

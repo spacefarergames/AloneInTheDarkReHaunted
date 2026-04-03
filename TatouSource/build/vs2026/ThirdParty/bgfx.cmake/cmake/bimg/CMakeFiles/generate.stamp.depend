@@ -1,0 +1,23 @@
+# CMake generation dependency list for this directory.
+C:/Program Files/CMake/share/cmake-4.2/Modules/CMakeCheckCompilerFlagCommonPatterns.cmake
+C:/Program Files/CMake/share/cmake-4.2/Modules/CheckCXXCompilerFlag.cmake
+C:/Program Files/CMake/share/cmake-4.2/Modules/CheckCXXSourceCompiles.cmake
+C:/Program Files/CMake/share/cmake-4.2/Modules/Internal/CheckCompilerFlag.cmake
+C:/Program Files/CMake/share/cmake-4.2/Modules/Internal/CheckFlagCommonConfig.cmake
+C:/Program Files/CMake/share/cmake-4.2/Modules/Internal/CheckSourceCompiles.cmake
+D:/FITD/ThirdParty/bgfx.cmake/cmake/bimg/3rdparty/astc_encoder.cmake
+D:/FITD/ThirdParty/bgfx.cmake/cmake/bimg/3rdparty/edtaa3.cmake
+D:/FITD/ThirdParty/bgfx.cmake/cmake/bimg/3rdparty/etc1.cmake
+D:/FITD/ThirdParty/bgfx.cmake/cmake/bimg/3rdparty/etc2.cmake
+D:/FITD/ThirdParty/bgfx.cmake/cmake/bimg/3rdparty/iqa.cmake
+D:/FITD/ThirdParty/bgfx.cmake/cmake/bimg/3rdparty/libsquish.cmake
+D:/FITD/ThirdParty/bgfx.cmake/cmake/bimg/3rdparty/loadpng.cmake
+D:/FITD/ThirdParty/bgfx.cmake/cmake/bimg/3rdparty/miniz.cmake
+D:/FITD/ThirdParty/bgfx.cmake/cmake/bimg/3rdparty/nvtt.cmake
+D:/FITD/ThirdParty/bgfx.cmake/cmake/bimg/3rdparty/pvrtc.cmake
+D:/FITD/ThirdParty/bgfx.cmake/cmake/bimg/3rdparty/tinyexr.cmake
+D:/FITD/ThirdParty/bgfx.cmake/cmake/bimg/CMakeLists.txt
+D:/FITD/ThirdParty/bgfx.cmake/cmake/bimg/bimg.cmake
+D:/FITD/ThirdParty/bgfx.cmake/cmake/bimg/bimg_decode.cmake
+D:/FITD/ThirdParty/bgfx.cmake/cmake/bimg/bimg_encode.cmake
+D:/FITD/ThirdParty/bgfx.cmake/cmake/bimg/texturec.cmake

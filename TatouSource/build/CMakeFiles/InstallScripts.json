@@ -1,0 +1,17 @@
+{
+	"InstallScripts" : 
+	[
+		"D:/FITD/build/cmake_install.cmake",
+		"D:/FITD/build/ThirdParty/bgfx.cmake/cmake_install.cmake",
+		"D:/FITD/build/ThirdParty/bgfx.cmake/cmake/bx/cmake_install.cmake",
+		"D:/FITD/build/ThirdParty/bgfx.cmake/cmake/bimg/cmake_install.cmake",
+		"D:/FITD/build/ThirdParty/bgfx.cmake/cmake/bgfx/cmake_install.cmake",
+		"D:/FITD/build/ThirdParty/soloud.cmake/cmake_install.cmake",
+		"D:/FITD/build/ThirdParty/SDL/cmake_install.cmake",
+		"D:/FITD/build/zlib/zlib-build/cmake_install.cmake",
+		"D:/FITD/build/tools/cmake_install.cmake",
+		"D:/FITD/build/FitdLib/cmake_install.cmake",
+		"D:/FITD/build/Fitd/cmake_install.cmake"
+	],
+	"Parallel" : false
+}

@@ -1,0 +1,34 @@
+///////////////////////////////////////////////////////////////////////////////
+// Alone In The Dark Re-Haunted
+// Copyright (C) 2026 Infogrames / Spacefarer Retro Remasters LLC
+// Based on FITD by yaz0r, Re-haunted is released under GPL
+//
+// Job System Initialization - Called once at startup
+// Author: Jake Jackson (jake@spacefarergames.com)
+///////////////////////////////////////////////////////////////////////////////
+
+#pragma once
+
+#include "jobSystem.h"
+
+///////////////////////////////////////////////////////////////////////////////
+// Initialize the job system at application startup
+///////////////////////////////////////////////////////////////////////////////
+
+inline void initJobSystem()
+{
+    // Initialize with default threading configuration:
+    // - 2 I/O threads for file operations
+    // - CPU_COUNT-1 worker threads for CPU-bound tasks
+    JobSystem::instance().init(2, -1);
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// Shutdown the job system at application termination
+///////////////////////////////////////////////////////////////////////////////
+
+inline void shutdownJobSystem()
+{
+    JobSystem::instance().shutdown();
+}
+

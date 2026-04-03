@@ -1,0 +1,151 @@
+% These lines tell TeXShop to typeset with xelatex, and to open and 
+% save the source with Unicode encoding.
+
+%!TEX TS-program = xelatex
+%!TEX encoding = UTF-8 Unicode
+%! program = pdflatex
+
+%% Get all the page and style setup from a common file
+\input{setup.tex}
+
+\usepackage{longtable}
+
+\usepackage{float}
+\restylefloat{table} 
+\restylefloat{figure}
+
+%% Set the image paths
+\graphicspath{{images/}}
+
+% \input{GrammarCheckSetup}
+    
+%%% DOCUMENT TITLE
+\title{SoLoud Audio Engine}
+\author{Jari Komppa}
+%\date{November 19, 2018}
+%\date{August 2012} % Delete this line to display the current date
+
+\usepackage{titletoc}
+\titlecontents{chapter}[3em]{\addvspace{10pt}\bfseries}
+    {\contentslabel{2.5em}}{\hspace{-2.5em}}{\hfill\contentspage}
+\dottedcontents{section}[6.3em]{}{3.3em}{0.7pc}
+\dottedcontents{subsection}[10.5em]{}{4.2em}{0.7pc}
+\renewcommand\chapternumberline[1]{\numberline{#1}}
+
+\usepackage[ ]{titlesec}  %
+\titleformat{\chapter}[display]
+  { \normalsize \huge  \color{black}}
+  {\flushright \normalsize \color{black} \MakeUppercase { \chaptertitlename } \hspace{1 ex} { \fontsize{60}{60}\selectfont \color{black} \sffamily  \thechapter }} {10 pt}{\huge}
+
+\usepackage{blowup}
+\blowUp{target=a5}
+
+%%% BEGIN DOCUMENT
+\begin{document}
+\lstset{
+    language=C++,
+    basicstyle=\small,
+    keywordstyle=\color{black},
+    identifierstyle=\color{black},
+    commentstyle=\color{myorange},
+    stringstyle=\ttfamily,
+    showstringspaces=false,
+    tabsize=2,
+    backgroundcolor=\color{mycyan}}
+
+\frontmatter
+\begin{titlingpage}
+\maketitle
+\pagestyle{plain}
+\newpage
+
+These pages were intentionally left blank.
+
+\newpage
+
+(Except for this text)
+
+\newpage
+
+© 2020 Komppa, Jari\\
+%Kustantaja: BoD - Books on Demand, Helsinki, Suomi\\
+%Valmistaja: BoD - Books on Demand, Norderstedt, Saksa\\
+%ISBN: 978-952-80-0359-5
+\end{titlingpage}
+
+
+% Use * to avoid the entries themselves to get inserted in TOC
+\tableofcontents*
+% \listoffigures*
+% \listoftables*
+
+%===============================================================================
+% All parts of the document are included as separate files.
+\mainmatter
+
+\include{temp/intro}
+\include{temp/quickstart}
+\include{temp/faq}
+\include{temp/dirstruct}
+\include{temp/premake}
+\include{temp/legal}
+
+\include{temp/concepts}
+\include{temp/concepts3d}
+\include{temp/voicemanagement}
+
+\include{temp/examples}
+
+\include{temp/foreign_interface}
+\include{temp/bmx_api}
+\include{temp/c_api}
+\include{temp/console}
+\include{temp/cs_api}
+\include{temp/d_api}
+\include{temp/gamemaker_api}
+\include{temp/python_api}
+\include{temp/ruby_api}
+\include{temp/rpgmaker_api}
+\include{temp/codegen}
+
+\include{temp/basics}
+\include{temp/attributes}
+\include{temp/faders}
+\include{temp/voicegroups}
+\include{temp/coremisc}
+\include{temp/core3d}
+
+\include{temp/audiosource}
+\include{temp/newsoundsources}
+\include{temp/wav}
+\include{temp/wavstream}
+\include{temp/speech}
+\include{temp/sfxr}
+\include{temp/modplug}
+\include{temp/monotone}
+\include{temp/tedsid}
+\include{temp/vizsn}
+\include{temp/vic}
+\include{temp/noise}
+
+\include{temp/filters}
+\include{temp/biquadfilter}
+\include{temp/echofilter}
+\include{temp/lofifilter}
+\include{temp/flangerfilter}
+\include{temp/dcremovalfilter}
+\include{temp/fftfilter}
+\include{temp/bassboostfilter}
+\include{temp/waveshaperfilter}
+\include{temp/robotizefilter}
+\include{temp/freeverbfilter}
+
+\include{temp/mixbus}
+\include{temp/queue}
+\include{temp/collider}
+\include{temp/attenuator}
+\include{temp/file}
+
+\include{temp/backends}
+
+\end{document}

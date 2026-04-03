@@ -1,0 +1,54 @@
+## Premake / GENie
+
+SoLoud comes with a GENie script. GENie is a fork of premake4, and the script may still be compatible with the latest premake.
+
+If you want to build SoLoud as static library (instead of including the source files in your project) this can be handy.
+
+GENie can be downloaded from <https://github.com/bkaradzic/genie>.
+Premake can be downloaded from <http://industriousone.com/premake>.
+
+Unfortunately, GENie cannot magically figure out where your libraries may be installed, so you may have to edit the genie.lua file. The lines to edit can be found at the very beginning of the file, with the following defaults:
+
+    local sdl_root       = "/libraries/sdl"
+    local sdl2_root      = "/libraries/sdl2"
+    local portmidi_root  = "/libraries/portmidi"
+    local dxsdk_root     = "C:/Program Files (x86)/Microsoft ..."
+    local portaudio_root = "/libraries/portaudio"
+    local openal_root    = "/libraries/openal"
+
+You will most likely want to edit at least the sdl2_root variable. After your edits, you can run GENie to generate makefiles or the IDE project files of your preference, such as:
+
+    genie vs2017
+    
+The current version (984) supports cmake, GNU makefiles (gmake), ninja, qbs, vs2010, vs2012, vs2013, vs2015, vs2017, xcode8, xcode9, xcode10.
+
+You can also use one or more of the optional parameters to change the build behavior. 
+
+Option                  Description
+----                    ------------
+soloud-devel            Shorthand for options used while developing SoLoud
+with-common-backends    Includes common backends in build
+with-coreaudio          Include OS X CoreAudio backend in build
+with-jack               Include JACK backend in build
+with-jack-only          Only include JACK backend in build
+with-miniaudio          Include MiniAudio in build
+with-miniaudio-only     Only include MiniAudio in build
+with-native-only        Only native backends (winmm/oss) in build (default)
+with-nosound            Include nosound backend in build
+with-openal             Include OpenAL backend in build
+with-portaudio          Include PortAudio backend in build
+with-sdl                Include SDL backend in build
+with-sdl-only           Only include sdl in build
+with-sdl2               Include SDL2 backend in build
+with-sdl2-only          Only include sdl2 in build
+with-sdl2static-only    Only include sdl2 that doesn't use dyndll in build
+with-sdlstatic-only     Only include sdl that doesn't use dyndll in build
+with-tools              Include (optional) tools in build
+with-vita-homebrew-only Only include PS Vita homebrew backend in build
+with-wasapi             Include WASAPI backend in build
+with-xaudio2            Include XAudio2 backend in build
+
+So for example, in order to build SoLoud with sdl2static and tools on vs2013, use:
+
+    genie --with-sdl2static-only --with-tools vs2013
+    

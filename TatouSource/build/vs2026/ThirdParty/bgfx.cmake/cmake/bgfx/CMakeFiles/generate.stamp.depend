@@ -1,0 +1,22 @@
+# CMake generation dependency list for this directory.
+C:/Program Files/CMake/share/cmake-4.2/Modules/CMakeParseArguments.cmake
+D:/FITD/ThirdParty/bgfx.cmake/cmake/bgfx/3rdparty/dear-imgui.cmake
+D:/FITD/ThirdParty/bgfx.cmake/cmake/bgfx/3rdparty/fcpp.cmake
+D:/FITD/ThirdParty/bgfx.cmake/cmake/bgfx/3rdparty/glsl-optimizer.cmake
+D:/FITD/ThirdParty/bgfx.cmake/cmake/bgfx/3rdparty/glslang.cmake
+D:/FITD/ThirdParty/bgfx.cmake/cmake/bgfx/3rdparty/meshoptimizer.cmake
+D:/FITD/ThirdParty/bgfx.cmake/cmake/bgfx/3rdparty/spirv-cross.cmake
+D:/FITD/ThirdParty/bgfx.cmake/cmake/bgfx/3rdparty/spirv-opt.cmake
+D:/FITD/ThirdParty/bgfx.cmake/cmake/bgfx/3rdparty/webgpu.cmake
+D:/FITD/ThirdParty/bgfx.cmake/cmake/bgfx/CMakeLists.txt
+D:/FITD/ThirdParty/bgfx.cmake/cmake/bgfx/bgfx.cmake
+D:/FITD/ThirdParty/bgfx.cmake/cmake/bgfx/examples.cmake
+D:/FITD/ThirdParty/bgfx.cmake/cmake/bgfx/generated/shader.cpp.in
+D:/FITD/ThirdParty/bgfx.cmake/cmake/bgfx/generated/vertexlayout.cpp.in
+D:/FITD/ThirdParty/bgfx.cmake/cmake/bgfx/geometryc.cmake
+D:/FITD/ThirdParty/bgfx.cmake/cmake/bgfx/geometryv.cmake
+D:/FITD/ThirdParty/bgfx.cmake/cmake/bgfx/shaderc.cmake
+D:/FITD/ThirdParty/bgfx.cmake/cmake/bgfx/shared.cmake
+D:/FITD/ThirdParty/bgfx.cmake/cmake/bgfx/texturev.cmake
+D:/FITD/ThirdParty/bgfx.cmake/cmake/bgfx/util/ConfigureDebugging.cmake
+D:/FITD/ThirdParty/bgfx.cmake/cmake/bgfxToolUtils.cmake

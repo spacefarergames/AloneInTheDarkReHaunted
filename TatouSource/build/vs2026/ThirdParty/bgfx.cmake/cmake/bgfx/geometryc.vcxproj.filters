@@ -1,0 +1,75 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="18.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\meshoptimizer\src\allocator.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\meshoptimizer\src\clusterizer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\meshoptimizer\src\indexanalyzer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\meshoptimizer\src\indexcodec.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\meshoptimizer\src\indexgenerator.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\meshoptimizer\src\overdrawoptimizer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\meshoptimizer\src\partition.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\meshoptimizer\src\quantization.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\meshoptimizer\src\rasterizer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\meshoptimizer\src\simplifier.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\meshoptimizer\src\spatialorder.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\meshoptimizer\src\stripifier.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\meshoptimizer\src\vcacheoptimizer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\meshoptimizer\src\vertexcodec.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\meshoptimizer\src\vertexfilter.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\meshoptimizer\src\vfetchoptimizer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\tools\geometryc\geometryc.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\build\vs2026\ThirdParty\bgfx.cmake\cmake\bgfx\generated\vertexlayout.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\meshoptimizer\src\meshoptimizer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\CMakeLists.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{9DFC67D7-0CF7-3A7D-801D-BF3DA2631FB3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{62594120-CEA6-3B91-91CB-064219E248BD}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

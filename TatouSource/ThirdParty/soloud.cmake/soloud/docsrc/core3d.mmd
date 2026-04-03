@@ -1,0 +1,227 @@
+## 3d Audio
+
+By default SoLoud's coordinate system is right handed (OpenGL). If you
+wish SoLoud to use left handed (Direct3d) coordinate system instead,
+initialize SoLoud with the LEFT_HANDED_3D flag.
+
+Note that most of the 3d audio calls are not thread safe, and it is best 
+not to call them from several threads at the same time. The good side is 
+that the 3d audio calls won't disturb the audio thread mutex, and will 
+thus be much more performant.
+
+### Soloud.update3dAudio()
+
+
+Update the 3d parameters for the 3d voices. No positional effect occurs unless this function is called periodically.
+
+    gSoloud.set3dSourceVelocity(h, -1, 0, 0); // go west
+    gSoloud.update3dAudio(); // apply change to voices    
+
+### Soloud.play3d()
+
+
+play3d() is the 3d version of the play() call.
+
+    handle play3d(AudioSource &aSound, 
+                  float aPosX, 
+                  float aPosY, 
+                  float aPosZ, 
+                  float aVelX = 0.0f, 
+                  float aVelY = 0.0f, 
+                  float aVelZ = 0.0f, 
+                  float aVolume = 1.0f, 
+                  bool aPaused = 0, 
+                  unsigned int aBus = 0);
+                  
+Instead of panning like with the "2d" version of the call, the 3d version requires 3d position and optionally velocity vector. Like its 2d version, this one tries to launch the sound as soon as possible, which means the start of the next audio buffer.
+
+The play3d can also add the "distance delay" to the sound, if enabled.
+
+    int h = gSoloud.play3d(west, -10, 0, 0);
+    gSoloud.set3dSourceVelocity(h, -1, 0, 0); // go west
+    
+
+\pagebreak
+
+
+### Soloud.play3dClocked()
+
+
+play3dClocked() is the 3d version of the playClocked() call.
+
+    handle play3d(time aSoundTime,
+                  AudioSource &aSound, 
+                  float aPosX, 
+                  float aPosY, 
+                  float aPosZ, 
+                  float aVelX = 0.0f, 
+                  float aVelY = 0.0f, 
+                  float aVelZ = 0.0f, 
+                  float aVolume = 1.0f,                   
+                  unsigned int aBus = 0);
+                  
+Instead of panning like with the "2d" version of the call, the 3d version requires 3d position and optionally velocity vector. Like its 2d version, this one delays the start of the sound based on the aSoundTime parameter, so that firing off sounds rapidly won't cause the sounds to "clump" together at the start of the next sound buffer.
+
+The play3dClocked can also add the "distance delay" to the sound, if enabled.
+
+    // trigger boom at specific coords
+    gSoloud.play3dClocked(physicstime, boom, bx, by, bz); 
+   
+### Soloud.set3dSoundSpeed(), Soloud.get3dSoundSpeed()
+
+
+You can set and get the current value of the speed of sound width the get3dSoundSpeed() and set3dSoundSpeed() functions. The speed of sound is used to calculate doppler effects in addition to the distance delay.
+
+Since SoLoud has no knowledge of the scale of your coordinates, you may need to adjust the speed of sound for these effects to work correctly. The default value is 343, which assumes that your world coordinates are in meters (where 1 unit is 1 meter), and that the environment is dry air at around 20 degrees Celsius.
+
+    int speed = gSoloud.get3dSoundSpeed(); // Get the current speed of sound
+    gSoloud.set3dSoundSpeed(speed / 2); // Halve it
+
+
+\pagebreak
+
+
+### Soloud.set3dListenerParameters()
+
+
+You can set the position, at-vector, up-vector and velocity parameters of the 3d audio listener with one call using the set3dListenerParameters.
+
+    void set3dListenerParameters(float aPosX, 
+                                 float aPosY, 
+                                 float aPosZ, 
+                                 float aAtX, 
+                                 float aAtY, 
+                                 float aAtZ, 
+                                 float aUpX, 
+                                 float aUpY, 
+                                 float aUpZ, 
+                                 float aVelocityX, 
+                                 float aVelocityY, 
+                                 float aVelocityZ)
+
+The changes to these parameters are only evaluated when the update3dAudio() function is called.
+
+### Soloud.set3dListenerPosition()
+
+
+You can set the position parameter of the 3d audio listener via set3dListenerPosition()
+
+    void set3dListenerPosition(float aPosX,
+                               float aPosY,
+                               float aPosZ)
+
+The changes to these parameters are only evaluated when the update3dAudio() function is called.
+
+### Soloud.set3dListenerAt()
+
+
+You can set the "at" vector parameter of the 3d audio listener via set3dListenerAt()
+
+    void set3dListenerAt(float aAtX,
+                         float aAtY,
+                         float aAtZ)
+
+The "at" vector means the direction the listener is facing. The vector does not need to be normalized.
+                         
+The changes to these parameters are only evaluated when the update3dAudio() function is called.
+
+### Soloud.set3dListenerUp()
+
+
+You can set the "up" vector parameter of the 3d audio listener via set3dListenerUp()
+
+    void set3dListenerUp(float aUpX,
+                         float aUpY,
+                         float aUpZ)
+
+The "up" vector means the direction upwards from the listener. The vector does not need to be normalized. Typically this is always set to 0,1,0.
+
+The changes to these parameters are only evaluated when the update3dAudio() function is called.
+
+### Soloud.set3dListenerVelocity()
+
+
+You can set the listener's velocity vector parameter via set3dListenerVelocity()
+
+    void set3dListenerVelocity(float aVelocityX,
+                               float aVelocityY,
+                               float aVelocityZ)
+
+The changes to these parameters are only evaluated when the update3dAudio() function is called.
+
+
+### Soloud.set3dSourceParameters()
+
+
+You can set the position and velocity parameters of a live 3d audio source with one call using the set3dSourceParameters().
+
+    void set3dSourceParameters(handle aVoiceHandle, 
+                               float aPosX, 
+                               float aPosY, 
+                               float aPosZ, 
+                               float aVelocityX, 
+                               float aVelocityY, 
+                               float aVelocityZ)
+                               
+The changes to these parameters are only evaluated when the update3dAudio() function is called.
+
+### Soloud.set3dSourcePosition()
+
+
+You can set the position parameters of a live 3d audio source with the set3dSourcePosition() function.
+
+    void set3dSourcePosition(handle aVoiceHandle, 
+                             float aPosX, 
+                             float aPosY, 
+                             float aPosZ)
+
+The changes to these parameters are only evaluated when the update3dAudio() function is called.
+
+### Soloud.set3dSourceVelocity()
+
+
+You can set the velocity parameters of a live 3d audio source with the set3dSourceVelocity() function.
+
+    void set3dSourceVelocity(handle aVoiceHandle, 
+                             float aVelocityX, 
+                             float aVelocityY, 
+                             float aVelocityZ)
+
+The changes to these parameters are only evaluated when the update3dAudio() function is called.
+
+### Soloud.set3dSourceMinMaxDistance()
+
+
+You can set the minimum and maximum distance parameters of a live 3d audio source with set3dSourceMinMaxDistance().
+
+    void set3dSourceMinMaxDistance(handle aVoiceHandle, 
+                                   float aMinDistance, 
+                                   float aMaxDistance)
+
+The changes to these parameters are only evaluated when the update3dAudio() function is called.
+
+\pagebreak
+
+### Soloud.set3dSourceAttenuation()
+
+
+You can change the attenuation model and rolloff factor parameters of a live 3d audio source with set3dSourceAttenuation().
+
+    void set3dSourceAttenuation(handle aVoiceHandle, 
+                                unsigned int aAttenuationModel, 
+                                float aAttenuationRolloffFactor)                                
+
+See AudioSource.set3dAttenuation() below for a list of attenuation models.
+
+The changes to these parameters are only evaluated when the update3dAudio() function is called.
+
+### Soloud.set3dSourceDopplerFactor()
+
+
+You can change the doppler factor of a live 3d audio source with set3dSourceDopplerFactor(). 
+
+    void set3dSourceDopplerFactor(handle aVoiceHandle, 
+                                  float aDopplerFactor)
+
+The changes to these parameters are only evaluated when the update3dAudio() function is called.
+

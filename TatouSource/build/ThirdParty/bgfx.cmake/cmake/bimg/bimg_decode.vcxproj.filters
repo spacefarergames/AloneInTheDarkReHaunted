@@ -1,0 +1,42 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="18.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bimg\3rdparty\tinyexr\deps\miniz\miniz.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bimg\src\image_decode.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bimg\3rdparty\lodepng\lodepng.cpp">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bimg\3rdparty\lodepng\lodepng.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bimg\3rdparty\tinyexr\deps\miniz\miniz.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bimg\include\bimg\bimg.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bimg\include\bimg\decode.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bimg\include\bimg\encode.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="D:\FITD\ThirdParty\bgfx.cmake\cmake\bimg\CMakeLists.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{A63ADDA3-3538-33CD-A706-EAD2E372C78A}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{69D1BAD0-6E13-379A-89C6-0965493FCDD5}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

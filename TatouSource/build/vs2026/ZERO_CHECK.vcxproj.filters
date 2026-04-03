@@ -1,0 +1,13 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="18.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <CustomBuild Include="D:\FITD\build\vs2026\CMakeFiles\9f1c5d6f636e4d5dacc3fc5f8d03267d\generate.stamp.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="CMake Rules">
+      <UniqueIdentifier>{565DEAA6-E957-3AC9-9F9F-67759B84618D}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

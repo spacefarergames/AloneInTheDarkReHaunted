@@ -1,0 +1,29 @@
+﻿  allocator.cpp
+  bounds.cpp
+  bx.cpp
+  commandline.cpp
+  crtnone.cpp
+  debug.cpp
+  dtoa.cpp
+  easing.cpp
+  file.cpp
+  filepath.cpp
+D:\FITD\ThirdParty\bgfx.cmake\bx\src\file.cpp(111,13): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+D:\FITD\ThirdParty\bgfx.cmake\bx\src\file.cpp(191,13): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  hash.cpp
+  math.cpp
+  mutex.cpp
+  os.cpp
+  process.cpp
+  semaphore.cpp
+  settings.cpp
+  sort.cpp
+  string.cpp
+  thread.cpp
+D:\FITD\ThirdParty\bgfx.cmake\bx\src\thread.cpp(260,4): warning C4996: 'mbstowcs': This function or variable may be unsafe. Consider using mbstowcs_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  Generating Code...
+  Compiling...
+  timer.cpp
+  url.cpp
+  Generating Code...
+  bx.vcxproj -> D:\FITD\build\vs2026\ThirdParty\bgfx.cmake\cmake\bx\Debug\bx.lib

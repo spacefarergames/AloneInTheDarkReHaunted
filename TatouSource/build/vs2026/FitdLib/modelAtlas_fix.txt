@@ -1,0 +1,55 @@
+// Generic helper to load atlas PNG data from atlases.hda archive or fall back to filesystem
+// Attempts to load from archive using just the filename as entry name, with fallback to direct file loading
+// Returns decompressed RGBA8 pixel data (caller must free with stbi_image_free)
+// Sets w, h, channels on success; returns nullptr on failure
+static unsigned char* loadAtlasDataFromArchiveOrFile(const std::string& filePath, int& w, int& h, int& channels)
+{
+    // Extract just the filename from the full path for archive entry lookup
+    // (Archive entries use simple names like "body_hqrname_001.png", not full paths)
+    size_t lastSlash = filePath.find_last_of("/\\");
+    std::string fileName = (lastSlash != std::string::npos) ? filePath.substr(lastSlash + 1) : filePath;
+
+    // First, try to load from atlases.hda archive
+    std::string archivePath = getAtlasFolder() + "atlases.hda";
+    if (HDArchive::open(archivePath.c_str()))
+    {
+        const HDArchiveEntry* entry = HDArchive::findEntry(fileName.c_str());
+        if (entry)
+        {
+            size_t dataSize = 0;
+            unsigned char* archiveData = HDArchive::readEntryAlloc(entry, &dataSize);
+            HDArchive::close();
+
+            if (archiveData && dataSize > 0)
+            {
+                // Use stbi_load_from_memory to decode the PNG from buffer
+                unsigned char* pixels = stbi_load_from_memory(
+                    archiveData, (int)dataSize, &w, &h, &channels, 4);
+
+                free(archiveData);  // Free the compressed archive data
+
+                if (pixels)
+                {
+                    printf(RNDR_INFO "Loaded atlas from archive: %s (%dx%d)" CON_RESET "\n",
+                        fileName.c_str(), w, h);
+                    return pixels;
+                }
+            }
+        }
+        else
+        {
+            HDArchive::close();
+        }
+    }
+
+    // Fallback: load from individual file on filesystem
+    unsigned char* data = stbi_load(filePath.c_str(), &w, &h, &channels, 4);
+
+    if (data)
+    {
+        printf(RNDR_INFO "Loaded atlas from file: %s (%dx%d)" CON_RESET "\n",
+            fileName.c_str(), w, h);
+    }
+
+    return data;
+}

@@ -1,0 +1,378 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="18.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glslang\SPIRV\CInterface\spirv_c_interface.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glslang\SPIRV\GlslangToSpv.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glslang\SPIRV\InReadableOrder.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glslang\SPIRV\Logger.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glslang\SPIRV\SPVRemapper.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glslang\SPIRV\SpvBuilder.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glslang\SPIRV\SpvPostProcess.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glslang\SPIRV\SpvTools.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glslang\SPIRV\disassemble.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glslang\SPIRV\doc.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glslang\glslang\CInterface\glslang_c_interface.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glslang\glslang\GenericCodeGen\CodeGen.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glslang\glslang\GenericCodeGen\Link.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glslang\glslang\HLSL\hlslAttributes.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glslang\glslang\HLSL\hlslGrammar.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glslang\glslang\HLSL\hlslOpMap.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glslang\glslang\HLSL\hlslParseHelper.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glslang\glslang\HLSL\hlslParseables.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glslang\glslang\HLSL\hlslScanContext.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glslang\glslang\HLSL\hlslTokenStream.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glslang\glslang\MachineIndependent\Constant.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glslang\glslang\MachineIndependent\InfoSink.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glslang\glslang\MachineIndependent\Initialize.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glslang\glslang\MachineIndependent\IntermTraverse.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glslang\glslang\MachineIndependent\Intermediate.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glslang\glslang\MachineIndependent\ParseContextBase.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glslang\glslang\MachineIndependent\ParseHelper.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glslang\glslang\MachineIndependent\PoolAlloc.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glslang\glslang\MachineIndependent\RemoveTree.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glslang\glslang\MachineIndependent\Scan.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glslang\glslang\MachineIndependent\ShaderLang.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glslang\glslang\MachineIndependent\SpirvIntrinsics.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glslang\glslang\MachineIndependent\SymbolTable.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glslang\glslang\MachineIndependent\Versions.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glslang\glslang\MachineIndependent\attribute.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glslang\glslang\MachineIndependent\glslang_tab.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glslang\glslang\MachineIndependent\intermOut.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glslang\glslang\MachineIndependent\iomapper.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glslang\glslang\MachineIndependent\limits.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glslang\glslang\MachineIndependent\linkValidate.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glslang\glslang\MachineIndependent\parseConst.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glslang\glslang\MachineIndependent\preprocessor\Pp.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glslang\glslang\MachineIndependent\preprocessor\PpAtom.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glslang\glslang\MachineIndependent\preprocessor\PpContext.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glslang\glslang\MachineIndependent\preprocessor\PpScanner.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glslang\glslang\MachineIndependent\preprocessor\PpTokens.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glslang\glslang\MachineIndependent\propagateNoContraction.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glslang\glslang\MachineIndependent\reflection.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glslang\glslang\OSDependent\Windows\ossource.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glslang\glslang\ResourceLimits\ResourceLimits.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glslang\glslang\ResourceLimits\resource_limits_c.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glslang\glslang\stub.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glslang\SPIRV\GLSL.ext.AMD.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glslang\SPIRV\GLSL.ext.ARM.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glslang\SPIRV\GLSL.ext.EXT.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glslang\SPIRV\GLSL.ext.KHR.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glslang\SPIRV\GLSL.ext.NV.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glslang\SPIRV\GLSL.ext.QCOM.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glslang\SPIRV\GLSL.std.450.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glslang\SPIRV\GlslangToSpv.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glslang\SPIRV\Logger.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glslang\SPIRV\NonSemanticDebugPrintf.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glslang\SPIRV\NonSemanticShaderDebugInfo100.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glslang\SPIRV\SPVRemapper.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glslang\SPIRV\SpvBuilder.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glslang\SPIRV\SpvTools.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glslang\SPIRV\bitutils.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glslang\SPIRV\disassemble.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glslang\SPIRV\doc.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glslang\SPIRV\hex_float.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glslang\SPIRV\spvIR.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glslang\SPIRV\spvUtil.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glslang\glslang\HLSL\hlslAttributes.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glslang\glslang\HLSL\hlslGrammar.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glslang\glslang\HLSL\hlslOpMap.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glslang\glslang\HLSL\hlslParseHelper.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glslang\glslang\HLSL\hlslParseables.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glslang\glslang\HLSL\hlslScanContext.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glslang\glslang\HLSL\hlslTokenStream.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glslang\glslang\HLSL\hlslTokens.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glslang\glslang\HLSL\pch.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glslang\glslang\Include\BaseTypes.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glslang\glslang\Include\Common.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glslang\glslang\Include\ConstantUnion.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glslang\glslang\Include\InfoSink.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glslang\glslang\Include\InitializeGlobals.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glslang\glslang\Include\PoolAlloc.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glslang\glslang\Include\ResourceLimits.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glslang\glslang\Include\ShHandle.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glslang\glslang\Include\SpirvIntrinsics.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glslang\glslang\Include\Types.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glslang\glslang\Include\arrays.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glslang\glslang\Include\glslang_c_interface.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glslang\glslang\Include\glslang_c_shader_types.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glslang\glslang\Include\intermediate.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glslang\glslang\Include\visibility.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glslang\glslang\MachineIndependent\Initialize.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glslang\glslang\MachineIndependent\LiveTraverser.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glslang\glslang\MachineIndependent\ParseHelper.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glslang\glslang\MachineIndependent\RemoveTree.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glslang\glslang\MachineIndependent\Scan.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glslang\glslang\MachineIndependent\ScanContext.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glslang\glslang\MachineIndependent\SymbolTable.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glslang\glslang\MachineIndependent\Versions.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glslang\glslang\MachineIndependent\attribute.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glslang\glslang\MachineIndependent\gl_types.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glslang\glslang\MachineIndependent\glslang_tab.cpp.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glslang\glslang\MachineIndependent\iomapper.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glslang\glslang\MachineIndependent\localintermediate.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glslang\glslang\MachineIndependent\parseVersions.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glslang\glslang\MachineIndependent\pch.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glslang\glslang\MachineIndependent\preprocessor\PpContext.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glslang\glslang\MachineIndependent\preprocessor\PpTokens.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glslang\glslang\MachineIndependent\propagateNoContraction.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glslang\glslang\MachineIndependent\reflection.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glslang\glslang\MachineIndependent\span.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glslang\glslang\OSDependent\osinclude.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glslang\glslang\Public\ResourceLimits.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glslang\glslang\Public\ShaderLang.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glslang\glslang\Public\resource_limits_c.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\CMakeLists.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{A63ADDA3-3538-33CD-A706-EAD2E372C78A}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{69D1BAD0-6E13-379A-89C6-0965493FCDD5}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

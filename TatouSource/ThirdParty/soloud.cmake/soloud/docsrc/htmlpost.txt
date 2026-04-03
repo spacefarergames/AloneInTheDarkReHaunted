@@ -1,0 +1,18 @@
+<p>Copyright&copy;2013-2020 <a href="http://iki.fi/sol/">Jari Komppa</a></p>
+
+<div class="advert">
+<script type="text/javascript"><!--
+google_ad_client = "pub-4771959869171372";
+/* 468x60, created 2/1/09 */
+google_ad_slot = "1377358828";
+google_ad_width = 468;
+google_ad_height = 60;
+//-->
+</script>
+<script type="text/javascript"
+src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
+</script></div>
+
+		</div>
+	</body>
+</html>

@@ -1,0 +1,50 @@
+# CMake generation dependency list for this directory.
+C:/Program Files/CMake/share/cmake-4.2/Modules/BasicConfigVersion-AnyNewerVersion.cmake.in
+C:/Program Files/CMake/share/cmake-4.2/Modules/CMakeCheckCompilerFlagCommonPatterns.cmake
+C:/Program Files/CMake/share/cmake-4.2/Modules/CMakeDependentOption.cmake
+C:/Program Files/CMake/share/cmake-4.2/Modules/CMakePackageConfigHelpers.cmake
+C:/Program Files/CMake/share/cmake-4.2/Modules/CMakeParseArguments.cmake
+C:/Program Files/CMake/share/cmake-4.2/Modules/CMakePushCheckState.cmake
+C:/Program Files/CMake/share/cmake-4.2/Modules/CheckCCompilerFlag.cmake
+C:/Program Files/CMake/share/cmake-4.2/Modules/CheckCSourceCompiles.cmake
+C:/Program Files/CMake/share/cmake-4.2/Modules/CheckCSourceRuns.cmake
+C:/Program Files/CMake/share/cmake-4.2/Modules/CheckCXXCompilerFlag.cmake
+C:/Program Files/CMake/share/cmake-4.2/Modules/CheckCXXSourceCompiles.cmake
+C:/Program Files/CMake/share/cmake-4.2/Modules/CheckIncludeFile.cmake
+C:/Program Files/CMake/share/cmake-4.2/Modules/CheckLanguage.cmake
+C:/Program Files/CMake/share/cmake-4.2/Modules/CheckLibraryExists.cmake
+C:/Program Files/CMake/share/cmake-4.2/Modules/CheckLinkerFlag.cmake
+C:/Program Files/CMake/share/cmake-4.2/Modules/CheckSourceCompiles.cmake
+C:/Program Files/CMake/share/cmake-4.2/Modules/CheckStructHasMember.cmake
+C:/Program Files/CMake/share/cmake-4.2/Modules/CheckSymbolExists.cmake
+C:/Program Files/CMake/share/cmake-4.2/Modules/FindGit.cmake
+C:/Program Files/CMake/share/cmake-4.2/Modules/FindPackageHandleStandardArgs.cmake
+C:/Program Files/CMake/share/cmake-4.2/Modules/FindPackageMessage.cmake
+C:/Program Files/CMake/share/cmake-4.2/Modules/FindPkgConfig.cmake
+C:/Program Files/CMake/share/cmake-4.2/Modules/GNUInstallDirs.cmake
+C:/Program Files/CMake/share/cmake-4.2/Modules/Internal/CheckCompilerFlag.cmake
+C:/Program Files/CMake/share/cmake-4.2/Modules/Internal/CheckFlagCommonConfig.cmake
+C:/Program Files/CMake/share/cmake-4.2/Modules/Internal/CheckLinkerFlag.cmake
+C:/Program Files/CMake/share/cmake-4.2/Modules/Internal/CheckSourceCompiles.cmake
+C:/Program Files/CMake/share/cmake-4.2/Modules/Internal/CheckSourceRuns.cmake
+C:/Program Files/CMake/share/cmake-4.2/Modules/WriteBasicConfigVersionFile.cmake
+D:/FITD/.git/modules/ThirdParty/SDL/HEAD
+D:/FITD/ThirdParty/SDL/CMakeLists.txt
+D:/FITD/ThirdParty/SDL/cmake/3rdparty.cmake
+D:/FITD/ThirdParty/SDL/cmake/FindLibUSB.cmake
+D:/FITD/ThirdParty/SDL/cmake/GetGitRevisionDescription.cmake
+D:/FITD/ThirdParty/SDL/cmake/GetGitRevisionDescription.cmake.in
+D:/FITD/ThirdParty/SDL/cmake/PreseedEmscriptenCache.cmake
+D:/FITD/ThirdParty/SDL/cmake/PreseedMSVCCache.cmake
+D:/FITD/ThirdParty/SDL/cmake/SDL3Config.cmake.in
+D:/FITD/ThirdParty/SDL/cmake/macros.cmake
+D:/FITD/ThirdParty/SDL/cmake/sdlchecks.cmake
+D:/FITD/ThirdParty/SDL/cmake/sdlcompilers.cmake
+D:/FITD/ThirdParty/SDL/cmake/sdlcpu.cmake
+D:/FITD/ThirdParty/SDL/cmake/sdlmanpages.cmake
+D:/FITD/ThirdParty/SDL/cmake/sdlplatform.cmake
+D:/FITD/ThirdParty/SDL/cmake/sdltargets.cmake
+D:/FITD/ThirdParty/SDL/include/build_config/SDL_build_config.h.cmake
+D:/FITD/ThirdParty/SDL/include/build_config/SDL_revision.h.cmake
+D:/FITD/build/vs2026/ThirdParty/SDL/CMakeFiles/SDL_build_config.h.intermediate
+D:/FITD/build/vs2026/ThirdParty/SDL/CMakeFiles/git-data/grabRef.cmake

@@ -1,0 +1,135 @@
+## SoLoud::Sfxr
+
+The SoLoud::Sfxr is a "retro" sound effect synthesizer based
+on the original Sfxr by Tomas Pettersson.
+
+![Sfxr interface](images/sfxr)\ 
+
+The original sfxr tool was designed to easily generate sound
+effects for Ludum Dare 48h games. SoLoud includes the same
+engine built in, so you can (should you wish) make every
+coin, explosion etc. sound different.
+
+The Sfxr sound sources also include a pseudo-random number
+generator which should probably be moved to more general use
+at some point.
+
+### Sfxr.loadPreset()
+
+You can simply tell Sfxr to use one of the presets 
+(COIN, LASER, EXPLOSION, POWERUP, HURT, JUMP, BLIP). Each of the
+presets has several random components, so you can get virtually
+unlimited variations of each. (Not all variants sound good, though).
+
+    void loadPreset(int aPresetNo, int aRandSeed); // Preset to load
+
+If loading fails, the function returns an error code.
+
+    SoLoud::Sfxr coin;
+    coin.loadPreset(Sfxr::COIN, 3247);
+
+### Sfxr.loadParams()
+
+Effect parameters can also be loaded from a configuration file
+saved from the sfxr tool.
+
+    result loadParams(const char *aFilename); // File to load
+
+If loading fails, the function returns an error code.
+
+    SoLoud::Sfxr boom;
+    boom.loadParams("boom.sfx");
+
+### Sfxr.loadParamsMem()
+
+Alternate way of loading the parameters is to read from a memory buffer.
+
+    result loadParamsMem(unsigned char *aMem, int aLength, 
+                         bool aCopy, bool aTakeOwnership);
+
+The aTakeOwnership parameter can be used to tell SoLoud to free the pointer
+once it's done with it. The aCopy parameter is here for compatibility with
+the other loadMem functions.
+
+### Sfxr.loadParamsFile()
+
+The loadFile() can be used to load parameters from a SoLoud::File object. This
+is useful for integrating with virtual filesystems / packfiles, such as
+PhysFS.
+
+
+### Sfxr.resetParams()
+
+
+This function resets all of the Sfxr parameters to a "sensible" default.
+Used by loadPreset(), which then only adjusts a few parameters over the
+defaults.
+
+### Sfxr.setLooping()
+
+
+Adjusting the looping of a sfxr sound does not currently
+have any effect. The sounds do not loop.
+
+\pagebreak
+
+
+### Sfxr.setFilter()
+
+
+As with any other audio source, you can attach filters to 
+Sfxr audio sources.
+
+    gMusic.setFilter(0, &gLofi);
+
+### Sfxr.stop()
+
+
+You can stop all instances of a Sfxr sound source with
+stop(). This is equivalent of calling soloud.stopAudioSource()
+with the sound source.
+
+    gBoom.stop();
+
+### Sfxr.setInaudibleBehavior()
+
+Set the inaudible behavior of the sound. By default, if a sound is
+inaudible, it's paused, and will resume when it becomes audible again.
+With this function you can tell SoLoud to either kill the sound if
+it becomes inaudible, or to keep ticking the sound even if it's 
+inaudible.
+
+	// Keep on talking even if I'm not around
+	gSpeech.setInaudibleBehavior(true, false);
+
+### Sfxr.setVolume()
+
+Set the default volume of the instances created from this audio source.
+
+    gTinyVoice.setVolume(0.1);
+    
+### Sfxr.setLoopPoint(), Sfxr.getLoopPoint()
+
+If looping is enabled, the loop point is, by default, the start of the
+stream. The loop point can be changed, and current loop point can be
+queried with these functions.
+
+	double t = snd.getLoopPoint();
+	snd.setLoopPoint(t + 1); // skip 1 second more when looping
+	...
+	snd.setLoopPoint(0); // loop from start
+
+### Inherited 3d audio interfaces
+
+Like all other audio sources, Sfxr inherits the 3d audio interfaces. Please refer to the 3d audio chapter for details on:
+
+- Sfxr.set3dMinMaxDistance()
+- Sfxr.set3dAttenuation()
+- Sfxr.set3dDopplerFactor()
+- Sfxr.set3dProcessing()
+- Sfxr.set3dListenerRelative()
+- Sfxr.set3dDistanceDelay()
+- Sfxr.set3dCollider()
+- Sfxr.set3dAttenuator()
+      
+      

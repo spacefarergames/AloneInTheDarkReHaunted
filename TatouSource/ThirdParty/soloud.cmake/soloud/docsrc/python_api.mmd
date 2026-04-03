@@ -1,0 +1,104 @@
+## Python API
+
+
+One of the generated glue interfaces for SoLoud is the Python API.
+
+All of the existing interfaces can be used via the Python API, but
+features that require extending SoLoud are not available.
+
+### Using the Python API
+
+The glue file soloud.py can be found under the "glue" directory.
+
+Include the SoLoud DLL and soloud.py in the same directory as your
+python files, and use
+
+    import soloud
+
+to include SoLoud to your project.
+
+### Python API Example
+
+The Python API mirrors the c++ API.
+
+If the c++ API functions have default parameters, the same function
+in the python API will also have default parameters.
+
+\pagebreak
+
+As an example, here's a simple example in the C++ api:
+
+    SoLoud::Soloud soloud;
+    SoLoud::Speech speech;
+
+    speech.setText("Hello c++ api");
+
+    soloud.init(SoLoud::Soloud::CLIP_ROUNDOFF |
+                SoLoud::Soloud::ENABLE_VISUALIZATION)
+
+    soloud.setGlobalVolume(4);
+    soloud.play(speech);
+
+    // ...
+
+    soloud.deinit();
+
+Converted to the Python API, this becomes:
+
+    import soloud
+
+    audiolib = soloud.Soloud()
+    speech = soloud.Speech()
+    
+    speech.set_text("Hello Python api")
+
+    audiolib.init(audiolib.CLIP_ROUNDOFF | 
+                  audiolib.ENABLE_VISUALIZATION)
+
+    audiolib.set_global_volume(4)
+    audiolib.play(speech)
+
+    # ...
+
+    audiolib.deinit()
+
+For cleanup, the code generator produces three functions: close, destroy and quit.
+All of these perform the exact same function, and it doesn't matter which you choose.
+
+\pagebreak
+
+
+Alternatively, you can use the SoLoud objects with the "with" syntax, which also handles cleanup, for example:
+
+    with Soloud() as audiolib:
+        audiolib.init()
+        # ...
+
+
+Here's a slightly longer example:
+
+    from soloud import *
+
+    with Soloud() as audiolib:
+        audiolib.init()
+        audiolib.set_global_volume(10)
+
+        speech = Speech()
+
+        flanger = FlangerFilter()
+        speech.set_filter(0, flanger)
+
+        t = "Hello Python (OOP) World!"
+        speech.set_text(t)
+        print(t)
+        audiolib.play(speech)
+
+        print "Enter text to speak (empty string quits)"
+        while t != "":
+            t = raw_input(": ")
+            speech.set_text(t);
+            audiolib.play(speech);
+
+        speech.close()
+
+    print "Bye"

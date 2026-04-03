@@ -1,0 +1,370 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="18.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bx\src\allocator.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bx\src\bounds.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bx\src\bx.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bx\src\commandline.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bx\src\crtnone.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bx\src\debug.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bx\src\dtoa.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bx\src\easing.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bx\src\file.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bx\src\filepath.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bx\src\hash.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bx\src\math.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bx\src\mutex.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bx\src\os.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bx\src\process.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bx\src\semaphore.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bx\src\settings.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bx\src\sort.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bx\src\string.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bx\src\thread.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bx\src\timer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bx\src\url.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bx\include\bx\allocator.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bx\include\bx\bounds.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bx\include\bx\bx.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bx\include\bx\commandline.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bx\include\bx\config.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bx\include\bx\constants.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bx\include\bx\cpu.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bx\include\bx\debug.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bx\include\bx\easing.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bx\include\bx\endian.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bx\include\bx\error.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bx\include\bx\file.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bx\include\bx\filepath.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bx\include\bx\float4x4_t.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bx\include\bx\handlealloc.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bx\include\bx\hash.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bx\include\bx\inline\allocator.inl">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bx\include\bx\inline\bounds.inl">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bx\include\bx\inline\bx.inl">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bx\include\bx\inline\cpu.inl">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bx\include\bx\inline\easing.inl">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bx\include\bx\inline\endian.inl">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bx\include\bx\inline\error.inl">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bx\include\bx\inline\float4x4_t.inl">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bx\include\bx\inline\handlealloc.inl">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bx\include\bx\inline\hash.inl">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bx\include\bx\inline\math.inl">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bx\include\bx\inline\mpscqueue.inl">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bx\include\bx\inline\mutex.inl">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bx\include\bx\inline\os.inl">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bx\include\bx\inline\pixelformat.inl">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bx\include\bx\inline\readerwriter.inl">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bx\include\bx\inline\ringbuffer.inl">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bx\include\bx\inline\rng.inl">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bx\include\bx\inline\simd128_langext.inl">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bx\include\bx\inline\simd128_neon.inl">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bx\include\bx\inline\simd128_ref.inl">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bx\include\bx\inline\simd128_sse.inl">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bx\include\bx\inline\simd128_swizzle.inl">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bx\include\bx\inline\simd256_avx.inl">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bx\include\bx\inline\simd256_ref.inl">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bx\include\bx\inline\simd_ni.inl">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bx\include\bx\inline\sort.inl">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bx\include\bx\inline\spscqueue.inl">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bx\include\bx\inline\string.inl">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bx\include\bx\inline\typetraits.inl">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bx\include\bx\inline\uint32_t.inl">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bx\include\bx\macros.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bx\include\bx\math.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bx\include\bx\mpscqueue.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bx\include\bx\mutex.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bx\include\bx\os.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bx\include\bx\pixelformat.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bx\include\bx\platform.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bx\include\bx\process.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bx\include\bx\readerwriter.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bx\include\bx\ringbuffer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bx\include\bx\rng.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bx\include\bx\semaphore.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bx\include\bx\settings.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bx\include\bx\simd_t.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bx\include\bx\sort.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bx\include\bx\spscqueue.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bx\include\bx\string.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bx\include\bx\thread.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bx\include\bx\timer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bx\include\bx\typetraits.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bx\include\bx\uint32_t.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bx\include\bx\url.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bx\include\compat\freebsd\dirent.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bx\include\compat\freebsd\malloc.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bx\include\compat\freebsd\signal.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bx\include\compat\ios\malloc.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bx\include\compat\linux\sal.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bx\include\compat\mingw\dirent.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bx\include\compat\mingw\sal.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bx\include\compat\mingw\salieri.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bx\include\compat\mingw\specstrings_strict.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bx\include\compat\mingw\specstrings_undef.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bx\include\compat\msvc\dirent.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bx\include\compat\osx\malloc.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bx\include\tinystl\allocator.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bx\include\tinystl\buffer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bx\include\tinystl\hash.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bx\include\tinystl\hash_base.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bx\include\tinystl\new.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bx\include\tinystl\stddef.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bx\include\tinystl\string.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bx\include\tinystl\string_view.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bx\include\tinystl\traits.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bx\include\tinystl\unordered_map.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bx\include\tinystl\unordered_set.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bx\include\tinystl\vector.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bx\src\amalgamated.cpp">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="D:\FITD\ThirdParty\bgfx.cmake\cmake\bx\CMakeLists.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Natvis Include="D:\FITD\ThirdParty\bgfx.cmake\bx\scripts\bx.natvis" />
+    <Natvis Include="D:\FITD\ThirdParty\bgfx.cmake\bx\scripts\tinystl.natvis" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{A63ADDA3-3538-33CD-A706-EAD2E372C78A}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{69D1BAD0-6E13-379A-89C6-0965493FCDD5}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

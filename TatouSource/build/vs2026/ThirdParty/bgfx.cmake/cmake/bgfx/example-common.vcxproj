@@ -1,0 +1,551 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="18.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <PreferredToolArchitecture>x64</PreferredToolArchitecture>
+  </PropertyGroup>
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="MinSizeRel|x64">
+      <Configuration>MinSizeRel</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="RelWithDebInfo|x64">
+      <Configuration>RelWithDebInfo</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{F3FE2608-1B46-3AB3-9085-3A8F23D9E4B0}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+    <WindowsTargetPlatformVersion>10.0.26100.0</WindowsTargetPlatformVersion>
+    <Platform>x64</Platform>
+    <ProjectName>example-common</ProjectName>
+    <VCProjectUpgraderObjectName>NoUpgrade</VCProjectUpgraderObjectName>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v145</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v145</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v145</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v145</PlatformToolset>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <_ProjectFileVersion>10.0.20506.1</_ProjectFileVersion>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">D:\FITD\build\vs2026\ThirdParty\bgfx.cmake\cmake\bgfx\Debug\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">example-common.dir\Debug\</IntDir>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">example-common</TargetName>
+    <TargetExt Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">.lib</TargetExt>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">D:\FITD\build\vs2026\ThirdParty\bgfx.cmake\cmake\bgfx\Release\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">example-common.dir\Release\</IntDir>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">example-common</TargetName>
+    <TargetExt Condition="'$(Configuration)|$(Platform)'=='Release|x64'">.lib</TargetExt>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">D:\FITD\build\vs2026\ThirdParty\bgfx.cmake\cmake\bgfx\MinSizeRel\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">example-common.dir\MinSizeRel\</IntDir>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">example-common</TargetName>
+    <TargetExt Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">.lib</TargetExt>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">D:\FITD\build\vs2026\ThirdParty\bgfx.cmake\cmake\bgfx\RelWithDebInfo\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">example-common.dir\RelWithDebInfo\</IntDir>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">example-common</TargetName>
+    <TargetExt Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">.lib</TargetExt>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>D:\FITD\ThirdParty\bgfx.cmake\bgfx\examples\common;D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty;D:\FITD\ThirdParty\bgfx.cmake\bgfx\include;D:\FITD\ThirdParty\bgfx.cmake\bx\include;D:\FITD\ThirdParty\bgfx.cmake\bx\3rdparty;D:\FITD\ThirdParty\bgfx.cmake\bx\include\compat\msvc;D:\FITD\ThirdParty\bgfx.cmake\bimg\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalOptions>%(AdditionalOptions) /Zc:__cplusplus</AdditionalOptions>
+      <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <BufferSecurityCheck></BufferSecurityCheck>
+      <CallingConvention></CallingConvention>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <ExceptionHandling>Sync</ExceptionHandling>
+      <FloatingPointModel></FloatingPointModel>
+      <ForceConformanceInForLoopScope></ForceConformanceInForLoopScope>
+      <InlineFunctionExpansion>Disabled</InlineFunctionExpansion>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+      <MinimalRebuild></MinimalRebuild>
+      <Optimization>Disabled</Optimization>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <RemoveUnreferencedCodeData></RemoveUnreferencedCodeData>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <SupportJustMyCode></SupportJustMyCode>
+      <TreatWChar_tAsBuiltInType></TreatWChar_tAsBuiltInType>
+      <UseFullPaths>false</UseFullPaths>
+      <UseStandardPreprocessor>true</UseStandardPreprocessor>
+      <WarningLevel>Level3</WarningLevel>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;BX_CONFIG_DEBUG=0;_CRT_SECURE_NO_WARNINGS;__STDC_FORMAT_MACROS;ENTRY_CONFIG_IMPLEMENT_MAIN=1;BX_CONFIG_DEBUG=1;BGFX_CONFIG_DEBUG_ANNOTATION=1;BGFX_CONFIG_MULTITHREADED=1;__STDC_LIMIT_MACROS;__STDC_CONSTANT_MACROS;CMAKE_INTDIR="Debug"</PreprocessorDefinitions>
+      <ObjectFileName>$(IntDir)</ObjectFileName>
+      <ScanSourceForModuleDependencies>false</ScanSourceForModuleDependencies>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_DEBUG;_WINDOWS;BX_CONFIG_DEBUG=0;_CRT_SECURE_NO_WARNINGS;__STDC_FORMAT_MACROS;ENTRY_CONFIG_IMPLEMENT_MAIN=1;BX_CONFIG_DEBUG=1;BGFX_CONFIG_DEBUG_ANNOTATION=1;BGFX_CONFIG_MULTITHREADED=1;__STDC_LIMIT_MACROS;__STDC_CONSTANT_MACROS;CMAKE_INTDIR=\"Debug\"</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>D:\FITD\ThirdParty\bgfx.cmake\bgfx\examples\common;D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty;D:\FITD\ThirdParty\bgfx.cmake\bgfx\include;D:\FITD\ThirdParty\bgfx.cmake\bx\include;D:\FITD\ThirdParty\bgfx.cmake\bx\3rdparty;D:\FITD\ThirdParty\bgfx.cmake\bx\include\compat\msvc;D:\FITD\ThirdParty\bgfx.cmake\bimg\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+    <Midl>
+      <AdditionalIncludeDirectories>D:\FITD\ThirdParty\bgfx.cmake\bgfx\examples\common;D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty;D:\FITD\ThirdParty\bgfx.cmake\bgfx\include;D:\FITD\ThirdParty\bgfx.cmake\bx\include;D:\FITD\ThirdParty\bgfx.cmake\bx\3rdparty;D:\FITD\ThirdParty\bgfx.cmake\bx\include\compat\msvc;D:\FITD\ThirdParty\bgfx.cmake\bimg\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+    <Lib>
+      <AdditionalOptions>%(AdditionalOptions) /machine:x64</AdditionalOptions>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>D:\FITD\ThirdParty\bgfx.cmake\bgfx\examples\common;D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty;D:\FITD\ThirdParty\bgfx.cmake\bgfx\include;D:\FITD\ThirdParty\bgfx.cmake\bx\include;D:\FITD\ThirdParty\bgfx.cmake\bx\3rdparty;D:\FITD\ThirdParty\bgfx.cmake\bx\include\compat\msvc;D:\FITD\ThirdParty\bgfx.cmake\bimg\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalOptions>%(AdditionalOptions) /Zc:__cplusplus</AdditionalOptions>
+      <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
+      <BasicRuntimeChecks>Default</BasicRuntimeChecks>
+      <BufferSecurityCheck></BufferSecurityCheck>
+      <CallingConvention></CallingConvention>
+      <ExceptionHandling>Sync</ExceptionHandling>
+      <FloatingPointModel></FloatingPointModel>
+      <ForceConformanceInForLoopScope></ForceConformanceInForLoopScope>
+      <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+      <MinimalRebuild></MinimalRebuild>
+      <Optimization>MaxSpeed</Optimization>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <RemoveUnreferencedCodeData></RemoveUnreferencedCodeData>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <SupportJustMyCode></SupportJustMyCode>
+      <TreatWChar_tAsBuiltInType></TreatWChar_tAsBuiltInType>
+      <UseFullPaths>false</UseFullPaths>
+      <UseStandardPreprocessor>true</UseStandardPreprocessor>
+      <WarningLevel>Level3</WarningLevel>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;BX_CONFIG_DEBUG=0;NDEBUG;_CRT_SECURE_NO_WARNINGS;__STDC_FORMAT_MACROS;ENTRY_CONFIG_IMPLEMENT_MAIN=1;BGFX_CONFIG_DEBUG_ANNOTATION=0;BGFX_CONFIG_MULTITHREADED=1;__STDC_LIMIT_MACROS;__STDC_CONSTANT_MACROS;CMAKE_INTDIR="Release"</PreprocessorDefinitions>
+      <ObjectFileName>$(IntDir)</ObjectFileName>
+      <DebugInformationFormat>
+      </DebugInformationFormat>
+      <ScanSourceForModuleDependencies>false</ScanSourceForModuleDependencies>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;BX_CONFIG_DEBUG=0;NDEBUG;_CRT_SECURE_NO_WARNINGS;__STDC_FORMAT_MACROS;ENTRY_CONFIG_IMPLEMENT_MAIN=1;BGFX_CONFIG_DEBUG_ANNOTATION=0;BGFX_CONFIG_MULTITHREADED=1;__STDC_LIMIT_MACROS;__STDC_CONSTANT_MACROS;CMAKE_INTDIR=\"Release\"</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>D:\FITD\ThirdParty\bgfx.cmake\bgfx\examples\common;D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty;D:\FITD\ThirdParty\bgfx.cmake\bgfx\include;D:\FITD\ThirdParty\bgfx.cmake\bx\include;D:\FITD\ThirdParty\bgfx.cmake\bx\3rdparty;D:\FITD\ThirdParty\bgfx.cmake\bx\include\compat\msvc;D:\FITD\ThirdParty\bgfx.cmake\bimg\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+    <Midl>
+      <AdditionalIncludeDirectories>D:\FITD\ThirdParty\bgfx.cmake\bgfx\examples\common;D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty;D:\FITD\ThirdParty\bgfx.cmake\bgfx\include;D:\FITD\ThirdParty\bgfx.cmake\bx\include;D:\FITD\ThirdParty\bgfx.cmake\bx\3rdparty;D:\FITD\ThirdParty\bgfx.cmake\bx\include\compat\msvc;D:\FITD\ThirdParty\bgfx.cmake\bimg\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+    <Lib>
+      <AdditionalOptions>%(AdditionalOptions) /machine:x64</AdditionalOptions>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>D:\FITD\ThirdParty\bgfx.cmake\bgfx\examples\common;D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty;D:\FITD\ThirdParty\bgfx.cmake\bgfx\include;D:\FITD\ThirdParty\bgfx.cmake\bx\include;D:\FITD\ThirdParty\bgfx.cmake\bx\3rdparty;D:\FITD\ThirdParty\bgfx.cmake\bx\include\compat\msvc;D:\FITD\ThirdParty\bgfx.cmake\bimg\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalOptions>%(AdditionalOptions) /Zc:__cplusplus</AdditionalOptions>
+      <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
+      <BasicRuntimeChecks>Default</BasicRuntimeChecks>
+      <BufferSecurityCheck></BufferSecurityCheck>
+      <CallingConvention></CallingConvention>
+      <ExceptionHandling>Sync</ExceptionHandling>
+      <FloatingPointModel></FloatingPointModel>
+      <ForceConformanceInForLoopScope></ForceConformanceInForLoopScope>
+      <InlineFunctionExpansion>OnlyExplicitInline</InlineFunctionExpansion>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+      <MinimalRebuild></MinimalRebuild>
+      <Optimization>MinSpace</Optimization>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <RemoveUnreferencedCodeData></RemoveUnreferencedCodeData>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <SupportJustMyCode></SupportJustMyCode>
+      <TreatWChar_tAsBuiltInType></TreatWChar_tAsBuiltInType>
+      <UseFullPaths>false</UseFullPaths>
+      <UseStandardPreprocessor>true</UseStandardPreprocessor>
+      <WarningLevel>Level3</WarningLevel>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;BX_CONFIG_DEBUG=0;NDEBUG;_CRT_SECURE_NO_WARNINGS;__STDC_FORMAT_MACROS;ENTRY_CONFIG_IMPLEMENT_MAIN=1;BGFX_CONFIG_DEBUG_ANNOTATION=0;BGFX_CONFIG_MULTITHREADED=1;__STDC_LIMIT_MACROS;__STDC_CONSTANT_MACROS;CMAKE_INTDIR="MinSizeRel"</PreprocessorDefinitions>
+      <ObjectFileName>$(IntDir)</ObjectFileName>
+      <DebugInformationFormat>
+      </DebugInformationFormat>
+      <ScanSourceForModuleDependencies>false</ScanSourceForModuleDependencies>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;BX_CONFIG_DEBUG=0;NDEBUG;_CRT_SECURE_NO_WARNINGS;__STDC_FORMAT_MACROS;ENTRY_CONFIG_IMPLEMENT_MAIN=1;BGFX_CONFIG_DEBUG_ANNOTATION=0;BGFX_CONFIG_MULTITHREADED=1;__STDC_LIMIT_MACROS;__STDC_CONSTANT_MACROS;CMAKE_INTDIR=\"MinSizeRel\"</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>D:\FITD\ThirdParty\bgfx.cmake\bgfx\examples\common;D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty;D:\FITD\ThirdParty\bgfx.cmake\bgfx\include;D:\FITD\ThirdParty\bgfx.cmake\bx\include;D:\FITD\ThirdParty\bgfx.cmake\bx\3rdparty;D:\FITD\ThirdParty\bgfx.cmake\bx\include\compat\msvc;D:\FITD\ThirdParty\bgfx.cmake\bimg\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+    <Midl>
+      <AdditionalIncludeDirectories>D:\FITD\ThirdParty\bgfx.cmake\bgfx\examples\common;D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty;D:\FITD\ThirdParty\bgfx.cmake\bgfx\include;D:\FITD\ThirdParty\bgfx.cmake\bx\include;D:\FITD\ThirdParty\bgfx.cmake\bx\3rdparty;D:\FITD\ThirdParty\bgfx.cmake\bx\include\compat\msvc;D:\FITD\ThirdParty\bgfx.cmake\bimg\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+    <Lib>
+      <AdditionalOptions>%(AdditionalOptions) /machine:x64</AdditionalOptions>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>D:\FITD\ThirdParty\bgfx.cmake\bgfx\examples\common;D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty;D:\FITD\ThirdParty\bgfx.cmake\bgfx\include;D:\FITD\ThirdParty\bgfx.cmake\bx\include;D:\FITD\ThirdParty\bgfx.cmake\bx\3rdparty;D:\FITD\ThirdParty\bgfx.cmake\bx\include\compat\msvc;D:\FITD\ThirdParty\bgfx.cmake\bimg\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalOptions>%(AdditionalOptions) /Zc:__cplusplus</AdditionalOptions>
+      <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
+      <BasicRuntimeChecks>Default</BasicRuntimeChecks>
+      <BufferSecurityCheck></BufferSecurityCheck>
+      <CallingConvention></CallingConvention>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <ExceptionHandling>Sync</ExceptionHandling>
+      <FloatingPointModel></FloatingPointModel>
+      <ForceConformanceInForLoopScope></ForceConformanceInForLoopScope>
+      <InlineFunctionExpansion>OnlyExplicitInline</InlineFunctionExpansion>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+      <MinimalRebuild></MinimalRebuild>
+      <Optimization>MaxSpeed</Optimization>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <RemoveUnreferencedCodeData></RemoveUnreferencedCodeData>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <SupportJustMyCode></SupportJustMyCode>
+      <TreatWChar_tAsBuiltInType></TreatWChar_tAsBuiltInType>
+      <UseFullPaths>false</UseFullPaths>
+      <UseStandardPreprocessor>true</UseStandardPreprocessor>
+      <WarningLevel>Level3</WarningLevel>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;BX_CONFIG_DEBUG=0;NDEBUG;_CRT_SECURE_NO_WARNINGS;__STDC_FORMAT_MACROS;ENTRY_CONFIG_IMPLEMENT_MAIN=1;BGFX_CONFIG_DEBUG_ANNOTATION=0;BGFX_CONFIG_MULTITHREADED=1;__STDC_LIMIT_MACROS;__STDC_CONSTANT_MACROS;CMAKE_INTDIR="RelWithDebInfo"</PreprocessorDefinitions>
+      <ObjectFileName>$(IntDir)</ObjectFileName>
+      <ScanSourceForModuleDependencies>false</ScanSourceForModuleDependencies>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;BX_CONFIG_DEBUG=0;NDEBUG;_CRT_SECURE_NO_WARNINGS;__STDC_FORMAT_MACROS;ENTRY_CONFIG_IMPLEMENT_MAIN=1;BGFX_CONFIG_DEBUG_ANNOTATION=0;BGFX_CONFIG_MULTITHREADED=1;__STDC_LIMIT_MACROS;__STDC_CONSTANT_MACROS;CMAKE_INTDIR=\"RelWithDebInfo\"</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>D:\FITD\ThirdParty\bgfx.cmake\bgfx\examples\common;D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty;D:\FITD\ThirdParty\bgfx.cmake\bgfx\include;D:\FITD\ThirdParty\bgfx.cmake\bx\include;D:\FITD\ThirdParty\bgfx.cmake\bx\3rdparty;D:\FITD\ThirdParty\bgfx.cmake\bx\include\compat\msvc;D:\FITD\ThirdParty\bgfx.cmake\bimg\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+    <Midl>
+      <AdditionalIncludeDirectories>D:\FITD\ThirdParty\bgfx.cmake\bgfx\examples\common;D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty;D:\FITD\ThirdParty\bgfx.cmake\bgfx\include;D:\FITD\ThirdParty\bgfx.cmake\bx\include;D:\FITD\ThirdParty\bgfx.cmake\bx\3rdparty;D:\FITD\ThirdParty\bgfx.cmake\bx\include\compat\msvc;D:\FITD\ThirdParty\bgfx.cmake\bimg\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+    <Lib>
+      <AdditionalOptions>%(AdditionalOptions) /machine:x64</AdditionalOptions>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <CustomBuild Include="D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\CMakeLists.txt">
+      <UseUtf8Encoding>Always</UseUtf8Encoding>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Building Custom Rule D:/FITD/ThirdParty/bgfx.cmake/cmake/bgfx/CMakeLists.txt</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -SD:/FITD -BD:/FITD/build/vs2026 --check-stamp-file D:/FITD/build/vs2026/ThirdParty/bgfx.cmake/cmake/bgfx/CMakeFiles/generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">C:\Program Files\CMake\share\cmake-4.2\Modules\CMakeParseArguments.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\3rdparty\dear-imgui.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\3rdparty\fcpp.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\3rdparty\glsl-optimizer.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\3rdparty\glslang.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\3rdparty\meshoptimizer.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\3rdparty\spirv-cross.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\3rdparty\spirv-opt.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\3rdparty\webgpu.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\bgfx.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\examples.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\generated\shader.cpp.in;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\generated\vertexlayout.cpp.in;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\geometryc.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\geometryv.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\shaderc.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\shared.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\texturev.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\util\ConfigureDebugging.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfxToolUtils.cmake;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">D:\FITD\build\vs2026\ThirdParty\bgfx.cmake\cmake\bgfx\CMakeFiles\generate.stamp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Building Custom Rule D:/FITD/ThirdParty/bgfx.cmake/cmake/bgfx/CMakeLists.txt</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -SD:/FITD -BD:/FITD/build/vs2026 --check-stamp-file D:/FITD/build/vs2026/ThirdParty/bgfx.cmake/cmake/bgfx/CMakeFiles/generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">C:\Program Files\CMake\share\cmake-4.2\Modules\CMakeParseArguments.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\3rdparty\dear-imgui.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\3rdparty\fcpp.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\3rdparty\glsl-optimizer.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\3rdparty\glslang.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\3rdparty\meshoptimizer.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\3rdparty\spirv-cross.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\3rdparty\spirv-opt.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\3rdparty\webgpu.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\bgfx.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\examples.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\generated\shader.cpp.in;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\generated\vertexlayout.cpp.in;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\geometryc.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\geometryv.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\shaderc.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\shared.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\texturev.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\util\ConfigureDebugging.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfxToolUtils.cmake;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">D:\FITD\build\vs2026\ThirdParty\bgfx.cmake\cmake\bgfx\CMakeFiles\generate.stamp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">Building Custom Rule D:/FITD/ThirdParty/bgfx.cmake/cmake/bgfx/CMakeLists.txt</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -SD:/FITD -BD:/FITD/build/vs2026 --check-stamp-file D:/FITD/build/vs2026/ThirdParty/bgfx.cmake/cmake/bgfx/CMakeFiles/generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">C:\Program Files\CMake\share\cmake-4.2\Modules\CMakeParseArguments.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\3rdparty\dear-imgui.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\3rdparty\fcpp.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\3rdparty\glsl-optimizer.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\3rdparty\glslang.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\3rdparty\meshoptimizer.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\3rdparty\spirv-cross.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\3rdparty\spirv-opt.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\3rdparty\webgpu.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\bgfx.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\examples.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\generated\shader.cpp.in;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\generated\vertexlayout.cpp.in;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\geometryc.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\geometryv.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\shaderc.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\shared.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\texturev.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\util\ConfigureDebugging.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfxToolUtils.cmake;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">D:\FITD\build\vs2026\ThirdParty\bgfx.cmake\cmake\bgfx\CMakeFiles\generate.stamp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">Building Custom Rule D:/FITD/ThirdParty/bgfx.cmake/cmake/bgfx/CMakeLists.txt</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -SD:/FITD -BD:/FITD/build/vs2026 --check-stamp-file D:/FITD/build/vs2026/ThirdParty/bgfx.cmake/cmake/bgfx/CMakeFiles/generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">C:\Program Files\CMake\share\cmake-4.2\Modules\CMakeParseArguments.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\3rdparty\dear-imgui.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\3rdparty\fcpp.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\3rdparty\glsl-optimizer.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\3rdparty\glslang.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\3rdparty\meshoptimizer.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\3rdparty\spirv-cross.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\3rdparty\spirv-opt.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\3rdparty\webgpu.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\bgfx.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\examples.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\generated\shader.cpp.in;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\generated\vertexlayout.cpp.in;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\geometryc.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\geometryv.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\shaderc.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\shared.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\texturev.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\util\ConfigureDebugging.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfxToolUtils.cmake;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">D:\FITD\build\vs2026\ThirdParty\bgfx.cmake\cmake\bgfx\CMakeFiles\generate.stamp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">false</LinkObjects>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\examples\common\debugdraw\debugdraw.cpp" />
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\examples\common\debugdraw\debugdraw.h" />
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\examples\common\debugdraw\fs_debugdraw_fill.bin.h" />
+    <None Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\examples\common\debugdraw\fs_debugdraw_fill.sc">
+    </None>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\examples\common\debugdraw\fs_debugdraw_fill_lit.bin.h" />
+    <None Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\examples\common\debugdraw\fs_debugdraw_fill_lit.sc">
+    </None>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\examples\common\debugdraw\fs_debugdraw_fill_texture.bin.h" />
+    <None Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\examples\common\debugdraw\fs_debugdraw_fill_texture.sc">
+    </None>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\examples\common\debugdraw\fs_debugdraw_lines.bin.h" />
+    <None Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\examples\common\debugdraw\fs_debugdraw_lines.sc">
+    </None>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\examples\common\debugdraw\fs_debugdraw_lines_stipple.bin.h" />
+    <None Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\examples\common\debugdraw\fs_debugdraw_lines_stipple.sc">
+    </None>
+    <None Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\examples\common\debugdraw\varying.def.sc">
+    </None>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\examples\common\debugdraw\vs_debugdraw_fill.bin.h" />
+    <None Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\examples\common\debugdraw\vs_debugdraw_fill.sc">
+    </None>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\examples\common\debugdraw\vs_debugdraw_fill_lit.bin.h" />
+    <None Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\examples\common\debugdraw\vs_debugdraw_fill_lit.sc">
+    </None>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\examples\common\debugdraw\vs_debugdraw_fill_lit_mesh.bin.h" />
+    <None Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\examples\common\debugdraw\vs_debugdraw_fill_lit_mesh.sc">
+    </None>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\examples\common\debugdraw\vs_debugdraw_fill_mesh.bin.h" />
+    <None Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\examples\common\debugdraw\vs_debugdraw_fill_mesh.sc">
+    </None>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\examples\common\debugdraw\vs_debugdraw_fill_texture.bin.h" />
+    <None Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\examples\common\debugdraw\vs_debugdraw_fill_texture.sc">
+    </None>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\examples\common\debugdraw\vs_debugdraw_lines.bin.h" />
+    <None Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\examples\common\debugdraw\vs_debugdraw_lines.sc">
+    </None>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\examples\common\debugdraw\vs_debugdraw_lines_stipple.bin.h" />
+    <None Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\examples\common\debugdraw\vs_debugdraw_lines_stipple.sc">
+    </None>
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\examples\common\entry\cmd.cpp" />
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\examples\common\entry\cmd.h" />
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\examples\common\entry\dbg.h" />
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\examples\common\entry\dialog.cpp" />
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\examples\common\entry\dialog.h" />
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\examples\common\entry\entry.cpp" />
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\examples\common\entry\entry.h" />
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\examples\common\entry\entry_android.cpp" />
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\examples\common\entry\entry_glfw.cpp" />
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\examples\common\entry\entry_html5.cpp" />
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\examples\common\entry\entry_noop.cpp" />
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\examples\common\entry\entry_p.h" />
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\examples\common\entry\entry_sdl.cpp" />
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\examples\common\entry\entry_windows.cpp" />
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\examples\common\entry\entry_x11.cpp" />
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\examples\common\entry\input.cpp" />
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\examples\common\entry\input.h" />
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\examples\common\font\font_manager.cpp" />
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\examples\common\font\font_manager.h" />
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\examples\common\font\fs_font_basic.bin.h" />
+    <None Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\examples\common\font\fs_font_basic.sc">
+    </None>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\examples\common\font\fs_font_distance_field.bin.h" />
+    <None Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\examples\common\font\fs_font_distance_field.sc">
+    </None>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\examples\common\font\fs_font_distance_field_drop_shadow.bin.h" />
+    <None Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\examples\common\font\fs_font_distance_field_drop_shadow.sc">
+    </None>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\examples\common\font\fs_font_distance_field_drop_shadow_image.bin.h" />
+    <None Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\examples\common\font\fs_font_distance_field_drop_shadow_image.sc">
+    </None>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\examples\common\font\fs_font_distance_field_outline.bin.h" />
+    <None Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\examples\common\font\fs_font_distance_field_outline.sc">
+    </None>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\examples\common\font\fs_font_distance_field_outline_drop_shadow_image.bin.h" />
+    <None Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\examples\common\font\fs_font_distance_field_outline_drop_shadow_image.sc">
+    </None>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\examples\common\font\fs_font_distance_field_outline_image.bin.h" />
+    <None Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\examples\common\font\fs_font_distance_field_outline_image.sc">
+    </None>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\examples\common\font\fs_font_distance_field_subpixel.bin.h" />
+    <None Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\examples\common\font\fs_font_distance_field_subpixel.sc">
+    </None>
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\examples\common\font\text_buffer_manager.cpp" />
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\examples\common\font\text_buffer_manager.h" />
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\examples\common\font\text_metrics.cpp" />
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\examples\common\font\text_metrics.h" />
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\examples\common\font\utf8.cpp" />
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\examples\common\font\utf8.h" />
+    <None Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\examples\common\font\varying.def.sc">
+    </None>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\examples\common\font\vs_font_basic.bin.h" />
+    <None Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\examples\common\font\vs_font_basic.sc">
+    </None>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\examples\common\font\vs_font_distance_field.bin.h" />
+    <None Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\examples\common\font\vs_font_distance_field.sc">
+    </None>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\examples\common\font\vs_font_distance_field_drop_shadow.bin.h" />
+    <None Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\examples\common\font\vs_font_distance_field_drop_shadow.sc">
+    </None>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\examples\common\font\vs_font_distance_field_drop_shadow_image.bin.h" />
+    <None Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\examples\common\font\vs_font_distance_field_drop_shadow_image.sc">
+    </None>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\examples\common\font\vs_font_distance_field_outline.bin.h" />
+    <None Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\examples\common\font\vs_font_distance_field_outline.sc">
+    </None>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\examples\common\font\vs_font_distance_field_outline_drop_shadow_image.bin.h" />
+    <None Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\examples\common\font\vs_font_distance_field_outline_drop_shadow_image.sc">
+    </None>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\examples\common\font\vs_font_distance_field_outline_image.bin.h" />
+    <None Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\examples\common\font\vs_font_distance_field_outline_image.sc">
+    </None>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\examples\common\font\vs_font_distance_field_subpixel.bin.h" />
+    <None Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\examples\common\font\vs_font_distance_field_subpixel.sc">
+    </None>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\examples\common\imgui\droidsans.ttf.h" />
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\examples\common\imgui\fs_imgui_image.bin.h" />
+    <None Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\examples\common\imgui\fs_imgui_image.sc">
+    </None>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\examples\common\imgui\fs_ocornut_imgui.bin.h" />
+    <None Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\examples\common\imgui\fs_ocornut_imgui.sc">
+    </None>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\examples\common\imgui\icons_font_awesome.ttf.h" />
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\examples\common\imgui\icons_kenney.ttf.h" />
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\examples\common\imgui\imgui.cpp">
+      <ObjectFileName>$(IntDir)/__/__/bgfx/examples/common/imgui/imgui.cpp.obj</ObjectFileName>
+    </ClCompile>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\examples\common\imgui\imgui.h" />
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\examples\common\imgui\roboto_regular.ttf.h" />
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\examples\common\imgui\robotomono_regular.ttf.h" />
+    <None Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\examples\common\imgui\varying.def.sc">
+    </None>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\examples\common\imgui\vs_imgui_image.bin.h" />
+    <None Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\examples\common\imgui\vs_imgui_image.sc">
+    </None>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\examples\common\imgui\vs_ocornut_imgui.bin.h" />
+    <None Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\examples\common\imgui\vs_ocornut_imgui.sc">
+    </None>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\examples\common\nanovg\fontstash.h" />
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\examples\common\nanovg\fs_nanovg_fill.bin.h" />
+    <None Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\examples\common\nanovg\fs_nanovg_fill.sc">
+    </None>
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\examples\common\nanovg\nanovg.cpp" />
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\examples\common\nanovg\nanovg.h" />
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\examples\common\nanovg\nanovg_bgfx.cpp" />
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\examples\common\nanovg\nanovg_bgfx.h" />
+    <None Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\examples\common\nanovg\varying.def.sc">
+    </None>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\examples\common\nanovg\vs_nanovg_fill.bin.h" />
+    <None Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\examples\common\nanovg\vs_nanovg_fill.sc">
+    </None>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\examples\common\ps\fs_particle.bin.h" />
+    <None Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\examples\common\ps\fs_particle.sc">
+    </None>
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\examples\common\ps\particle_system.cpp" />
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\examples\common\ps\particle_system.h" />
+    <None Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\examples\common\ps\varying.def.sc">
+    </None>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\examples\common\ps\vs_particle.bin.h" />
+    <None Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\examples\common\ps\vs_particle.sc">
+    </None>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\examples\common\aviwriter.h" />
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\examples\common\bgfx_utils.cpp" />
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\examples\common\bgfx_utils.h" />
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\examples\common\camera.cpp" />
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\examples\common\camera.h" />
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\examples\common\common.h" />
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\examples\common\cube_atlas.cpp" />
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\examples\common\cube_atlas.h" />
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\examples\common\example-glue.cpp" />
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\examples\common\packrect.h" />
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\dear-imgui\imconfig.h" />
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\dear-imgui\imgui.cpp">
+      <ObjectFileName>$(IntDir)/__/__/bgfx/3rdparty/dear-imgui/imgui.cpp.obj</ObjectFileName>
+    </ClCompile>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\dear-imgui\imgui.h" />
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\dear-imgui\imgui_demo.cpp" />
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\dear-imgui\imgui_draw.cpp" />
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\dear-imgui\imgui_internal.h" />
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\dear-imgui\imgui_tables.cpp" />
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\dear-imgui\imgui_user.h" />
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\dear-imgui\imgui_user.inl" />
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\dear-imgui\imgui_widgets.cpp" />
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\dear-imgui\imstb_rectpack.h" />
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\dear-imgui\imstb_textedit.h" />
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\dear-imgui\imstb_truetype.h" />
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\meshoptimizer\src\allocator.cpp" />
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\meshoptimizer\src\clusterizer.cpp" />
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\meshoptimizer\src\indexanalyzer.cpp" />
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\meshoptimizer\src\indexcodec.cpp" />
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\meshoptimizer\src\indexgenerator.cpp" />
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\meshoptimizer\src\meshoptimizer.h" />
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\meshoptimizer\src\overdrawoptimizer.cpp" />
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\meshoptimizer\src\partition.cpp" />
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\meshoptimizer\src\quantization.cpp" />
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\meshoptimizer\src\rasterizer.cpp" />
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\meshoptimizer\src\simplifier.cpp" />
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\meshoptimizer\src\spatialorder.cpp" />
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\meshoptimizer\src\stripifier.cpp" />
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\meshoptimizer\src\vcacheoptimizer.cpp" />
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\meshoptimizer\src\vertexcodec.cpp" />
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\meshoptimizer\src\vertexfilter.cpp" />
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\meshoptimizer\src\vfetchoptimizer.cpp" />
+  </ItemGroup>
+  <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="D:\FITD\build\vs2026\ZERO_CHECK.vcxproj">
+      <Project>{A64E50DE-6981-3875-AD91-29157346A96C}</Project>
+      <Name>ZERO_CHECK</Name>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </ProjectReference>
+    <ProjectReference Include="D:\FITD\build\vs2026\ThirdParty\bgfx.cmake\cmake\bgfx\bgfx.vcxproj">
+      <Project>{E618A171-8433-3E45-ACDE-D96696917E03}</Project>
+      <Name>bgfx</Name>
+    </ProjectReference>
+    <ProjectReference Include="D:\FITD\build\vs2026\ThirdParty\bgfx.cmake\cmake\bimg\bimg.vcxproj">
+      <Project>{0EDEB0B0-2070-3C71-8C83-09CAA73F06DC}</Project>
+      <Name>bimg</Name>
+    </ProjectReference>
+    <ProjectReference Include="D:\FITD\build\vs2026\ThirdParty\bgfx.cmake\cmake\bimg\bimg_decode.vcxproj">
+      <Project>{893599D6-C987-316F-98F3-D91EC44B357F}</Project>
+      <Name>bimg_decode</Name>
+    </ProjectReference>
+    <ProjectReference Include="D:\FITD\build\vs2026\ThirdParty\bgfx.cmake\cmake\bx\bx.vcxproj">
+      <Project>{FA37E5B2-C200-3515-A4DE-B51A9F737B67}</Project>
+      <Name>bx</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

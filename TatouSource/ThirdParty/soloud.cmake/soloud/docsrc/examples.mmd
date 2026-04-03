@@ -1,0 +1,119 @@
+## Examples
+
+
+SoLoud package comes with a bunch of simple examples. These can be found under the 'demos' directory. Pre-built binaries for Windows can also be found in the 'bin' directory.
+
+Along with the examples, the 'bin' directory also contains some command-line tools. These are safe to run without parameters, and will print out help when run.
+
+### simplest
+
+The simplest example initializes SoLoud, and uses the speech synthesizer to play some sound. Once the sound has finished, the application cleans up and quits.
+
+This example also uses SoLoud's cross-platform thread library to sleep while waiting for the sound to end. The source code is so short that we'll just include it here verbatim:
+
+    #include "soloud.h"
+    #include "soloud_speech.h"
+    #include "soloud_thread.h"
+    
+    // Entry point
+    int main(int argc, char *argv[])
+    {
+      // Define a couple of variables
+      SoLoud::Soloud soloud;  // SoLoud engine core
+      SoLoud::Speech speech;  // A sound source (speech, in this case)
+    
+      // Configure sound source
+      speech.setText("1 2 3   1 2 3   Hello world. Welcome to So-Loud.");
+    
+      // initialize SoLoud.
+      soloud.init();
+    
+      // Play the sound source (we could do this several times if we wanted)
+      soloud.play(speech);
+    
+      // Wait until sounds have finished
+      while (soloud.getActiveVoiceCount() > 0)
+      {
+        // Still going, sleep for a bit
+        SoLoud::Thread::sleep(100);
+      }
+    
+      // Clean up SoLoud
+      soloud.deinit();
+    
+      // All done.
+      return 0;
+    }
+
+### welcome
+
+
+Slightly more complicated console-based example, playing different kinds of sounds.
+
+    Welcome to Soloud!
+    What is your name?
+    >john doe
+    Playing music. Press a key to quit..
+
+
+- Set up SoLoud
+- Load and play looping ogg stream
+- Adjust live parameters of the ogg (volume, pan, play speed)
+- Ask for text input, play it through speech synthesizer
+- Wait until speech is over
+- Try to load and play an S3M module
+
+### megademo
+
+![tedsid demo screenshot](images/demo_tedsid)\ 
+
+The megademo demo is a collection of smaller demos and tests showing various SoLoud features.
+
+### c_test
+
+The c_test demo uses the "c" API to play voice samples as well as playing a wave that is generated on the fly.
+
+### env
+
+![env demo screenshot](images/demo_env)\ 
+
+The env demo is a non-interactive demo of how SoLoud could be used to play environmental 
+audio. It is more of a proof of concept than a good example at this point.
+
+
+### enumerate
+
+The enumerate demo scans all included back-ends and shows data about them.
+Note that some backends, like WinMM, only support limited number of channels, while others may report more 
+channels available than the hardware supports, like PortAudio.
+
+### emscripten
+
+Script files are included to compile some of the demos for web use using Emscripten. These require Linux environment 
+with Emscripten installed.
+
+### glue
+
+Some simple demos are included for the glue interfaces, i.e, using SoLoud from C#, gamemaker, python, ruby, etc.
+
+### null
+
+The null demo shows an example of using the null driver backend. It plays some sound and draws the waveform
+on the console using ascii graphics.
+
+\pagebreak
+
+### piano
+
+![piano demo screenshot](images/demo_piano)\ 
+
+This example is a simple implementation of a playable instrument. 
+The example also includes a simple waveform generator (soloud_basicwave.cpp/h), which can produce square, saw, 
+sine and triangle waves. If compiled to use portmidi, you can also use an external midi keyboard to drive the example.
+
+![piano keys](images/pianokeys)\ 
+
+Don't worry if you don't have an external midi keyboard though, you can also jam from the PC keyboard
+
+You can also adjust some filters and pick waveforms using the GUI. Speech synthesizer describes your option changes.
+

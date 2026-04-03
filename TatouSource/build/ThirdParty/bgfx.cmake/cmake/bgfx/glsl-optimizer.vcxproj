@@ -1,0 +1,486 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="18.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <PreferredToolArchitecture>x64</PreferredToolArchitecture>
+  </PropertyGroup>
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="MinSizeRel|x64">
+      <Configuration>MinSizeRel</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="RelWithDebInfo|x64">
+      <Configuration>RelWithDebInfo</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{CFB9733D-24DD-3BE7-A6EC-32205385D3C4}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+    <WindowsTargetPlatformVersion>10.0.26100.0</WindowsTargetPlatformVersion>
+    <Platform>x64</Platform>
+    <ProjectName>glsl-optimizer</ProjectName>
+    <VCProjectUpgraderObjectName>NoUpgrade</VCProjectUpgraderObjectName>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v145</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v145</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v145</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v145</PlatformToolset>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <_ProjectFileVersion>10.0.20506.1</_ProjectFileVersion>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">D:\FITD\build\ThirdParty\bgfx.cmake\cmake\bgfx\Debug\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">glsl-optimizer.dir\Debug\</IntDir>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">glsl-optimizer</TargetName>
+    <TargetExt Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">.lib</TargetExt>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">D:\FITD\build\ThirdParty\bgfx.cmake\cmake\bgfx\Release\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">glsl-optimizer.dir\Release\</IntDir>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">glsl-optimizer</TargetName>
+    <TargetExt Condition="'$(Configuration)|$(Platform)'=='Release|x64'">.lib</TargetExt>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">D:\FITD\build\ThirdParty\bgfx.cmake\cmake\bgfx\MinSizeRel\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">glsl-optimizer.dir\MinSizeRel\</IntDir>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">glsl-optimizer</TargetName>
+    <TargetExt Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">.lib</TargetExt>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">D:\FITD\build\ThirdParty\bgfx.cmake\cmake\bgfx\RelWithDebInfo\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">glsl-optimizer.dir\RelWithDebInfo\</IntDir>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">glsl-optimizer</TargetName>
+    <TargetExt Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">.lib</TargetExt>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glsl-optimizer\include;D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glsl-optimizer\src\glsl;D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glsl-optimizer\src;D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glsl-optimizer\src\mesa;D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glsl-optimizer\src\mapi;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <BufferSecurityCheck></BufferSecurityCheck>
+      <CallingConvention></CallingConvention>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <DisableSpecificWarnings>4100;4127;4132;4189;4204;4244;4389;4245;4701;4702;4706;4996</DisableSpecificWarnings>
+      <ExceptionHandling>Sync</ExceptionHandling>
+      <FloatingPointModel></FloatingPointModel>
+      <ForceConformanceInForLoopScope></ForceConformanceInForLoopScope>
+      <InlineFunctionExpansion>Disabled</InlineFunctionExpansion>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+      <MinimalRebuild></MinimalRebuild>
+      <Optimization>Disabled</Optimization>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <RemoveUnreferencedCodeData></RemoveUnreferencedCodeData>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <SupportJustMyCode></SupportJustMyCode>
+      <TreatWChar_tAsBuiltInType></TreatWChar_tAsBuiltInType>
+      <UseFullPaths>false</UseFullPaths>
+      <WarningLevel>Level3</WarningLevel>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;BX_CONFIG_DEBUG=0;__STDC__;__STDC_VERSION__=199901L;strdup=_strdup;alloca=_alloca;isascii=__isascii;CMAKE_INTDIR="Debug"</PreprocessorDefinitions>
+      <ObjectFileName>$(IntDir)</ObjectFileName>
+      <ScanSourceForModuleDependencies>false</ScanSourceForModuleDependencies>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_DEBUG;_WINDOWS;BX_CONFIG_DEBUG=0;__STDC__;__STDC_VERSION__=199901L;strdup=_strdup;alloca=_alloca;isascii=__isascii;CMAKE_INTDIR=\"Debug\"</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glsl-optimizer\include;D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glsl-optimizer\src\glsl;D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glsl-optimizer\src;D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glsl-optimizer\src\mesa;D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glsl-optimizer\src\mapi;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+    <Midl>
+      <AdditionalIncludeDirectories>D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glsl-optimizer\include;D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glsl-optimizer\src\glsl;D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glsl-optimizer\src;D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glsl-optimizer\src\mesa;D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glsl-optimizer\src\mapi;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+    <Lib>
+      <AdditionalOptions>%(AdditionalOptions) /machine:x64</AdditionalOptions>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glsl-optimizer\include;D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glsl-optimizer\src\glsl;D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glsl-optimizer\src;D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glsl-optimizer\src\mesa;D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glsl-optimizer\src\mapi;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
+      <BasicRuntimeChecks>Default</BasicRuntimeChecks>
+      <BufferSecurityCheck></BufferSecurityCheck>
+      <CallingConvention></CallingConvention>
+      <DisableSpecificWarnings>4100;4127;4132;4189;4204;4244;4389;4245;4701;4702;4706;4996</DisableSpecificWarnings>
+      <ExceptionHandling>Sync</ExceptionHandling>
+      <FloatingPointModel></FloatingPointModel>
+      <ForceConformanceInForLoopScope></ForceConformanceInForLoopScope>
+      <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+      <MinimalRebuild></MinimalRebuild>
+      <Optimization>MaxSpeed</Optimization>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <RemoveUnreferencedCodeData></RemoveUnreferencedCodeData>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <SupportJustMyCode></SupportJustMyCode>
+      <TreatWChar_tAsBuiltInType></TreatWChar_tAsBuiltInType>
+      <UseFullPaths>false</UseFullPaths>
+      <WarningLevel>Level3</WarningLevel>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;BX_CONFIG_DEBUG=0;NDEBUG;__STDC__;__STDC_VERSION__=199901L;strdup=_strdup;alloca=_alloca;isascii=__isascii;CMAKE_INTDIR="Release"</PreprocessorDefinitions>
+      <ObjectFileName>$(IntDir)</ObjectFileName>
+      <DebugInformationFormat>
+      </DebugInformationFormat>
+      <ScanSourceForModuleDependencies>false</ScanSourceForModuleDependencies>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;BX_CONFIG_DEBUG=0;NDEBUG;__STDC__;__STDC_VERSION__=199901L;strdup=_strdup;alloca=_alloca;isascii=__isascii;CMAKE_INTDIR=\"Release\"</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glsl-optimizer\include;D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glsl-optimizer\src\glsl;D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glsl-optimizer\src;D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glsl-optimizer\src\mesa;D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glsl-optimizer\src\mapi;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+    <Midl>
+      <AdditionalIncludeDirectories>D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glsl-optimizer\include;D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glsl-optimizer\src\glsl;D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glsl-optimizer\src;D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glsl-optimizer\src\mesa;D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glsl-optimizer\src\mapi;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+    <Lib>
+      <AdditionalOptions>%(AdditionalOptions) /machine:x64</AdditionalOptions>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glsl-optimizer\include;D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glsl-optimizer\src\glsl;D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glsl-optimizer\src;D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glsl-optimizer\src\mesa;D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glsl-optimizer\src\mapi;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
+      <BasicRuntimeChecks>Default</BasicRuntimeChecks>
+      <BufferSecurityCheck></BufferSecurityCheck>
+      <CallingConvention></CallingConvention>
+      <DisableSpecificWarnings>4100;4127;4132;4189;4204;4244;4389;4245;4701;4702;4706;4996</DisableSpecificWarnings>
+      <ExceptionHandling>Sync</ExceptionHandling>
+      <FloatingPointModel></FloatingPointModel>
+      <ForceConformanceInForLoopScope></ForceConformanceInForLoopScope>
+      <InlineFunctionExpansion>OnlyExplicitInline</InlineFunctionExpansion>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+      <MinimalRebuild></MinimalRebuild>
+      <Optimization>MinSpace</Optimization>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <RemoveUnreferencedCodeData></RemoveUnreferencedCodeData>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <SupportJustMyCode></SupportJustMyCode>
+      <TreatWChar_tAsBuiltInType></TreatWChar_tAsBuiltInType>
+      <UseFullPaths>false</UseFullPaths>
+      <WarningLevel>Level3</WarningLevel>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;BX_CONFIG_DEBUG=0;NDEBUG;__STDC__;__STDC_VERSION__=199901L;strdup=_strdup;alloca=_alloca;isascii=__isascii;CMAKE_INTDIR="MinSizeRel"</PreprocessorDefinitions>
+      <ObjectFileName>$(IntDir)</ObjectFileName>
+      <DebugInformationFormat>
+      </DebugInformationFormat>
+      <ScanSourceForModuleDependencies>false</ScanSourceForModuleDependencies>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;BX_CONFIG_DEBUG=0;NDEBUG;__STDC__;__STDC_VERSION__=199901L;strdup=_strdup;alloca=_alloca;isascii=__isascii;CMAKE_INTDIR=\"MinSizeRel\"</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glsl-optimizer\include;D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glsl-optimizer\src\glsl;D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glsl-optimizer\src;D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glsl-optimizer\src\mesa;D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glsl-optimizer\src\mapi;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+    <Midl>
+      <AdditionalIncludeDirectories>D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glsl-optimizer\include;D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glsl-optimizer\src\glsl;D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glsl-optimizer\src;D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glsl-optimizer\src\mesa;D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glsl-optimizer\src\mapi;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+    <Lib>
+      <AdditionalOptions>%(AdditionalOptions) /machine:x64</AdditionalOptions>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glsl-optimizer\include;D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glsl-optimizer\src\glsl;D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glsl-optimizer\src;D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glsl-optimizer\src\mesa;D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glsl-optimizer\src\mapi;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
+      <BasicRuntimeChecks>Default</BasicRuntimeChecks>
+      <BufferSecurityCheck></BufferSecurityCheck>
+      <CallingConvention></CallingConvention>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <DisableSpecificWarnings>4100;4127;4132;4189;4204;4244;4389;4245;4701;4702;4706;4996</DisableSpecificWarnings>
+      <ExceptionHandling>Sync</ExceptionHandling>
+      <FloatingPointModel></FloatingPointModel>
+      <ForceConformanceInForLoopScope></ForceConformanceInForLoopScope>
+      <InlineFunctionExpansion>OnlyExplicitInline</InlineFunctionExpansion>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+      <MinimalRebuild></MinimalRebuild>
+      <Optimization>MaxSpeed</Optimization>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <RemoveUnreferencedCodeData></RemoveUnreferencedCodeData>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <SupportJustMyCode></SupportJustMyCode>
+      <TreatWChar_tAsBuiltInType></TreatWChar_tAsBuiltInType>
+      <UseFullPaths>false</UseFullPaths>
+      <WarningLevel>Level3</WarningLevel>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;BX_CONFIG_DEBUG=0;NDEBUG;__STDC__;__STDC_VERSION__=199901L;strdup=_strdup;alloca=_alloca;isascii=__isascii;CMAKE_INTDIR="RelWithDebInfo"</PreprocessorDefinitions>
+      <ObjectFileName>$(IntDir)</ObjectFileName>
+      <ScanSourceForModuleDependencies>false</ScanSourceForModuleDependencies>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;BX_CONFIG_DEBUG=0;NDEBUG;__STDC__;__STDC_VERSION__=199901L;strdup=_strdup;alloca=_alloca;isascii=__isascii;CMAKE_INTDIR=\"RelWithDebInfo\"</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glsl-optimizer\include;D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glsl-optimizer\src\glsl;D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glsl-optimizer\src;D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glsl-optimizer\src\mesa;D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glsl-optimizer\src\mapi;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+    <Midl>
+      <AdditionalIncludeDirectories>D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glsl-optimizer\include;D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glsl-optimizer\src\glsl;D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glsl-optimizer\src;D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glsl-optimizer\src\mesa;D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glsl-optimizer\src\mapi;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+    <Lib>
+      <AdditionalOptions>%(AdditionalOptions) /machine:x64</AdditionalOptions>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <CustomBuild Include="D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\CMakeLists.txt">
+      <UseUtf8Encoding>Always</UseUtf8Encoding>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Building Custom Rule D:/FITD/ThirdParty/bgfx.cmake/cmake/bgfx/CMakeLists.txt</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -SD:/FITD -BD:/FITD/build --check-stamp-file D:/FITD/build/ThirdParty/bgfx.cmake/cmake/bgfx/CMakeFiles/generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">C:\Program Files\CMake\share\cmake-4.2\Modules\CMakeParseArguments.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\3rdparty\dear-imgui.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\3rdparty\fcpp.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\3rdparty\glsl-optimizer.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\3rdparty\glslang.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\3rdparty\meshoptimizer.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\3rdparty\spirv-cross.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\3rdparty\spirv-opt.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\3rdparty\webgpu.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\bgfx.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\examples.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\generated\shader.cpp.in;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\generated\vertexlayout.cpp.in;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\geometryc.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\geometryv.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\shaderc.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\shared.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\texturev.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\util\ConfigureDebugging.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfxToolUtils.cmake;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">D:\FITD\build\ThirdParty\bgfx.cmake\cmake\bgfx\CMakeFiles\generate.stamp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Building Custom Rule D:/FITD/ThirdParty/bgfx.cmake/cmake/bgfx/CMakeLists.txt</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -SD:/FITD -BD:/FITD/build --check-stamp-file D:/FITD/build/ThirdParty/bgfx.cmake/cmake/bgfx/CMakeFiles/generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">C:\Program Files\CMake\share\cmake-4.2\Modules\CMakeParseArguments.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\3rdparty\dear-imgui.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\3rdparty\fcpp.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\3rdparty\glsl-optimizer.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\3rdparty\glslang.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\3rdparty\meshoptimizer.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\3rdparty\spirv-cross.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\3rdparty\spirv-opt.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\3rdparty\webgpu.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\bgfx.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\examples.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\generated\shader.cpp.in;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\generated\vertexlayout.cpp.in;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\geometryc.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\geometryv.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\shaderc.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\shared.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\texturev.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\util\ConfigureDebugging.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfxToolUtils.cmake;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">D:\FITD\build\ThirdParty\bgfx.cmake\cmake\bgfx\CMakeFiles\generate.stamp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">Building Custom Rule D:/FITD/ThirdParty/bgfx.cmake/cmake/bgfx/CMakeLists.txt</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -SD:/FITD -BD:/FITD/build --check-stamp-file D:/FITD/build/ThirdParty/bgfx.cmake/cmake/bgfx/CMakeFiles/generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">C:\Program Files\CMake\share\cmake-4.2\Modules\CMakeParseArguments.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\3rdparty\dear-imgui.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\3rdparty\fcpp.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\3rdparty\glsl-optimizer.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\3rdparty\glslang.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\3rdparty\meshoptimizer.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\3rdparty\spirv-cross.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\3rdparty\spirv-opt.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\3rdparty\webgpu.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\bgfx.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\examples.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\generated\shader.cpp.in;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\generated\vertexlayout.cpp.in;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\geometryc.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\geometryv.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\shaderc.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\shared.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\texturev.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\util\ConfigureDebugging.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfxToolUtils.cmake;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">D:\FITD\build\ThirdParty\bgfx.cmake\cmake\bgfx\CMakeFiles\generate.stamp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">Building Custom Rule D:/FITD/ThirdParty/bgfx.cmake/cmake/bgfx/CMakeLists.txt</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -SD:/FITD -BD:/FITD/build --check-stamp-file D:/FITD/build/ThirdParty/bgfx.cmake/cmake/bgfx/CMakeFiles/generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">C:\Program Files\CMake\share\cmake-4.2\Modules\CMakeParseArguments.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\3rdparty\dear-imgui.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\3rdparty\fcpp.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\3rdparty\glsl-optimizer.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\3rdparty\glslang.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\3rdparty\meshoptimizer.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\3rdparty\spirv-cross.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\3rdparty\spirv-opt.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\3rdparty\webgpu.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\bgfx.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\examples.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\generated\shader.cpp.in;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\generated\vertexlayout.cpp.in;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\geometryc.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\geometryv.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\shaderc.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\shared.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\texturev.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\util\ConfigureDebugging.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfxToolUtils.cmake;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">D:\FITD\build\ThirdParty\bgfx.cmake\cmake\bgfx\CMakeFiles\generate.stamp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">false</LinkObjects>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glsl-optimizer\src\glsl\ast.h" />
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glsl-optimizer\src\glsl\ast_array_index.cpp" />
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glsl-optimizer\src\glsl\ast_expr.cpp" />
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glsl-optimizer\src\glsl\ast_function.cpp" />
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glsl-optimizer\src\glsl\ast_to_hir.cpp" />
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glsl-optimizer\src\glsl\ast_type.cpp" />
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glsl-optimizer\src\glsl\builtin_functions.cpp" />
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glsl-optimizer\src\glsl\builtin_type_macros.h" />
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glsl-optimizer\src\glsl\builtin_types.cpp" />
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glsl-optimizer\src\glsl\builtin_variables.cpp" />
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glsl-optimizer\src\glsl\glcpp\glcpp-lex.c" />
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glsl-optimizer\src\glsl\glcpp\glcpp-parse.c" />
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glsl-optimizer\src\glsl\glcpp\glcpp-parse.h" />
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glsl-optimizer\src\glsl\glcpp\glcpp.h" />
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glsl-optimizer\src\glsl\glcpp\pp.c" />
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glsl-optimizer\src\glsl\glsl_lexer.cpp" />
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glsl-optimizer\src\glsl\glsl_optimizer.cpp" />
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glsl-optimizer\src\glsl\glsl_optimizer.h" />
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glsl-optimizer\src\glsl\glsl_parser.cpp" />
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glsl-optimizer\src\glsl\glsl_parser.h" />
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glsl-optimizer\src\glsl\glsl_parser_extras.cpp" />
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glsl-optimizer\src\glsl\glsl_parser_extras.h" />
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glsl-optimizer\src\glsl\glsl_symbol_table.cpp" />
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glsl-optimizer\src\glsl\glsl_symbol_table.h" />
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glsl-optimizer\src\glsl\glsl_types.cpp" />
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glsl-optimizer\src\glsl\glsl_types.h" />
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glsl-optimizer\src\glsl\hir_field_selection.cpp" />
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glsl-optimizer\src\glsl\ir.cpp" />
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glsl-optimizer\src\glsl\ir.h" />
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glsl-optimizer\src\glsl\ir_basic_block.cpp" />
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glsl-optimizer\src\glsl\ir_basic_block.h" />
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glsl-optimizer\src\glsl\ir_builder.cpp" />
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glsl-optimizer\src\glsl\ir_builder.h" />
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glsl-optimizer\src\glsl\ir_clone.cpp" />
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glsl-optimizer\src\glsl\ir_constant_expression.cpp" />
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glsl-optimizer\src\glsl\ir_equals.cpp" />
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glsl-optimizer\src\glsl\ir_expression_flattening.cpp" />
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glsl-optimizer\src\glsl\ir_expression_flattening.h" />
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glsl-optimizer\src\glsl\ir_function.cpp" />
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glsl-optimizer\src\glsl\ir_function_can_inline.cpp" />
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glsl-optimizer\src\glsl\ir_function_detect_recursion.cpp" />
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glsl-optimizer\src\glsl\ir_function_inlining.h" />
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glsl-optimizer\src\glsl\ir_hierarchical_visitor.cpp" />
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glsl-optimizer\src\glsl\ir_hierarchical_visitor.h" />
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glsl-optimizer\src\glsl\ir_hv_accept.cpp" />
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glsl-optimizer\src\glsl\ir_import_prototypes.cpp" />
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glsl-optimizer\src\glsl\ir_optimization.h" />
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glsl-optimizer\src\glsl\ir_print_glsl_visitor.cpp" />
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glsl-optimizer\src\glsl\ir_print_glsl_visitor.h" />
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glsl-optimizer\src\glsl\ir_print_metal_visitor.cpp" />
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glsl-optimizer\src\glsl\ir_print_metal_visitor.h" />
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glsl-optimizer\src\glsl\ir_print_visitor.cpp" />
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glsl-optimizer\src\glsl\ir_print_visitor.h" />
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glsl-optimizer\src\glsl\ir_rvalue_visitor.cpp" />
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glsl-optimizer\src\glsl\ir_rvalue_visitor.h" />
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glsl-optimizer\src\glsl\ir_stats.cpp" />
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glsl-optimizer\src\glsl\ir_stats.h" />
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glsl-optimizer\src\glsl\ir_uniform.h" />
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glsl-optimizer\src\glsl\ir_unused_structs.cpp" />
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glsl-optimizer\src\glsl\ir_unused_structs.h" />
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glsl-optimizer\src\glsl\ir_validate.cpp" />
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glsl-optimizer\src\glsl\ir_variable_refcount.cpp" />
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glsl-optimizer\src\glsl\ir_variable_refcount.h" />
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glsl-optimizer\src\glsl\ir_visitor.h" />
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glsl-optimizer\src\glsl\link_atomics.cpp" />
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glsl-optimizer\src\glsl\link_functions.cpp" />
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glsl-optimizer\src\glsl\link_interface_blocks.cpp" />
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glsl-optimizer\src\glsl\link_uniform_block_active_visitor.cpp" />
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glsl-optimizer\src\glsl\link_uniform_block_active_visitor.h" />
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glsl-optimizer\src\glsl\link_uniform_blocks.cpp" />
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glsl-optimizer\src\glsl\link_uniform_initializers.cpp" />
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glsl-optimizer\src\glsl\link_uniforms.cpp" />
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glsl-optimizer\src\glsl\link_varyings.cpp" />
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glsl-optimizer\src\glsl\link_varyings.h" />
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glsl-optimizer\src\glsl\linker.cpp" />
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glsl-optimizer\src\glsl\linker.h" />
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glsl-optimizer\src\glsl\list.h" />
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glsl-optimizer\src\glsl\loop_analysis.cpp" />
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glsl-optimizer\src\glsl\loop_analysis.h" />
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glsl-optimizer\src\glsl\loop_controls.cpp" />
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glsl-optimizer\src\glsl\loop_unroll.cpp" />
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glsl-optimizer\src\glsl\lower_clip_distance.cpp" />
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glsl-optimizer\src\glsl\lower_discard.cpp" />
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glsl-optimizer\src\glsl\lower_discard_flow.cpp" />
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glsl-optimizer\src\glsl\lower_if_to_cond_assign.cpp" />
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glsl-optimizer\src\glsl\lower_instructions.cpp" />
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glsl-optimizer\src\glsl\lower_jumps.cpp" />
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glsl-optimizer\src\glsl\lower_mat_op_to_vec.cpp" />
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glsl-optimizer\src\glsl\lower_named_interface_blocks.cpp" />
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glsl-optimizer\src\glsl\lower_noise.cpp" />
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glsl-optimizer\src\glsl\lower_offset_array.cpp" />
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glsl-optimizer\src\glsl\lower_output_reads.cpp" />
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glsl-optimizer\src\glsl\lower_packed_varyings.cpp" />
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glsl-optimizer\src\glsl\lower_packing_builtins.cpp" />
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glsl-optimizer\src\glsl\lower_ubo_reference.cpp" />
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glsl-optimizer\src\glsl\lower_variable_index_to_cond_assign.cpp" />
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glsl-optimizer\src\glsl\lower_vec_index_to_cond_assign.cpp" />
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glsl-optimizer\src\glsl\lower_vec_index_to_swizzle.cpp" />
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glsl-optimizer\src\glsl\lower_vector.cpp" />
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glsl-optimizer\src\glsl\lower_vector_insert.cpp" />
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glsl-optimizer\src\glsl\lower_vertex_id.cpp" />
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glsl-optimizer\src\glsl\opt_algebraic.cpp" />
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glsl-optimizer\src\glsl\opt_array_splitting.cpp" />
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glsl-optimizer\src\glsl\opt_constant_folding.cpp" />
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glsl-optimizer\src\glsl\opt_constant_propagation.cpp" />
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glsl-optimizer\src\glsl\opt_constant_variable.cpp" />
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glsl-optimizer\src\glsl\opt_copy_propagation.cpp" />
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glsl-optimizer\src\glsl\opt_copy_propagation_elements.cpp" />
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glsl-optimizer\src\glsl\opt_cse.cpp" />
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glsl-optimizer\src\glsl\opt_dead_builtin_variables.cpp" />
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glsl-optimizer\src\glsl\opt_dead_builtin_varyings.cpp" />
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glsl-optimizer\src\glsl\opt_dead_code.cpp" />
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glsl-optimizer\src\glsl\opt_dead_code_local.cpp" />
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glsl-optimizer\src\glsl\opt_dead_functions.cpp" />
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glsl-optimizer\src\glsl\opt_flatten_nested_if_blocks.cpp" />
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glsl-optimizer\src\glsl\opt_flip_matrices.cpp" />
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glsl-optimizer\src\glsl\opt_function_inlining.cpp" />
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glsl-optimizer\src\glsl\opt_if_simplification.cpp" />
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glsl-optimizer\src\glsl\opt_minmax.cpp" />
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glsl-optimizer\src\glsl\opt_noop_swizzle.cpp" />
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glsl-optimizer\src\glsl\opt_rebalance_tree.cpp" />
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glsl-optimizer\src\glsl\opt_redundant_jumps.cpp" />
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glsl-optimizer\src\glsl\opt_structure_splitting.cpp" />
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glsl-optimizer\src\glsl\opt_swizzle_swizzle.cpp" />
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glsl-optimizer\src\glsl\opt_tree_grafting.cpp" />
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glsl-optimizer\src\glsl\opt_vectorize.cpp" />
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glsl-optimizer\src\glsl\program.h" />
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glsl-optimizer\src\glsl\s_expression.cpp" />
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glsl-optimizer\src\glsl\s_expression.h" />
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glsl-optimizer\src\glsl\standalone_scaffolding.cpp" />
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glsl-optimizer\src\glsl\standalone_scaffolding.h" />
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glsl-optimizer\src\glsl\strtod.c" />
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glsl-optimizer\src\glsl\strtod.h" />
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glsl-optimizer\src\mesa\main\compiler.h" />
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glsl-optimizer\src\mesa\main\config.h" />
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glsl-optimizer\src\mesa\main\context.h" />
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glsl-optimizer\src\mesa\main\core.h" />
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glsl-optimizer\src\mesa\main\dd.h" />
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glsl-optimizer\src\mesa\main\errors.h" />
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glsl-optimizer\src\mesa\main\glheader.h" />
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glsl-optimizer\src\mesa\main\glminimal.h" />
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glsl-optimizer\src\mesa\main\imports.c" />
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glsl-optimizer\src\mesa\main\imports.h" />
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glsl-optimizer\src\mesa\main\macros.h" />
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glsl-optimizer\src\mesa\main\mtypes.h" />
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glsl-optimizer\src\mesa\main\simple_list.h" />
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glsl-optimizer\src\mesa\program\hash_table.h" />
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glsl-optimizer\src\mesa\program\prog_hash_table.c" />
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glsl-optimizer\src\mesa\program\prog_instruction.h" />
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glsl-optimizer\src\mesa\program\prog_parameter.h" />
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glsl-optimizer\src\mesa\program\prog_statevars.h" />
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glsl-optimizer\src\mesa\program\symbol_table.c" />
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glsl-optimizer\src\mesa\program\symbol_table.h" />
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glsl-optimizer\src\util\hash_table.c" />
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glsl-optimizer\src\util\hash_table.h" />
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glsl-optimizer\src\util\macros.h" />
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glsl-optimizer\src\util\ralloc.c" />
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glsl-optimizer\src\util\ralloc.h" />
+  </ItemGroup>
+  <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="D:\FITD\build\ZERO_CHECK.vcxproj">
+      <Project>{2595C25F-C5BF-3655-AC4B-0C1EB69174EA}</Project>
+      <Name>ZERO_CHECK</Name>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

@@ -1,0 +1,51 @@
+﻿  edtaa3func.cpp
+  etc1.cpp
+  ProcessRGB.cpp
+D:\FITD\ThirdParty\bgfx.cmake\bimg\3rdparty\etc2\Math.hpp(63,45): warning C4244: 'return': conversion from 'double' to 'float', possible loss of data
+  (compiling source file '../../../../../../ThirdParty/bgfx.cmake/bimg/3rdparty/etc2/ProcessRGB.cpp')
+  
+  Tables.cpp
+  alpha.cpp
+  clusterfit.cpp
+  colourblock.cpp
+  colourfit.cpp
+  colourset.cpp
+  maths.cpp
+  rangefit.cpp
+  singlecolourfit.cpp
+  squish.cpp
+  zoh.cpp
+  zoh_utils.cpp
+  zohone.cpp
+  zohtwo.cpp
+  avpcl.cpp
+  avpcl_mode0.cpp
+  avpcl_mode1.cpp
+  Generating Code...
+  Compiling...
+  avpcl_mode2.cpp
+  avpcl_mode3.cpp
+  avpcl_mode4.cpp
+  avpcl_mode5.cpp
+  avpcl_mode6.cpp
+  avpcl_mode7.cpp
+  avpcl_utils.cpp
+  fitting.cpp
+  nvtt.cpp
+  BitScale.cpp
+  MortonTable.cpp
+  PvrTcDecoder.cpp
+  PvrTcEncoder.cpp
+  PvrTcPacket.cpp
+  image_cubemap_filter.cpp
+  image_encode.cpp
+  Generating Code...
+  convolve.c
+  decimate.c
+  math_utils.c
+  ms_ssim.c
+  mse.c
+  psnr.c
+  ssim.c
+  Generating Code...
+  bimg_encode.vcxproj -> D:\FITD\build\vs2026\ThirdParty\bgfx.cmake\cmake\bimg\Debug\bimg_encode.lib

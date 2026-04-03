@@ -1,0 +1,4 @@
+﻿RC : warning RC4005: 'BX_CONFIG_DEBUG' : redefinition
+  
+     Creating library D:/FITD/build/vs2026/Fitd/Debug/Tatou.lib and object D:/FITD/build/vs2026/Fitd/Debug/Tatou.exp
+  Fitd.vcxproj -> D:\FITD\build\vs2026\Fitd\Debug\Tatou.exe

@@ -1,0 +1,13 @@
+prefix=C:/Program Files (x86)/FITD
+exec_prefix=C:/Program Files (x86)/FITD
+libdir=C:/Program Files (x86)/FITD/lib
+sharedlibdir=C:/Program Files (x86)/FITD/lib
+includedir=C:/Program Files (x86)/FITD/include
+
+Name: zlib
+Description: zlib compression library
+Version: 1.2.11
+
+Requires:
+Libs: -L${libdir} -L${sharedlibdir} -lz
+Cflags: -I${includedir}

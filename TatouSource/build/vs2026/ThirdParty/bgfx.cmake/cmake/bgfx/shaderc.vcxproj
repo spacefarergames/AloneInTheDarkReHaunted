@@ -1,0 +1,438 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="18.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <PreferredToolArchitecture>x64</PreferredToolArchitecture>
+  </PropertyGroup>
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="MinSizeRel|x64">
+      <Configuration>MinSizeRel</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="RelWithDebInfo|x64">
+      <Configuration>RelWithDebInfo</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{2DEB33EE-831E-3421-BCE1-88BACEDB1DEB}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+    <WindowsTargetPlatformVersion>10.0.26100.0</WindowsTargetPlatformVersion>
+    <Platform>x64</Platform>
+    <ProjectName>shaderc</ProjectName>
+    <VCProjectUpgraderObjectName>NoUpgrade</VCProjectUpgraderObjectName>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v145</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v145</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v145</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v145</PlatformToolset>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <_ProjectFileVersion>10.0.20506.1</_ProjectFileVersion>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">D:\FITD\build\vs2026\ThirdParty\bgfx.cmake\cmake\bgfx\Debug\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">shaderc.dir\Debug\</IntDir>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">shaderc</TargetName>
+    <TargetExt Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">.exe</TargetExt>
+    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</LinkIncremental>
+    <GenerateManifest Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</GenerateManifest>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">D:\FITD\build\vs2026\ThirdParty\bgfx.cmake\cmake\bgfx\Release\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">shaderc.dir\Release\</IntDir>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">shaderc</TargetName>
+    <TargetExt Condition="'$(Configuration)|$(Platform)'=='Release|x64'">.exe</TargetExt>
+    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</LinkIncremental>
+    <GenerateManifest Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</GenerateManifest>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">D:\FITD\build\vs2026\ThirdParty\bgfx.cmake\cmake\bgfx\MinSizeRel\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">shaderc.dir\MinSizeRel\</IntDir>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">shaderc</TargetName>
+    <TargetExt Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">.exe</TargetExt>
+    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">false</LinkIncremental>
+    <GenerateManifest Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">true</GenerateManifest>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">D:\FITD\build\vs2026\ThirdParty\bgfx.cmake\cmake\bgfx\RelWithDebInfo\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">shaderc.dir\RelWithDebInfo\</IntDir>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">shaderc</TargetName>
+    <TargetExt Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">.exe</TargetExt>
+    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">true</LinkIncremental>
+    <GenerateManifest Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">true</GenerateManifest>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>D:\FITD\ThirdParty\bgfx.cmake\bx\include;D:\FITD\ThirdParty\bgfx.cmake\bx\3rdparty;D:\FITD\ThirdParty\bgfx.cmake\bx\include\compat\msvc;D:\FITD\ThirdParty\bgfx.cmake\bgfx\include;D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\fcpp;D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glslang;D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glslang\glslang\Public;D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glsl-optimizer\include;D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glsl-optimizer\src\glsl;D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\spirv-tools\include;D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\spirv-cross;D:\FITD\ThirdParty\bgfx.cmake\bimg\include;D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\webgpu\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalOptions>%(AdditionalOptions) /Zc:__cplusplus</AdditionalOptions>
+      <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <BufferSecurityCheck></BufferSecurityCheck>
+      <CallingConvention></CallingConvention>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <ExceptionHandling>Sync</ExceptionHandling>
+      <FloatingPointModel></FloatingPointModel>
+      <ForceConformanceInForLoopScope></ForceConformanceInForLoopScope>
+      <InlineFunctionExpansion>Disabled</InlineFunctionExpansion>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+      <MinimalRebuild></MinimalRebuild>
+      <Optimization>Disabled</Optimization>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <RemoveUnreferencedCodeData></RemoveUnreferencedCodeData>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <SupportJustMyCode></SupportJustMyCode>
+      <TreatWChar_tAsBuiltInType></TreatWChar_tAsBuiltInType>
+      <UseFullPaths>false</UseFullPaths>
+      <UseStandardPreprocessor>true</UseStandardPreprocessor>
+      <WarningLevel>Level3</WarningLevel>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;BX_CONFIG_DEBUG=0;BX_CONFIG_DEBUG=1;__STDC_LIMIT_MACROS;__STDC_FORMAT_MACROS;__STDC_CONSTANT_MACROS;CMAKE_INTDIR="Debug"</PreprocessorDefinitions>
+      <ObjectFileName>$(IntDir)</ObjectFileName>
+      <ScanSourceForModuleDependencies>false</ScanSourceForModuleDependencies>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_DEBUG;_WINDOWS;BX_CONFIG_DEBUG=0;BX_CONFIG_DEBUG=1;__STDC_LIMIT_MACROS;__STDC_FORMAT_MACROS;__STDC_CONSTANT_MACROS;CMAKE_INTDIR=\"Debug\"</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>D:\FITD\ThirdParty\bgfx.cmake\bx\include;D:\FITD\ThirdParty\bgfx.cmake\bx\3rdparty;D:\FITD\ThirdParty\bgfx.cmake\bx\include\compat\msvc;D:\FITD\ThirdParty\bgfx.cmake\bgfx\include;D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\fcpp;D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glslang;D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glslang\glslang\Public;D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glsl-optimizer\include;D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glsl-optimizer\src\glsl;D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\spirv-tools\include;D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\spirv-cross;D:\FITD\ThirdParty\bgfx.cmake\bimg\include;D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\webgpu\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+    <Midl>
+      <AdditionalIncludeDirectories>D:\FITD\ThirdParty\bgfx.cmake\bx\include;D:\FITD\ThirdParty\bgfx.cmake\bx\3rdparty;D:\FITD\ThirdParty\bgfx.cmake\bx\include\compat\msvc;D:\FITD\ThirdParty\bgfx.cmake\bgfx\include;D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\fcpp;D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glslang;D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glslang\glslang\Public;D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glsl-optimizer\include;D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glsl-optimizer\src\glsl;D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\spirv-tools\include;D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\spirv-cross;D:\FITD\ThirdParty\bgfx.cmake\bimg\include;D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\webgpu\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+    <Link>
+      <AdditionalDependencies>..\bx\Debug\bx.lib;Debug\fcpp.lib;Debug\glslang.lib;Debug\glsl-optimizer.lib;Debug\spirv-opt.lib;Debug\spirv-cross.lib;..\bx\Debug\bx.lib;..\bimg\Debug\bimg.lib;Debug\fcpp.lib;Debug\glslang.lib;Debug\glsl-optimizer.lib;Debug\spirv-opt.lib;Debug\spirv-cross.lib;..\bx\Debug\bx.lib;psapi.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;comdlg32.lib;advapi32.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalOptions>%(AdditionalOptions) /machine:x64</AdditionalOptions>
+      <DataExecutionPrevention></DataExecutionPrevention>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
+      <ImageHasSafeExceptionHandlers></ImageHasSafeExceptionHandlers>
+      <ImportLibrary>D:/FITD/build/vs2026/ThirdParty/bgfx.cmake/cmake/bgfx/Debug/shaderc.lib</ImportLibrary>
+      <LinkErrorReporting></LinkErrorReporting>
+      <ProgramDataBaseFile>D:/FITD/build/vs2026/ThirdParty/bgfx.cmake/cmake/bgfx/Debug/shaderc.pdb</ProgramDataBaseFile>
+      <RandomizedBaseAddress></RandomizedBaseAddress>
+      <SubSystem>Console</SubSystem>
+    </Link>
+    <ProjectReference>
+      <LinkLibraryDependencies>false</LinkLibraryDependencies>
+    </ProjectReference>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>D:\FITD\ThirdParty\bgfx.cmake\bx\include;D:\FITD\ThirdParty\bgfx.cmake\bx\3rdparty;D:\FITD\ThirdParty\bgfx.cmake\bx\include\compat\msvc;D:\FITD\ThirdParty\bgfx.cmake\bgfx\include;D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\fcpp;D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glslang;D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glslang\glslang\Public;D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glsl-optimizer\include;D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glsl-optimizer\src\glsl;D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\spirv-tools\include;D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\spirv-cross;D:\FITD\ThirdParty\bgfx.cmake\bimg\include;D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\webgpu\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalOptions>%(AdditionalOptions) /Zc:__cplusplus</AdditionalOptions>
+      <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
+      <BasicRuntimeChecks>Default</BasicRuntimeChecks>
+      <BufferSecurityCheck></BufferSecurityCheck>
+      <CallingConvention></CallingConvention>
+      <ExceptionHandling>Sync</ExceptionHandling>
+      <FloatingPointModel></FloatingPointModel>
+      <ForceConformanceInForLoopScope></ForceConformanceInForLoopScope>
+      <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+      <MinimalRebuild></MinimalRebuild>
+      <Optimization>MaxSpeed</Optimization>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <RemoveUnreferencedCodeData></RemoveUnreferencedCodeData>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <SupportJustMyCode></SupportJustMyCode>
+      <TreatWChar_tAsBuiltInType></TreatWChar_tAsBuiltInType>
+      <UseFullPaths>false</UseFullPaths>
+      <UseStandardPreprocessor>true</UseStandardPreprocessor>
+      <WarningLevel>Level3</WarningLevel>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;BX_CONFIG_DEBUG=0;NDEBUG;__STDC_LIMIT_MACROS;__STDC_FORMAT_MACROS;__STDC_CONSTANT_MACROS;CMAKE_INTDIR="Release"</PreprocessorDefinitions>
+      <ObjectFileName>$(IntDir)</ObjectFileName>
+      <DebugInformationFormat>
+      </DebugInformationFormat>
+      <ScanSourceForModuleDependencies>false</ScanSourceForModuleDependencies>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;BX_CONFIG_DEBUG=0;NDEBUG;__STDC_LIMIT_MACROS;__STDC_FORMAT_MACROS;__STDC_CONSTANT_MACROS;CMAKE_INTDIR=\"Release\"</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>D:\FITD\ThirdParty\bgfx.cmake\bx\include;D:\FITD\ThirdParty\bgfx.cmake\bx\3rdparty;D:\FITD\ThirdParty\bgfx.cmake\bx\include\compat\msvc;D:\FITD\ThirdParty\bgfx.cmake\bgfx\include;D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\fcpp;D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glslang;D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glslang\glslang\Public;D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glsl-optimizer\include;D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glsl-optimizer\src\glsl;D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\spirv-tools\include;D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\spirv-cross;D:\FITD\ThirdParty\bgfx.cmake\bimg\include;D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\webgpu\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+    <Midl>
+      <AdditionalIncludeDirectories>D:\FITD\ThirdParty\bgfx.cmake\bx\include;D:\FITD\ThirdParty\bgfx.cmake\bx\3rdparty;D:\FITD\ThirdParty\bgfx.cmake\bx\include\compat\msvc;D:\FITD\ThirdParty\bgfx.cmake\bgfx\include;D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\fcpp;D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glslang;D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glslang\glslang\Public;D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glsl-optimizer\include;D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glsl-optimizer\src\glsl;D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\spirv-tools\include;D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\spirv-cross;D:\FITD\ThirdParty\bgfx.cmake\bimg\include;D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\webgpu\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+    <Link>
+      <AdditionalDependencies>..\bx\Release\bx.lib;Release\fcpp.lib;Release\glslang.lib;Release\glsl-optimizer.lib;Release\spirv-opt.lib;Release\spirv-cross.lib;..\bx\Release\bx.lib;..\bimg\Release\bimg.lib;Release\fcpp.lib;Release\glslang.lib;Release\glsl-optimizer.lib;Release\spirv-opt.lib;Release\spirv-cross.lib;..\bx\Release\bx.lib;psapi.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;comdlg32.lib;advapi32.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalOptions>%(AdditionalOptions) /machine:x64</AdditionalOptions>
+      <DataExecutionPrevention></DataExecutionPrevention>
+      <GenerateDebugInformation>false</GenerateDebugInformation>
+      <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
+      <ImageHasSafeExceptionHandlers></ImageHasSafeExceptionHandlers>
+      <ImportLibrary>D:/FITD/build/vs2026/ThirdParty/bgfx.cmake/cmake/bgfx/Release/shaderc.lib</ImportLibrary>
+      <LinkErrorReporting></LinkErrorReporting>
+      <ProgramDataBaseFile>D:/FITD/build/vs2026/ThirdParty/bgfx.cmake/cmake/bgfx/Release/shaderc.pdb</ProgramDataBaseFile>
+      <RandomizedBaseAddress></RandomizedBaseAddress>
+      <SubSystem>Console</SubSystem>
+    </Link>
+    <ProjectReference>
+      <LinkLibraryDependencies>false</LinkLibraryDependencies>
+    </ProjectReference>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>D:\FITD\ThirdParty\bgfx.cmake\bx\include;D:\FITD\ThirdParty\bgfx.cmake\bx\3rdparty;D:\FITD\ThirdParty\bgfx.cmake\bx\include\compat\msvc;D:\FITD\ThirdParty\bgfx.cmake\bgfx\include;D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\fcpp;D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glslang;D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glslang\glslang\Public;D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glsl-optimizer\include;D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glsl-optimizer\src\glsl;D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\spirv-tools\include;D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\spirv-cross;D:\FITD\ThirdParty\bgfx.cmake\bimg\include;D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\webgpu\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalOptions>%(AdditionalOptions) /Zc:__cplusplus</AdditionalOptions>
+      <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
+      <BasicRuntimeChecks>Default</BasicRuntimeChecks>
+      <BufferSecurityCheck></BufferSecurityCheck>
+      <CallingConvention></CallingConvention>
+      <ExceptionHandling>Sync</ExceptionHandling>
+      <FloatingPointModel></FloatingPointModel>
+      <ForceConformanceInForLoopScope></ForceConformanceInForLoopScope>
+      <InlineFunctionExpansion>OnlyExplicitInline</InlineFunctionExpansion>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+      <MinimalRebuild></MinimalRebuild>
+      <Optimization>MinSpace</Optimization>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <RemoveUnreferencedCodeData></RemoveUnreferencedCodeData>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <SupportJustMyCode></SupportJustMyCode>
+      <TreatWChar_tAsBuiltInType></TreatWChar_tAsBuiltInType>
+      <UseFullPaths>false</UseFullPaths>
+      <UseStandardPreprocessor>true</UseStandardPreprocessor>
+      <WarningLevel>Level3</WarningLevel>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;BX_CONFIG_DEBUG=0;NDEBUG;__STDC_LIMIT_MACROS;__STDC_FORMAT_MACROS;__STDC_CONSTANT_MACROS;CMAKE_INTDIR="MinSizeRel"</PreprocessorDefinitions>
+      <ObjectFileName>$(IntDir)</ObjectFileName>
+      <DebugInformationFormat>
+      </DebugInformationFormat>
+      <ScanSourceForModuleDependencies>false</ScanSourceForModuleDependencies>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;BX_CONFIG_DEBUG=0;NDEBUG;__STDC_LIMIT_MACROS;__STDC_FORMAT_MACROS;__STDC_CONSTANT_MACROS;CMAKE_INTDIR=\"MinSizeRel\"</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>D:\FITD\ThirdParty\bgfx.cmake\bx\include;D:\FITD\ThirdParty\bgfx.cmake\bx\3rdparty;D:\FITD\ThirdParty\bgfx.cmake\bx\include\compat\msvc;D:\FITD\ThirdParty\bgfx.cmake\bgfx\include;D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\fcpp;D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glslang;D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glslang\glslang\Public;D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glsl-optimizer\include;D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glsl-optimizer\src\glsl;D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\spirv-tools\include;D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\spirv-cross;D:\FITD\ThirdParty\bgfx.cmake\bimg\include;D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\webgpu\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+    <Midl>
+      <AdditionalIncludeDirectories>D:\FITD\ThirdParty\bgfx.cmake\bx\include;D:\FITD\ThirdParty\bgfx.cmake\bx\3rdparty;D:\FITD\ThirdParty\bgfx.cmake\bx\include\compat\msvc;D:\FITD\ThirdParty\bgfx.cmake\bgfx\include;D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\fcpp;D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glslang;D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glslang\glslang\Public;D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glsl-optimizer\include;D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glsl-optimizer\src\glsl;D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\spirv-tools\include;D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\spirv-cross;D:\FITD\ThirdParty\bgfx.cmake\bimg\include;D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\webgpu\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+    <Link>
+      <AdditionalDependencies>..\bx\MinSizeRel\bx.lib;MinSizeRel\fcpp.lib;MinSizeRel\glslang.lib;MinSizeRel\glsl-optimizer.lib;MinSizeRel\spirv-opt.lib;MinSizeRel\spirv-cross.lib;..\bx\MinSizeRel\bx.lib;..\bimg\MinSizeRel\bimg.lib;MinSizeRel\fcpp.lib;MinSizeRel\glslang.lib;MinSizeRel\glsl-optimizer.lib;MinSizeRel\spirv-opt.lib;MinSizeRel\spirv-cross.lib;..\bx\MinSizeRel\bx.lib;psapi.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;comdlg32.lib;advapi32.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalOptions>%(AdditionalOptions) /machine:x64</AdditionalOptions>
+      <DataExecutionPrevention></DataExecutionPrevention>
+      <GenerateDebugInformation>false</GenerateDebugInformation>
+      <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
+      <ImageHasSafeExceptionHandlers></ImageHasSafeExceptionHandlers>
+      <ImportLibrary>D:/FITD/build/vs2026/ThirdParty/bgfx.cmake/cmake/bgfx/MinSizeRel/shaderc.lib</ImportLibrary>
+      <LinkErrorReporting></LinkErrorReporting>
+      <ProgramDataBaseFile>D:/FITD/build/vs2026/ThirdParty/bgfx.cmake/cmake/bgfx/MinSizeRel/shaderc.pdb</ProgramDataBaseFile>
+      <RandomizedBaseAddress></RandomizedBaseAddress>
+      <SubSystem>Console</SubSystem>
+    </Link>
+    <ProjectReference>
+      <LinkLibraryDependencies>false</LinkLibraryDependencies>
+    </ProjectReference>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>D:\FITD\ThirdParty\bgfx.cmake\bx\include;D:\FITD\ThirdParty\bgfx.cmake\bx\3rdparty;D:\FITD\ThirdParty\bgfx.cmake\bx\include\compat\msvc;D:\FITD\ThirdParty\bgfx.cmake\bgfx\include;D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\fcpp;D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glslang;D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glslang\glslang\Public;D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glsl-optimizer\include;D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glsl-optimizer\src\glsl;D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\spirv-tools\include;D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\spirv-cross;D:\FITD\ThirdParty\bgfx.cmake\bimg\include;D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\webgpu\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalOptions>%(AdditionalOptions) /Zc:__cplusplus</AdditionalOptions>
+      <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
+      <BasicRuntimeChecks>Default</BasicRuntimeChecks>
+      <BufferSecurityCheck></BufferSecurityCheck>
+      <CallingConvention></CallingConvention>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <ExceptionHandling>Sync</ExceptionHandling>
+      <FloatingPointModel></FloatingPointModel>
+      <ForceConformanceInForLoopScope></ForceConformanceInForLoopScope>
+      <InlineFunctionExpansion>OnlyExplicitInline</InlineFunctionExpansion>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+      <MinimalRebuild></MinimalRebuild>
+      <Optimization>MaxSpeed</Optimization>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <RemoveUnreferencedCodeData></RemoveUnreferencedCodeData>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <SupportJustMyCode></SupportJustMyCode>
+      <TreatWChar_tAsBuiltInType></TreatWChar_tAsBuiltInType>
+      <UseFullPaths>false</UseFullPaths>
+      <UseStandardPreprocessor>true</UseStandardPreprocessor>
+      <WarningLevel>Level3</WarningLevel>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;BX_CONFIG_DEBUG=0;NDEBUG;__STDC_LIMIT_MACROS;__STDC_FORMAT_MACROS;__STDC_CONSTANT_MACROS;CMAKE_INTDIR="RelWithDebInfo"</PreprocessorDefinitions>
+      <ObjectFileName>$(IntDir)</ObjectFileName>
+      <ScanSourceForModuleDependencies>false</ScanSourceForModuleDependencies>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;BX_CONFIG_DEBUG=0;NDEBUG;__STDC_LIMIT_MACROS;__STDC_FORMAT_MACROS;__STDC_CONSTANT_MACROS;CMAKE_INTDIR=\"RelWithDebInfo\"</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>D:\FITD\ThirdParty\bgfx.cmake\bx\include;D:\FITD\ThirdParty\bgfx.cmake\bx\3rdparty;D:\FITD\ThirdParty\bgfx.cmake\bx\include\compat\msvc;D:\FITD\ThirdParty\bgfx.cmake\bgfx\include;D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\fcpp;D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glslang;D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glslang\glslang\Public;D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glsl-optimizer\include;D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glsl-optimizer\src\glsl;D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\spirv-tools\include;D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\spirv-cross;D:\FITD\ThirdParty\bgfx.cmake\bimg\include;D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\webgpu\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+    <Midl>
+      <AdditionalIncludeDirectories>D:\FITD\ThirdParty\bgfx.cmake\bx\include;D:\FITD\ThirdParty\bgfx.cmake\bx\3rdparty;D:\FITD\ThirdParty\bgfx.cmake\bx\include\compat\msvc;D:\FITD\ThirdParty\bgfx.cmake\bgfx\include;D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\fcpp;D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glslang;D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glslang\glslang\Public;D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glsl-optimizer\include;D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\glsl-optimizer\src\glsl;D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\spirv-tools\include;D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\spirv-cross;D:\FITD\ThirdParty\bgfx.cmake\bimg\include;D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\webgpu\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+    <Link>
+      <AdditionalDependencies>..\bx\RelWithDebInfo\bx.lib;RelWithDebInfo\fcpp.lib;RelWithDebInfo\glslang.lib;RelWithDebInfo\glsl-optimizer.lib;RelWithDebInfo\spirv-opt.lib;RelWithDebInfo\spirv-cross.lib;..\bx\RelWithDebInfo\bx.lib;..\bimg\RelWithDebInfo\bimg.lib;RelWithDebInfo\fcpp.lib;RelWithDebInfo\glslang.lib;RelWithDebInfo\glsl-optimizer.lib;RelWithDebInfo\spirv-opt.lib;RelWithDebInfo\spirv-cross.lib;..\bx\RelWithDebInfo\bx.lib;psapi.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;comdlg32.lib;advapi32.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalOptions>%(AdditionalOptions) /machine:x64</AdditionalOptions>
+      <DataExecutionPrevention></DataExecutionPrevention>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
+      <ImageHasSafeExceptionHandlers></ImageHasSafeExceptionHandlers>
+      <ImportLibrary>D:/FITD/build/vs2026/ThirdParty/bgfx.cmake/cmake/bgfx/RelWithDebInfo/shaderc.lib</ImportLibrary>
+      <LinkErrorReporting></LinkErrorReporting>
+      <ProgramDataBaseFile>D:/FITD/build/vs2026/ThirdParty/bgfx.cmake/cmake/bgfx/RelWithDebInfo/shaderc.pdb</ProgramDataBaseFile>
+      <RandomizedBaseAddress></RandomizedBaseAddress>
+      <SubSystem>Console</SubSystem>
+    </Link>
+    <ProjectReference>
+      <LinkLibraryDependencies>false</LinkLibraryDependencies>
+    </ProjectReference>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <CustomBuild Include="D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\CMakeLists.txt">
+      <UseUtf8Encoding>Always</UseUtf8Encoding>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Building Custom Rule D:/FITD/ThirdParty/bgfx.cmake/cmake/bgfx/CMakeLists.txt</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -SD:/FITD -BD:/FITD/build/vs2026 --check-stamp-file D:/FITD/build/vs2026/ThirdParty/bgfx.cmake/cmake/bgfx/CMakeFiles/generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">C:\Program Files\CMake\share\cmake-4.2\Modules\CMakeParseArguments.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\3rdparty\dear-imgui.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\3rdparty\fcpp.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\3rdparty\glsl-optimizer.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\3rdparty\glslang.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\3rdparty\meshoptimizer.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\3rdparty\spirv-cross.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\3rdparty\spirv-opt.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\3rdparty\webgpu.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\bgfx.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\examples.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\generated\shader.cpp.in;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\generated\vertexlayout.cpp.in;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\geometryc.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\geometryv.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\shaderc.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\shared.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\texturev.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\util\ConfigureDebugging.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfxToolUtils.cmake;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">D:\FITD\build\vs2026\ThirdParty\bgfx.cmake\cmake\bgfx\CMakeFiles\generate.stamp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Building Custom Rule D:/FITD/ThirdParty/bgfx.cmake/cmake/bgfx/CMakeLists.txt</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -SD:/FITD -BD:/FITD/build/vs2026 --check-stamp-file D:/FITD/build/vs2026/ThirdParty/bgfx.cmake/cmake/bgfx/CMakeFiles/generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">C:\Program Files\CMake\share\cmake-4.2\Modules\CMakeParseArguments.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\3rdparty\dear-imgui.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\3rdparty\fcpp.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\3rdparty\glsl-optimizer.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\3rdparty\glslang.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\3rdparty\meshoptimizer.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\3rdparty\spirv-cross.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\3rdparty\spirv-opt.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\3rdparty\webgpu.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\bgfx.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\examples.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\generated\shader.cpp.in;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\generated\vertexlayout.cpp.in;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\geometryc.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\geometryv.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\shaderc.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\shared.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\texturev.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\util\ConfigureDebugging.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfxToolUtils.cmake;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">D:\FITD\build\vs2026\ThirdParty\bgfx.cmake\cmake\bgfx\CMakeFiles\generate.stamp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">Building Custom Rule D:/FITD/ThirdParty/bgfx.cmake/cmake/bgfx/CMakeLists.txt</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -SD:/FITD -BD:/FITD/build/vs2026 --check-stamp-file D:/FITD/build/vs2026/ThirdParty/bgfx.cmake/cmake/bgfx/CMakeFiles/generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">C:\Program Files\CMake\share\cmake-4.2\Modules\CMakeParseArguments.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\3rdparty\dear-imgui.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\3rdparty\fcpp.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\3rdparty\glsl-optimizer.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\3rdparty\glslang.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\3rdparty\meshoptimizer.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\3rdparty\spirv-cross.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\3rdparty\spirv-opt.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\3rdparty\webgpu.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\bgfx.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\examples.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\generated\shader.cpp.in;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\generated\vertexlayout.cpp.in;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\geometryc.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\geometryv.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\shaderc.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\shared.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\texturev.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\util\ConfigureDebugging.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfxToolUtils.cmake;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">D:\FITD\build\vs2026\ThirdParty\bgfx.cmake\cmake\bgfx\CMakeFiles\generate.stamp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">Building Custom Rule D:/FITD/ThirdParty/bgfx.cmake/cmake/bgfx/CMakeLists.txt</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -SD:/FITD -BD:/FITD/build/vs2026 --check-stamp-file D:/FITD/build/vs2026/ThirdParty/bgfx.cmake/cmake/bgfx/CMakeFiles/generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">C:\Program Files\CMake\share\cmake-4.2\Modules\CMakeParseArguments.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\3rdparty\dear-imgui.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\3rdparty\fcpp.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\3rdparty\glsl-optimizer.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\3rdparty\glslang.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\3rdparty\meshoptimizer.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\3rdparty\spirv-cross.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\3rdparty\spirv-opt.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\3rdparty\webgpu.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\bgfx.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\examples.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\generated\shader.cpp.in;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\generated\vertexlayout.cpp.in;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\geometryc.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\geometryv.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\shaderc.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\shared.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\texturev.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\util\ConfigureDebugging.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfxToolUtils.cmake;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">D:\FITD\build\vs2026\ThirdParty\bgfx.cmake\cmake\bgfx\CMakeFiles\generate.stamp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">false</LinkObjects>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\src\shader.cpp" />
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\src\shader.h" />
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\src\shader_dxbc.cpp" />
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\src\shader_dxbc.h" />
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\src\shader_spirv.cpp" />
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\src\shader_spirv.h" />
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\tools\shaderc\shaderc.cpp" />
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\tools\shaderc\shaderc.h" />
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\tools\shaderc\shaderc_glsl.cpp" />
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\tools\shaderc\shaderc_hlsl.cpp" />
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\tools\shaderc\shaderc_metal.cpp" />
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\tools\shaderc\shaderc_pssl.cpp" />
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\tools\shaderc\shaderc_spirv.cpp" />
+    <ClCompile Include="D:\FITD\build\vs2026\ThirdParty\bgfx.cmake\cmake\bgfx\generated\vertexlayout.cpp" />
+  </ItemGroup>
+  <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="D:\FITD\build\vs2026\ZERO_CHECK.vcxproj">
+      <Project>{A64E50DE-6981-3875-AD91-29157346A96C}</Project>
+      <Name>ZERO_CHECK</Name>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </ProjectReference>
+    <ProjectReference Include="D:\FITD\build\vs2026\ThirdParty\bgfx.cmake\cmake\bimg\bimg.vcxproj">
+      <Project>{0EDEB0B0-2070-3C71-8C83-09CAA73F06DC}</Project>
+      <Name>bimg</Name>
+    </ProjectReference>
+    <ProjectReference Include="D:\FITD\build\vs2026\ThirdParty\bgfx.cmake\cmake\bx\bx.vcxproj">
+      <Project>{FA37E5B2-C200-3515-A4DE-B51A9F737B67}</Project>
+      <Name>bx</Name>
+    </ProjectReference>
+    <ProjectReference Include="D:\FITD\build\vs2026\ThirdParty\bgfx.cmake\cmake\bgfx\fcpp.vcxproj">
+      <Project>{53CC4A35-97F2-3720-B7B6-8179314391A3}</Project>
+      <Name>fcpp</Name>
+    </ProjectReference>
+    <ProjectReference Include="D:\FITD\build\vs2026\ThirdParty\bgfx.cmake\cmake\bgfx\glsl-optimizer.vcxproj">
+      <Project>{7F9B2ADD-92BE-31C0-B843-E658F5B942F9}</Project>
+      <Name>glsl-optimizer</Name>
+    </ProjectReference>
+    <ProjectReference Include="D:\FITD\build\vs2026\ThirdParty\bgfx.cmake\cmake\bgfx\glslang.vcxproj">
+      <Project>{7D89E23F-4E27-3EF3-B4B4-829DA728488F}</Project>
+      <Name>glslang</Name>
+    </ProjectReference>
+    <ProjectReference Include="D:\FITD\build\vs2026\ThirdParty\bgfx.cmake\cmake\bgfx\spirv-cross.vcxproj">
+      <Project>{AD276E28-04B5-3EE3-AE44-F7719CE7366C}</Project>
+      <Name>spirv-cross</Name>
+    </ProjectReference>
+    <ProjectReference Include="D:\FITD\build\vs2026\ThirdParty\bgfx.cmake\cmake\bgfx\spirv-opt.vcxproj">
+      <Project>{2869DBB1-6762-3B45-9955-BBB75BB20278}</Project>
+      <Name>spirv-opt</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

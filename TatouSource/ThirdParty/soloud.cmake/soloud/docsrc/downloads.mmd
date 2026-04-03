@@ -1,0 +1,329 @@
+Downloads
+=========
+
+This page lists SoLoud downloads, as well as other relevant information.
+
+Latest stable release
+---------------------
+[soloud_20200207.zip](soloud_20200207.zip) <<- Download here (~47 MB)
+
+[soloud_20200207_lite.zip](soloud_20200207_lite.zip)  (~3 MB)
+
+Documentation: [PDF](soloud_20200207.pdf) | [EPUB](soloud_20200207.epub) | [MOBI](soloud_20200207.mobi) | [HTML](soloud_20200207.html) 
+
+Book
+----
+
+You can also buy the documentation as a physical book (version 20181119): 
+
+- Amazon [com](https://www.amazon.com/Soloud-Audio-Engine-Jari-Komppa/dp/9528003591) [co.uk](https://www.amazon.co.uk/SoLoud-Audio-Engine-Jari-Komppa/dp/9528003591) [de](https://www.amazon.de/SoLoud-Audio-Engine-Jari-Komppa/dp/9528003591) [fr](https://www.amazon.fr/Soloud-Audio-Engine-Jari-Komppa/dp/9528003591)
+- [bod.fi](https://www.bod.fi/kirjakauppa/soloud-audio-engine-jari-komppa-9789528003595)
+- [bookdepository](https://www.bookdepository.com/SoLoud-Audio-Engine-Jari-Komppa/9789528003595)
+- [blackwell's](https://blackwells.co.uk/bookshop/product/9789528003595)
+
+There won't be new versions of the physical book every time SoLoud releases because those things cost money and unless they suddely start selling hundreds of copies, it's not financially viable.
+
+Development
+-----------
+You can find the latest, bleeding-edge version on GitHub at: <https://github.com/jarikomppa/soloud>. Note that the latest development version may be unstable.
+
+There's a mailing list at <http://groups.google.com/d/forum/soloud>
+
+Finally, there's #soloud on ircnet, if you want to pop by.
+
+How to support SoLoud development
+---------------------------------
+
+Contact the author, maybe we'll work something out.
+
+Additional files
+----------------
+[timgm6mb_pat.zip](timgm6mb_pat.zip) Free MIDI patches for the libmodplug .mid / .abc playing (around 11MB zip) by [http://www.timbrechbill.com](http://www.timbrechbill.com), converted from sf2 to .pat files with [http://alsa.opensrc.org/Unsf](unsf).
+
+    "I created some of the samples myself and all others are either public 
+    domain or fall under the terms of the GNU General Public License." 
+    -- Tim Brechbill - http://www.timbrechbill.com
+
+
+Release history
+---------------
+[soloud_20200207.zip](soloud_20200207.zip) <<- Download here (~47 MB)
+
+[soloud_20200207_lite.zip](soloud_20200207_lite.zip)  (~3 MB)
+
+Documentation: [PDF](soloud_20200207.pdf) | [EPUB](soloud_20200207.epub) | [MOBI](soloud_20200207.mobi) | [HTML](soloud_20200207.html) 
+
+- Oops, it's over a year already, let's do a refresh
+- Hilights:
+    - Python 3 migration
+    - Updated dr_ and stb_ libraries
+    - Changing volume while paused should now work
+    - Filters can now be queried for live parameters and ranges
+    - Set FPU flags in audio threads to ignore denorms, performance gain (can be disabled at runtime)
+    - New feature: ability to move live sounds from one bus to another (annexSound)
+    - New backend: JACK
+    - New backend: Nosound
+    - New backend: MiniAudio
+    - New demo: annex
+    - New demo: Filter Folio for playing with filters
+    - New audio source: Noise
+    - New filter: FreeVerb
+    - New namespace: Misc, including pseudorandom generator and waveform generator
+    - Monotone now has new waveforms
+    - Rewritten robotize filter
+    - Internal calls in Soloud class renamed to _internal to avoid confusion
+    - sdl headers now loaded as "sdl.h" instead of "sdl/sdl.h"
+    - Removed portmidi, using rtmidi instead (piano example)
+    - Added const in several places due to peer pressure
+    - WinMM backend no longer leaks resources if init fails
+    - Several queue fixes
+    - WASAPI backend fixes
+    - deprecated usleep -> nanosleep
+    - A lot of cppcheck, lgtm, pvs-studio and other static code analysis fixes
+    - A pile of smaller bug fixes and inevitably new bugs.
+
+[soloud_20181119.zip](soloud_20181119.zip) <<- Download here (~47 MB)
+
+[soloud_20181119_lite.zip](soloud_20181119_lite.zip)  (~3 MB)
+
+Documentation: [PDF](soloud_20181119.pdf) | [EPUB](soloud_20181119.epub) | [MOBI](soloud_20181119.mobi) | [HTML](soloud_20181119.html) 
+
+- First release after 2 year burnout hiatus
+- Hilights:
+    - FLAC, MP3 and various wav file formats through dr_flac, dr_mp3 and dr_wav
+    - Split SDL and SDL2 dll backends due to SDL2 doing stupid things unless told not to
+    - Removed modplug, added libmodplug dll interface
+    - Loop point support for all audio sources
+    - Wav files can now load from raw data
+    - Multi-speaker support
+    - Queues
+    - Many new small examples
+    - Piano demo now has padsynth
+    - Sanity test: over 200 tests to check if changes break playback
+    - Asserts
+    - playBackground helper interface to play audio without panning
+    - countAudioSource call to see how many instances of an audio source are playing
+    - PS Vita homebrew platform support
+    - Wave shaper, robotize filters
+    - Added more options to speech synth playback
+    - Removed many dynamic allocations
+    - Switched FFT implementations (again)
+    - Countless bug fixes and tweaks
+    
+[soloud_20160109.zip](soloud_20160109.zip) 
+
+Documentation: [PDF](soloud_20160109.pdf) | [EPUB](soloud_20160109.epub) | [MOBI](soloud_20160109.mobi) | [HTML](soloud_20160109.html) 
+
+- Refresh release after 6+ months of no releases
+- Hilights:
+    - Various bugfixes
+    - Work on multiple speaker systems
+    - Separate volume and play speed for 3d; 3d no longer overwrites 2d settings
+    - Moved examples to SDL2
+    - A lot of build system tweaks
+    - All examples use new demo framework based on SDL2 and ImGui
+    - Some backends use float samples directly
+    - Backends no longer responsible for mutex creation/deletion
+    - Virtual voices now default to "kill inaudible"
+    - Demo framework shaders are now es2 compatible (for webgl etc)
+    - Emscripten builds included
+    - Thread pool code added (not used as of yet)
+    - SSE optimized clipping
+    - Signed 16 bit mix function api added for backends that prefer int data
+    - Linux and Android work by Neil Richardson
+    - Mac OSX work by Petri Hakkinen
+    - New backend: OpenSL ES
+    - New backend: Core Audio
+    - New audio source: VIC-20 sound emulator
+    
+
+[soloud_20150512.zip](soloud_20150512.zip) 
+
+Documentation: [PDF](soloud_20150512.pdf) | [EPUB](soloud_20150512.epub) | [MOBI](soloud_20150512.mobi) | [HTML](soloud_20150512.html) 
+
+- SoLoud "VLF" release
+- Hilights:
+    - Virtual voices - play 1000 voices, SoLoud will figure out which ones you hear
+    - Major documentation update
+        - yEd graphs
+        - New web layout
+        - Many tweaks to PDF layout
+        - PDF doc is now 141 pages (ULF release had 94)
+        - Single-file HTML now contains images        
+    - New backend: ALSA for Linux
+    - New filter: bassboost
+    - New backend: Null driver 
+        - No audio device, call mix() to pull samples.
+    - New demo: virtualvoices
+    - New demo: null driver
+    - New demo: enumerate
+    - Added functions to query information on currently active back-end
+    - Added get/setLooping for live sounds
+    - Added default volume for audio sources
+    - Added custom 3d attenuator interface
+    - Added LEFT_HANDED_3D flag for left-handed 3d coordinate processing
+    - Added setInaudibleBehavior
+    - Split demo common code to a separate static lib
+    - Upped filter count to 8        
+    - Some x64 fixes
+    - "nondyn" naming removed, calling static libs static now
+    - Removed modf in monotone because Linux clib didn't like it
+    - Cleanup fix - call stop() from all audio source virtual dtors
+    - Memory file bugfixes
+    - Wav file loading was broken after move to File interface, fixed
+    - Some div by zeros fixed in Sfxr    
+    - 3d processing done largely outside audio mutex
+        - Plus side - 3d stuff is way more performant
+        - Minus side - 3d stuff isn't thread safe
+    - And a bunch of smaller bug fixes and tweaks
+    
+
+[soloud_20150427.zip](soloud_20150427.zip) 
+
+Documentation: [PDF](soloud_20150427.pdf) | [EPUB](soloud_20150427.epub) | [MOBI](soloud_20150427.mobi) | [HTML](soloud_20150427.html) 
+
+- Hilights:   
+    - More demos moved to new framework, features added
+    - Switched FFT implementations
+    - 'FFTFilter' is now base class for STFT filters
+    - Generalized file i/o through File class
+    - New interface to query info from live audio streams
+    - Commodore plus/4 TED and Commodore 64 SID song support
+    - As always, documentation updates and little bug fixes here and there. 
+
+[soloud_20150419.zip](soloud_20150419.zip)
+
+Documentation: [PDF](soloud_20150419.pdf) | [EPUB](soloud_20150419.epub) | [MOBI](soloud_20150419.mobi) | [HTML](soloud_20150419.html) 
+
+- Not a milestone release, just a refresher
+- Hilights:   
+    - Moved from premake4 to premake fork GENie for build file generation
+    - SDL2 static linking support
+    - MONOTONE tracker replayer
+        - New demo: monotone
+    - New filter: DC removal
+    - New demo framework based on ImGui, simplifies demo code and makes demos prettier
+    - More foreign interfaces
+        - D
+        - GameMaker:Studio
+    - Updated versions of libmodplug and stb_vorbis
+    - Documentation updates and little bug fixes here and there.    
+
+[soloud_20140821.zip](soloud_20140821.zip)
+
+Documentation: [PDF](soloud_20140821.pdf) | [EPUB](soloud_20140821.epub) | [MOBI](soloud_20140821.mobi) | [HTML](soloud_20140821.html) 
+
+- SoLoud "ULF" release
+- Hilights:
+    - 3d (positional) audio interfaces
+        - Including positions, doppler, etc
+        - New demo: 3dtest, a simple test of the positional audio
+    - More foreign interfaces
+        - BlitzMax 
+        - Ruby
+        - RPG Maker 
+        - c# (c sharp)
+    - Lots more documentation and little bug fixes here and there.    
+
+[soloud_20140622.zip](soloud_20140622.zip)
+
+Documentation: [PDF](soloud_20140622.pdf) | [EPUB](soloud_20140622.epub) | [MOBI](soloud_20140622.mobi) | [HTML](soloud_20140622.html) 
+
+- SoLoud "SLF" release
+- Hilights:
+    - New demo: "space", demonstrating visualization data from different parts of the pipeline
+    - New demo: "pew pew", demonstrating difference between play() and playClocked()
+    - New filter: flanger
+    - New way to play sounds: playClocked() for rapidly-launched sounds, to make it so all sounds don't start from the beginning of a sound buffer
+    - Loop count query added    
+    - Voice groups to command several voices in one atomic operation
+- A lot of variable type changes:
+    - Defined error codes, and several functions return error codes now.
+    - Time variable type changed from float to double
+    - Typedefs for handles, time, result codes
+    - Plenty of "int" -> "unsigned int" changes, some ints changed to bools
+- A lot of work on code generation and wrappers:
+    - Codegen now also outputs soloud_codegen.py with all data needed to generate wrappers
+    - Python wrapper generator
+    - Python API
+- Other changes that affect your code:
+    - stopSound() renamed to stopAudioSource(). Audio sources also got a new stop() function that stops all instances.
+    - Echo filter now has an optional low pass filter to make more "natural" echoes
+    - Default post-clip scaler upped from 0.5 to 0.95
+    - New songs for multimusic, changed multimusic to use voice groups
+- Regarding builds:
+    - Redesigned the mechanism by which different backends are included in the build, controlled mainly through premake
+    - Many new premake options    
+    - "nondyn" SDL build added which links to SDL directly, for special needs such as emscripten
+    - sdl2 dll may work now (mutex functions were renamed from SDL to SDL2, audio API should be almost the same)
+- And, under the hood:
+    - Side project - resamplerlab - to make writing new resamplers easier, with some experimental resamplers
+    - Some work towards osx, linux compatibility
+    - FFT code moved to its own source so it can be more easily replaced in the future
+    - Changed mixer fixed point from 16.16 to 12.20
+    - Various small fixes, as usual.
+
+[soloud_20140521.zip](soloud_20140521.zip) 
+
+Documentation: [PDF](soloud_20140521.pdf) | [EPUB](soloud_20140521.epub) | [MOBI](soloud_20140521.mobi) | [HTML](soloud_20140521.html) 
+
+- SoLoud "ELF" release
+- Critical bug fix: process was sometimes left hanging at application quit.
+- Audio instance creation moved outside the audio thread mutex (some instance creation may take quite a bit of time, causing stutter)
+- Wav/wavstream now can report length of the stream in seconds via getLength()
+- Filter interface has simplified parameter handling to make writing new filters easier
+- Lo-fi filter
+- Libmodplug audio source for various formats (669, abc, amf, ams, dbm, dmf, dsm, far, it, j2b, mdl, med, mid, mod, mt2, mtm, okt, pat, psm, ptm, s3m, stm, ult, umx, xm, as well as wider support for wav files).
+- SFXR audio source for old school sound effects
+- Greatly simplified init pattern; no need (if you don't want) to care about which back-end to use
+- Dynamic linking of most back-ends
+- "C" API code generator
+- DLL based on the "C" API
+- Misc smaller fixes, cppcheck fixes and reorganization
+
+[soloud_20131109.zip](soloud_20131109.zip) 
+
+Documentation: [PDF](soloud_20131109.pdf) | [EPUB](soloud_20131109.epub) | [MOBI](soloud_20131109.mobi) | [HTML](soloud_20131109.html) 
+
+- SoLoud "TLF" release 
+- PortAudio, winmm, oss, wasapi, xaudio2 and openal back-ends
+- Simplified cleanup - no separate cleanup functions per back-end
+- Simple cross-platform thread support for back-ends that require it
+- Filter interface revamped
+- Echo, fft and biquad resonant (low/high/bandpass) filters
+- Switched from ffft to a simpler (and slower) fft implementation
+- Faders can now oscillate
+- wav/ogg files can be loaded from memory 
+- AudioInstance -> AudioSourceInstance rename
+- SoLoud core split into a bunch of source files to keep things manageable
+- Various changes aiming at multi-channel support; hard-coded stereo support removed
+- Audio samples no longer interlaced to simplify filter processing
+- Simplified init and wave loading by removing useless options or moving them to constants in soloud.h
+- Mixing busses implemented
+- Visualization via FFT or waveform supported, requires init flag to work
+- Resampler interface and linear resampler
+- Granularity of audio buffers fixed to a small value, configurable via soloud.h
+- Per-sample volume faders
+- Reworked old and added more example applications
+- Premake4 script for project files to generate static libraries
+- Reorganized files for easier handling (single include directory, etc)
+- Lots and lots and lots of bug fixes and mixer rewrites
+
+
+[soloud_20130808.zip](soloud_20130808.zip)
+
+- They grow so fast! Hilights:
+- Redesigned, simpler filter system. Probably still needs a lot of work.
+- Added a FFT library and calls to get FFT data from SoLoud. This can be disabled via a #define to improve compile time.
+- Added stopSound() to stop all instances of a sound. This is also called from the dtor of audio sources for simpler application cleanup.
+- Tweaked and improved all demos.
+- Volume faders are calculated on per-sample basis instead of per-buffer, this removed plenty of noise.
+- Added getPan.
+- and various bugfixes and CppCheck fixes.
+
+[soloud_20130801.zip](soloud_20130801.zip)
+
+- Initial release. If you're after something really minimalistic, dig in.
+
+The package contains all sources, and pre-compiled win32 binaries. The sources should(tm) be portable to other platforms.
+

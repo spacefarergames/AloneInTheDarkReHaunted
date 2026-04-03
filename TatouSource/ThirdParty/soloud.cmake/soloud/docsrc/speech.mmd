@@ -1,0 +1,117 @@
+## SoLoud::Speech
+
+
+The SoLoud::Speech class implements a simple Klatt-style formant speech
+synthesizer. It's barely legible, not really human-like, but it's free,
+and it's here.
+
+Adjusting the speech synthesizer's output with audio filters should
+allow for various voices, which, along with subtitles, will let you add
+voice to your games cheaply.
+
+For more serious use, feel free to study the source code and play with
+the various internal parameters, as well as apply various filters to the
+sound.
+
+For legal notes, please see the license page.
+
+### Speech.setText()
+
+
+The setText function can be used to set the text to be spoken.
+
+    SoLoud::Speech sp;
+    sp.setText("Hello world.  You will be assimilated.");
+
+If the setText function is called while speech is playing, SoLoud stops
+any playing instances to avoid crashing.
+
+Trying to set the text to NULL will return an error code.
+
+### Speech.setParams()
+
+The speech's voice can be adjusted by changing the parameters;
+
+	result Speech::setParams(unsigned int aBaseFrequency, 
+                             float aBaseSpeed, 
+							 float aBaseDeclination, 
+							 int aBaseWaveform)
+
+The default parameters for these are 1330 for frequecy, 10 for speed, 0.5 for declination 
+and KW_SQUARE as waveform. The easiest way to understand what these parameters do and how
+they affect the voice is to play with the "speechfilter" demo that is part of the megademo
+example.
+
+
+\pagebreak
+
+
+### Speech.setLooping()
+
+
+This function can be used to set the speech to loop.
+
+    gHeyListen.setLooping(1);
+    
+Calling this function will not affect "live" sound sources.
+
+
+### Speech.setFilter()
+
+
+As with any other audio source, you can attach filters to 
+speech audio sources.
+
+    gRobot.setFilter(0, &gRobotize);
+
+### Speech.stop()
+
+
+You can stop all instances of a speech sound source with
+stop(). This is equivalent of calling soloud.stopAudioSource()
+with the sound source.
+
+    gHeyListen.stop(); // shut up already!
+
+### Speech.setInaudibleBehavior()
+
+Set the inaudible behavior of the sound. By default, if a sound is
+inaudible, it's paused, and will resume when it becomes audible again.
+With this function you can tell SoLoud to either kill the sound if
+it becomes inaudible, or to keep ticking the sound even if it's 
+inaudible.
+
+	// Keep on talking even if I'm not around
+	gSpeech.setInaudibleBehavior(true, false);
+
+### Speech.setVolume()
+
+Set the default volume of the instances created from this audio source.
+
+    gTinyVoice.setVolume(0.1);
+    
+### Speech.setLoopPoint(), Speech.getLoopPoint()
+
+If looping is enabled, the loop point is, by default, the start of the
+stream. The loop point can be changed, and current loop point can be
+queried with these functions.
+
+	double t = snd.getLoopPoint();
+	snd.setLoopPoint(t + 1); // skip 1 second more when looping
+	...
+	snd.setLoopPoint(0); // loop from start
+
+### Inherited 3d audio interfaces
+
+Like all other audio sources, Speech inherits the 3d audio interfaces. Please refer to the 3d audio chapter for details on:
+
+- Speech.set3dMinMaxDistance()
+- Speech.set3dAttenuation()
+- Speech.set3dDopplerFactor()
+- Speech.set3dProcessing()
+- Speech.set3dListenerRelative()
+- Speech.set3dDistanceDelay()
+- Speech.set3dCollider()
+- Speech.set3dAttenuator()
+      
+      

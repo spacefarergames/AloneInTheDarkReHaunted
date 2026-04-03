@@ -1,0 +1,23 @@
+﻿  adler32.c
+  compress.c
+  crc32.c
+  deflate.c
+  gzclose.c
+  gzlib.c
+  gzread.c
+  gzwrite.c
+D:\FITD\ThirdParty\zlib\gzread.c(319,17): warning C4267: '=': conversion from 'size_t' to 'unsigned int', possible loss of data
+D:\FITD\ThirdParty\zlib\gzread.c(400,11): warning C4267: '=': conversion from 'size_t' to 'unsigned int', possible loss of data
+D:\FITD\ThirdParty\zlib\gzread.c(472,11): warning C4267: '=': conversion from 'size_t' to 'int', possible loss of data
+D:\FITD\ThirdParty\zlib\gzwrite.c(212,24): warning C4267: '=': conversion from 'size_t' to 'unsigned int', possible loss of data
+D:\FITD\ThirdParty\zlib\gzwrite.c(232,21): warning C4267: '=': conversion from 'size_t' to 'unsigned int', possible loss of data
+D:\FITD\ThirdParty\zlib\gzwrite.c(371,11): warning C4267: '=': conversion from 'size_t' to 'int', possible loss of data
+  inflate.c
+  infback.c
+  inftrees.c
+  inffast.c
+  trees.c
+  uncompr.c
+  zutil.c
+  Generating Code...
+  zlibstatic.vcxproj -> D:\FITD\build\vs2026\zlib\zlib-build\Debug\zlibstaticd.lib

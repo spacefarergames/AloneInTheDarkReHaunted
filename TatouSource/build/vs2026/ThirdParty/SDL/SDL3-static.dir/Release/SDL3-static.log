@@ -1,0 +1,33 @@
+﻿  SDL_camera_mediafoundation.c
+  SDL_dialog.c
+  SDL_dialog_utils.c
+  SDL_windowsdialog.c
+  SDL_gpu_d3d12.c
+  SDL_gpu_vulkan.c
+  SDL_dinputhaptic.c
+  SDL_windowshaptic.c
+  SDL_gameinputjoystick.c
+  SDL_hidapi_xbox360w.c
+  SDL_hidapi_xboxone.c
+  SDL_hidapijoystick.c
+  SDL_dinputjoystick.c
+  SDL_rawinputjoystick.c
+  SDL_windows_gaming_input.c
+  SDL_windowsjoystick.c
+  SDL_xinputjoystick.c
+  SDL_sysmain_callbacks.c
+  SDL_process.c
+  SDL_windowsprocess.c
+  Generating Code...
+  Compiling...
+  SDL_tray_utils.c
+  SDL_offscreenevents.c
+  SDL_offscreenframebuffer.c
+  SDL_offscreenopengles.c
+  SDL_offscreenvideo.c
+  SDL_offscreenvulkan.c
+  SDL_offscreenwindow.c
+  Generating Code...
+  SDL_dynapi.c
+  SDL_mslibc.c
+  SDL3-static.vcxproj -> D:\FITD\build\vs2026\ThirdParty\SDL\Release\SDL3-static.lib

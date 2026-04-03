@@ -1,0 +1,55 @@
+﻿  Building Custom Rule D:/FITD/ThirdParty/soloud.cmake/CMakeLists.txt
+cl : command line  warning D9002: ignoring unknown option '-O3'
+  dr_impl.cpp
+  soloud_wav.cpp
+  soloud_wavstream.cpp
+  soloud_null.cpp
+  soloud_sdl3_static.cpp
+  soloud.cpp
+  soloud_audiosource.cpp
+D:\FITD\ThirdParty\soloud.cmake\soloud\src\core\soloud.cpp(198,3): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+D:\FITD\ThirdParty\soloud.cmake\soloud\src\core\soloud.cpp(1102,3): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+D:\FITD\ThirdParty\soloud.cmake\soloud\src\core\soloud.cpp(1103,3): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+D:\FITD\ThirdParty\soloud.cmake\soloud\src\core\soloud.cpp(1104,3): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+D:\FITD\ThirdParty\soloud.cmake\soloud\src\core\soloud.cpp(1962,3): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+D:\FITD\ThirdParty\soloud.cmake\soloud\src\core\soloud.cpp(2001,5): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+D:\FITD\ThirdParty\soloud.cmake\soloud\src\core\soloud.cpp(2136,6): warning C4996: '_controlfp': This function or variable may be unsafe. Consider using _controlfp_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+D:\FITD\ThirdParty\soloud.cmake\soloud\src\core\soloud.cpp(2352,3): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+D:\FITD\ThirdParty\soloud.cmake\soloud\src\core\soloud.cpp(2358,3): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  soloud_bus.cpp
+  soloud_core_3d.cpp
+  soloud_core_basicops.cpp
+  soloud_core_faderops.cpp
+  soloud_core_filterops.cpp
+  soloud_core_getters.cpp
+  soloud_core_setters.cpp
+  soloud_core_voicegroup.cpp
+  soloud_core_voiceops.cpp
+D:\FITD\ThirdParty\soloud.cmake\soloud\src\core\soloud_core_voiceops.cpp(33,3): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+D:\FITD\ThirdParty\soloud.cmake\soloud\src\core\soloud_core_voiceops.cpp(34,3): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+D:\FITD\ThirdParty\soloud.cmake\soloud\src\core\soloud_core_voiceops.cpp(51,3): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+D:\FITD\ThirdParty\soloud.cmake\soloud\src\core\soloud_core_voiceops.cpp(52,3): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+D:\FITD\ThirdParty\soloud.cmake\soloud\src\core\soloud_core_voiceops.cpp(71,3): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+D:\FITD\ThirdParty\soloud.cmake\soloud\src\core\soloud_core_voiceops.cpp(72,3): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+D:\FITD\ThirdParty\soloud.cmake\soloud\src\core\soloud_core_voiceops.cpp(106,3): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+D:\FITD\ThirdParty\soloud.cmake\soloud\src\core\soloud_core_voiceops.cpp(107,3): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+D:\FITD\ThirdParty\soloud.cmake\soloud\src\core\soloud_core_voiceops.cpp(118,3): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+D:\FITD\ThirdParty\soloud.cmake\soloud\src\core\soloud_core_voiceops.cpp(119,3): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+D:\FITD\ThirdParty\soloud.cmake\soloud\src\core\soloud_core_voiceops.cpp(142,3): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+D:\FITD\ThirdParty\soloud.cmake\soloud\src\core\soloud_core_voiceops.cpp(143,3): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+D:\FITD\ThirdParty\soloud.cmake\soloud\src\core\soloud_core_voiceops.cpp(150,3): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+D:\FITD\ThirdParty\soloud.cmake\soloud\src\core\soloud_core_voiceops.cpp(151,3): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  soloud_fader.cpp
+  soloud_fft.cpp
+  soloud_fft_lut.cpp
+  soloud_file.cpp
+  Generating Code...
+  Compiling...
+  soloud_filter.cpp
+  soloud_misc.cpp
+  soloud_queue.cpp
+  soloud_thread.cpp
+  Generating Code...
+cl : command line  warning D9002: ignoring unknown option '-O3'
+  stb_vorbis.c
+  soloud.vcxproj -> D:\FITD\build\vs2026\ThirdParty\soloud.cmake\Release\soloud.lib

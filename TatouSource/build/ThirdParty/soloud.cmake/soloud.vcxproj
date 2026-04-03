@@ -1,0 +1,389 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="18.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <PreferredToolArchitecture>x64</PreferredToolArchitecture>
+  </PropertyGroup>
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="MinSizeRel|x64">
+      <Configuration>MinSizeRel</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="RelWithDebInfo|x64">
+      <Configuration>RelWithDebInfo</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{2B7C00EE-F50E-34B6-BCE2-63D992BF0245}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+    <WindowsTargetPlatformVersion>10.0.26100.0</WindowsTargetPlatformVersion>
+    <Platform>x64</Platform>
+    <ProjectName>soloud</ProjectName>
+    <VCProjectUpgraderObjectName>NoUpgrade</VCProjectUpgraderObjectName>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v145</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v145</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v145</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v145</PlatformToolset>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <_ProjectFileVersion>10.0.20506.1</_ProjectFileVersion>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">D:\FITD\build\ThirdParty\soloud.cmake\Debug\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">soloud.dir\Debug\</IntDir>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">soloud</TargetName>
+    <TargetExt Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">.lib</TargetExt>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">D:\FITD\build\ThirdParty\soloud.cmake\Release\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">soloud.dir\Release\</IntDir>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">soloud</TargetName>
+    <TargetExt Condition="'$(Configuration)|$(Platform)'=='Release|x64'">.lib</TargetExt>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">D:\FITD\build\ThirdParty\soloud.cmake\MinSizeRel\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">soloud.dir\MinSizeRel\</IntDir>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">soloud</TargetName>
+    <TargetExt Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">.lib</TargetExt>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">D:\FITD\build\ThirdParty\soloud.cmake\RelWithDebInfo\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">soloud.dir\RelWithDebInfo\</IntDir>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">soloud</TargetName>
+    <TargetExt Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">.lib</TargetExt>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>D:\FITD\ThirdParty\soloud.cmake\soloud\include;D:\FITD\ThirdParty\SDL\include;D:\FITD\ThirdParty\SDL\include\SDL3;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalOptions>%(AdditionalOptions) -O3</AdditionalOptions>
+      <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <BufferSecurityCheck></BufferSecurityCheck>
+      <CallingConvention></CallingConvention>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <ExceptionHandling>Sync</ExceptionHandling>
+      <FloatingPointModel></FloatingPointModel>
+      <ForceConformanceInForLoopScope></ForceConformanceInForLoopScope>
+      <InlineFunctionExpansion>Disabled</InlineFunctionExpansion>
+      <MinimalRebuild></MinimalRebuild>
+      <Optimization>Disabled</Optimization>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <RemoveUnreferencedCodeData></RemoveUnreferencedCodeData>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <SupportJustMyCode></SupportJustMyCode>
+      <TreatWChar_tAsBuiltInType></TreatWChar_tAsBuiltInType>
+      <UseFullPaths>false</UseFullPaths>
+      <WarningLevel>Level3</WarningLevel>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;BX_CONFIG_DEBUG=0;WITH_SDL3_STATIC=1;CMAKE_INTDIR="Debug"</PreprocessorDefinitions>
+      <ObjectFileName>$(IntDir)</ObjectFileName>
+      <ScanSourceForModuleDependencies>false</ScanSourceForModuleDependencies>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_DEBUG;_WINDOWS;BX_CONFIG_DEBUG=0;WITH_SDL3_STATIC=1;CMAKE_INTDIR=\"Debug\"</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>D:\FITD\ThirdParty\soloud.cmake\soloud\include;D:\FITD\ThirdParty\SDL\include;D:\FITD\ThirdParty\SDL\include\SDL3;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+    <Midl>
+      <AdditionalIncludeDirectories>D:\FITD\ThirdParty\soloud.cmake\soloud\include;D:\FITD\ThirdParty\SDL\include;D:\FITD\ThirdParty\SDL\include\SDL3;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+    <Lib>
+      <AdditionalOptions>%(AdditionalOptions) /machine:x64</AdditionalOptions>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>D:\FITD\ThirdParty\soloud.cmake\soloud\include;D:\FITD\ThirdParty\SDL\include;D:\FITD\ThirdParty\SDL\include\SDL3;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalOptions>%(AdditionalOptions) -O3</AdditionalOptions>
+      <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
+      <BasicRuntimeChecks>Default</BasicRuntimeChecks>
+      <BufferSecurityCheck></BufferSecurityCheck>
+      <CallingConvention></CallingConvention>
+      <ExceptionHandling>Sync</ExceptionHandling>
+      <FloatingPointModel></FloatingPointModel>
+      <ForceConformanceInForLoopScope></ForceConformanceInForLoopScope>
+      <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
+      <MinimalRebuild></MinimalRebuild>
+      <Optimization>MaxSpeed</Optimization>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <RemoveUnreferencedCodeData></RemoveUnreferencedCodeData>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <SupportJustMyCode></SupportJustMyCode>
+      <TreatWChar_tAsBuiltInType></TreatWChar_tAsBuiltInType>
+      <UseFullPaths>false</UseFullPaths>
+      <WarningLevel>Level3</WarningLevel>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;BX_CONFIG_DEBUG=0;NDEBUG;WITH_SDL3_STATIC=1;CMAKE_INTDIR="Release"</PreprocessorDefinitions>
+      <ObjectFileName>$(IntDir)</ObjectFileName>
+      <DebugInformationFormat>
+      </DebugInformationFormat>
+      <ScanSourceForModuleDependencies>false</ScanSourceForModuleDependencies>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;BX_CONFIG_DEBUG=0;NDEBUG;WITH_SDL3_STATIC=1;CMAKE_INTDIR=\"Release\"</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>D:\FITD\ThirdParty\soloud.cmake\soloud\include;D:\FITD\ThirdParty\SDL\include;D:\FITD\ThirdParty\SDL\include\SDL3;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+    <Midl>
+      <AdditionalIncludeDirectories>D:\FITD\ThirdParty\soloud.cmake\soloud\include;D:\FITD\ThirdParty\SDL\include;D:\FITD\ThirdParty\SDL\include\SDL3;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+    <Lib>
+      <AdditionalOptions>%(AdditionalOptions) /machine:x64</AdditionalOptions>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>D:\FITD\ThirdParty\soloud.cmake\soloud\include;D:\FITD\ThirdParty\SDL\include;D:\FITD\ThirdParty\SDL\include\SDL3;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalOptions>%(AdditionalOptions) -O3</AdditionalOptions>
+      <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
+      <BasicRuntimeChecks>Default</BasicRuntimeChecks>
+      <BufferSecurityCheck></BufferSecurityCheck>
+      <CallingConvention></CallingConvention>
+      <ExceptionHandling>Sync</ExceptionHandling>
+      <FloatingPointModel></FloatingPointModel>
+      <ForceConformanceInForLoopScope></ForceConformanceInForLoopScope>
+      <InlineFunctionExpansion>OnlyExplicitInline</InlineFunctionExpansion>
+      <MinimalRebuild></MinimalRebuild>
+      <Optimization>MinSpace</Optimization>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <RemoveUnreferencedCodeData></RemoveUnreferencedCodeData>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <SupportJustMyCode></SupportJustMyCode>
+      <TreatWChar_tAsBuiltInType></TreatWChar_tAsBuiltInType>
+      <UseFullPaths>false</UseFullPaths>
+      <WarningLevel>Level3</WarningLevel>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;BX_CONFIG_DEBUG=0;NDEBUG;WITH_SDL3_STATIC=1;CMAKE_INTDIR="MinSizeRel"</PreprocessorDefinitions>
+      <ObjectFileName>$(IntDir)</ObjectFileName>
+      <DebugInformationFormat>
+      </DebugInformationFormat>
+      <ScanSourceForModuleDependencies>false</ScanSourceForModuleDependencies>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;BX_CONFIG_DEBUG=0;NDEBUG;WITH_SDL3_STATIC=1;CMAKE_INTDIR=\"MinSizeRel\"</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>D:\FITD\ThirdParty\soloud.cmake\soloud\include;D:\FITD\ThirdParty\SDL\include;D:\FITD\ThirdParty\SDL\include\SDL3;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+    <Midl>
+      <AdditionalIncludeDirectories>D:\FITD\ThirdParty\soloud.cmake\soloud\include;D:\FITD\ThirdParty\SDL\include;D:\FITD\ThirdParty\SDL\include\SDL3;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+    <Lib>
+      <AdditionalOptions>%(AdditionalOptions) /machine:x64</AdditionalOptions>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>D:\FITD\ThirdParty\soloud.cmake\soloud\include;D:\FITD\ThirdParty\SDL\include;D:\FITD\ThirdParty\SDL\include\SDL3;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalOptions>%(AdditionalOptions) -O3</AdditionalOptions>
+      <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
+      <BasicRuntimeChecks>Default</BasicRuntimeChecks>
+      <BufferSecurityCheck></BufferSecurityCheck>
+      <CallingConvention></CallingConvention>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <ExceptionHandling>Sync</ExceptionHandling>
+      <FloatingPointModel></FloatingPointModel>
+      <ForceConformanceInForLoopScope></ForceConformanceInForLoopScope>
+      <InlineFunctionExpansion>OnlyExplicitInline</InlineFunctionExpansion>
+      <MinimalRebuild></MinimalRebuild>
+      <Optimization>MaxSpeed</Optimization>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <RemoveUnreferencedCodeData></RemoveUnreferencedCodeData>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <SupportJustMyCode></SupportJustMyCode>
+      <TreatWChar_tAsBuiltInType></TreatWChar_tAsBuiltInType>
+      <UseFullPaths>false</UseFullPaths>
+      <WarningLevel>Level3</WarningLevel>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;BX_CONFIG_DEBUG=0;NDEBUG;WITH_SDL3_STATIC=1;CMAKE_INTDIR="RelWithDebInfo"</PreprocessorDefinitions>
+      <ObjectFileName>$(IntDir)</ObjectFileName>
+      <ScanSourceForModuleDependencies>false</ScanSourceForModuleDependencies>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;BX_CONFIG_DEBUG=0;NDEBUG;WITH_SDL3_STATIC=1;CMAKE_INTDIR=\"RelWithDebInfo\"</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>D:\FITD\ThirdParty\soloud.cmake\soloud\include;D:\FITD\ThirdParty\SDL\include;D:\FITD\ThirdParty\SDL\include\SDL3;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+    <Midl>
+      <AdditionalIncludeDirectories>D:\FITD\ThirdParty\soloud.cmake\soloud\include;D:\FITD\ThirdParty\SDL\include;D:\FITD\ThirdParty\SDL\include\SDL3;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+    <Lib>
+      <AdditionalOptions>%(AdditionalOptions) /machine:x64</AdditionalOptions>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <CustomBuild Include="D:\FITD\ThirdParty\soloud.cmake\CMakeLists.txt">
+      <UseUtf8Encoding>Always</UseUtf8Encoding>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Building Custom Rule D:/FITD/ThirdParty/soloud.cmake/CMakeLists.txt</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -SD:/FITD -BD:/FITD/build --check-stamp-file D:/FITD/build/ThirdParty/soloud.cmake/CMakeFiles/generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">D:\FITD\build\ThirdParty\soloud.cmake\CMakeFiles\generate.stamp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Building Custom Rule D:/FITD/ThirdParty/soloud.cmake/CMakeLists.txt</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -SD:/FITD -BD:/FITD/build --check-stamp-file D:/FITD/build/ThirdParty/soloud.cmake/CMakeFiles/generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">D:\FITD\build\ThirdParty\soloud.cmake\CMakeFiles\generate.stamp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">Building Custom Rule D:/FITD/ThirdParty/soloud.cmake/CMakeLists.txt</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -SD:/FITD -BD:/FITD/build --check-stamp-file D:/FITD/build/ThirdParty/soloud.cmake/CMakeFiles/generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">D:\FITD\build\ThirdParty\soloud.cmake\CMakeFiles\generate.stamp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">Building Custom Rule D:/FITD/ThirdParty/soloud.cmake/CMakeLists.txt</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -SD:/FITD -BD:/FITD/build --check-stamp-file D:/FITD/build/ThirdParty/soloud.cmake/CMakeFiles/generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">D:\FITD\build\ThirdParty\soloud.cmake\CMakeFiles\generate.stamp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">false</LinkObjects>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="D:\FITD\ThirdParty\soloud.cmake\soloud\include\soloud.h" />
+    <ClInclude Include="D:\FITD\ThirdParty\soloud.cmake\soloud\include\soloud_audiosource.h" />
+    <ClInclude Include="D:\FITD\ThirdParty\soloud.cmake\soloud\include\soloud_ay.h" />
+    <ClInclude Include="D:\FITD\ThirdParty\soloud.cmake\soloud\include\soloud_backend_data_sdl3.h" />
+    <ClInclude Include="D:\FITD\ThirdParty\soloud.cmake\soloud\include\soloud_bassboostfilter.h" />
+    <ClInclude Include="D:\FITD\ThirdParty\soloud.cmake\soloud\include\soloud_biquadresonantfilter.h" />
+    <ClInclude Include="D:\FITD\ThirdParty\soloud.cmake\soloud\include\soloud_bus.h" />
+    <ClInclude Include="D:\FITD\ThirdParty\soloud.cmake\soloud\include\soloud_c.h" />
+    <ClInclude Include="D:\FITD\ThirdParty\soloud.cmake\soloud\include\soloud_dcremovalfilter.h" />
+    <ClInclude Include="D:\FITD\ThirdParty\soloud.cmake\soloud\include\soloud_duckfilter.h" />
+    <ClInclude Include="D:\FITD\ThirdParty\soloud.cmake\soloud\include\soloud_echofilter.h" />
+    <ClInclude Include="D:\FITD\ThirdParty\soloud.cmake\soloud\include\soloud_eqfilter.h" />
+    <ClInclude Include="D:\FITD\ThirdParty\soloud.cmake\soloud\include\soloud_error.h" />
+    <ClInclude Include="D:\FITD\ThirdParty\soloud.cmake\soloud\include\soloud_fader.h" />
+    <ClInclude Include="D:\FITD\ThirdParty\soloud.cmake\soloud\include\soloud_fft.h" />
+    <ClInclude Include="D:\FITD\ThirdParty\soloud.cmake\soloud\include\soloud_fftfilter.h" />
+    <ClInclude Include="D:\FITD\ThirdParty\soloud.cmake\soloud\include\soloud_file.h" />
+    <ClInclude Include="D:\FITD\ThirdParty\soloud.cmake\soloud\include\soloud_file_hack_off.h" />
+    <ClInclude Include="D:\FITD\ThirdParty\soloud.cmake\soloud\include\soloud_file_hack_on.h" />
+    <ClInclude Include="D:\FITD\ThirdParty\soloud.cmake\soloud\include\soloud_filter.h" />
+    <ClInclude Include="D:\FITD\ThirdParty\soloud.cmake\soloud\include\soloud_flangerfilter.h" />
+    <ClInclude Include="D:\FITD\ThirdParty\soloud.cmake\soloud\include\soloud_freeverbfilter.h" />
+    <ClInclude Include="D:\FITD\ThirdParty\soloud.cmake\soloud\include\soloud_internal.h" />
+    <ClInclude Include="D:\FITD\ThirdParty\soloud.cmake\soloud\include\soloud_lofifilter.h" />
+    <ClInclude Include="D:\FITD\ThirdParty\soloud.cmake\soloud\include\soloud_misc.h" />
+    <ClInclude Include="D:\FITD\ThirdParty\soloud.cmake\soloud\include\soloud_monotone.h" />
+    <ClInclude Include="D:\FITD\ThirdParty\soloud.cmake\soloud\include\soloud_noise.h" />
+    <ClInclude Include="D:\FITD\ThirdParty\soloud.cmake\soloud\include\soloud_openmpt.h" />
+    <ClInclude Include="D:\FITD\ThirdParty\soloud.cmake\soloud\include\soloud_queue.h" />
+    <ClInclude Include="D:\FITD\ThirdParty\soloud.cmake\soloud\include\soloud_robotizefilter.h" />
+    <ClInclude Include="D:\FITD\ThirdParty\soloud.cmake\soloud\include\soloud_sfxr.h" />
+    <ClInclude Include="D:\FITD\ThirdParty\soloud.cmake\soloud\include\soloud_speech.h" />
+    <ClInclude Include="D:\FITD\ThirdParty\soloud.cmake\soloud\include\soloud_tedsid.h" />
+    <ClInclude Include="D:\FITD\ThirdParty\soloud.cmake\soloud\include\soloud_thread.h" />
+    <ClInclude Include="D:\FITD\ThirdParty\soloud.cmake\soloud\include\soloud_vic.h" />
+    <ClInclude Include="D:\FITD\ThirdParty\soloud.cmake\soloud\include\soloud_vizsn.h" />
+    <ClInclude Include="D:\FITD\ThirdParty\soloud.cmake\soloud\include\soloud_wav.h" />
+    <ClInclude Include="D:\FITD\ThirdParty\soloud.cmake\soloud\include\soloud_waveshaperfilter.h" />
+    <ClInclude Include="D:\FITD\ThirdParty\soloud.cmake\soloud\include\soloud_wavstream.h" />
+    <ClInclude Include="D:\FITD\ThirdParty\soloud.cmake\soloud\include\zx7decompress.h" />
+    <ClCompile Include="D:\FITD\ThirdParty\soloud.cmake\soloud\src\audiosource\wav\dr_impl.cpp" />
+    <ClCompile Include="D:\FITD\ThirdParty\soloud.cmake\soloud\src\audiosource\wav\soloud_wav.cpp" />
+    <ClCompile Include="D:\FITD\ThirdParty\soloud.cmake\soloud\src\audiosource\wav\soloud_wavstream.cpp" />
+    <ClCompile Include="D:\FITD\ThirdParty\soloud.cmake\soloud\src\audiosource\wav\stb_vorbis.c" />
+    <ClCompile Include="D:\FITD\ThirdParty\soloud.cmake\soloud\src\backend\null\soloud_null.cpp" />
+    <ClCompile Include="D:\FITD\ThirdParty\soloud.cmake\soloud\src\backend\sdl3_static\soloud_sdl3_static.cpp" />
+    <ClCompile Include="D:\FITD\ThirdParty\soloud.cmake\soloud\src\core\soloud.cpp" />
+    <ClCompile Include="D:\FITD\ThirdParty\soloud.cmake\soloud\src\core\soloud_audiosource.cpp" />
+    <ClCompile Include="D:\FITD\ThirdParty\soloud.cmake\soloud\src\core\soloud_bus.cpp" />
+    <ClCompile Include="D:\FITD\ThirdParty\soloud.cmake\soloud\src\core\soloud_core_3d.cpp" />
+    <ClCompile Include="D:\FITD\ThirdParty\soloud.cmake\soloud\src\core\soloud_core_basicops.cpp" />
+    <ClCompile Include="D:\FITD\ThirdParty\soloud.cmake\soloud\src\core\soloud_core_faderops.cpp" />
+    <ClCompile Include="D:\FITD\ThirdParty\soloud.cmake\soloud\src\core\soloud_core_filterops.cpp" />
+    <ClCompile Include="D:\FITD\ThirdParty\soloud.cmake\soloud\src\core\soloud_core_getters.cpp" />
+    <ClCompile Include="D:\FITD\ThirdParty\soloud.cmake\soloud\src\core\soloud_core_setters.cpp" />
+    <ClCompile Include="D:\FITD\ThirdParty\soloud.cmake\soloud\src\core\soloud_core_voicegroup.cpp" />
+    <ClCompile Include="D:\FITD\ThirdParty\soloud.cmake\soloud\src\core\soloud_core_voiceops.cpp" />
+    <ClCompile Include="D:\FITD\ThirdParty\soloud.cmake\soloud\src\core\soloud_fader.cpp" />
+    <ClCompile Include="D:\FITD\ThirdParty\soloud.cmake\soloud\src\core\soloud_fft.cpp" />
+    <ClCompile Include="D:\FITD\ThirdParty\soloud.cmake\soloud\src\core\soloud_fft_lut.cpp" />
+    <ClCompile Include="D:\FITD\ThirdParty\soloud.cmake\soloud\src\core\soloud_file.cpp" />
+    <ClCompile Include="D:\FITD\ThirdParty\soloud.cmake\soloud\src\core\soloud_filter.cpp" />
+    <ClCompile Include="D:\FITD\ThirdParty\soloud.cmake\soloud\src\core\soloud_misc.cpp" />
+    <ClCompile Include="D:\FITD\ThirdParty\soloud.cmake\soloud\src\core\soloud_queue.cpp" />
+    <ClCompile Include="D:\FITD\ThirdParty\soloud.cmake\soloud\src\core\soloud_thread.cpp" />
+  </ItemGroup>
+  <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="D:\FITD\build\ZERO_CHECK.vcxproj">
+      <Project>{2595C25F-C5BF-3655-AC4B-0C1EB69174EA}</Project>
+      <Name>ZERO_CHECK</Name>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

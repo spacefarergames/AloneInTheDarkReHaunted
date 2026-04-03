@@ -1,0 +1,38 @@
+﻿  cpp1.c
+  cpp2.c
+D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\fcpp\cpp1.c(339,4): warning C4996: 'strncpy': This function or variable may be unsafe. Consider using strncpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\fcpp\cpp1.c(376,6): warning C4996: 'strcpy': This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\fcpp\cpp1.c(445,8): warning C4996: 'strncpy': This function or variable may be unsafe. Consider using strncpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\fcpp\cpp1.c(563,3): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\fcpp\cpp2.c(92,9): warning C4996: 'strcpy': This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\fcpp\cpp2.c(650,13): warning C4996: 'strcat': This function or variable may be unsafe. Consider using strcat_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\fcpp\cpp2.c(652,13): warning C4996: 'strcpy': This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\fcpp\cpp2.c(675,17): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\fcpp\cpp2.c(677,17): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\fcpp\cpp2.c(702,5): warning C4996: 'strncpy': This function or variable may be unsafe. Consider using strncpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  cpp3.c
+D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\fcpp\cpp3.c(42,10): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\fcpp\cpp3.c(247,7): warning C4996: 'strcpy': This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\fcpp\cpp3.c(354,10): warning C4996: 'localtime': This function or variable may be unsafe. Consider using localtime_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\fcpp\cpp3.c(355,5): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\fcpp\cpp3.c(369,5): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  cpp4.c
+D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\fcpp\cpp4.c(325,5): warning C4996: 'strcpy': This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\fcpp\cpp4.c(391,4): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\fcpp\cpp4.c(396,5): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\fcpp\cpp4.c(408,2): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\fcpp\cpp4.c(419,5): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\fcpp\cpp4.c(427,5): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\fcpp\cpp4.c(610,6): warning C4996: 'strcpy': This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\fcpp\cpp4.c(618,3): warning C4996: 'strcpy': This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  cpp5.c
+  cpp6.c
+D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\fcpp\cpp6.c(242,7): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\fcpp\cpp6.c(246,7): warning C4996: 'strcpy': This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\fcpp\cpp6.c(260,7): warning C4996: 'strcpy': This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\fcpp\cpp6.c(491,3): warning C4996: 'strcpy': This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\fcpp\cpp6.c(620,5): warning C4996: 'strcpy': This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\fcpp\cpp6.c(720,11): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\fcpp\cpp6.c(986,5): warning C4996: 'strcpy': This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  Generating Code...
+  fcpp.vcxproj -> D:\FITD\build\vs2026\ThirdParty\bgfx.cmake\cmake\bgfx\Debug\fcpp.lib

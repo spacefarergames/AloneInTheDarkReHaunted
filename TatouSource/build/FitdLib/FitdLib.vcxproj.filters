@@ -1,0 +1,878 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="18.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="D:\FITD\FitdLib\AITD1.cpp" />
+    <ClCompile Include="D:\FITD\FitdLib\AITD1_Tatou.cpp" />
+    <ClCompile Include="D:\FITD\FitdLib\AITD2.cpp" />
+    <ClCompile Include="D:\FITD\FitdLib\AITD3.cpp" />
+    <ClCompile Include="D:\FITD\FitdLib\JACK.cpp" />
+    <ClCompile Include="D:\FITD\FitdLib\LockedFiles\animAction.cpp">
+      <Filter>LockedFiles</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\FitdLib\actorList.cpp" />
+    <ClCompile Include="D:\FITD\FitdLib\aitdBox.cpp" />
+    <ClCompile Include="D:\FITD\FitdLib\anim.cpp" />
+    <ClCompile Include="D:\FITD\FitdLib\anim2d.cpp" />
+    <ClCompile Include="D:\FITD\FitdLib\animAction.cpp" />
+    <ClCompile Include="D:\FITD\FitdLib\animAction_temp.cpp" />
+    <ClCompile Include="D:\FITD\FitdLib\asyncLoader.cpp" />
+    <ClCompile Include="D:\FITD\FitdLib\bgfxGlue.cpp" />
+    <ClCompile Include="D:\FITD\FitdLib\configRemaster.cpp" />
+    <ClCompile Include="D:\FITD\FitdLib\controlsMenu.cpp" />
+    <ClCompile Include="D:\FITD\FitdLib\cosTable.cpp" />
+    <ClCompile Include="D:\FITD\FitdLib\debugFont.cpp" />
+    <ClCompile Include="D:\FITD\FitdLib\debugger.cpp" />
+    <ClCompile Include="D:\FITD\FitdLib\dustParticles.cpp" />
+    <ClCompile Include="D:\FITD\FitdLib\embedded\embeddedData.cpp">
+      <Filter>embedded</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_AITD2_flag.cpp">
+      <Filter>embedded</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_CAMERA00_PAK.cpp">
+      <Filter>embedded</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_CAMERA01_PAK.cpp">
+      <Filter>embedded</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_CAMERA02_PAK.cpp">
+      <Filter>embedded</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_CAMERA03_PAK.cpp">
+      <Filter>embedded</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_CAMERA04_PAK.cpp">
+      <Filter>embedded</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_CAMERA05_PAK.cpp">
+      <Filter>embedded</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_CAMERA06_PAK.cpp">
+      <Filter>embedded</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_CAMERA07_PAK.cpp">
+      <Filter>embedded</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_ControllerHint_png.cpp">
+      <Filter>embedded</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_DEFINES_ITD.cpp">
+      <Filter>embedded</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_DEUTSCH_PAK.cpp">
+      <Filter>embedded</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_ENDSEQ_PAK.cpp">
+      <Filter>embedded</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_ENGLISH_PAK.cpp">
+      <Filter>embedded</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_ESPAGNOL_PAK.cpp">
+      <Filter>embedded</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_ETAGE00_PAK.cpp">
+      <Filter>embedded</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_ETAGE01_PAK.cpp">
+      <Filter>embedded</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_ETAGE02_PAK.cpp">
+      <Filter>embedded</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_ETAGE03_PAK.cpp">
+      <Filter>embedded</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_ETAGE04_PAK.cpp">
+      <Filter>embedded</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_ETAGE05_PAK.cpp">
+      <Filter>embedded</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_ETAGE06_PAK.cpp">
+      <Filter>embedded</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_ETAGE07_PAK.cpp">
+      <Filter>embedded</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_FRANCAIS_PAK.cpp">
+      <Filter>embedded</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_ITALIANO_PAK.cpp">
+      <Filter>embedded</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_ITD_RESS_PAK.cpp">
+      <Filter>embedded</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_LISTANI2_PAK.cpp">
+      <Filter>embedded</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_LISTANIM_PAK.cpp">
+      <Filter>embedded</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_LISTBOD2_PAK.cpp">
+      <Filter>embedded</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_LISTBODY_PAK.cpp">
+      <Filter>embedded</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_LISTLIFE_PAK.cpp">
+      <Filter>embedded</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_LISTMUS_PAK.cpp">
+      <Filter>embedded</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_LISTSAMP_PAK.cpp">
+      <Filter>embedded</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_LISTTRAK_PAK.cpp">
+      <Filter>embedded</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_OBJETS_ITD.cpp">
+      <Filter>embedded</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_PRESENT_PAK.cpp">
+      <Filter>embedded</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_PRIORITY_ITD.cpp">
+      <Filter>embedded</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_USA_PAK.cpp">
+      <Filter>embedded</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_VARS_ITD.cpp">
+      <Filter>embedded</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\FitdLib\evalVar.cpp" />
+    <ClCompile Include="D:\FITD\FitdLib\exceptionHandler.cpp" />
+    <ClCompile Include="D:\FITD\FitdLib\fileAccess.cpp" />
+    <ClCompile Include="D:\FITD\FitdLib\floor.cpp" />
+    <ClCompile Include="D:\FITD\FitdLib\fmopl.cpp" />
+    <ClCompile Include="D:\FITD\FitdLib\font.cpp" />
+    <ClCompile Include="D:\FITD\FitdLib\fontTTF.cpp" />
+    <ClCompile Include="D:\FITD\FitdLib\gameTime.cpp" />
+    <ClCompile Include="D:\FITD\FitdLib\hdArchive.cpp" />
+    <ClCompile Include="D:\FITD\FitdLib\hdBackground.cpp" />
+    <ClCompile Include="D:\FITD\FitdLib\hdBackgroundRenderer.cpp" />
+    <ClCompile Include="D:\FITD\FitdLib\hqr.cpp" />
+    <ClCompile Include="D:\FITD\FitdLib\hybrid.cpp" />
+    <ClCompile Include="D:\FITD\FitdLib\imguiBGFX.cpp" />
+    <ClCompile Include="D:\FITD\FitdLib\input.cpp" />
+    <ClCompile Include="D:\FITD\FitdLib\inventory.cpp" />
+    <ClCompile Include="D:\FITD\FitdLib\jobSystem.cpp" />
+    <ClCompile Include="D:\FITD\FitdLib\life.cpp" />
+    <ClCompile Include="D:\FITD\FitdLib\lifeMacroTable.cpp" />
+    <ClCompile Include="D:\FITD\FitdLib\lightProbes.cpp" />
+    <ClCompile Include="D:\FITD\FitdLib\lines.cpp" />
+    <ClCompile Include="D:\FITD\FitdLib\main.cpp" />
+    <ClCompile Include="D:\FITD\FitdLib\mainLoop.cpp" />
+    <ClCompile Include="D:\FITD\FitdLib\modelAtlas.cpp" />
+    <ClCompile Include="D:\FITD\FitdLib\modelAtlas_fixed.cpp" />
+    <ClCompile Include="D:\FITD\FitdLib\music.cpp" />
+    <ClCompile Include="D:\FITD\FitdLib\object.cpp" />
+    <ClCompile Include="D:\FITD\FitdLib\osystemAL.cpp" />
+    <ClCompile Include="D:\FITD\FitdLib\osystemAL_adlib.cpp" />
+    <ClCompile Include="D:\FITD\FitdLib\osystemAL_mp3.cpp" />
+    <ClCompile Include="D:\FITD\FitdLib\osystemSDL.cpp" />
+    <ClCompile Include="D:\FITD\FitdLib\pak.cpp" />
+    <ClCompile Include="D:\FITD\FitdLib\palette.cpp" />
+    <ClCompile Include="D:\FITD\FitdLib\polys.cpp" />
+    <ClCompile Include="D:\FITD\FitdLib\postProcessing.cpp" />
+    <ClCompile Include="D:\FITD\FitdLib\renderer.cpp" />
+    <ClCompile Include="D:\FITD\FitdLib\rendererBGFX.cpp" />
+    <ClCompile Include="D:\FITD\FitdLib\resourceGC.cpp" />
+    <ClCompile Include="D:\FITD\FitdLib\room.cpp" />
+    <ClCompile Include="D:\FITD\FitdLib\save.cpp" />
+    <ClCompile Include="D:\FITD\FitdLib\screen.cpp" />
+    <ClCompile Include="D:\FITD\FitdLib\sequence.cpp" />
+    <ClCompile Include="D:\FITD\FitdLib\shaders\embeddedShaders.cpp">
+      <Filter>shaders</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\FitdLib\sprite.cpp" />
+    <ClCompile Include="D:\FITD\FitdLib\startupMenu.cpp" />
+    <ClCompile Include="D:\FITD\FitdLib\systemMenu.cpp" />
+    <ClCompile Include="D:\FITD\FitdLib\tatou.cpp" />
+    <ClCompile Include="D:\FITD\FitdLib\threadCode.cpp" />
+    <ClCompile Include="D:\FITD\FitdLib\track.cpp" />
+    <ClCompile Include="D:\FITD\FitdLib\unpack.cpp" />
+    <ClCompile Include="D:\FITD\FitdLib\updateChecker.cpp" />
+    <ClCompile Include="D:\FITD\FitdLib\vars.cpp" />
+    <ClCompile Include="D:\FITD\FitdLib\version.cpp" />
+    <ClCompile Include="D:\FITD\FitdLib\videoMode.cpp" />
+    <ClCompile Include="D:\FITD\FitdLib\vocDecoder.cpp" />
+    <ClCompile Include="D:\FITD\FitdLib\zv.cpp" />
+    <ClCompile Include="D:\FITD\ThirdParty\imgui\imgui.cpp">
+      <Filter>..\ThirdParty\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\ThirdParty\imgui\imgui_draw.cpp">
+      <Filter>..\ThirdParty\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\ThirdParty\imgui\imgui_tables.cpp">
+      <Filter>..\ThirdParty\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\ThirdParty\imgui\imgui_widgets.cpp">
+      <Filter>..\ThirdParty\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\ThirdParty\imgui\backends\imgui_impl_sdl3.cpp">
+      <Filter>..\ThirdParty\imgui\backends</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="D:\FITD\FitdLib\AITD1.h" />
+    <ClInclude Include="D:\FITD\FitdLib\AITD2.h" />
+    <ClInclude Include="D:\FITD\FitdLib\AITD3.h" />
+    <ClInclude Include="D:\FITD\FitdLib\JACK.h" />
+    <ClInclude Include="D:\FITD\FitdLib\actorList.h" />
+    <ClInclude Include="D:\FITD\FitdLib\aitdBox.h" />
+    <ClInclude Include="D:\FITD\FitdLib\anim.h" />
+    <ClInclude Include="D:\FITD\FitdLib\anim2d.h" />
+    <ClInclude Include="D:\FITD\FitdLib\animAction.h" />
+    <ClInclude Include="D:\FITD\FitdLib\appArchive.h" />
+    <ClInclude Include="D:\FITD\FitdLib\asyncLoader.h" />
+    <ClInclude Include="D:\FITD\FitdLib\baseTypes.h" />
+    <ClInclude Include="D:\FITD\FitdLib\bgfxGlue.h" />
+    <ClInclude Include="D:\FITD\FitdLib\common.h" />
+    <ClInclude Include="D:\FITD\FitdLib\config.h" />
+    <ClInclude Include="D:\FITD\FitdLib\configRemaster.h" />
+    <ClInclude Include="D:\FITD\FitdLib\consoleLog.h" />
+    <ClInclude Include="D:\FITD\FitdLib\controlsMenu.h" />
+    <ClInclude Include="D:\FITD\FitdLib\cosTable.h" />
+    <ClInclude Include="D:\FITD\FitdLib\debugFont.h" />
+    <ClInclude Include="D:\FITD\FitdLib\debugger.h" />
+    <ClInclude Include="D:\FITD\FitdLib\dustParticles.h" />
+    <ClInclude Include="D:\FITD\FitdLib\embedded\embeddedData.h">
+      <Filter>embedded</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\FitdLib\endianess.h" />
+    <ClInclude Include="D:\FITD\FitdLib\evalVar.h" />
+    <ClInclude Include="D:\FITD\FitdLib\exceptionHandler.h" />
+    <ClInclude Include="D:\FITD\FitdLib\fileAccess.h" />
+    <ClInclude Include="D:\FITD\FitdLib\floor.h" />
+    <ClInclude Include="D:\FITD\FitdLib\fmopl.h" />
+    <ClInclude Include="D:\FITD\FitdLib\font.h" />
+    <ClInclude Include="D:\FITD\FitdLib\fontTTF.h" />
+    <ClInclude Include="D:\FITD\FitdLib\gameTime.h" />
+    <ClInclude Include="D:\FITD\FitdLib\hdArchive.h" />
+    <ClInclude Include="D:\FITD\FitdLib\hdBackground.h" />
+    <ClInclude Include="D:\FITD\FitdLib\hdBackgroundRenderer.h" />
+    <ClInclude Include="D:\FITD\FitdLib\hqr.h" />
+    <ClInclude Include="D:\FITD\FitdLib\hybrid.h" />
+    <ClInclude Include="D:\FITD\FitdLib\imguiBGFX.h" />
+    <ClInclude Include="D:\FITD\FitdLib\input.h" />
+    <ClInclude Include="D:\FITD\FitdLib\inventory.h" />
+    <ClInclude Include="D:\FITD\FitdLib\jobSystem.h" />
+    <ClInclude Include="D:\FITD\FitdLib\jobSystemInit.h" />
+    <ClInclude Include="D:\FITD\FitdLib\life.h" />
+    <ClInclude Include="D:\FITD\FitdLib\lightProbes.h" />
+    <ClInclude Include="D:\FITD\FitdLib\main.h" />
+    <ClInclude Include="D:\FITD\FitdLib\mainLoop.h" />
+    <ClInclude Include="D:\FITD\FitdLib\memoryManager.h" />
+    <ClInclude Include="D:\FITD\FitdLib\modelAtlas.h" />
+    <ClInclude Include="D:\FITD\FitdLib\music.h" />
+    <ClInclude Include="D:\FITD\FitdLib\object.h" />
+    <ClInclude Include="D:\FITD\FitdLib\osystem.h" />
+    <ClInclude Include="D:\FITD\FitdLib\osystemAL.h" />
+    <ClInclude Include="D:\FITD\FitdLib\osystemAL_mp3.h" />
+    <ClInclude Include="D:\FITD\FitdLib\pak.h" />
+    <ClInclude Include="D:\FITD\FitdLib\palette.h" />
+    <ClInclude Include="D:\FITD\FitdLib\postProcessing.h" />
+    <ClInclude Include="D:\FITD\FitdLib\renderer.h" />
+    <ClInclude Include="D:\FITD\FitdLib\reshadecompat.h" />
+    <ClInclude Include="D:\FITD\FitdLib\resourceGC.h" />
+    <ClInclude Include="D:\FITD\FitdLib\room.h" />
+    <ClInclude Include="D:\FITD\FitdLib\safeDelete.h" />
+    <ClInclude Include="D:\FITD\FitdLib\save.h" />
+    <ClInclude Include="D:\FITD\FitdLib\screen.h" />
+    <ClInclude Include="D:\FITD\FitdLib\sequence.h" />
+    <ClInclude Include="D:\FITD\FitdLib\shaders\embeddedShaders.h">
+      <Filter>shaders</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\FitdLib\shaders\embeddedShadersMacro.h">
+      <Filter>shaders</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\FitdLib\shaders\generated\dx10\background_ps.sc.bin.h">
+      <Filter>shaders\generated\dx10</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\FitdLib\shaders\generated\dx10\background_vs.sc.bin.h">
+      <Filter>shaders\generated\dx10</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\FitdLib\shaders\generated\dx10\blur_ps.sc.bin.h">
+      <Filter>shaders\generated\dx10</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\FitdLib\shaders\generated\dx10\brightpass_ps.sc.bin.h">
+      <Filter>shaders\generated\dx10</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\FitdLib\shaders\generated\dx10\composite_ps.sc.bin.h">
+      <Filter>shaders\generated\dx10</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\FitdLib\shaders\generated\dx10\flat_ps.sc.bin.h">
+      <Filter>shaders\generated\dx10</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\FitdLib\shaders\generated\dx10\flat_vs.sc.bin.h">
+      <Filter>shaders\generated\dx10</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\FitdLib\shaders\generated\dx10\hdBackground_ps.sc.bin.h">
+      <Filter>shaders\generated\dx10</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\FitdLib\shaders\generated\dx10\maskBackground_ps.sc.bin.h">
+      <Filter>shaders\generated\dx10</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\FitdLib\shaders\generated\dx10\maskBackground_vs.sc.bin.h">
+      <Filter>shaders\generated\dx10</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\FitdLib\shaders\generated\dx10\maskHDBackground_ps.sc.bin.h">
+      <Filter>shaders\generated\dx10</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\FitdLib\shaders\generated\dx10\noise_ps.sc.bin.h">
+      <Filter>shaders\generated\dx10</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\FitdLib\shaders\generated\dx10\noise_vs.sc.bin.h">
+      <Filter>shaders\generated\dx10</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\FitdLib\shaders\generated\dx10\particle_ps.sc.bin.h">
+      <Filter>shaders\generated\dx10</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\FitdLib\shaders\generated\dx10\particle_vs.sc.bin.h">
+      <Filter>shaders\generated\dx10</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\FitdLib\shaders\generated\dx10\postprocess_vs.sc.bin.h">
+      <Filter>shaders\generated\dx10</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\FitdLib\shaders\generated\dx10\ramp_ps.sc.bin.h">
+      <Filter>shaders\generated\dx10</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\FitdLib\shaders\generated\dx10\ramp_vs.sc.bin.h">
+      <Filter>shaders\generated\dx10</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\FitdLib\shaders\generated\dx10\sphere_ps.sc.bin.h">
+      <Filter>shaders\generated\dx10</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\FitdLib\shaders\generated\dx10\sphere_vs.sc.bin.h">
+      <Filter>shaders\generated\dx10</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\FitdLib\shaders\generated\dx10\ssao_blur_ps.sc.bin.h">
+      <Filter>shaders\generated\dx10</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\FitdLib\shaders\generated\dx10\ssao_ps.sc.bin.h">
+      <Filter>shaders\generated\dx10</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\FitdLib\shaders\generated\dx10\ssgi_blur_ps.sc.bin.h">
+      <Filter>shaders\generated\dx10</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\FitdLib\shaders\generated\dx10\ssgi_ps.sc.bin.h">
+      <Filter>shaders\generated\dx10</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\FitdLib\shaders\generated\dx10\textured_ps.sc.bin.h">
+      <Filter>shaders\generated\dx10</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\FitdLib\shaders\generated\dx10\ui_ps.sc.bin.h">
+      <Filter>shaders\generated\dx10</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\FitdLib\shaders\generated\dx10\ui_vs.sc.bin.h">
+      <Filter>shaders\generated\dx10</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\FitdLib\shaders\generated\dx11\background_ps.sc.bin.h">
+      <Filter>shaders\generated\dx11</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\FitdLib\shaders\generated\dx11\background_vs.sc.bin.h">
+      <Filter>shaders\generated\dx11</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\FitdLib\shaders\generated\dx11\blur_ps.sc.bin.h">
+      <Filter>shaders\generated\dx11</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\FitdLib\shaders\generated\dx11\brightpass_ps.sc.bin.h">
+      <Filter>shaders\generated\dx11</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\FitdLib\shaders\generated\dx11\composite_ps.sc.bin.h">
+      <Filter>shaders\generated\dx11</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\FitdLib\shaders\generated\dx11\flat_ps.sc.bin.h">
+      <Filter>shaders\generated\dx11</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\FitdLib\shaders\generated\dx11\flat_vs.sc.bin.h">
+      <Filter>shaders\generated\dx11</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\FitdLib\shaders\generated\dx11\hdBackground_ps.sc.bin.h">
+      <Filter>shaders\generated\dx11</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\FitdLib\shaders\generated\dx11\maskBackground_ps.sc.bin.h">
+      <Filter>shaders\generated\dx11</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\FitdLib\shaders\generated\dx11\maskBackground_vs.sc.bin.h">
+      <Filter>shaders\generated\dx11</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\FitdLib\shaders\generated\dx11\maskHDBackground_ps.sc.bin.h">
+      <Filter>shaders\generated\dx11</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\FitdLib\shaders\generated\dx11\noise_ps.sc.bin.h">
+      <Filter>shaders\generated\dx11</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\FitdLib\shaders\generated\dx11\noise_vs.sc.bin.h">
+      <Filter>shaders\generated\dx11</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\FitdLib\shaders\generated\dx11\particle_ps.sc.bin.h">
+      <Filter>shaders\generated\dx11</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\FitdLib\shaders\generated\dx11\particle_vs.sc.bin.h">
+      <Filter>shaders\generated\dx11</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\FitdLib\shaders\generated\dx11\postprocess_vs.sc.bin.h">
+      <Filter>shaders\generated\dx11</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\FitdLib\shaders\generated\dx11\ramp_ps.sc.bin.h">
+      <Filter>shaders\generated\dx11</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\FitdLib\shaders\generated\dx11\ramp_vs.sc.bin.h">
+      <Filter>shaders\generated\dx11</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\FitdLib\shaders\generated\dx11\sphere_ps.sc.bin.h">
+      <Filter>shaders\generated\dx11</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\FitdLib\shaders\generated\dx11\sphere_vs.sc.bin.h">
+      <Filter>shaders\generated\dx11</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\FitdLib\shaders\generated\dx11\ssao_blur_ps.sc.bin.h">
+      <Filter>shaders\generated\dx11</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\FitdLib\shaders\generated\dx11\ssao_ps.sc.bin.h">
+      <Filter>shaders\generated\dx11</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\FitdLib\shaders\generated\dx11\ssgi_blur_ps.sc.bin.h">
+      <Filter>shaders\generated\dx11</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\FitdLib\shaders\generated\dx11\ssgi_ps.sc.bin.h">
+      <Filter>shaders\generated\dx11</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\FitdLib\shaders\generated\dx11\textured_ps.sc.bin.h">
+      <Filter>shaders\generated\dx11</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\FitdLib\shaders\generated\dx11\ui_ps.sc.bin.h">
+      <Filter>shaders\generated\dx11</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\FitdLib\shaders\generated\dx11\ui_vs.sc.bin.h">
+      <Filter>shaders\generated\dx11</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\FitdLib\shaders\generated\essl\background_ps.sc.bin.h">
+      <Filter>shaders\generated\essl</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\FitdLib\shaders\generated\essl\background_vs.sc.bin.h">
+      <Filter>shaders\generated\essl</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\FitdLib\shaders\generated\essl\blur_ps.sc.bin.h">
+      <Filter>shaders\generated\essl</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\FitdLib\shaders\generated\essl\brightpass_ps.sc.bin.h">
+      <Filter>shaders\generated\essl</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\FitdLib\shaders\generated\essl\composite_ps.sc.bin.h">
+      <Filter>shaders\generated\essl</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\FitdLib\shaders\generated\essl\flat_ps.sc.bin.h">
+      <Filter>shaders\generated\essl</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\FitdLib\shaders\generated\essl\flat_vs.sc.bin.h">
+      <Filter>shaders\generated\essl</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\FitdLib\shaders\generated\essl\hdBackground_ps.sc.bin.h">
+      <Filter>shaders\generated\essl</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\FitdLib\shaders\generated\essl\maskBackground_ps.sc.bin.h">
+      <Filter>shaders\generated\essl</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\FitdLib\shaders\generated\essl\maskBackground_vs.sc.bin.h">
+      <Filter>shaders\generated\essl</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\FitdLib\shaders\generated\essl\maskHDBackground_ps.sc.bin.h">
+      <Filter>shaders\generated\essl</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\FitdLib\shaders\generated\essl\noise_ps.sc.bin.h">
+      <Filter>shaders\generated\essl</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\FitdLib\shaders\generated\essl\noise_vs.sc.bin.h">
+      <Filter>shaders\generated\essl</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\FitdLib\shaders\generated\essl\particle_ps.sc.bin.h">
+      <Filter>shaders\generated\essl</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\FitdLib\shaders\generated\essl\particle_vs.sc.bin.h">
+      <Filter>shaders\generated\essl</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\FitdLib\shaders\generated\essl\postprocess_vs.sc.bin.h">
+      <Filter>shaders\generated\essl</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\FitdLib\shaders\generated\essl\ramp_ps.sc.bin.h">
+      <Filter>shaders\generated\essl</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\FitdLib\shaders\generated\essl\ramp_vs.sc.bin.h">
+      <Filter>shaders\generated\essl</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\FitdLib\shaders\generated\essl\sphere_ps.sc.bin.h">
+      <Filter>shaders\generated\essl</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\FitdLib\shaders\generated\essl\sphere_vs.sc.bin.h">
+      <Filter>shaders\generated\essl</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\FitdLib\shaders\generated\essl\ssao_blur_ps.sc.bin.h">
+      <Filter>shaders\generated\essl</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\FitdLib\shaders\generated\essl\ssao_ps.sc.bin.h">
+      <Filter>shaders\generated\essl</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\FitdLib\shaders\generated\essl\ssgi_blur_ps.sc.bin.h">
+      <Filter>shaders\generated\essl</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\FitdLib\shaders\generated\essl\ssgi_ps.sc.bin.h">
+      <Filter>shaders\generated\essl</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\FitdLib\shaders\generated\essl\textured_ps.sc.bin.h">
+      <Filter>shaders\generated\essl</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\FitdLib\shaders\generated\essl\ui_ps.sc.bin.h">
+      <Filter>shaders\generated\essl</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\FitdLib\shaders\generated\essl\ui_vs.sc.bin.h">
+      <Filter>shaders\generated\essl</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\FitdLib\shaders\generated\glsl\background_ps.sc.bin.h">
+      <Filter>shaders\generated\glsl</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\FitdLib\shaders\generated\glsl\background_vs.sc.bin.h">
+      <Filter>shaders\generated\glsl</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\FitdLib\shaders\generated\glsl\blur_ps.sc.bin.h">
+      <Filter>shaders\generated\glsl</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\FitdLib\shaders\generated\glsl\brightpass_ps.sc.bin.h">
+      <Filter>shaders\generated\glsl</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\FitdLib\shaders\generated\glsl\composite_ps.sc.bin.h">
+      <Filter>shaders\generated\glsl</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\FitdLib\shaders\generated\glsl\flat_ps.sc.bin.h">
+      <Filter>shaders\generated\glsl</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\FitdLib\shaders\generated\glsl\flat_vs.sc.bin.h">
+      <Filter>shaders\generated\glsl</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\FitdLib\shaders\generated\glsl\hdBackground_ps.sc.bin.h">
+      <Filter>shaders\generated\glsl</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\FitdLib\shaders\generated\glsl\maskBackground_ps.sc.bin.h">
+      <Filter>shaders\generated\glsl</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\FitdLib\shaders\generated\glsl\maskBackground_vs.sc.bin.h">
+      <Filter>shaders\generated\glsl</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\FitdLib\shaders\generated\glsl\maskHDBackground_ps.sc.bin.h">
+      <Filter>shaders\generated\glsl</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\FitdLib\shaders\generated\glsl\noise_ps.sc.bin.h">
+      <Filter>shaders\generated\glsl</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\FitdLib\shaders\generated\glsl\noise_vs.sc.bin.h">
+      <Filter>shaders\generated\glsl</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\FitdLib\shaders\generated\glsl\particle_ps.sc.bin.h">
+      <Filter>shaders\generated\glsl</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\FitdLib\shaders\generated\glsl\particle_vs.sc.bin.h">
+      <Filter>shaders\generated\glsl</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\FitdLib\shaders\generated\glsl\postprocess_vs.sc.bin.h">
+      <Filter>shaders\generated\glsl</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\FitdLib\shaders\generated\glsl\ramp_ps.sc.bin.h">
+      <Filter>shaders\generated\glsl</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\FitdLib\shaders\generated\glsl\ramp_vs.sc.bin.h">
+      <Filter>shaders\generated\glsl</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\FitdLib\shaders\generated\glsl\sphere_ps.sc.bin.h">
+      <Filter>shaders\generated\glsl</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\FitdLib\shaders\generated\glsl\sphere_vs.sc.bin.h">
+      <Filter>shaders\generated\glsl</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\FitdLib\shaders\generated\glsl\ssao_blur_ps.sc.bin.h">
+      <Filter>shaders\generated\glsl</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\FitdLib\shaders\generated\glsl\ssao_ps.sc.bin.h">
+      <Filter>shaders\generated\glsl</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\FitdLib\shaders\generated\glsl\ssgi_blur_ps.sc.bin.h">
+      <Filter>shaders\generated\glsl</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\FitdLib\shaders\generated\glsl\ssgi_ps.sc.bin.h">
+      <Filter>shaders\generated\glsl</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\FitdLib\shaders\generated\glsl\textured_ps.sc.bin.h">
+      <Filter>shaders\generated\glsl</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\FitdLib\shaders\generated\glsl\ui_ps.sc.bin.h">
+      <Filter>shaders\generated\glsl</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\FitdLib\shaders\generated\glsl\ui_vs.sc.bin.h">
+      <Filter>shaders\generated\glsl</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\FitdLib\shaders\generated\metal\textured_ps.sc.bin.h">
+      <Filter>shaders\generated\metal</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\FitdLib\shaders\generated\spirv\background_ps.sc.bin.h">
+      <Filter>shaders\generated\spirv</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\FitdLib\shaders\generated\spirv\background_vs.sc.bin.h">
+      <Filter>shaders\generated\spirv</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\FitdLib\shaders\generated\spirv\blur_ps.sc.bin.h">
+      <Filter>shaders\generated\spirv</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\FitdLib\shaders\generated\spirv\brightpass_ps.sc.bin.h">
+      <Filter>shaders\generated\spirv</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\FitdLib\shaders\generated\spirv\composite_ps.sc.bin.h">
+      <Filter>shaders\generated\spirv</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\FitdLib\shaders\generated\spirv\flat_ps.sc.bin.h">
+      <Filter>shaders\generated\spirv</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\FitdLib\shaders\generated\spirv\flat_vs.sc.bin.h">
+      <Filter>shaders\generated\spirv</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\FitdLib\shaders\generated\spirv\hdBackground_ps.sc.bin.h">
+      <Filter>shaders\generated\spirv</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\FitdLib\shaders\generated\spirv\maskBackground_ps.sc.bin.h">
+      <Filter>shaders\generated\spirv</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\FitdLib\shaders\generated\spirv\maskBackground_vs.sc.bin.h">
+      <Filter>shaders\generated\spirv</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\FitdLib\shaders\generated\spirv\maskHDBackground_ps.sc.bin.h">
+      <Filter>shaders\generated\spirv</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\FitdLib\shaders\generated\spirv\noise_ps.sc.bin.h">
+      <Filter>shaders\generated\spirv</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\FitdLib\shaders\generated\spirv\noise_vs.sc.bin.h">
+      <Filter>shaders\generated\spirv</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\FitdLib\shaders\generated\spirv\particle_ps.sc.bin.h">
+      <Filter>shaders\generated\spirv</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\FitdLib\shaders\generated\spirv\particle_vs.sc.bin.h">
+      <Filter>shaders\generated\spirv</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\FitdLib\shaders\generated\spirv\postprocess_vs.sc.bin.h">
+      <Filter>shaders\generated\spirv</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\FitdLib\shaders\generated\spirv\ramp_ps.sc.bin.h">
+      <Filter>shaders\generated\spirv</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\FitdLib\shaders\generated\spirv\ramp_vs.sc.bin.h">
+      <Filter>shaders\generated\spirv</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\FitdLib\shaders\generated\spirv\sphere_ps.sc.bin.h">
+      <Filter>shaders\generated\spirv</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\FitdLib\shaders\generated\spirv\sphere_vs.sc.bin.h">
+      <Filter>shaders\generated\spirv</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\FitdLib\shaders\generated\spirv\ssao_blur_ps.sc.bin.h">
+      <Filter>shaders\generated\spirv</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\FitdLib\shaders\generated\spirv\ssao_ps.sc.bin.h">
+      <Filter>shaders\generated\spirv</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\FitdLib\shaders\generated\spirv\ssgi_blur_ps.sc.bin.h">
+      <Filter>shaders\generated\spirv</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\FitdLib\shaders\generated\spirv\ssgi_ps.sc.bin.h">
+      <Filter>shaders\generated\spirv</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\FitdLib\shaders\generated\spirv\textured_ps.sc.bin.h">
+      <Filter>shaders\generated\spirv</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\FitdLib\shaders\generated\spirv\ui_ps.sc.bin.h">
+      <Filter>shaders\generated\spirv</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\FitdLib\shaders\generated\spirv\ui_vs.sc.bin.h">
+      <Filter>shaders\generated\spirv</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\FitdLib\sprite.h" />
+    <ClInclude Include="D:\FITD\FitdLib\startupMenu.h" />
+    <ClInclude Include="D:\FITD\FitdLib\systemMenu.h" />
+    <ClInclude Include="D:\FITD\FitdLib\tatou.h" />
+    <ClInclude Include="D:\FITD\FitdLib\threadCode.h" />
+    <ClInclude Include="D:\FITD\FitdLib\track.h" />
+    <ClInclude Include="D:\FITD\FitdLib\triangle.h" />
+    <ClInclude Include="D:\FITD\FitdLib\unpack.h" />
+    <ClInclude Include="D:\FITD\FitdLib\updateChecker.h" />
+    <ClInclude Include="D:\FITD\FitdLib\vars.h" />
+    <ClInclude Include="D:\FITD\FitdLib\version.h" />
+    <ClInclude Include="D:\FITD\FitdLib\videoMode.h" />
+    <ClInclude Include="D:\FITD\FitdLib\vocDecoder.h" />
+    <ClInclude Include="D:\FITD\FitdLib\zconf.h" />
+    <ClInclude Include="D:\FITD\FitdLib\zlib.h" />
+    <ClInclude Include="D:\FITD\FitdLib\zv.h" />
+    <ClInclude Include="D:\FITD\ThirdParty\imgui\imgui.h">
+      <Filter>..\ThirdParty\imgui</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="D:\FITD\FitdLib\shaders\background_ps.sc">
+      <Filter>shaders</Filter>
+    </CustomBuild>
+    <CustomBuild Include="D:\FITD\FitdLib\shaders\background_vs.sc">
+      <Filter>shaders</Filter>
+    </CustomBuild>
+    <CustomBuild Include="D:\FITD\FitdLib\shaders\blur_ps.sc">
+      <Filter>shaders</Filter>
+    </CustomBuild>
+    <CustomBuild Include="D:\FITD\FitdLib\shaders\brightpass_ps.sc">
+      <Filter>shaders</Filter>
+    </CustomBuild>
+    <CustomBuild Include="D:\FITD\FitdLib\shaders\composite_ps.sc">
+      <Filter>shaders</Filter>
+    </CustomBuild>
+    <CustomBuild Include="D:\FITD\FitdLib\shaders\flat_ps.sc">
+      <Filter>shaders</Filter>
+    </CustomBuild>
+    <CustomBuild Include="D:\FITD\FitdLib\shaders\flat_vs.sc">
+      <Filter>shaders</Filter>
+    </CustomBuild>
+    <CustomBuild Include="D:\FITD\FitdLib\shaders\hdBackground_ps.sc">
+      <Filter>shaders</Filter>
+    </CustomBuild>
+    <CustomBuild Include="D:\FITD\FitdLib\shaders\maskBackground_ps.sc">
+      <Filter>shaders</Filter>
+    </CustomBuild>
+    <CustomBuild Include="D:\FITD\FitdLib\shaders\maskBackground_vs.sc">
+      <Filter>shaders</Filter>
+    </CustomBuild>
+    <CustomBuild Include="D:\FITD\FitdLib\shaders\maskHDBackground_ps.sc">
+      <Filter>shaders</Filter>
+    </CustomBuild>
+    <CustomBuild Include="D:\FITD\FitdLib\shaders\noise_ps.sc">
+      <Filter>shaders</Filter>
+    </CustomBuild>
+    <CustomBuild Include="D:\FITD\FitdLib\shaders\noise_vs.sc">
+      <Filter>shaders</Filter>
+    </CustomBuild>
+    <CustomBuild Include="D:\FITD\FitdLib\shaders\particle_ps.sc">
+      <Filter>shaders</Filter>
+    </CustomBuild>
+    <CustomBuild Include="D:\FITD\FitdLib\shaders\particle_vs.sc">
+      <Filter>shaders</Filter>
+    </CustomBuild>
+    <CustomBuild Include="D:\FITD\FitdLib\shaders\postprocess_vs.sc">
+      <Filter>shaders</Filter>
+    </CustomBuild>
+    <CustomBuild Include="D:\FITD\FitdLib\shaders\ramp_ps.sc">
+      <Filter>shaders</Filter>
+    </CustomBuild>
+    <CustomBuild Include="D:\FITD\FitdLib\shaders\ramp_vs.sc">
+      <Filter>shaders</Filter>
+    </CustomBuild>
+    <CustomBuild Include="D:\FITD\FitdLib\shaders\sphere_ps.sc">
+      <Filter>shaders</Filter>
+    </CustomBuild>
+    <CustomBuild Include="D:\FITD\FitdLib\shaders\sphere_vs.sc">
+      <Filter>shaders</Filter>
+    </CustomBuild>
+    <CustomBuild Include="D:\FITD\FitdLib\shaders\ssao_blur_ps.sc">
+      <Filter>shaders</Filter>
+    </CustomBuild>
+    <CustomBuild Include="D:\FITD\FitdLib\shaders\ssao_ps.sc">
+      <Filter>shaders</Filter>
+    </CustomBuild>
+    <CustomBuild Include="D:\FITD\FitdLib\shaders\ssgi_blur_ps.sc">
+      <Filter>shaders</Filter>
+    </CustomBuild>
+    <CustomBuild Include="D:\FITD\FitdLib\shaders\ssgi_ps.sc">
+      <Filter>shaders</Filter>
+    </CustomBuild>
+    <CustomBuild Include="D:\FITD\FitdLib\shaders\textured_ps.sc">
+      <Filter>shaders</Filter>
+    </CustomBuild>
+    <CustomBuild Include="D:\FITD\FitdLib\shaders\ui_ps.sc">
+      <Filter>shaders</Filter>
+    </CustomBuild>
+    <CustomBuild Include="D:\FITD\FitdLib\shaders\ui_vs.sc">
+      <Filter>shaders</Filter>
+    </CustomBuild>
+    <CustomBuild Include="D:\FITD\FitdLib\CMakeLists.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="D:\FITD\FitdLib\shaders\ui.varying.def.sc">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="D:\FITD\FitdLib\shaders\background.varying.def.sc">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="D:\FITD\FitdLib\shaders\maskBackground.varying.def.sc">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="D:\FITD\FitdLib\shaders\flat.varying.def.sc">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="D:\FITD\FitdLib\shaders\noise.varying.def.sc">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="D:\FITD\FitdLib\shaders\ramp.varying.def.sc">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="D:\FITD\FitdLib\shaders\sphere.varying.def.sc">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="D:\FITD\FitdLib\shaders\postprocess.varying.def.sc">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="D:\FITD\FitdLib\shaders\particle.varying.def.sc">
+      <Filter>shaders</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="..">
+      <UniqueIdentifier>{D72BFBC1-B930-330E-94CD-BC86EE5F100C}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="..\ThirdParty">
+      <UniqueIdentifier>{DE10E4BA-0C1C-3F18-8C80-26847C90414B}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="..\ThirdParty\imgui">
+      <UniqueIdentifier>{15516F8A-09E1-3B4D-8DD5-C0733C9F621B}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="..\ThirdParty\imgui\backends">
+      <UniqueIdentifier>{37A6B7AE-0B23-3DAE-9764-D4EF8D4AA2DF}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="LockedFiles">
+      <UniqueIdentifier>{6AD418C3-208A-3753-B0AA-B88A70740E16}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="embedded">
+      <UniqueIdentifier>{E3D152F9-D919-3FD2-BB8A-5EB29DA9A26C}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="shaders">
+      <UniqueIdentifier>{01F0AA33-AA35-30C2-895B-76BA2B260AA0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="shaders\generated">
+      <UniqueIdentifier>{70938D19-5E7B-394D-936D-559FA1C89D8B}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="shaders\generated\dx10">
+      <UniqueIdentifier>{0F4ABD66-4D31-3E1F-8036-20181DF1245C}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="shaders\generated\dx11">
+      <UniqueIdentifier>{FF929CA4-07DC-395E-ABE0-4F006B8C2D8E}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="shaders\generated\essl">
+      <UniqueIdentifier>{E1444A9F-4492-35BF-99E1-7FC91F18E27C}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="shaders\generated\glsl">
+      <UniqueIdentifier>{0F5A8F77-F822-322B-A2D9-9CF0143582FA}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="shaders\generated\metal">
+      <UniqueIdentifier>{0002A6CB-39FD-3D2D-B42E-2D910077C831}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="shaders\generated\spirv">
+      <UniqueIdentifier>{4E0AAE0F-43E7-3990-9191-5C7121EEB88A}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

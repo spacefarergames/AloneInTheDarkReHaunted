@@ -1,0 +1,412 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="18.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\examples\common\debugdraw\debugdraw.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\examples\common\entry\cmd.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\examples\common\entry\dialog.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\examples\common\entry\entry.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\examples\common\entry\entry_android.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\examples\common\entry\entry_glfw.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\examples\common\entry\entry_html5.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\examples\common\entry\entry_noop.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\examples\common\entry\entry_sdl.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\examples\common\entry\entry_windows.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\examples\common\entry\entry_x11.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\examples\common\entry\input.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\examples\common\font\font_manager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\examples\common\font\text_buffer_manager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\examples\common\font\text_metrics.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\examples\common\font\utf8.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\examples\common\imgui\imgui.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\examples\common\nanovg\nanovg.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\examples\common\nanovg\nanovg_bgfx.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\examples\common\ps\particle_system.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\examples\common\bgfx_utils.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\examples\common\camera.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\examples\common\cube_atlas.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\examples\common\example-glue.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\dear-imgui\imgui.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\dear-imgui\imgui_demo.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\dear-imgui\imgui_draw.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\dear-imgui\imgui_tables.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\dear-imgui\imgui_widgets.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\meshoptimizer\src\allocator.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\meshoptimizer\src\clusterizer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\meshoptimizer\src\indexanalyzer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\meshoptimizer\src\indexcodec.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\meshoptimizer\src\indexgenerator.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\meshoptimizer\src\overdrawoptimizer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\meshoptimizer\src\partition.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\meshoptimizer\src\quantization.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\meshoptimizer\src\rasterizer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\meshoptimizer\src\simplifier.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\meshoptimizer\src\spatialorder.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\meshoptimizer\src\stripifier.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\meshoptimizer\src\vcacheoptimizer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\meshoptimizer\src\vertexcodec.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\meshoptimizer\src\vertexfilter.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\meshoptimizer\src\vfetchoptimizer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\examples\common\debugdraw\debugdraw.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\examples\common\debugdraw\fs_debugdraw_fill.bin.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\examples\common\debugdraw\fs_debugdraw_fill_lit.bin.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\examples\common\debugdraw\fs_debugdraw_fill_texture.bin.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\examples\common\debugdraw\fs_debugdraw_lines.bin.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\examples\common\debugdraw\fs_debugdraw_lines_stipple.bin.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\examples\common\debugdraw\vs_debugdraw_fill.bin.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\examples\common\debugdraw\vs_debugdraw_fill_lit.bin.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\examples\common\debugdraw\vs_debugdraw_fill_lit_mesh.bin.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\examples\common\debugdraw\vs_debugdraw_fill_mesh.bin.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\examples\common\debugdraw\vs_debugdraw_fill_texture.bin.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\examples\common\debugdraw\vs_debugdraw_lines.bin.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\examples\common\debugdraw\vs_debugdraw_lines_stipple.bin.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\examples\common\entry\cmd.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\examples\common\entry\dbg.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\examples\common\entry\dialog.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\examples\common\entry\entry.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\examples\common\entry\entry_p.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\examples\common\entry\input.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\examples\common\font\font_manager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\examples\common\font\fs_font_basic.bin.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\examples\common\font\fs_font_distance_field.bin.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\examples\common\font\fs_font_distance_field_drop_shadow.bin.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\examples\common\font\fs_font_distance_field_drop_shadow_image.bin.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\examples\common\font\fs_font_distance_field_outline.bin.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\examples\common\font\fs_font_distance_field_outline_drop_shadow_image.bin.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\examples\common\font\fs_font_distance_field_outline_image.bin.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\examples\common\font\fs_font_distance_field_subpixel.bin.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\examples\common\font\text_buffer_manager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\examples\common\font\text_metrics.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\examples\common\font\utf8.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\examples\common\font\vs_font_basic.bin.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\examples\common\font\vs_font_distance_field.bin.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\examples\common\font\vs_font_distance_field_drop_shadow.bin.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\examples\common\font\vs_font_distance_field_drop_shadow_image.bin.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\examples\common\font\vs_font_distance_field_outline.bin.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\examples\common\font\vs_font_distance_field_outline_drop_shadow_image.bin.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\examples\common\font\vs_font_distance_field_outline_image.bin.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\examples\common\font\vs_font_distance_field_subpixel.bin.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\examples\common\imgui\droidsans.ttf.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\examples\common\imgui\fs_imgui_image.bin.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\examples\common\imgui\fs_ocornut_imgui.bin.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\examples\common\imgui\icons_font_awesome.ttf.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\examples\common\imgui\icons_kenney.ttf.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\examples\common\imgui\imgui.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\examples\common\imgui\roboto_regular.ttf.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\examples\common\imgui\robotomono_regular.ttf.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\examples\common\imgui\vs_imgui_image.bin.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\examples\common\imgui\vs_ocornut_imgui.bin.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\examples\common\nanovg\fontstash.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\examples\common\nanovg\fs_nanovg_fill.bin.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\examples\common\nanovg\nanovg.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\examples\common\nanovg\nanovg_bgfx.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\examples\common\nanovg\vs_nanovg_fill.bin.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\examples\common\ps\fs_particle.bin.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\examples\common\ps\particle_system.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\examples\common\ps\vs_particle.bin.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\examples\common\aviwriter.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\examples\common\bgfx_utils.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\examples\common\camera.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\examples\common\common.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\examples\common\cube_atlas.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\examples\common\packrect.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\dear-imgui\imconfig.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\dear-imgui\imgui.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\dear-imgui\imgui_internal.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\dear-imgui\imgui_user.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\dear-imgui\imgui_user.inl">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\dear-imgui\imstb_rectpack.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\dear-imgui\imstb_textedit.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\dear-imgui\imstb_truetype.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\meshoptimizer\src\meshoptimizer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\CMakeLists.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\examples\common\debugdraw\fs_debugdraw_fill.sc" />
+    <None Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\examples\common\debugdraw\fs_debugdraw_fill_lit.sc" />
+    <None Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\examples\common\debugdraw\fs_debugdraw_fill_texture.sc" />
+    <None Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\examples\common\debugdraw\fs_debugdraw_lines.sc" />
+    <None Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\examples\common\debugdraw\fs_debugdraw_lines_stipple.sc" />
+    <None Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\examples\common\debugdraw\varying.def.sc" />
+    <None Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\examples\common\debugdraw\vs_debugdraw_fill.sc" />
+    <None Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\examples\common\debugdraw\vs_debugdraw_fill_lit.sc" />
+    <None Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\examples\common\debugdraw\vs_debugdraw_fill_lit_mesh.sc" />
+    <None Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\examples\common\debugdraw\vs_debugdraw_fill_mesh.sc" />
+    <None Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\examples\common\debugdraw\vs_debugdraw_fill_texture.sc" />
+    <None Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\examples\common\debugdraw\vs_debugdraw_lines.sc" />
+    <None Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\examples\common\debugdraw\vs_debugdraw_lines_stipple.sc" />
+    <None Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\examples\common\font\fs_font_basic.sc" />
+    <None Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\examples\common\font\fs_font_distance_field.sc" />
+    <None Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\examples\common\font\fs_font_distance_field_drop_shadow.sc" />
+    <None Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\examples\common\font\fs_font_distance_field_drop_shadow_image.sc" />
+    <None Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\examples\common\font\fs_font_distance_field_outline.sc" />
+    <None Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\examples\common\font\fs_font_distance_field_outline_drop_shadow_image.sc" />
+    <None Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\examples\common\font\fs_font_distance_field_outline_image.sc" />
+    <None Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\examples\common\font\fs_font_distance_field_subpixel.sc" />
+    <None Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\examples\common\font\varying.def.sc" />
+    <None Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\examples\common\font\vs_font_basic.sc" />
+    <None Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\examples\common\font\vs_font_distance_field.sc" />
+    <None Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\examples\common\font\vs_font_distance_field_drop_shadow.sc" />
+    <None Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\examples\common\font\vs_font_distance_field_drop_shadow_image.sc" />
+    <None Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\examples\common\font\vs_font_distance_field_outline.sc" />
+    <None Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\examples\common\font\vs_font_distance_field_outline_drop_shadow_image.sc" />
+    <None Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\examples\common\font\vs_font_distance_field_outline_image.sc" />
+    <None Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\examples\common\font\vs_font_distance_field_subpixel.sc" />
+    <None Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\examples\common\imgui\fs_imgui_image.sc" />
+    <None Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\examples\common\imgui\fs_ocornut_imgui.sc" />
+    <None Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\examples\common\imgui\varying.def.sc" />
+    <None Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\examples\common\imgui\vs_imgui_image.sc" />
+    <None Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\examples\common\imgui\vs_ocornut_imgui.sc" />
+    <None Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\examples\common\nanovg\fs_nanovg_fill.sc" />
+    <None Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\examples\common\nanovg\varying.def.sc" />
+    <None Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\examples\common\nanovg\vs_nanovg_fill.sc" />
+    <None Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\examples\common\ps\fs_particle.sc" />
+    <None Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\examples\common\ps\varying.def.sc" />
+    <None Include="D:\FITD\ThirdParty\bgfx.cmake\bgfx\examples\common\ps\vs_particle.sc" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{A63ADDA3-3538-33CD-A706-EAD2E372C78A}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{69D1BAD0-6E13-379A-89C6-0965493FCDD5}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

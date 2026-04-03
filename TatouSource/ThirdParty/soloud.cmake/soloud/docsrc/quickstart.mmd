@@ -1,0 +1,154 @@
+## Quick Start
+
+This quick start is for c++ developers. If you're using SoLoud with
+some other environment SoLoud supports, you may want to skip this and
+look at the chapter that covers your environment (such as Python).
+
+#### Download SoLoud
+
+
+First, you need to download SoLoud sources. You can find the downloads
+on the <http://soloud-audio.com/downloads.html> page.
+
+#### Add SoLoud to your project
+
+
+There's a few ways to include SoLoud to your project. 
+
+You can, for example, include all the SoLoud source files to your project,
+define one or more of the backend defines (see table below), and you're good
+to go.
+
+A bit more structured way is to use GENie / premake4 to create the build
+files, and build a static library for your compiler / environment.
+
+Note that the Windows DLL only exports the  "C" API, which may not 
+be what you want - it's primarily meant for foreign interface use.
+
+If you're including the sources directly to your project, You'll need the 
+core files, at least one backend, and at least one audio source. For 
+example, for wav file playing, you'll need the files from
+audiosource/wav. 
+
+The current list of back-ends is:
+
+Preprocessor macro  Description
+----                ------------
+WITH_MINIAUDIO      MiniAudio cross-platform audio backend
+WITH_SDL            SDL or SDL2 via runtime dyndll linking
+WITH_SDL1           SDL1 via runtime dyndll linking
+WITH_SDL2           SDL2 via runtime dyndll linking
+WITH_SDL_STATIC     SDL via normal static linking
+WITH_SDL2           SDL or SDL2 via runtime dyndll linking
+WITH_SDL2_STATIC    SDL2 via normal static linking
+WITH_PORTAUDIO      Portaudio via runtime dyndll linking
+WITH_OPENAL         OpenAL via runtime dyndll linking (high latency)
+WITH_XAUDIO2        XAudio2 via normal linking
+WITH_WINMM          Windows multimedia 
+WITH_WASAPI         WASAPI (experimental)
+WITH_OSS            Linux OSS
+WITH_ALSA           Linux ALSA
+WITH_OPENSLES       OpenSL ES
+WITH_COREAUDIO		OSX CoreAudio
+WITH_VITA_HOMEBREW	Sony Vita homebrew backend
+WITH_JACK           Linux JACK
+WITH_NOSOUND        Nosound audio device
+WITH_NULL           Special use "no backend"
+
+The backend with no audio device may seem odd, but that can be used to
+call SoLoud's mix function manually, which can be useful in some cases
+such as LibRetro.
+
+#### Include files
+
+
+In order to use a certain feature of SoLoud, you need to include its
+header file. You might have, for instance:
+
+    #include "soloud.h"
+    #include "soloud_wav.h"
+
+#### Variables
+
+
+You need at least the SoLoud engine core, and one or more of the audio
+source variables. If you're using five different sound effect wav files,
+you need five SoLoud::Wav objects. You can play one object any number of
+times, even on top of itself.
+
+Where to place these is up to you. Globals work, as do allocation from
+heap, including in a class as members, etc. Stack is probably a bad idea,
+but I'm not stopping you.
+
+    SoLoud::Soloud gSoloud; // SoLoud engine
+    SoLoud::Wav gWave;      // One wave file
+
+#### Initialize SoLoud
+
+
+In your application, once you have your framework up (for instance after your 
+SDL\_Init call), include a call to initialize SoLoud.
+
+    gSoloud.init(); // Initialize SoLoud
+    
+The call has a bunch of optional parameters if you'd rather pick the replay
+back-end and its parameters yourself; the default should work for most cases.
+
+#### Set up sound sources
+
+
+This step varies from one audio source to another, but basically you'll
+load your wave files here.
+
+    gWave.load("pew_pew.wav"); // Load a wave
+
+\pagebreak
+
+#### Play sounds
+
+
+Now you're ready to play the sounds. Place playing commands wherever you
+need sound to be played.
+
+    gSoloud.play(gWave); // Play the wave
+
+Note that you can play the same sound several times, and it doesn't cut
+itself off (but if that's what you want, there's an option for that too).
+
+#### Take control of the sound
+
+
+You can adjust various things about the sound you're playing if you take
+the handle.
+
+    int x = gSoloud.play(gWave); // Grab the handle
+    gSoloud.setPan(x, -0.2f);    // Use handle to adjust panning
+
+Read the soloud.h header file (or this documentation) for further things
+you can do.
+
+#### Cleanup
+
+
+After you've done, remember to clean up. If you don't, the audio thread
+may do stupid things while the application is shutting down.
+
+    gSoloud.deinit(); // Clean up!
+
+#### Enjoy
+
+And you're done!
+
+Some useful notes:
+
+Most calls to SoLoud also return some kind of return code which may
+help you diagnose potential problems. When loading wave files, for instance,
+you may want to check if the file is actually found.
+
+Many of the calls also have additional optional parameters, and there are
+also alternate calls to do (almost) the same thing (Wav::load() and 
+WavStream::loadToMem() as an example).
+
+Finally, SoLoud has been designed so that you can ignore most of the return values.
+If there's an error state, such as wav file failing to load, further calls,
+like trying to play the wav file that didn't load, will simply do nothing.
