@@ -1,4 +1,4 @@
-<img width="1536" height="1024" alt="RemasterAITDBoxWidescreen" src="https://github.com/user-attachments/assets/e5c54cb5-e24d-46ff-8ba0-e055401b0ec6" />
+![573467422-e5c54cb5-e24d-46ff-8ba0-e055401b0ec6](https://github.com/user-attachments/assets/16cd0d2e-4f16-42fa-9fce-5bdeb2f64a2f)
 
 # Alone In The Dark: Re-Haunted
 
