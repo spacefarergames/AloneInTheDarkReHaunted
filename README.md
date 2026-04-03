@@ -24,7 +24,7 @@ AITD-R (also known as *Alone In The Dark Re-Haunted*) lets you play the original
 |------|-------|-----|--------|
 | Alone in the Dark 1 | [Store page](https://store.steampowered.com/app/548090/Alone_in_the_Dark_1/) | [Trilogy](https://www.gog.com/en/game/alone_in_the_dark_the_trilogy_123) | ✅ Completable
 
-Future Rehaunted projects. AKA Jack Is Back (Again!) and AITD3 are coming son.
+Future Rehaunted projects. AKA Jack Is Back (Again!) and AITD3 are coming soon.
 
 ---
 
