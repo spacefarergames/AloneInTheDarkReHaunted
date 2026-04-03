@@ -232,8 +232,12 @@ This project is licensed under the **GNU General Public License v2** — see the
 
 The original game data files are **not** included and must be obtained separately (e.g., from Steam or GOG).
 
-## Steam Box Art
+## Steam Assets
+Box Art
 <img width="1024" height="1536" alt="image" src="https://github.com/user-attachments/assets/62b94c3b-7fd4-4b7d-8f81-f504382f798d" />
+Logo
+<img width="1536" height="1024" alt="Copilot_20260403_111155" src="https://github.com/user-attachments/assets/ad5073b8-d9b0-4d57-a2a8-13f63bf98bfc" />
+
 
 
 
