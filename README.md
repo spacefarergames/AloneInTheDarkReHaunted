@@ -235,9 +235,11 @@ The original game data files are **not** included and must be obtained separatel
 
 ## Steam Assets
 Box Art
-<img width="1024" height="1536" alt="image" src="https://github.com/user-attachments/assets/62b94c3b-7fd4-4b7d-8f81-f504382f798d" />
+![573480799-62b94c3b-7fd4-4b7d-8f81-f504382f798d](https://github.com/user-attachments/assets/e01731c3-5f6a-42a8-9330-227242e1d919)
+
 Logo
-<img width="1536" height="1024" alt="Copilot_20260403_111155" src="https://github.com/user-attachments/assets/ad5073b8-d9b0-4d57-a2a8-13f63bf98bfc" />
+<img width="1536" height="1024" alt="Copilot_20260403_111155" src="https://github.com/user-attachments/assets/9277959d-af64-4c71-9bae-70007b945838" />
+
 
 
 
