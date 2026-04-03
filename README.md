@@ -233,6 +233,7 @@ This project is licensed under the **GNU General Public License v2** — see the
 The original game data files are **not** included and must be obtained separately (e.g., from Steam or GOG).
 
 ## Steam Box Art
-<img width="1024" height="1536" alt="image" src="https://github.com/user-attachments/assets/3ea8b4ba-a9b0-438d-9006-758be44439e3" />
+<img width="1024" height="1536" alt="image" src="https://github.com/user-attachments/assets/62b94c3b-7fd4-4b7d-8f81-f504382f798d" />
+
 
 
