@@ -63,6 +63,7 @@ For full multi-platform build instructions see **[BUILDING.md](BUILDING.md)**.
 2. The engine auto-detects which game is installed based on the data files present.
 3. For AITD1: after the Infogrames logo and armadillo animation, select your character — **Edward Carnby** (detective) or **Emily Hartwood** (heiress).
 4. The game begins in the attic of Derceto Manor.
+5. Copy the built DOSBox.exe into your Alone In The Dark Steam/GOG game folder alongside Tatou.exe. When Steam launches "DOSBox.exe", it will start the FITD engine instead.
 
 ### Gameplay Basics
 
