@@ -1,4 +1,4 @@
-![573467422-e5c54cb5-e24d-46ff-8ba0-e055401b0ec6](https://github.com/user-attachments/assets/16cd0d2e-4f16-42fa-9fce-5bdeb2f64a2f)
+<img width="1536" height="1024" alt="BCO b91ab279-5d06-4e0e-9661-41d0371e3ac4" src="https://github.com/user-attachments/assets/cbc94105-e024-44f7-8e94-e9ddc208a15c" />
 
 # Alone In The Dark: Re-Haunted
 
