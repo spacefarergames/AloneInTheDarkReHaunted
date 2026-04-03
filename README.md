@@ -65,6 +65,9 @@ For full multi-platform build instructions see **[BUILDING.md](BUILDING.md)**.
 4. The game begins in the attic of Derceto Manor.
 5. Copy the built DOSBox.exe into your Alone In The Dark Steam/GOG game folder alongside Tatou.exe. When Steam launches "DOSBox.exe", it will start the FITD engine instead.
 
+### Automatic Installation
+Beginning with Version 2.0, Rehaunted will automatically find and copy over the original game files if installed from Steam, GOG or the CD version is in the drive. If found, the game will copy the files and you will be good to go. In the event it doesn't copy them into the game directory. As an extra bonus, it will copy itself over afterwards to make it easy to launch from Steam / GOG. The Steam Overlay will then work too!
+
 ### Gameplay Basics
 
 *Alone in the Dark* is a survival-horror adventure. You explore a haunted mansion, solve puzzles, and fight (or flee from) supernatural enemies.
