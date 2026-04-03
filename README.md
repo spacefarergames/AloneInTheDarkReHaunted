@@ -16,9 +16,9 @@ AITD-R (also known as *Alone In The Dark Re-Haunted*) lets you play the original
 ---
 
 ## Screenshots
-<img width="1386" height="884" alt="image" src="https://github.com/user-attachments/assets/7d49eb5a-8d31-4474-a939-ff9876fdc9df" />
-<img width="982" height="706" alt="image" src="https://github.com/user-attachments/assets/b0206b5f-8026-46d0-89a6-b5dc6b7ba73e" />
----
+![573227923-7d49eb5a-8d31-4474-a939-ff9876fdc9df](https://github.com/user-attachments/assets/63ea6028-5b75-4003-9db5-a0e3c9040d87)
+
+![573228488-b0206b5f-8026-46d0-89a6-b5dc6b7ba73e](https://github.com/user-attachments/assets/e7fa702a-6d17-4ce2-afc4-573c3be5340e)
 
 ## Supported Games
 
