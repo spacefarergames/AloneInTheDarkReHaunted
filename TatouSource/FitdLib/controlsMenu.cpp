@@ -75,6 +75,12 @@ void initDefaultKeyBindings()
 	g_keyBindings[ACTION_QUICK_TURN_RIGHT].gamepadButton = SDL_GAMEPAD_BUTTON_RIGHT_SHOULDER;
 	g_keyBindings[ACTION_QUICK_TURN_RIGHT].gamepadAxis = SDL_GAMEPAD_AXIS_COUNT;
 	g_keyBindings[ACTION_QUICK_TURN_RIGHT].gamepadAxisPositive = false;
+
+	// Run (Left Shift / Left Stick Press L3)
+	g_keyBindings[ACTION_RUN].keyboard = SDL_SCANCODE_LSHIFT;
+	g_keyBindings[ACTION_RUN].gamepadButton = SDL_GAMEPAD_BUTTON_LEFT_STICK;
+	g_keyBindings[ACTION_RUN].gamepadAxis = SDL_GAMEPAD_AXIS_COUNT;
+	g_keyBindings[ACTION_RUN].gamepadAxisPositive = false;
 }
 
 const KeyBinding& getKeyBinding(KeyAction action)
@@ -105,7 +111,10 @@ const char* getActionName(KeyAction action)
 	case ACTION_ACTION:  return "Action";
 	case ACTION_CONFIRM: return "Confirm";
 	case ACTION_CANCEL:  return "Cancel";
-	default:             return "Quick Turn";
+	case ACTION_QUICK_TURN_LEFT:  return "Quick Turn Left";
+	case ACTION_QUICK_TURN_RIGHT: return "Quick Turn Right";
+	case ACTION_RUN:     return "Run";
+	default:             return "Unknown";
 	}
 }
 

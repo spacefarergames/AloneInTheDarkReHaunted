@@ -99,3 +99,14 @@ ModelAtlasData* getModelAtlas(int bodyNum);
 
 // Clear all cached atlas data (call on shutdown).
 void clearModelAtlases();
+
+// Dump a 4-way texture atlas (front/back/left/right quadrants) for the Tatou armadillo model.
+// The output file is written to <homePath>/atlases/tatou_<hqrName>_<bodyNum>.png
+// Returns true on success.
+bool dumpTatouAtlas(int bodyNum, sBody* pBody, const std::string& hqrName);
+
+// Try to load a 4-way Tatou atlas for the given body.
+// Looks for <homePath>/atlases/tatou_<hqrName>_<bodyNum>.png
+// If found, creates a bgfx texture and computes 4-way UVs, stores in cache.
+// Returns pointer to cached atlas data, or nullptr if no atlas file exists.
+ModelAtlasData* loadTatouAtlas(int bodyNum, sBody* pBody, const std::string& hqrName);

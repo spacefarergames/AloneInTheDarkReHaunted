@@ -1350,3 +1350,297 @@ void clearModelAtlases()
     }
     s_atlasCache.clear();
 }
+
+///////////////////////////////////////////////////////////////////////////////
+// Tatou (armadillo) 4-way atlas: front / back / left / right quadrants
+///////////////////////////////////////////////////////////////////////////////
+
+// Get Tatou atlas file path
+static std::string getTatouAtlasPath(const std::string& hqrName, int bodyNum)
+{
+    char buf[128];
+    snprintf(buf, sizeof(buf), "tatou_%s_%03d.png", hqrName.c_str(), bodyNum);
+    return getAtlasFolder() + buf;
+}
+
+// 4-way projection parameters for the Tatou atlas
+struct TatouProjectionParams
+{
+    // Front/back view (X,Y) ranges
+    float padMinX, padMinY;
+    float rangeX, rangeY;
+    // Left/right view (Z,Y) ranges (Y shared with front/back)
+    float padMinZ;
+    float rangeZ;
+    int atlasW, atlasH;
+};
+
+static TatouProjectionParams computeTatouProjectionParams(const std::vector<point3dStruct>& verts)
+{
+    TatouProjectionParams p = {};
+    float minX = 1e30f, maxX = -1e30f;
+    float minY = 1e30f, maxY = -1e30f;
+    float minZ = 1e30f, maxZ = -1e30f;
+    for (auto& v : verts)
+    {
+        float fx = (float)v.x, fy = (float)v.y, fz = (float)v.z;
+        if (fx < minX) minX = fx; if (fx > maxX) maxX = fx;
+        if (fy < minY) minY = fy; if (fy > maxY) maxY = fy;
+        if (fz < minZ) minZ = fz; if (fz > maxZ) maxZ = fz;
+    }
+
+    float rawRangeX = maxX - minX; if (rawRangeX < 1.f) rawRangeX = 1.f;
+    float rawRangeY = maxY - minY; if (rawRangeY < 1.f) rawRangeY = 1.f;
+    float rawRangeZ = maxZ - minZ; if (rawRangeZ < 1.f) rawRangeZ = 1.f;
+
+    float padX = rawRangeX * 0.05f;
+    float padY = rawRangeY * 0.05f;
+    float padZ = rawRangeZ * 0.05f;
+
+    p.padMinX = minX - padX;  p.rangeX = rawRangeX + 2.f * padX;
+    p.padMinY = minY - padY;  p.rangeY = rawRangeY + 2.f * padY;
+    p.padMinZ = minZ - padZ;  p.rangeZ = rawRangeZ + 2.f * padZ;
+
+    // Atlas is 2x2 quadrants. Each quadrant gets halfW x halfH.
+    auto nextPow2 = [](int v) -> int {
+        v--; v |= v >> 1; v |= v >> 2; v |= v >> 4; v |= v >> 8; v |= v >> 16;
+        return v + 1;
+    };
+    int halfW = 512;
+    // Use the largest horizontal range (X or Z) to determine aspect
+    float maxHorizRange = (std::max)(p.rangeX, p.rangeZ);
+    int baseH = (int)ceilf((float)halfW * (p.rangeY / maxHorizRange));
+    p.atlasW = nextPow2((std::max)(halfW * 2, 128));
+    p.atlasH = nextPow2((std::max)(baseH * 2, 128));  // Double height for 4 quadrants
+    return p;
+}
+
+// Classify polygon into one of 4 directions based on dominant normal component
+// 0 = front (nz < 0, |nz| >= |nx|)
+// 1 = back  (nz >= 0, |nz| >= |nx|)
+// 2 = left  (nx < 0, |nx| > |nz|)
+// 3 = right (nx >= 0, |nx| > |nz|)
+static int classifyPolyDirection4Way(const std::vector<point3dStruct>& globalVerts, sPrimitive* pPrim)
+{
+    int nv = (int)pPrim->m_points.size();
+    if (nv < 3) return 0;
+    const point3dStruct& v0 = globalVerts[pPrim->m_points[0]];
+    const point3dStruct& v1 = globalVerts[pPrim->m_points[1]];
+    const point3dStruct& v2 = globalVerts[pPrim->m_points[2]];
+    float e1x = (float)(v1.x - v0.x), e1y = (float)(v1.y - v0.y), e1z = (float)(v1.z - v0.z);
+    float e2x = (float)(v2.x - v0.x), e2y = (float)(v2.y - v0.y), e2z = (float)(v2.z - v0.z);
+    float nx = e1y * e2z - e1z * e2y;
+    float nz = e1x * e2y - e1y * e2x;
+
+    float absNx = fabsf(nx);
+    float absNz = fabsf(nz);
+
+    if (absNz >= absNx)
+        return (nz < 0) ? 0 : 1; // front or back
+    else
+        return (nx < 0) ? 2 : 3; // left or right
+}
+
+bool dumpTatouAtlas(int bodyNum, sBody* pBody, const std::string& hqrName)
+{
+    if (!pBody) return false;
+
+    int numPrims = (int)pBody->m_primitives.size();
+    if (numPrims == 0) return false;
+
+    std::vector<point3dStruct> globalVerts;
+    computeRestPoseVertices(pBody, globalVerts);
+    TatouProjectionParams proj = computeTatouProjectionParams(globalVerts);
+    int atlasW = proj.atlasW;
+    int atlasH = proj.atlasH;
+    int halfW = atlasW / 2;
+    int halfH = atlasH / 2;
+
+    // Create the atlas image (RGBA)
+    std::vector<unsigned char> image(atlasW * atlasH * 4, 0);
+
+    // Rasterize each polygon into one of 4 quadrants:
+    //   [Front (top-left)]  [Back (top-right)]
+    //   [Left (bot-left)]   [Right (bot-right)]
+    for (int i = 0; i < numPrims; i++)
+    {
+        sPrimitive* pPrim = &pBody->m_primitives[i];
+        if (!isPrimPoly(pPrim)) continue;
+        int nv = (int)pPrim->m_points.size();
+        if (nv < 3) continue;
+
+        unsigned char r = 128, g = 128, b = 128;
+        int palIdx = pPrim->m_color;
+        r = (unsigned char)RGB_Pal[palIdx * 3 + 0];
+        g = (unsigned char)RGB_Pal[palIdx * 3 + 1];
+        b = (unsigned char)RGB_Pal[palIdx * 3 + 2];
+
+        int dir = classifyPolyDirection4Way(globalVerts, pPrim);
+
+        std::vector<float> px(nv), py(nv);
+        for (int v = 0; v < nv; v++)
+        {
+            point3dStruct& vert = globalVerts[pPrim->m_points[v]];
+            float yNorm = ((float)vert.y - proj.padMinY) / proj.rangeY;
+
+            switch (dir)
+            {
+            case 0: // Front (top-left): project X,Y
+            {
+                float xNorm = ((float)vert.x - proj.padMinX) / proj.rangeX;
+                px[v] = xNorm * (float)halfW;
+                py[v] = (1.0f - yNorm) * (float)halfH;
+                break;
+            }
+            case 1: // Back (top-right): project X,Y mirrored
+            {
+                float xNorm = ((float)vert.x - proj.padMinX) / proj.rangeX;
+                px[v] = (float)halfW + (1.0f - xNorm) * (float)halfW;
+                py[v] = (1.0f - yNorm) * (float)halfH;
+                break;
+            }
+            case 2: // Left (bottom-left): project Z,Y
+            {
+                float zNorm = ((float)vert.z - proj.padMinZ) / proj.rangeZ;
+                px[v] = zNorm * (float)halfW;
+                py[v] = (float)halfH + (1.0f - yNorm) * (float)halfH;
+                break;
+            }
+            case 3: // Right (bottom-right): project Z,Y mirrored
+            {
+                float zNorm = ((float)vert.z - proj.padMinZ) / proj.rangeZ;
+                px[v] = (float)halfW + (1.0f - zNorm) * (float)halfW;
+                py[v] = (float)halfH + (1.0f - yNorm) * (float)halfH;
+                break;
+            }
+            }
+        }
+
+        // Fan-triangulate and fill
+        for (int t = 1; t < nv - 1; t++)
+        {
+            fillTriangleInImage(image, atlasW, atlasH,
+                px[0], py[0], px[t], py[t], px[t + 1], py[t + 1],
+                r, g, b);
+        }
+    }
+
+    // Write the PNG
+    ensureAtlasDir();
+    std::string path = getTatouAtlasPath(hqrName, bodyNum);
+    int result = stbi_write_png(path.c_str(), atlasW, atlasH, 4, image.data(), atlasW * 4);
+
+    if (result)
+    {
+        printf(RNDR_TAG "Tatou 4-way atlas dumped: %s (%dx%d, %d polys)\n", path.c_str(), atlasW, atlasH, numPrims);
+    }
+    else
+    {
+        printf(RNDR_ERR "Failed to write Tatou atlas: %s" CON_RESET "\n", path.c_str());
+    }
+
+    return result != 0;
+}
+
+ModelAtlasData* loadTatouAtlas(int bodyNum, sBody* pBody, const std::string& hqrName)
+{
+    if (!pBody) return nullptr;
+
+    // Use a distinct cache key so it doesn't collide with normal atlases
+    std::string cacheKey = "tatou_" + makeAtlasKey(hqrName, bodyNum);
+    auto it = s_atlasCache.find(cacheKey);
+    if (it != s_atlasCache.end())
+        return &it->second;
+
+    // Try to load the Tatou atlas PNG; auto-dump if it doesn't exist yet
+    std::string path = getTatouAtlasPath(hqrName, bodyNum);
+    int w, h, channels;
+    unsigned char* data = loadAtlasDataFromArchiveOrFile(path, w, h, channels);
+    if (!data)
+    {
+        dumpTatouAtlas(bodyNum, pBody, hqrName);
+        data = loadAtlasDataFromArchiveOrFile(path, w, h, channels);
+        if (!data)
+            return nullptr;
+    }
+
+    printf(RNDR_TAG "Loading Tatou 4-way atlas: %s (%dx%d)\n", path.c_str(), w, h);
+
+    // Create bgfx texture
+    ModelAtlasData atlas;
+    atlas.atlasWidth = w;
+    atlas.atlasHeight = h;
+
+    atlas.pixels.assign(data, data + w * h * 4);
+
+    const bgfx::Memory* mem = bgfx::copy(data, w * h * 4);
+    atlas.texture = bgfx::createTexture2D(w, h, false, 1, bgfx::TextureFormat::RGBA8, 0, mem);
+    stbi_image_free(data);
+
+    if (!bgfx::isValid(atlas.texture))
+    {
+        printf(RNDR_ERR "Failed to create Tatou atlas texture for body %d" CON_RESET "\n", bodyNum);
+        return nullptr;
+    }
+
+    // Compute 4-way projection UVs matching the dump layout
+    std::vector<point3dStruct> globalVerts;
+    computeRestPoseVertices(pBody, globalVerts);
+    TatouProjectionParams proj = computeTatouProjectionParams(globalVerts);
+
+    int numPrims = (int)pBody->m_primitives.size();
+    atlas.polyUVs.resize(numPrims);
+
+    for (int i = 0; i < numPrims; i++)
+    {
+        sPrimitive* pPrim = &pBody->m_primitives[i];
+        if (!isPrimPoly(pPrim)) continue;
+
+        int nv = (int)pPrim->m_points.size();
+        atlas.polyUVs[i].u.resize(nv);
+        atlas.polyUVs[i].v.resize(nv);
+
+        int dir = classifyPolyDirection4Way(globalVerts, pPrim);
+
+        for (int v = 0; v < nv; v++)
+        {
+            point3dStruct& vert = globalVerts[pPrim->m_points[v]];
+            float yNorm = ((float)vert.y - proj.padMinY) / proj.rangeY;
+
+            switch (dir)
+            {
+            case 0: // Front (top-left): U=[0,0.5], V=[0,0.5]
+            {
+                float xNorm = ((float)vert.x - proj.padMinX) / proj.rangeX;
+                atlas.polyUVs[i].u[v] = xNorm * 0.5f;
+                atlas.polyUVs[i].v[v] = (1.0f - yNorm) * 0.5f;
+                break;
+            }
+            case 1: // Back (top-right): U=[0.5,1], V=[0,0.5]
+            {
+                float xNorm = ((float)vert.x - proj.padMinX) / proj.rangeX;
+                atlas.polyUVs[i].u[v] = 0.5f + (1.0f - xNorm) * 0.5f;
+                atlas.polyUVs[i].v[v] = (1.0f - yNorm) * 0.5f;
+                break;
+            }
+            case 2: // Left (bottom-left): U=[0,0.5], V=[0.5,1]
+            {
+                float zNorm = ((float)vert.z - proj.padMinZ) / proj.rangeZ;
+                atlas.polyUVs[i].u[v] = zNorm * 0.5f;
+                atlas.polyUVs[i].v[v] = 0.5f + (1.0f - yNorm) * 0.5f;
+                break;
+            }
+            case 3: // Right (bottom-right): U=[0.5,1], V=[0.5,1]
+            {
+                float zNorm = ((float)vert.z - proj.padMinZ) / proj.rangeZ;
+                atlas.polyUVs[i].u[v] = 0.5f + (1.0f - zNorm) * 0.5f;
+                atlas.polyUVs[i].v[v] = 0.5f + (1.0f - yNorm) * 0.5f;
+                break;
+            }
+            }
+        }
+    }
+
+    auto result = s_atlasCache.emplace(cacheKey, std::move(atlas));
+    return &result.first->second;
+}

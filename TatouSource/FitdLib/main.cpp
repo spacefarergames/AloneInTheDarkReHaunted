@@ -31,6 +31,7 @@ extern void playMenuSound(const char* soundName);
 #endif
 
 #include "configRemaster.h"
+#include "jobSystemInit.h"
 
 #include <array>
 #include <filesystem>
@@ -1247,7 +1248,10 @@ int Lire(int index, int startx, int top, int endx, int bottom, int demoMode, int
 
     // Stop any playing voice-over VOC when exiting
     if (vocIndex >= 0)
+    {
         osystem_stopVO();
+        osystem_clearVocCache();
+    }
 
     HQ_Free_Malloc(HQ_Memory, textIndexMalloc);
 
@@ -2540,6 +2544,13 @@ void InitView()
     NumCamera = NewNumCamera;
 
     assert(NewNumCamera < roomDataTable[currentRoom].numCameraInRoom);
+
+    // Stop lingering sound effects when entering the first camera on floor 0
+    // (prevents intro SFX from bleeding into the game world)
+    if (g_currentFloor == 0 && roomDataTable[currentRoom].cameraIdxTable[NewNumCamera] == 0)
+    {
+        osystem_stopSample();
+    }
 
     loadCamera(roomDataTable[currentRoom].cameraIdxTable[NewNumCamera]);
     if (g_gameId >= JACK)
@@ -5509,6 +5520,10 @@ void cleanupAndExit(void)
     free(screen); */
 
     destroyMusicDriver();
+
+    // Shutdown job system and clear VOC cache
+    osystem_clearVocCache();
+    shutdownJobSystem();
 
     exit(0);
 }

@@ -14,27 +14,34 @@
 #include <cstdlib>
 #include <algorithm>
 #include <cctype>
+#include <unordered_map>
 
-// Archive magic & version
+#include "zlib.h"
+
+// Archive magic & supported versions
 static const uint32_t HDARCHIVE_MAGIC   = 0x47424448; // "HDBG" as little-endian uint32
-static const uint32_t HDARCHIVE_VERSION = 1;
+static const uint32_t HDARCHIVE_VERSION_1 = 1;
+static const uint32_t HDARCHIVE_VERSION_2 = 2;
 
 // Internal state (singleton)
 static FILE*                          s_file    = nullptr;
 static std::vector<HDArchiveEntry>    s_entries;
 static bool                           s_open    = false;
 
-// Case-insensitive string compare (ASCII only, sufficient for file names)
-static bool strEqualCI(const char* a, const char* b)
+// Hash map for O(1) case-insensitive lookup by path
+static std::unordered_map<std::string, size_t> s_pathIndex; // lowered path -> index in s_entries
+
+// Convert a string to lowercase (ASCII) in-place and return it
+static std::string toLowerASCII(const char* str)
 {
-    while (*a && *b)
+    std::string result;
+    result.reserve(strlen(str));
+    while (*str)
     {
-        if (tolower((unsigned char)*a) != tolower((unsigned char)*b))
-            return false;
-        ++a;
-        ++b;
+        result += (char)tolower((unsigned char)*str);
+        ++str;
     }
-    return *a == *b;
+    return result;
 }
 
 // Case-insensitive prefix check
@@ -73,13 +80,23 @@ bool open(const char* archivePath)
         return false;
     }
 
-    if (magic != HDARCHIVE_MAGIC || version != HDARCHIVE_VERSION)
+    if (magic != HDARCHIVE_MAGIC)
     {
-        printf(HDAR_ERR "bad magic/version in %s (magic=0x%08X, ver=%u)" CON_RESET "\n",
-               archivePath, magic, version);
+        printf(HDAR_ERR "bad magic in %s (magic=0x%08X)" CON_RESET "\n",
+               archivePath, magic);
         fclose(f);
         return false;
     }
+
+    if (version != HDARCHIVE_VERSION_1 && version != HDARCHIVE_VERSION_2)
+    {
+        printf(HDAR_ERR "unsupported version %u in %s" CON_RESET "\n",
+               version, archivePath);
+        fclose(f);
+        return false;
+    }
+
+    const bool isV2 = (version >= HDARCHIVE_VERSION_2);
 
     // Read TOC
     s_entries.resize(entryCount);
@@ -109,9 +126,25 @@ bool open(const char* archivePath)
             return false;
         }
 
-        s_entries[i].path   = std::move(path);
-        s_entries[i].offset = offset;
-        s_entries[i].size   = size;
+        uint64_t uncompressedSize = size;
+        uint32_t flags = HDARCHIVE_FLAG_NONE;
+
+        if (isV2)
+        {
+            if (fread(&uncompressedSize, 8, 1, f) != 1 ||
+                fread(&flags, 4, 1, f) != 1)
+            {
+                s_entries.clear();
+                fclose(f);
+                return false;
+            }
+        }
+
+        s_entries[i].path             = std::move(path);
+        s_entries[i].offset           = offset;
+        s_entries[i].size             = size;
+        s_entries[i].uncompressedSize = uncompressedSize;
+        s_entries[i].flags            = flags;
     }
 
     // Sort entries by path for deterministic prefix searches
@@ -121,10 +154,35 @@ bool open(const char* archivePath)
                   return a.path < b.path;
               });
 
+    // Build case-insensitive hash map for O(1) lookup
+    s_pathIndex.clear();
+    s_pathIndex.reserve(entryCount);
+    for (size_t i = 0; i < s_entries.size(); i++)
+    {
+        s_pathIndex[toLowerASCII(s_entries[i].path.c_str())] = i;
+    }
+
     s_file = f;
     s_open = true;
 
-    printf(HDAR_OK "Opened %s (%u entries)\n", archivePath, entryCount);
+    if (isV2)
+    {
+        // Count compressed entries for the log message
+        uint32_t compressedCount = 0;
+        for (const auto& e : s_entries)
+        {
+            if (e.flags & HDARCHIVE_FLAG_COMPRESSED)
+                compressedCount++;
+        }
+        printf(HDAR_OK "Opened %s v%u (%u entries, %u compressed)\n",
+               archivePath, version, entryCount, compressedCount);
+    }
+    else
+    {
+        printf(HDAR_OK "Opened %s v%u (%u entries)\n",
+               archivePath, version, entryCount);
+    }
+
     return true;
 }
 
@@ -136,6 +194,7 @@ void close()
         s_file = nullptr;
     }
     s_entries.clear();
+    s_pathIndex.clear();
     s_open = false;
 }
 
@@ -149,11 +208,11 @@ const HDArchiveEntry* findEntry(const char* relativePath)
     if (!s_open)
         return nullptr;
 
-    for (const auto& e : s_entries)
-    {
-        if (strEqualCI(e.path.c_str(), relativePath))
-            return &e;
-    }
+    std::string key = toLowerASCII(relativePath);
+    auto it = s_pathIndex.find(key);
+    if (it != s_pathIndex.end())
+        return &s_entries[it->second];
+
     return nullptr;
 }
 
@@ -194,6 +253,35 @@ bool readEntry(const HDArchiveEntry* entry, void* buf)
         return false;
 #endif
 
+    if (entry->flags & HDARCHIVE_FLAG_COMPRESSED)
+    {
+        // Read compressed data into a temporary buffer, then decompress
+        unsigned char* compBuf = (unsigned char*)malloc((size_t)entry->size);
+        if (!compBuf)
+            return false;
+
+        if (fread(compBuf, 1, (size_t)entry->size, s_file) != (size_t)entry->size)
+        {
+            free(compBuf);
+            return false;
+        }
+
+        uLongf destLen = (uLongf)entry->uncompressedSize;
+        int zrc = uncompress((Bytef*)buf, &destLen,
+                             (const Bytef*)compBuf, (uLong)entry->size);
+        free(compBuf);
+
+        if (zrc != Z_OK)
+        {
+            printf(HDAR_ERR "zlib uncompress failed for '%s' (rc=%d)" CON_RESET "\n",
+                   entry->path.c_str(), zrc);
+            return false;
+        }
+
+        return true;
+    }
+
+    // Uncompressed: read directly into caller buffer
     return fread(buf, 1, (size_t)entry->size, s_file) == (size_t)entry->size;
 }
 
@@ -202,7 +290,7 @@ unsigned char* readEntryAlloc(const HDArchiveEntry* entry, size_t* outSize)
     if (!entry)
         return nullptr;
 
-    size_t sz = (size_t)entry->size;
+    size_t sz = (size_t)entry->uncompressedSize;
     unsigned char* buf = (unsigned char*)malloc(sz);
     if (!buf)
         return nullptr;

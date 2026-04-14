@@ -46,13 +46,21 @@ bool isHDBackgroundEnabled()
     return g_remasterConfig.graphics.enableHDBackgrounds;
 }
 
-// Ensure the HD archive is open (lazy init, called on first use)
+// Ensure the HD archive is open (lazy init, called on first use).
+// The HDArchive namespace is a singleton - only one archive can be open at a
+// time.  Other subsystems (e.g. modelAtlas) may clobber it by opening a
+// different archive, so we must be prepared to reopen backgrounds_hd.hda
+// whenever it has been closed out from under us.
 static void ensureArchiveOpen()
 {
-    static bool s_tried = false;
-    if (s_tried) return;
-    s_tried = true;
-    HDArchive::open("backgrounds_hd.hda");
+    if (HDArchive::isOpen())
+        return; // still open from a previous call
+
+    static bool s_failed = false;
+    if (s_failed) return; // file does not exist - no point retrying every frame
+
+    if (!HDArchive::open("backgrounds_hd.hda"))
+        s_failed = true;
 }
 
 // Load an image from an archive entry using stb_image

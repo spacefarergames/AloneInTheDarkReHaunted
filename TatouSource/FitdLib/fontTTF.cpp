@@ -6,7 +6,7 @@
 //
 // TrueType font rendering for remastered text display
 ///////////////////////////////////////////////////////////////////////////////
-
+//Updated
 #include "common.h"
 #include "fontTTF.h"
 #include "configRemaster.h"

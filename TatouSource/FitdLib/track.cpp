@@ -231,10 +231,10 @@ void processTrack(void)
     {
     case 1: // manual
         {
-            GereManualRot(60);
+            GereManualRot(40); // reduced from 60 for snappier rotation during combat
             if(localJoyD&1) // forward
             {
-                if(timer - lastTimeForward < 10 && currentProcessedActorPtr->speed != 4) // start running ?
+                if((localJoyD&0x40) || (timer - lastTimeForward < 10 && currentProcessedActorPtr->speed != 4)) // run button held OR double-tap forward
                 {
                     currentProcessedActorPtr->speed = 5;
                 }
@@ -246,17 +246,13 @@ void processTrack(void)
                     }
                 }
 
-                /*        if(currentProcessedActorPtr->speed>0 && currentProcessedActorPtr->speed<4)
-                currentProcessedActorPtr->speed = 5; */
-
-
                 lastTimeForward = timer;
             }
             else
             {
                 if((currentProcessedActorPtr->speed > 0) && (currentProcessedActorPtr->speed<=4))
                 {
-                    currentProcessedActorPtr->speed--;
+                    currentProcessedActorPtr->speed = 0; // instant stop for more responsive movement
                 }
                 else
                 {

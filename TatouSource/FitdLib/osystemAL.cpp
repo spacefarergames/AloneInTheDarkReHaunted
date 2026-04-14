@@ -10,6 +10,11 @@
 #include <stdlib.h>
 #include <assert.h>
 #include <new>
+#include <mutex>
+#include <condition_variable>
+#include <unordered_map>
+#include <memory>
+#include <cstdint>
 #include "consoleLog.h"
 
 #ifdef _WIN32
@@ -29,6 +34,9 @@
 #include "osystemAL.h"
 #include "hdArchive.h"
 #include "vocDecoder.h"
+#include "jobSystem.h"
+
+#include "zlib.h"
 
 void osystemAL_mp3_Update();
 void osystemAL_adlib_Update();
@@ -38,15 +46,38 @@ SoLoud::Soloud* gSoloud = NULL;
 // Self-contained audio archive reader (same HDBG format, separate instance from HDArchive)
 static FILE* s_audioArchiveFile = nullptr;
 static std::vector<HDArchiveEntry> s_audioEntries;
+static std::unordered_map<std::string, size_t> s_audioPathIndex; // lowered path -> index
 static bool s_audioArchiveOpen = false;
 static bool s_audioArchiveTried = false;
+static std::mutex s_audioArchiveMutex;  // Thread safety: protects FILE* and entry access
+
+static std::string audioToLowerASCII(const char* str)
+{
+    std::string result;
+    result.reserve(strlen(str));
+    while (*str)
+    {
+        result += (char)tolower((unsigned char)*str);
+        ++str;
+    }
+    return result;
+}
 
 static void ensureAudioArchiveOpen()
 {
     if (s_audioArchiveTried) return;
     s_audioArchiveTried = true;
 
-    FILE* f = fopen("audio.hda", "rb");
+    // Use language-specific audio archive for French voices, fall back to default
+    FILE* f = nullptr;
+    const char* archiveName = "audio.hda";
+    if (languageNameString == "FRANCAIS")
+    {
+        f = fopen("audio_fre.hda", "rb");
+        if (f) archiveName = "audio_fre.hda";
+    }
+    if (!f)
+        f = fopen("audio.hda", "rb");
     if (!f) return;
 
     uint32_t magic = 0, version = 0, entryCount = 0;
@@ -58,12 +89,21 @@ static void ensureAudioArchiveOpen()
         return;
     }
 
-    if (magic != 0x47424448 || version != 1)
+    if (magic != 0x47424448)
     {
-        printf(AL_ERR "bad magic/version in audio archive (magic=0x%08X, ver=%u)" CON_RESET "\n", magic, version);
+        printf(AL_ERR "bad magic in audio archive (magic=0x%08X)" CON_RESET "\n", magic);
         fclose(f);
         return;
     }
+
+    if (version != 1 && version != 2)
+    {
+        printf(AL_ERR "unsupported version %u in audio archive" CON_RESET "\n", version);
+        fclose(f);
+        return;
+    }
+
+    const bool isV2 = (version >= 2);
 
     s_audioEntries.resize(entryCount);
     for (uint32_t i = 0; i < entryCount; i++)
@@ -89,24 +129,63 @@ static void ensureAudioArchiveOpen()
             fclose(f);
             return;
         }
-        s_audioEntries[i].path = std::move(path);
-        s_audioEntries[i].offset = offset;
-        s_audioEntries[i].size = size;
+
+        uint64_t uncompressedSize = size;
+        uint32_t flags = 0;
+
+        if (isV2)
+        {
+            if (fread(&uncompressedSize, 8, 1, f) != 1 ||
+                fread(&flags, 4, 1, f) != 1)
+            {
+                s_audioEntries.clear();
+                fclose(f);
+                return;
+            }
+        }
+
+        s_audioEntries[i].path             = std::move(path);
+        s_audioEntries[i].offset           = offset;
+        s_audioEntries[i].size             = size;
+        s_audioEntries[i].uncompressedSize = uncompressedSize;
+        s_audioEntries[i].flags            = flags;
+    }
+
+    // Build case-insensitive hash map for O(1) lookup
+    s_audioPathIndex.clear();
+    s_audioPathIndex.reserve(entryCount);
+    for (size_t i = 0; i < s_audioEntries.size(); i++)
+    {
+        s_audioPathIndex[audioToLowerASCII(s_audioEntries[i].path.c_str())] = i;
     }
 
     s_audioArchiveFile = f;
     s_audioArchiveOpen = true;
-    printf(AL_OK "Opened audio.hda (%u entries)\n", entryCount);
+
+    if (isV2)
+    {
+        uint32_t compressedCount = 0;
+        for (const auto& e : s_audioEntries)
+        {
+            if (e.flags & HDARCHIVE_FLAG_COMPRESSED)
+                compressedCount++;
+        }
+        printf(AL_OK "Opened %s v%u (%u entries, %u compressed)\n",
+               archiveName, version, entryCount, compressedCount);
+    }
+    else
+    {
+        printf(AL_OK "Opened %s v%u (%u entries)\n", archiveName, version, entryCount);
+    }
 }
 
 static const HDArchiveEntry* findAudioEntry(const char* name)
 {
     if (!s_audioArchiveOpen) return nullptr;
-    for (const auto& e : s_audioEntries)
-    {
-        if (_stricmp(e.path.c_str(), name) == 0)
-            return &e;
-    }
+    std::string key = audioToLowerASCII(name);
+    auto it = s_audioPathIndex.find(key);
+    if (it != s_audioPathIndex.end())
+        return &s_audioEntries[it->second];
     return nullptr;
 }
 
@@ -115,18 +194,58 @@ static const HDArchiveEntry* findAudioEntry(const char* name)
 static unsigned char* readAudioEntry(const HDArchiveEntry* entry, size_t* outSize)
 {
     if (!entry || !s_audioArchiveFile) return nullptr;
-    size_t sz = (size_t)entry->size;
-    unsigned char* buf = new (std::nothrow) unsigned char[sz];
-    if (!buf) return nullptr;
+
 #ifdef _WIN32
     if (_fseeki64(s_audioArchiveFile, (long long)entry->offset, SEEK_SET) != 0)
 #else
     if (fseeko(s_audioArchiveFile, (off_t)entry->offset, SEEK_SET) != 0)
 #endif
     {
-        delete[] buf;
         return nullptr;
     }
+
+    if (entry->flags & HDARCHIVE_FLAG_COMPRESSED)
+    {
+        // Read compressed data, then decompress into new[]-allocated buffer
+        unsigned char* compBuf = (unsigned char*)malloc((size_t)entry->size);
+        if (!compBuf) return nullptr;
+
+        if (fread(compBuf, 1, (size_t)entry->size, s_audioArchiveFile) != (size_t)entry->size)
+        {
+            free(compBuf);
+            return nullptr;
+        }
+
+        size_t uncompSz = (size_t)entry->uncompressedSize;
+        unsigned char* buf = new (std::nothrow) unsigned char[uncompSz];
+        if (!buf)
+        {
+            free(compBuf);
+            return nullptr;
+        }
+
+        uLongf destLen = (uLongf)uncompSz;
+        int zrc = uncompress((Bytef*)buf, &destLen,
+                             (const Bytef*)compBuf, (uLong)entry->size);
+        free(compBuf);
+
+        if (zrc != Z_OK)
+        {
+            printf(AL_ERR "zlib uncompress failed for '%s' (rc=%d)" CON_RESET "\n",
+                   entry->path.c_str(), zrc);
+            delete[] buf;
+            return nullptr;
+        }
+
+        if (outSize) *outSize = uncompSz;
+        return buf;
+    }
+
+    // Uncompressed: read directly
+    size_t sz = (size_t)entry->size;
+    unsigned char* buf = new (std::nothrow) unsigned char[sz];
+    if (!buf) return nullptr;
+
     if (fread(buf, 1, sz, s_audioArchiveFile) != sz)
     {
         delete[] buf;
@@ -193,11 +312,18 @@ void closeAudioArchive()
         s_audioArchiveFile = nullptr;
     }
     s_audioEntries.clear();
+    s_audioPathIndex.clear();
     s_audioArchiveOpen = false;
     s_audioArchiveTried = false;
 }
 
-// ── CD Audio (ALONECD) support ─────────────────────────────────────────────
+void osystem_reloadAudioArchive()
+{
+    closeAudioArchive();
+    ensureAudioArchiveOpen();
+}
+
+// 
 #ifdef _WIN32
 static bool  s_cdDetected    = false;
 static bool  s_cdDetectDone  = false;
@@ -452,21 +578,34 @@ struct ActiveSfx
 };
 static std::vector<ActiveSfx> g_activeSfx;
 
+// Remove finished sounds from the active list and free their AudioSource memory.
+static void reapFinishedSfx()
+{
+    if (!gSoloud) return;
+    for (size_t i = 0; i < g_activeSfx.size(); )
+    {
+        if (!gSoloud->isValidVoiceHandle(g_activeSfx[i].handle))
+        {
+            delete g_activeSfx[i].source;
+            g_activeSfx.erase(g_activeSfx.begin() + i);
+        }
+        else
+        {
+            i++;
+        }
+    }
+}
+
 void osystem_playSample(char* samplePtr,int size)
 {
     if (!gSoloud || !samplePtr || size <= 0)
         return;
 
-    // The original DOS game had a single SFX channel — any new sound replaced
-    // the previous one. LIFE script opcodes (LM_ANIM_SAMPLE, LM_SAMPLE, etc.)
-    // fire every game tick and rely on this replacement behavior. Without it,
-    // sounds accumulate indefinitely and become corrupted.
-    for (auto& sfx : g_activeSfx)
-    {
-        gSoloud->stop(sfx.handle);
-        delete sfx.source;
-    }
-    g_activeSfx.clear();
+    // Clean up finished sounds to avoid unbounded growth.
+    // Unlike the original single-channel DOS behavior, we allow multiple
+    // one-shot SFX to overlap so that e.g. combat hits and ambient sounds
+    // don't cut each other out.
+    reapFinishedSfx();
 
     // Check if the sample data is in VOC format (LISTSAMP entries for AITD-era games are VOC)
     bool isVoc = (size >= 20 && memcmp(samplePtr, "Creative Voice File\x1a", 20) == 0);
@@ -528,8 +667,8 @@ void osystem_playSample(char* samplePtr,int size)
         extern s16 rndFreqModulation;
         if (rndFreqModulation > 0 && h != 0)
         {
-            // Random variation: ±rndFreqModulation% of pitch
-            // rndFreqModulation of 40 means ±40% variation
+            // Random variation: ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â±rndFreqModulation% of pitch
+            // rndFreqModulation of 40 means ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â±40% variation
             float variation = (float)(rand() % (rndFreqModulation * 2 + 1) - rndFreqModulation) / 100.0f;
             float playSpeed = 1.0f + variation;
 
@@ -569,13 +708,22 @@ void osystem_playLoopingSample(char* samplePtr, int size)
     if (!gSoloud || !samplePtr || size <= 0)
         return;
 
-    // Stop all active sounds — single SFX channel, same as osystem_playSample
-    for (auto& sfx : g_activeSfx)
+    // Stop previous looping sounds (only one ambient loop at a time)
+    // but let one-shot SFX keep playing.
+    for (size_t i = 0; i < g_activeSfx.size(); )
     {
-        gSoloud->stop(sfx.handle);
-        delete sfx.source;
+        if (g_activeSfx[i].looping)
+        {
+            gSoloud->stop(g_activeSfx[i].handle);
+            delete g_activeSfx[i].source;
+            g_activeSfx.erase(g_activeSfx.begin() + i);
+        }
+        else
+        {
+            i++;
+        }
     }
-    g_activeSfx.clear();
+    reapFinishedSfx();
 
     // Check if the sample data is in VOC format
     bool isVoc = (size >= 20 && memcmp(samplePtr, "Creative Voice File\x1a", 20) == 0);
@@ -752,7 +900,7 @@ int osystem_playTrack(int trackId)
     return 0;
 }
 
-// ── Voice Over (VO) playback ───────────────────────────────────────────────
+// ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚ÂÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚ÂÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ Voice Over (VO) playback ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚ÂÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚ÂÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚ÂÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚ÂÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚ÂÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚ÂÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚ÂÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚ÂÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚ÂÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚ÂÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚ÂÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚ÂÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚ÂÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚ÂÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚ÂÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚ÂÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚ÂÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚ÂÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚ÂÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚ÂÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚ÂÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚ÂÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚ÂÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚ÂÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚ÂÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚ÂÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚ÂÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚ÂÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚ÂÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚ÂÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚ÂÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚ÂÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚ÂÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚ÂÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚ÂÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚ÂÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚ÂÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚ÂÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚ÂÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚ÂÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚ÂÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚ÂÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚ÂÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚ÂÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚ÂÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚ÂÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚ÂÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬
 
 void osystem_stopVO()
 {
@@ -808,7 +956,7 @@ static bool tryPlayVoFile(const char* path, const char* label)
     FILE* fh = fopen(path, "rb");
     if (!fh) return false;
 
-    // VOC files need special decoding — read fully into memory first
+    // VOC files need special decoding ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â read fully into memory first
     if (hasExtCI(path, ".voc"))
     {
         fseek(fh, 0, SEEK_END);
@@ -831,7 +979,7 @@ static bool tryPlayVoFile(const char* path, const char* label)
         return ok;
     }
 
-    // Standard audio formats — let SoLoud handle directly
+    // Standard audio formats ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â let SoLoud handle directly
     s_voFile   = new SoLoud::DiskFile(fh);
     s_voStream = new SoLoud::WavStream();
     SoLoud::result res = s_voStream->loadFile(s_voFile);
@@ -960,6 +1108,30 @@ void osystem_playVocPageLines(int vocIndex, int page, int numLines)
 
     osystem_stopVO();
 
+    // CACHE CHECK: Try pre-decoded page from cache first
+    size_t cachedWavSize = 0;
+    unsigned char* cachedWav = osystem_tryGetPreDecodedVocPage(vocIndex, page, &cachedWavSize);
+    if (cachedWav && cachedWavSize > 0)
+    {
+        s_voStream = new SoLoud::WavStream();
+        SoLoud::result res = s_voStream->loadMem(cachedWav, cachedWavSize, false, false);
+        if (res == SoLoud::SO_NO_ERROR)
+        {
+            s_voHandle = gSoloud->play(*s_voStream);
+            if (g_voPitchMultiplier != 1.0f)
+                gSoloud->setRelativePlaySpeed(s_voHandle, g_voPitchMultiplier);
+            printf(VO_OK "Playing VOC page from cache: book %d page %d" CON_RESET "\n",
+                   vocIndex, page);
+            return;
+        }
+        else
+        {
+            delete s_voStream;
+            s_voStream = nullptr;
+        }
+    }
+
+    // CACHE MISS: Decode from scratch
     // Collect decoded PCM data from all line VOCs for this page
     std::vector<unsigned char> combinedPcm;
     uint32_t sampleRate = 0;
@@ -1117,7 +1289,7 @@ void osystem_playVO(const char* voFileName)
                 continue;
             }
 
-            // Standard format — load directly
+            // Standard format ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â load directly
             s_voStream = new SoLoud::WavStream();
             SoLoud::result res = s_voStream->loadMem(data, (unsigned int)dataSize, false, false);
             if (res == SoLoud::SO_NO_ERROR)
@@ -1235,4 +1407,178 @@ void osystem_playSampleFromName(char* sampleName)
     {
         delete pWav;
     }
+}
+///////////////////////////////////////////////////////////////////////////////
+// VOC Pre-Decode Cache for Book Reading (Phase 3)
+///////////////////////////////////////////////////////////////////////////////
+
+struct PreDecodedVocPage
+{
+    unsigned char* wavData = nullptr;
+    size_t wavSize = 0;
+    std::mutex mtx;
+    std::condition_variable cv;
+    bool ready = false;
+
+    ~PreDecodedVocPage()
+    {
+        if (wavData)
+        {
+            delete[] wavData;
+            wavData = nullptr;
+        }
+    }
+};
+
+static std::unordered_map<uint32_t, std::shared_ptr<PreDecodedVocPage>> s_vocPageCache;
+static std::mutex s_vocCacheMutex;
+
+static uint32_t makeVocCacheKey(int vocIndex, int page)
+{
+    return (uint32_t)(vocIndex * 10000 + page);
+}
+
+void osystem_preDecodeVocPage(int vocIndex, int page)
+{
+    if (!JobSystem::instance().isInitialized())
+        return;
+
+    uint32_t cacheKey = makeVocCacheKey(vocIndex, page);
+
+    {
+        std::lock_guard<std::mutex> lock(s_vocCacheMutex);
+        if (s_vocPageCache.count(cacheKey))
+            return;
+    }
+
+    auto cacheEntry = std::make_shared<PreDecodedVocPage>();
+
+    {
+        std::lock_guard<std::mutex> lock(s_vocCacheMutex);
+        s_vocPageCache[cacheKey] = cacheEntry;
+    }
+
+    int numMaxLines = 20;
+    JobSystem::instance().scheduleJob(
+        JobSystem::JobType::DECODE_VOC,
+        JobSystem::Priority::HIGH,
+        [vocIndex, page, cacheEntry, numMaxLines]() {
+            std::vector<unsigned char> combinedPcm;
+            uint32_t sampleRate = 0;
+            uint16_t bitsPerSample = 0;
+            uint16_t numChannels = 0;
+            bool gotFormat = false;
+
+            for (int line = 0; line < numMaxLines; line++)
+            {
+                int vocNum = vocIndex * 10000 + page * 100 + line;
+                char vocName[64];
+                sprintf(vocName, "%06d.VOC", vocNum);
+
+                size_t rawSize = 0;
+                unsigned char* rawData = loadVocFileData(vocName, &rawSize);
+                if (!rawData)
+                    break;
+
+                unsigned char* wavBuf = nullptr;
+                size_t wavSz = 0;
+                if (!vocDecodeToWav(rawData, rawSize, &wavBuf, &wavSz))
+                {
+                    delete[] rawData;
+                    break;
+                }
+                delete[] rawData;
+
+                if (!gotFormat && wavSz >= 44)
+                {
+                    sampleRate    = (uint32_t)wavBuf[24] | ((uint32_t)wavBuf[25] << 8) |
+                                    ((uint32_t)wavBuf[26] << 16) | ((uint32_t)wavBuf[27] << 24);
+                    numChannels   = (uint16_t)wavBuf[22] | ((uint16_t)wavBuf[23] << 8);
+                    bitsPerSample = (uint16_t)wavBuf[34] | ((uint16_t)wavBuf[35] << 8);
+                    gotFormat = true;
+                }
+
+                if (wavSz > 44)
+                    combinedPcm.insert(combinedPcm.end(), wavBuf + 44, wavBuf + wavSz);
+
+                delete[] wavBuf;
+            }
+
+            if (!gotFormat || combinedPcm.empty())
+                return;
+
+            uint32_t dataSize   = (uint32_t)combinedPcm.size();
+            uint32_t totalWavSz = 44 + dataSize;
+            uint16_t blockAlign = numChannels * (bitsPerSample / 8);
+            uint32_t byteRate   = sampleRate * blockAlign;
+
+            unsigned char* wav = new (std::nothrow) unsigned char[totalWavSz];
+            if (!wav)
+                return;
+
+            memcpy(wav, "RIFF", 4);
+            wav[4] = (unsigned char)((totalWavSz - 8) & 0xFF);
+            wav[5] = (unsigned char)(((totalWavSz - 8) >> 8) & 0xFF);
+            wav[6] = (unsigned char)(((totalWavSz - 8) >> 16) & 0xFF);
+            wav[7] = (unsigned char)(((totalWavSz - 8) >> 24) & 0xFF);
+            memcpy(wav + 8, "WAVE", 4);
+            memcpy(wav + 12, "fmt ", 4);
+            wav[16] = 16; wav[17] = 0; wav[18] = 0; wav[19] = 0;
+            wav[20] = 1;  wav[21] = 0;
+            wav[22] = (unsigned char)(numChannels & 0xFF);
+            wav[23] = (unsigned char)((numChannels >> 8) & 0xFF);
+            wav[24] = (unsigned char)(sampleRate & 0xFF);
+            wav[25] = (unsigned char)((sampleRate >> 8) & 0xFF);
+            wav[26] = (unsigned char)((sampleRate >> 16) & 0xFF);
+            wav[27] = (unsigned char)((sampleRate >> 24) & 0xFF);
+            wav[28] = (unsigned char)(byteRate & 0xFF);
+            wav[29] = (unsigned char)((byteRate >> 8) & 0xFF);
+            wav[30] = (unsigned char)((byteRate >> 16) & 0xFF);
+            wav[31] = (unsigned char)((byteRate >> 24) & 0xFF);
+            wav[32] = (unsigned char)(blockAlign & 0xFF);
+            wav[33] = (unsigned char)((blockAlign >> 8) & 0xFF);
+            wav[34] = (unsigned char)(bitsPerSample & 0xFF);
+            wav[35] = (unsigned char)((bitsPerSample >> 8) & 0xFF);
+            memcpy(wav + 36, "data", 4);
+            wav[40] = (unsigned char)(dataSize & 0xFF);
+            wav[41] = (unsigned char)((dataSize >> 8) & 0xFF);
+            wav[42] = (unsigned char)((dataSize >> 16) & 0xFF);
+            wav[43] = (unsigned char)((dataSize >> 24) & 0xFF);
+            memcpy(wav + 44, combinedPcm.data(), dataSize);
+
+            {
+                std::lock_guard<std::mutex> lock(cacheEntry->mtx);
+                cacheEntry->wavData = wav;
+                cacheEntry->wavSize = totalWavSz;
+                cacheEntry->ready = true;
+            }
+            cacheEntry->cv.notify_all();
+        });
+}
+
+unsigned char* osystem_tryGetPreDecodedVocPage(int vocIndex, int page, size_t* outSize)
+{
+    uint32_t cacheKey = makeVocCacheKey(vocIndex, page);
+
+    std::lock_guard<std::mutex> lock(s_vocCacheMutex);
+    auto it = s_vocPageCache.find(cacheKey);
+    if (it == s_vocPageCache.end())
+        return nullptr;
+
+    auto& entry = it->second;
+    std::lock_guard<std::mutex> entryLock(entry->mtx);
+
+    if (!entry->ready)
+        return nullptr;
+
+    if (outSize)
+        *outSize = entry->wavSize;
+
+    return entry->wavData;
+}
+
+void osystem_clearVocCache()
+{
+    std::lock_guard<std::mutex> lock(s_vocCacheMutex);
+    s_vocPageCache.clear();
 }

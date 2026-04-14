@@ -183,6 +183,8 @@ void readKeyboard(void)
                     JoyD |= 0x10;
                 if (j == (int)getKeyBinding(ACTION_QUICK_TURN_RIGHT).keyboard)
                     JoyD |= 0x20;
+                if (j == (int)getKeyBinding(ACTION_RUN).keyboard)
+                    JoyD |= 0x40;
                 if (j == (int)getKeyBinding(ACTION_ACTION).keyboard)
                     Click = 1;
                 if (j == (int)getKeyBinding(ACTION_CONFIRM).keyboard && j != SDL_SCANCODE_RETURN)
@@ -304,13 +306,6 @@ void handleControllerDeviceEvent(SDL_Event& event)
 {
     switch (event.type)
     {
-        case SDL_EVENT_MOUSE_BUTTON_DOWN:
-            // Double-click toggles fullscreen
-            if (event.button.clicks == 2 && event.button.button == SDL_BUTTON_LEFT)
-            {
-                toggleFullscreen();
-            }
-            break;
     case SDL_EVENT_GAMEPAD_ADDED:
         if (!g_controllerState.connected)
         {
@@ -367,6 +362,12 @@ void updateController()
     leftY *= g_controllerConfig.analogSensitivity;
     rightX *= g_controllerConfig.analogSensitivity;
     rightY *= g_controllerConfig.analogSensitivity;
+
+    // Clamp to [-1, 1] range after sensitivity scaling
+    if (leftX > 1.0f) leftX = 1.0f; else if (leftX < -1.0f) leftX = -1.0f;
+    if (leftY > 1.0f) leftY = 1.0f; else if (leftY < -1.0f) leftY = -1.0f;
+    if (rightX > 1.0f) rightX = 1.0f; else if (rightX < -1.0f) rightX = -1.0f;
+    if (rightY > 1.0f) rightY = 1.0f; else if (rightY < -1.0f) rightY = -1.0f;
 
     // Invert Y axis if configured
     if (g_controllerConfig.invertYAxis)
@@ -432,4 +433,6 @@ void updateController()
         JoyD |= 0x10;
     if (SDL_GetGamepadButton(g_controllerState.gamepad, getKeyBinding(ACTION_QUICK_TURN_RIGHT).gamepadButton))
         JoyD |= 0x20;
+    if (SDL_GetGamepadButton(g_controllerState.gamepad, getKeyBinding(ACTION_RUN).gamepadButton))
+        JoyD |= 0x40;
 }

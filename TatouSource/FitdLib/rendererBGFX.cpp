@@ -76,6 +76,10 @@ static bgfx::TextureHandle s_frozenSceneTex = BGFX_INVALID_HANDLE;
 static int s_frozenSceneWidth = 0;
 static int s_frozenSceneHeight = 0;
 
+// HD sequence (FMV cutscene) frame override
+static bgfx::TextureHandle g_sequenceHDTexture = BGFX_INVALID_HANDLE;
+static bool g_sequenceHDActive = false;
+
 extern int outputResolution[2];
 
 #define _USE_MATH_DEFINES
@@ -2108,14 +2112,24 @@ void osystem_drawBackground()
 
         bgfx::setVertexBuffer(0, &transientBuffer);
 
-        bgfx::setTexture(0, backgroundTextureUniform, getActiveBackgroundTexture());
+        // Use HD sequence texture when active, otherwise use normal background pipeline
+        bool useHDShader = g_currentBackgroundIsHD;
+        if (g_sequenceHDActive && bgfx::isValid(g_sequenceHDTexture))
+        {
+            bgfx::setTexture(0, backgroundTextureUniform, g_sequenceHDTexture);
+            useHDShader = true;
+        }
+        else
+        {
+            bgfx::setTexture(0, backgroundTextureUniform, getActiveBackgroundTexture());
+        }
         bgfx::setTexture(1, paletteTextureUniform, g_paletteTexture);
 
         // Set fade level uniform for HD backgrounds
         float fadeParams[4] = { g_fadeLevel, 0.0f, 0.0f, 0.0f };
         bgfx::setUniform(fadeLevelUniform, fadeParams);
 
-        bgfx::submit(gameViewId, g_currentBackgroundIsHD ? getHDBackgroundShader() : getBackgroundShader());
+        bgfx::submit(gameViewId, useHDShader ? getHDBackgroundShader() : getBackgroundShader());
 
 
     }
@@ -2437,7 +2451,7 @@ void osystem_startFrame()
 
     osystem_drawBackground();
 
-    if (g_portraitOverlayChoice >= 0)
+    if (g_portraitOverlayChoice >= 0 && g_remasterConfig.graphics.enableHDBackgrounds)
     {
         osystem_drawPortraitOverlay(g_portraitOverlayChoice);
     }
@@ -2480,6 +2494,34 @@ void osystem_CopyBlockPhys(unsigned char* videoBuffer, int left, int top, int ri
 
 void osystem_refreshFrontTextureBuffer()
 {}
+
+void osystem_setSequenceHDFrame(unsigned char* rgbaData, int width, int height)
+{
+    if (bgfx::isValid(g_sequenceHDTexture))
+    {
+        bgfx::destroy(g_sequenceHDTexture);
+        g_sequenceHDTexture = BGFX_INVALID_HANDLE;
+    }
+
+    g_sequenceHDTexture = bgfx::createTexture2D(
+        width, height, false, 1,
+        bgfx::TextureFormat::RGBA8,
+        BGFX_TEXTURE_NONE | BGFX_SAMPLER_MIN_POINT | BGFX_SAMPLER_MAG_POINT,
+        bgfx::copy(rgbaData, width * height * 4)
+    );
+
+    g_sequenceHDActive = true;
+}
+
+void osystem_clearSequenceHDFrame()
+{
+    if (bgfx::isValid(g_sequenceHDTexture))
+    {
+        bgfx::destroy(g_sequenceHDTexture);
+        g_sequenceHDTexture = BGFX_INVALID_HANDLE;
+    }
+    g_sequenceHDActive = false;
+}
 
 void osystem_initBuffer()
 {

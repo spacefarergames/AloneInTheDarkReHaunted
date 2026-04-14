@@ -561,8 +561,8 @@ void PlayWorld(int allowSystemMenu, int deltaTime)
 
             // Fix: warp player out of walls after any room transition
             fixPlayerStuckInWall();
-
-            continue;
+            // BUG FIX: Removed continue statement - AllRedraw() MUST execute after room transitions
+            // to render 3D objects. Objects disappear during combat when room changes occur.
         }
 
         GereSwitchCamera();

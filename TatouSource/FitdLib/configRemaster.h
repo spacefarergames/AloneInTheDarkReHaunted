@@ -1,4 +1,4 @@
-///////////////////////////////////////////////////////////////////////////////
+﻿///////////////////////////////////////////////////////////////////////////////
 // Alone In The Dark Re-Haunted
 // Copyright (C) 2026 Infogrames / Spacefarer Retro Remasters LLC
 // Based on FITD by yaz0r, Re-haunted is released under GPL
@@ -31,6 +31,11 @@ struct RemasterConfig
         float menuBlurAmount;
         bool enableHints;
         bool enableArtwork;
+        bool fullscreen;
+        // Renderer backend selection. Valid values: "auto", "d3d11", "d3d12",
+        // "opengl", "vulkan", "metal". "auto" lets bgfx choose the best
+        // backend for the current platform.
+        char rendererBackend[32];
     } graphics;
 
     // Post-processing settings
@@ -73,8 +78,8 @@ struct RemasterConfig
 
     // Controls / key binding settings
     struct {
-        int keyBindings[9];     // SDL_Scancode per action (ACTION_COUNT = 9)
-        int gamepadBindings[9]; // SDL_GamepadButton per action
+        int keyBindings[10];     // SDL_Scancode per action (ACTION_COUNT = 10)
+        int gamepadBindings[10]; // SDL_GamepadButton per action
     } controls;
 
     // Mask dumping/loading settings
@@ -82,6 +87,17 @@ struct RemasterConfig
         bool dumpEnabled;       // Dump generated masks to PNG for artist editing (default: false)
         bool loadEnabled;       // Load hand-edited masks from masks_hd/ directory (default: true)
     } masks;
+
+    // Sequence (FMV cutscene) dumping/loading settings
+    struct {
+        bool dumpEnabled;       // Dump decoded sequence frames to PNG in sequences_dump/ (default: false)
+        bool loadEnabled;       // Load HD replacement frames from sequences_hd/ (default: true)
+    } sequences;
+
+    // Game data settings
+    struct {
+        bool steamless;         // Disable automatic file copying/installation when true (default: false)
+    } gameData;
 };
 
 extern RemasterConfig g_remasterConfig;

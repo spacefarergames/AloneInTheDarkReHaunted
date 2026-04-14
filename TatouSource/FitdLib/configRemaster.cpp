@@ -33,6 +33,8 @@ void initDefaultRemasterConfig()
     g_remasterConfig.graphics.menuBlurAmount = 5.0f;
     g_remasterConfig.graphics.enableHints = true;
     g_remasterConfig.graphics.enableArtwork = true;
+    g_remasterConfig.graphics.fullscreen = false;
+    strcpy(g_remasterConfig.graphics.rendererBackend, "auto");
 
     // Post-processing defaults
     g_remasterConfig.postProcessing.enableBloom = true;
@@ -85,10 +87,19 @@ void initDefaultRemasterConfig()
     g_remasterConfig.controls.keyBindings[8] = SDL_SCANCODE_E;
     g_remasterConfig.controls.gamepadBindings[7] = SDL_GAMEPAD_BUTTON_LEFT_SHOULDER;
     g_remasterConfig.controls.gamepadBindings[8] = SDL_GAMEPAD_BUTTON_RIGHT_SHOULDER;
+    g_remasterConfig.controls.keyBindings[9] = SDL_SCANCODE_LSHIFT;
+    g_remasterConfig.controls.gamepadBindings[9] = SDL_GAMEPAD_BUTTON_LEFT_STICK;
 
     // Mask dumping/loading defaults
     g_remasterConfig.masks.dumpEnabled = false;    // Don't auto-dump masks during normal gameplay
     g_remasterConfig.masks.loadEnabled = true;     // Always load hand-edited HD masks if available
+
+    // Sequence dumping/loading defaults
+    g_remasterConfig.sequences.dumpEnabled = false;  // Don't auto-dump sequence frames during normal gameplay
+    g_remasterConfig.sequences.loadEnabled = true;   // Load HD replacement sequence frames if available
+
+    // Game data defaults
+    g_remasterConfig.gameData.steamless = false;   // Allow automatic file copying/installation by default
 }
 
 void loadRemasterConfig()
@@ -143,6 +154,13 @@ void loadRemasterConfig()
                 g_remasterConfig.graphics.enableHints = (strcmp(value, "true") == 0 || strcmp(value, "1") == 0);
             else if (strcmp(key, "graphics.useArtwork") == 0)
                 g_remasterConfig.graphics.enableArtwork = (strcmp(value, "true") == 0 || strcmp(value, "1") == 0);
+            else if (strcmp(key, "graphics.fullscreen") == 0)
+                g_remasterConfig.graphics.fullscreen = (strcmp(value, "true") == 0 || strcmp(value, "1") == 0);
+            else if (strcmp(key, "graphics.renderer") == 0)
+            {
+                strncpy(g_remasterConfig.graphics.rendererBackend, value, 31);
+                g_remasterConfig.graphics.rendererBackend[31] = '\0';
+            }
 
             // External music settings
             else if (strcmp(key, "music.external") == 0)
@@ -253,16 +271,59 @@ void loadRemasterConfig()
                 g_remasterConfig.controls.gamepadBindings[7] = atoi(value);
             else if (strcmp(key, "controls.pad.quickturnright") == 0)
                 g_remasterConfig.controls.gamepadBindings[8] = atoi(value);
+            else if (strcmp(key, "controls.key.run") == 0)
+                g_remasterConfig.controls.keyBindings[9] = atoi(value);
+            else if (strcmp(key, "controls.pad.run") == 0)
+                g_remasterConfig.controls.gamepadBindings[9] = atoi(value);
 
             // Mask dumping/loading settings
             else if (strcmp(key, "masks.dump") == 0)
                 g_remasterConfig.masks.dumpEnabled = (strcmp(value, "true") == 0 || strcmp(value, "1") == 0);
             else if (strcmp(key, "masks.load") == 0)
                 g_remasterConfig.masks.loadEnabled = (strcmp(value, "true") == 0 || strcmp(value, "1") == 0);
+
+            // Sequence dumping/loading settings
+            else if (strcmp(key, "sequences.dump") == 0)
+                g_remasterConfig.sequences.dumpEnabled = (strcmp(value, "true") == 0 || strcmp(value, "1") == 0);
+            else if (strcmp(key, "sequences.load") == 0)
+                g_remasterConfig.sequences.loadEnabled = (strcmp(value, "true") == 0 || strcmp(value, "1") == 0);
+
+            // Game data settings
+            else if (strcmp(key, "gamedata.steamless") == 0)
+                g_remasterConfig.gameData.steamless = (strcmp(value, "true") == 0 || strcmp(value, "1") == 0);
         }
     }
 
     fclose(file);
+
+    // Validate and clamp numeric config values to safe ranges
+    if (g_remasterConfig.controller.analogDeadzone < 0.0f) g_remasterConfig.controller.analogDeadzone = 0.0f;
+    if (g_remasterConfig.controller.analogDeadzone > 0.9f) g_remasterConfig.controller.analogDeadzone = 0.9f;
+    if (g_remasterConfig.controller.analogSensitivity < 0.1f) g_remasterConfig.controller.analogSensitivity = 0.1f;
+    if (g_remasterConfig.controller.analogSensitivity > 5.0f) g_remasterConfig.controller.analogSensitivity = 5.0f;
+
+    if (g_remasterConfig.graphics.backgroundScale < 1) g_remasterConfig.graphics.backgroundScale = 1;
+    if (g_remasterConfig.graphics.backgroundScale > 8) g_remasterConfig.graphics.backgroundScale = 8;
+    if (g_remasterConfig.graphics.menuBlurAmount < 0.0f) g_remasterConfig.graphics.menuBlurAmount = 0.0f;
+    if (g_remasterConfig.graphics.menuBlurAmount > 10.0f) g_remasterConfig.graphics.menuBlurAmount = 10.0f;
+
+    if (g_remasterConfig.postProcessing.bloomThreshold < 0.0f) g_remasterConfig.postProcessing.bloomThreshold = 0.0f;
+    if (g_remasterConfig.postProcessing.bloomThreshold > 1.0f) g_remasterConfig.postProcessing.bloomThreshold = 1.0f;
+    if (g_remasterConfig.postProcessing.bloomIntensity < 0.0f) g_remasterConfig.postProcessing.bloomIntensity = 0.0f;
+    if (g_remasterConfig.postProcessing.bloomIntensity > 5.0f) g_remasterConfig.postProcessing.bloomIntensity = 5.0f;
+    if (g_remasterConfig.postProcessing.bloomPasses < 1) g_remasterConfig.postProcessing.bloomPasses = 1;
+    if (g_remasterConfig.postProcessing.bloomPasses > 8) g_remasterConfig.postProcessing.bloomPasses = 8;
+    if (g_remasterConfig.postProcessing.filmGrainIntensity < 0.0f) g_remasterConfig.postProcessing.filmGrainIntensity = 0.0f;
+    if (g_remasterConfig.postProcessing.filmGrainIntensity > 1.0f) g_remasterConfig.postProcessing.filmGrainIntensity = 1.0f;
+    if (g_remasterConfig.postProcessing.ssaoRadius < 0.0f) g_remasterConfig.postProcessing.ssaoRadius = 0.0f;
+    if (g_remasterConfig.postProcessing.ssaoIntensity < 0.0f) g_remasterConfig.postProcessing.ssaoIntensity = 0.0f;
+    if (g_remasterConfig.postProcessing.ssaoIntensity > 5.0f) g_remasterConfig.postProcessing.ssaoIntensity = 5.0f;
+    if (g_remasterConfig.postProcessing.ssgiNumSamples < 1) g_remasterConfig.postProcessing.ssgiNumSamples = 1;
+    if (g_remasterConfig.postProcessing.ssgiNumSamples > 64) g_remasterConfig.postProcessing.ssgiNumSamples = 64;
+
+    if (g_remasterConfig.font.fontSize < 8) g_remasterConfig.font.fontSize = 8;
+    if (g_remasterConfig.font.fontSize > 72) g_remasterConfig.font.fontSize = 72;
+
     printf(CFG_OK "Remaster config loaded\n");
 
     // Sync detail level with HD backgrounds setting
@@ -297,7 +358,10 @@ void saveRemasterConfig()
     fprintf(file, "graphics.blurredMenu = %s\n", g_remasterConfig.graphics.enableBlurredMenu ? "true" : "false");
     fprintf(file, "graphics.menuBlurAmount = %.1f\n", g_remasterConfig.graphics.menuBlurAmount);
     fprintf(file, "gameplay.hints = %s\n", g_remasterConfig.graphics.enableHints ? "true" : "false");
-    fprintf(file, "graphics.useArtwork = %s\n\n", g_remasterConfig.graphics.enableArtwork ? "true" : "false");
+    fprintf(file, "graphics.useArtwork = %s\n", g_remasterConfig.graphics.enableArtwork ? "true" : "false");
+    fprintf(file, "graphics.fullscreen = %s\n", g_remasterConfig.graphics.fullscreen ? "true" : "false");
+    fprintf(file, "# Renderer backend: auto, d3d11, d3d12, opengl, vulkan, metal\n");
+    fprintf(file, "graphics.renderer = %s\n\n", g_remasterConfig.graphics.rendererBackend);
 
     fprintf(file, "# External Music Settings\n");
     fprintf(file, "music.external = %s\n", g_remasterConfig.music.enableExternalMusic ? "true" : "false");
@@ -350,10 +414,19 @@ void saveRemasterConfig()
     fprintf(file, "controls.key.quickturnright = %d\n", g_remasterConfig.controls.keyBindings[8]);
     fprintf(file, "controls.pad.quickturnleft = %d\n", g_remasterConfig.controls.gamepadBindings[7]);
     fprintf(file, "controls.pad.quickturnright = %d\n", g_remasterConfig.controls.gamepadBindings[8]);
+    fprintf(file, "controls.key.run = %d\n", g_remasterConfig.controls.keyBindings[9]);
+    fprintf(file, "controls.pad.run = %d\n", g_remasterConfig.controls.gamepadBindings[9]);
 
     fprintf(file, "\n# Mask Dumping/Loading Settings\n");
     fprintf(file, "masks.dump = %s\n", g_remasterConfig.masks.dumpEnabled ? "true" : "false");
     fprintf(file, "masks.load = %s\n", g_remasterConfig.masks.loadEnabled ? "true" : "false");
+
+    fprintf(file, "\n# Sequence Dumping/Loading Settings\n");
+    fprintf(file, "sequences.dump = %s\n", g_remasterConfig.sequences.dumpEnabled ? "true" : "false");
+    fprintf(file, "sequences.load = %s\n", g_remasterConfig.sequences.loadEnabled ? "true" : "false");
+
+    fprintf(file, "\n# Game Data Settings\n");
+    fprintf(file, "gamedata.steamless = %s\n", g_remasterConfig.gameData.steamless ? "true" : "false");
 
     fclose(file);
     printf(CFG_OK "Remaster config saved\n");

@@ -13,6 +13,10 @@
 
 #include "hdBackground.h"
 #include "hdBackgroundRenderer.h"
+#include "bgfxGlue.h"
+#include "configRemaster.h"
+#include "modelAtlas.h"
+#include "renderer.h"
 
 void clearScreenTatou(void)
 {
@@ -61,6 +65,13 @@ int make3dTatou(void)
     char* tatouPalRaw = CheckLoadMallocPak("ITD_RESS",AITD1_TATOU_PAL);
     copyPalette(tatouPalRaw, tatouPal);
 
+    // Set Tatou palette into RGB_Pal before loading/dumping the atlas so
+    // that dumpTatouAtlas reads the correct polygon colors from RGB_Pal.
+    setPalette(tatouPal);
+
+    // Load (or dump) 4-way texture atlas for the Tatou armadillo model
+    ModelAtlasData* tatouAtlas = loadTatouAtlas(AITD1_TATOU_3DO, tatou3d, "ITD_RESS");
+
     zoom = 8920;
     deltaTime = 50;
     beta = 256;
@@ -78,31 +89,45 @@ int make3dTatou(void)
     FastCopyScreen(tatou2d+770,frontBuffer);
     FastCopyScreen(frontBuffer,aux2);
 
-    osystem_CopyBlockPhys(frontBuffer,0,0,320,200);
+	osystem_CopyBlockPhys(frontBuffer,0,0,320,200);
 
-    FadeInPhys(8,0);
+	// Bring the game window to the foreground so the console
+	// doesn't obscure the animation.
+	if (gWindowBGFX)
+	{
+		SDL_RaiseWindow(gWindowBGFX);
+	}
 
-    startChrono(&localChrono);
+	// If fullscreen is saved in the remaster config, apply it now
+	if (g_remasterConfig.graphics.fullscreen && !gIsFullscreen)
+	{
+		g_pendingFullscreenToggle = true;
+	}
 
-    do
-    {
-        process_events();
+	FadeInPhys(8,0);
+
+	startChrono(&localChrono);
+
+	do
+	{
+		process_events();
 
 		//timeGlobal++;
 		timer = timeGlobal;
 
-        if(evalChrono(&localChrono)<=180) 
-        {
-            // before lightning strike
-            if(key || Click)
-            {
-                break;
-            }
-        }
-        else
-        {
-            // Lightning strike - prepare for 3D rendering
-            // Switch to HD background now that 3D animation is starting
+		if(evalChrono(&localChrono)<=180) 
+		{
+			// before lightning strike
+			if(key || Click)
+			{
+				break;
+			}
+		}
+		else
+		{
+			// Lightning strike - prepare for 3D rendering
+
+			// Switch to HD background now that 3D animation is starting
             HDBackgroundInfo* hdBg = loadHDBackground("ITD_RESS", AITD1_TATOU_MCG, "NOTATOU");
             if (hdBg)
             {
@@ -133,7 +158,9 @@ int make3dTatou(void)
 
             setCameraTarget(0,0,0,alpha,beta,0,zoom);
 
+            if (tatouAtlas) setCurrentAtlas(tatouAtlas);
             AffObjet(0,0,0,0,0,0,tatou3d);
+            setCurrentAtlas(nullptr);
 
             //blitScreenTatou();
             osystem_CopyBlockPhys((unsigned char*)frontBuffer,0,0,320,200);
@@ -162,7 +189,9 @@ int make3dTatou(void)
 
                 setCameraTarget(0,0,0,alpha,beta,0,zoom);
 
+                if (tatouAtlas) setCurrentAtlas(tatouAtlas);
                 AffObjet(0,0,0,0,0,0,tatou3d);
+                setCurrentAtlas(nullptr);
 
                 //blitScreenTatou();
 

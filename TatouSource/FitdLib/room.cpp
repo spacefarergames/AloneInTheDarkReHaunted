@@ -87,11 +87,19 @@ void ChangeSalle(int roomNumber)
     }
     else
     {
-        cameraVar0 = roomDataTable[currentRoom].worldX;
-        cameraVar1 = roomDataTable[currentRoom].worldY;
-        cameraVar2 = roomDataTable[currentRoom].worldZ;
+        if(currentRoom >= 0 && currentRoom < (int)roomDataTable.size()
+           && NumCamera >= 0 && NumCamera < (int)roomDataTable[currentRoom].cameraIdxTable.size())
+        {
+            cameraVar0 = roomDataTable[currentRoom].worldX;
+            cameraVar1 = roomDataTable[currentRoom].worldY;
+            cameraVar2 = roomDataTable[currentRoom].worldZ;
 
-        oldCameraIdx = roomDataTable[currentRoom].cameraIdxTable[NumCamera];
+            oldCameraIdx = roomDataTable[currentRoom].cameraIdxTable[NumCamera];
+        }
+        else
+        {
+            oldCameraIdx = -1;
+        }
     }
 
     if(g_gameId < AITD3)
@@ -99,9 +107,19 @@ void ChangeSalle(int roomNumber)
         cameraPtr = (char*)getRoomData(roomNumber); // TODO: obsolete
         roomDataPtr = getRoomData(roomNumber);
         pCurrentRoomData = getRoomData(roomNumber);
+        if(!roomDataPtr)
+        {
+            printf("ChangeSalle: getRoomData(%d) returned null\n", roomNumber);
+        }
     }
 
     currentRoom = roomNumber;
+
+    if(roomNumber < 0 || roomNumber >= (int)roomDataTable.size())
+    {
+        printf("ChangeSalle: roomNumber %d out of range (size %d)\n", roomNumber, (int)roomDataTable.size());
+        return;
+    }
 
     numCameraInRoom = roomDataTable[roomNumber].numCameraInRoom;
 

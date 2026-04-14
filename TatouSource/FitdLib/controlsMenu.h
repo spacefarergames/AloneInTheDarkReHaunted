@@ -24,6 +24,7 @@ enum KeyAction
 	ACTION_CANCEL,    // Escape / B button
 	ACTION_QUICK_TURN_LEFT,  // Q / Left Shoulder
 	ACTION_QUICK_TURN_RIGHT, // E / Right Shoulder
+	ACTION_RUN,              // Left Shift / Left Stick press (L3)
 	ACTION_COUNT
 };
 

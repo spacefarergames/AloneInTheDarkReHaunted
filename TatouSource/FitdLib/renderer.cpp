@@ -1174,6 +1174,11 @@ void setCurrentBodyNum(int bodyNum, sBody* pBody, const std::string& hqrName)
     }
 }
 
+void setCurrentAtlas(ModelAtlasData* atlas)
+{
+    s_currentAtlas = atlas;
+}
+
 int AffObjet(int x,int y,int z,int alpha,int beta,int gamma, sBody* pBody)
 {
     if (!pBody)
@@ -1324,6 +1329,10 @@ int AffObjet(int x,int y,int z,int alpha,int beta,int gamma, sBody* pBody)
 		// Key discriminator: vertex isolation. Floating geometry (eyes) uses
 		// vertices that no other polygon in the model references. Connected
 		// mesh polygons (lips, chin, cheek) share vertices with neighbors.
+		//
+		// Only apply in HD mode; in non-HD mode keep the original model
+		// intact so eyes remain visible.
+		if (g_remasterConfig.graphics.enableHDBackgrounds)
 		{
 			// Build per-vertex reference count across ALL model primitives.
 			// Connected mesh vertices are referenced by multiple polygons (refcount >= 2).

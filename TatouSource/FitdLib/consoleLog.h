@@ -198,6 +198,24 @@
 #define VO_WARN   CON_MAKE_WARN("VO")
 #define VO_ERR    CON_MAKE_ERR("VO")
 
+// Steam overlay (steamOverlay.cpp)
+#define STEAM_TAG  CON_MAKE_TAG("STEAM")
+#define STEAM_OK   CON_MAKE_OK("STEAM")
+#define STEAM_WARN CON_MAKE_WARN("STEAM")
+#define STEAM_ERR  CON_MAKE_ERR("STEAM")
+
+// Game data auto-copy (gameDataCopy.cpp)
+#define DATA_TAG   CON_MAKE_TAG("DATA")
+#define DATA_OK    CON_MAKE_OK("DATA")
+#define DATA_WARN  CON_MAKE_WARN("DATA")
+#define DATA_ERR   CON_MAKE_ERR("DATA")
+
+// Sequence player (sequence.cpp)
+#define SEQ_TAG   CON_MAKE_TAG("SEQ")
+#define SEQ_OK    CON_MAKE_OK("SEQ")
+#define SEQ_WARN  CON_MAKE_WARN("SEQ")
+#define SEQ_ERR   CON_MAKE_ERR("SEQ")
+
 // ── Windows: enable ANSI virtual terminal processing ───────────────────────
 #ifdef _WIN32
 #include <windows.h>

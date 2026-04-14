@@ -3,8 +3,12 @@
  * (Steam / GOG) so that launching through those platforms starts Tatou.exe
  * (the FITD remastered engine) instead.
  *
- * The stub resolves its own directory and executes Tatou.exe from the same
- * folder, forwarding any command-line arguments.
+ * When deployed into a Steam/GOG install the layout is:
+ *   <install>/DOSBOX/DOSBox.exe    ← this stub
+ *   <install>/INDARK/Tatou.exe     ← the remaster
+ *
+ * The stub first checks for ..\INDARK\Tatou.exe (deployed layout) and falls
+ * back to looking in its own directory (development / standalone layout).
  */
 
 #define WIN32_LEAN_AND_MEAN
@@ -32,7 +36,18 @@ int WINAPI WinMain(HINSTANCE /*hInstance*/, HINSTANCE /*hPrevInstance*/,
     else
         dir.clear();
 
-    std::string targetExe = dir + "Tatou.exe";
+    // Try the deployed Steam/GOG layout first: ..\INDARK\Tatou.exe
+    std::string indarkDir = dir + "..\\INDARK\\";
+    std::string targetExe = indarkDir + "Tatou.exe";
+    std::string workDir   = indarkDir;
+
+    DWORD attr = GetFileAttributesA(targetExe.c_str());
+    if (attr == INVALID_FILE_ATTRIBUTES)
+    {
+        // Fallback: same directory as this stub (dev / standalone layout)
+        targetExe = dir + "Tatou.exe";
+        workDir   = dir;
+    }
 
     // Build the command line: "Tatou.exe" followed by any original arguments.
     std::string cmdLine = "\"" + targetExe + "\"";
@@ -57,14 +72,15 @@ int WINAPI WinMain(HINSTANCE /*hInstance*/, HINSTANCE /*hPrevInstance*/,
         FALSE,                    // inherit handles
         0,                        // creation flags
         nullptr,                  // environment
-        dir.empty() ? nullptr : dir.c_str(), // working directory
+        workDir.c_str(),          // working directory (INDARK or stub dir)
         &si,
         &pi);
 
     if (!ok)
     {
-        std::string msg = "Could not start Tatou.exe.\n\nMake sure Tatou.exe "
-                          "is in the same directory as DOSBox.exe.\n\nLooked for:\n" +
+        std::string msg = "Could not start Tatou.exe.\n\n"
+                          "Make sure Tatou.exe is in the same directory as "
+                          "DOSBox.exe, or in ..\\INDARK\\.\n\nLooked for:\n" +
                           targetExe;
         MessageBoxA(nullptr, msg.c_str(), "DOSBox Stub", MB_OK | MB_ICONERROR);
         return 1;

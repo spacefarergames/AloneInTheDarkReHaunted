@@ -74,6 +74,7 @@
 	void osystem_playLoopingSample(char* samplePtr, int size);
 	void osystem_stopSample();
 	bool osystem_isSamplePlaying();
+	void osystem_reloadAudioArchive();
 
 	void osystem_playVO(const char* voFileName);
 	void osystem_playVocByIndex(int vocIndex);
@@ -166,5 +167,9 @@
 	// Page turn animation
 	void osystem_pageTurnCapture();
 	void osystem_pageTurnFrame(float progress, bool forward, unsigned char* newPage);
+
+	// HD sequence (FMV cutscene) frame override
+	void osystem_setSequenceHDFrame(unsigned char* rgbaData, int width, int height);
+	void osystem_clearSequenceHDFrame();
 
 #endif

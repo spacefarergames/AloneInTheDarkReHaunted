@@ -35,6 +35,9 @@ email                : yaz0r@yaz0r.net
 #include "bgfxGlue.h"
 #include "jobSystemInit.h"
 #include "reshadecompat.h"
+#include "steamOverlay.h"
+#include "gameDataCopy.h"
+#include "configRemaster.h"
 #include <SDL.h>
 #include <SDL_thread.h>
 #include <SDL_mutex.h>
@@ -145,8 +148,31 @@ int FitdInit(int argc, char* argv[])
 
     osystem_init();
 
+    // Load remaster config early so steamless setting is available before data copy
+    loadRemasterConfig();
+
+    // Auto-detect and copy original AITD game data (PAK/ITD) from
+    // Steam, GOG, or CD-ROM if not already present in the working directory.
+    if (!g_remasterConfig.gameData.steamless)
+    {
+        gameDataCopy_EnsureDataFiles();
+    }
+
     // Initialize job system for multithreaded asset loading
     initJobSystem();
+
+    // Initialize Steam overlay BEFORE creating the SDL window and D3D11 device.
+    // Steam's overlay hooks intercept D3D11 device creation, so SteamAPI_Init()
+    // must be called first.  If the DLL is absent this is a harmless no-op.
+    if (!g_remasterConfig.gameData.steamless)
+    {
+        steamOverlay_Init();
+        if (steamOverlay_ShouldRelaunch())
+        {
+            // Steam needs to relaunch us through the Steam client — exit now.
+            exit(0);
+        }
+    }
 
     unsigned int flags = 0;
     flags |= SDL_WINDOW_RESIZABLE;
@@ -222,6 +248,13 @@ int FitdInit(int argc, char* argv[])
         bgfx::renderFrame(100);
     } while (!SDL_TryWaitSemaphore(endOfRender));
 
+    // The bgfx device is now created and has presented at least one frame.
+    // Notify Steam so the overlay can attach to the D3D11 swap chain.
+    if (!g_remasterConfig.gameData.steamless)
+    {
+        steamOverlay_NotifyGraphicsReady();
+    }
+
     unsigned long int t_start = SDL_GetTicks();
     unsigned long int t_lastUpdate = t_start;
 
@@ -256,6 +289,13 @@ int FitdInit(int argc, char* argv[])
         }
 
         osystemAL_udpate();
+
+        // Pump Steam overlay callbacks once per frame on the main thread.
+        // This keeps the Shift+Tab overlay responsive and processes Steam events.
+        if (!g_remasterConfig.gameData.steamless)
+        {
+            steamOverlay_RunCallbacks();
+        }
 
         SDL_PumpEvents();
 

@@ -8,6 +8,25 @@
 ///////////////////////////////////////////////////////////////////////////////
 
 #include "common.h"
+#include "consoleLog.h"
+#include "configRemaster.h"
+
+// stb_image_write for sequence frame dumping (static to avoid linker conflicts)
+#define STB_IMAGE_WRITE_STATIC
+#define STB_IMAGE_WRITE_IMPLEMENTATION
+#include "../ThirdParty/bgfx.cmake/bimg/3rdparty/stb/stb_image_write.h"
+
+// stb_image for loading HD replacement sequence frames
+#define STB_IMAGE_STATIC
+#define STB_IMAGE_IMPLEMENTATION
+#define STBI_ONLY_PNG
+#include "../ThirdParty/bgfx.cmake/bimg/3rdparty/stb/stb_image.h"
+
+#ifdef _WIN32
+#include <direct.h>
+#else
+#include <sys/stat.h>
+#endif
 
 const char* sequenceListAITD2[]=
 {
@@ -137,6 +156,68 @@ void unapckSequenceFrame(unsigned char* source,unsigned char* dest)
     }
 }
 
+extern "C" { extern char homePath[512]; }
+
+static void ensureSequenceDirectory(const char* dir)
+{
+#ifdef _WIN32
+    _mkdir(dir);
+#else
+    mkdir(dir, 0755);
+#endif
+}
+
+static void dumpSequenceFrame(const char* seqName, int frameId, const char* auxBuffer, const palette_t& palette)
+{
+    char dirPath[512];
+    snprintf(dirPath, sizeof(dirPath), "%ssequences_dump", homePath);
+    ensureSequenceDirectory(dirPath);
+
+    snprintf(dirPath, sizeof(dirPath), "%ssequences_dump/%s", homePath, seqName);
+    ensureSequenceDirectory(dirPath);
+
+    char filePath[512];
+    snprintf(filePath, sizeof(filePath), "%ssequences_dump/%s/%s_%04d.png", homePath, seqName, seqName, frameId);
+
+    // Convert paletted 320x200 aux buffer to RGBA
+    unsigned char* rgba = (unsigned char*)malloc(320 * 200 * 4);
+    if (!rgba) return;
+
+    for (int i = 0; i < 320 * 200; i++)
+    {
+        unsigned char idx = (unsigned char)auxBuffer[i];
+        rgba[i * 4 + 0] = palette[idx][0];
+        rgba[i * 4 + 1] = palette[idx][1];
+        rgba[i * 4 + 2] = palette[idx][2];
+        rgba[i * 4 + 3] = 255;
+    }
+
+    if (stbi_write_png(filePath, 320, 200, 4, rgba, 320 * 4))
+    {
+        printf(SEQ_OK "Dumped sequence frame: %s" CON_RESET "\n", filePath);
+    }
+    else
+    {
+        printf(SEQ_ERR "Failed to dump sequence frame: %s" CON_RESET "\n", filePath);
+    }
+
+    free(rgba);
+}
+
+static unsigned char* tryLoadHDSequenceFrame(const char* seqName, int frameId, int* outWidth, int* outHeight)
+{
+    char filePath[512];
+    snprintf(filePath, sizeof(filePath), "%ssequences_hd/%s/%s_%04d.png", homePath, seqName, seqName, frameId);
+
+    int channels = 0;
+    unsigned char* data = stbi_load(filePath, outWidth, outHeight, &channels, 4);
+    if (data)
+    {
+        printf(SEQ_OK "Loaded HD sequence frame: %s (%dx%d)" CON_RESET "\n", filePath, *outWidth, *outHeight);
+    }
+    return data;
+}
+
 void playSequence(int sequenceIdx, int fadeStart, int fadeOutVar)
 {
 
@@ -145,6 +226,7 @@ void playSequence(int sequenceIdx, int fadeStart, int fadeOutVar)
     int var_4 = 1;
     int quitPlayback = 0;
     int nextFrame = 1;
+    palette_t seqPalette;           // Palette at outer scope for dump/load access
 
     char buffer[256];
     if (g_gameId == AITD2)
@@ -155,6 +237,8 @@ void playSequence(int sequenceIdx, int fadeStart, int fadeOutVar)
     {
         sprintf(buffer, "AN%d", sequenceIdx);
     }
+
+    printf(SEQ_TAG "Playing sequence: %s" CON_RESET "\n", buffer);
 
     int numMaxFrames = PAK_getNumFiles(buffer);
 
@@ -182,12 +266,11 @@ void playSequence(int sequenceIdx, int fadeStart, int fadeOutVar)
 
             if(!currentFrameId) // first frame
             {
-                palette_t localPalette;
-                copyPalette(logicalScreen, localPalette);  // copy palette
+                copyPalette(logicalScreen, seqPalette);  // copy palette
                 memcpy(aux,logicalScreen+0x300,64000);
                 nextFrame = READ_LE_U16(logicalScreen+64768);
 
-                convertPaletteIfRequired(localPalette);
+                convertPaletteIfRequired(seqPalette);
 
                 if(var_4 != 0)
                 {
@@ -198,12 +281,12 @@ void playSequence(int sequenceIdx, int fadeStart, int fadeOutVar)
                     if(fadeStart & 4)
                     {
                     //memset(palette,0,0); // fade from black
-                    fadeInSub1(localPalette);
+                    fadeInSub1(seqPalette);
                     flipOtherPalette(palette);
                     } */
 
-                    osystem_setPalette(&localPalette);
-                    copyPalette(localPalette,currentGamePalette);
+                    osystem_setPalette(&seqPalette);
+                    copyPalette(seqPalette,currentGamePalette);
                 }
             }
             else // not first frame
@@ -230,10 +313,33 @@ void playSequence(int sequenceIdx, int fadeStart, int fadeOutVar)
                 }
             }
 
-            // TODO: here, timming management
-            // TODO: fade management
+			// TODO: here, timming management
+			// TODO: fade management
 
-            osystem_CopyBlockPhys((unsigned char*)aux,0,0,320,200);
+			// Dump decoded frame to PNG if enabled
+			if (g_remasterConfig.sequences.dumpEnabled)
+			{
+				dumpSequenceFrame(buffer, currentFrameId, aux, seqPalette);
+			}
+
+			// Try loading HD replacement frame
+			bool usedHDFrame = false;
+			if (g_remasterConfig.sequences.loadEnabled)
+			{
+				int hdW = 0, hdH = 0;
+				unsigned char* hdFrame = tryLoadHDSequenceFrame(buffer, currentFrameId, &hdW, &hdH);
+				if (hdFrame)
+				{
+					osystem_setSequenceHDFrame(hdFrame, hdW, hdH);
+					stbi_image_free(hdFrame);
+					usedHDFrame = true;
+				}
+			}
+
+			if (!usedHDFrame)
+			{
+				osystem_CopyBlockPhys((unsigned char*)aux,0,0,320,200);
+			}
 
 			osystem_drawBackground();
 
@@ -261,5 +367,6 @@ void playSequence(int sequenceIdx, int fadeStart, int fadeOutVar)
         }
     }
 
+	osystem_clearSequenceHDFrame();
 	FlagInitView = 2;
 }

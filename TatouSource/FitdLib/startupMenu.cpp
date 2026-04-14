@@ -36,14 +36,8 @@ static const int s_allLanguagesCount = sizeof(s_allLanguages) / sizeof(s_allLang
 static u32 s_mainMenuSelTime = 0;
 static u32 s_langMenuSelTime = 0;
 
-// Helper function to play menu navigation sounds
-static void playMenuSound(const char* soundName)
-{
-    if (soundEnabled)
-    {
-        osystem_playSampleFromName((char*)soundName);
-    }
-}
+// Helper function to play menu navigation sounds (defined in systemMenu.cpp)
+extern void playMenuSound(const char* soundName);
 
 void DrawMenu(int selectedEntry)
 {
@@ -145,7 +139,7 @@ static void DrawLanguageMenu(int* availableLanguages, int availableCount, int se
                 if (t < 1.0f)
                     pop = (int)(sinf(t * 3.14159f) * 6.0f);
             }
-            int boxPad = 00;
+            int boxPad = 0;
             int x1 = textX - boxPad - pop;
             int x2 = textX + textWidth + boxPad + pop;
             if (x1 < textX - boxPad - 6) x1 = textX - boxPad - 6;
@@ -258,6 +252,7 @@ void LanguageSelectionMenu(void)
     if (languageNameString != selectedLang)
     {
         reloadLanguage(selectedLang);
+        osystem_reloadAudioArchive();
     }
 }
 

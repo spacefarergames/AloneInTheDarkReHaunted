@@ -371,7 +371,7 @@ void GereAnim(void)
 		{
 			if (currentProcessedActorPtr->speedChange.numSteps == 0)
 			{
-				InitRealValue(0, currentProcessedActorPtr->speed, 60, &currentProcessedActorPtr->speedChange);
+				InitRealValue(0, currentProcessedActorPtr->speed, 30, &currentProcessedActorPtr->speedChange);
 			}
 			animStepZ += evaluateReal(&currentProcessedActorPtr->speedChange);
 		}
@@ -737,7 +737,7 @@ void GereAnim(void)
 			currentProcessedActorPtr->stepX = 0;
 			currentProcessedActorPtr->stepZ = 0;
 
-			InitRealValue(0,currentProcessedActorPtr->speed,60,&currentProcessedActorPtr->speedChange);
+			InitRealValue(0,currentProcessedActorPtr->speed,30,&currentProcessedActorPtr->speedChange);
 		}
 
 		currentProcessedActorPtr->flagEndAnim = 0;

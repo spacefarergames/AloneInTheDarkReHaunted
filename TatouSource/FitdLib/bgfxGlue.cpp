@@ -6,7 +6,7 @@
 //
 // BGFX graphics library initialization and window management
 ///////////////////////////////////////////////////////////////////////////////
-
+//Updated
 #include <SDL.h>
 #include <bgfx/bgfx.h>
 #include <bgfx/platform.h>
@@ -310,11 +310,24 @@ int initBgfxGlue(int argc, char* argv[])
         }
     }
 
-    // If no command-line override, force DirectX 11 for best ReShade compatibility
+    // If no command-line override, check config file setting
     if (!rendererSpecified)
     {
-        initparam.type = bgfx::RendererType::Direct3D11;
-        printf(BGFX_TAG "Using DirectX 11 renderer\n");
+        const char* backend = g_remasterConfig.graphics.rendererBackend;
+        if (strcmp(backend, "d3d11") == 0)
+            initparam.type = bgfx::RendererType::Direct3D11;
+        else if (strcmp(backend, "d3d12") == 0)
+            initparam.type = bgfx::RendererType::Direct3D12;
+        else if (strcmp(backend, "opengl") == 0)
+            initparam.type = bgfx::RendererType::OpenGL;
+        else if (strcmp(backend, "vulkan") == 0)
+            initparam.type = bgfx::RendererType::Vulkan;
+        else if (strcmp(backend, "metal") == 0)
+            initparam.type = bgfx::RendererType::Metal;
+        else
+            initparam.type = bgfx::RendererType::Direct3D11; // default fallback
+
+        printf(BGFX_TAG "Using %s renderer (from config)\n", backend);
     }
 
     // ReShade compatibility settings

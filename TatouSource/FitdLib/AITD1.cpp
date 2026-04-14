@@ -247,8 +247,8 @@ int ChoosePerso(void)
     // Notify TTF that we're entering character selection
     notifyTTFMenuStateChanged(true, false);
 
-    // Try HD replacement for character selection background
-    HDBackgroundInfo* hdBg = loadHDBackground("ITD_RESS", 10);
+    // Try HD replacement for character selection background (only in HD mode)
+    HDBackgroundInfo* hdBg = g_remasterConfig.graphics.enableHDBackgrounds ? loadHDBackground("ITD_RESS", 10) : nullptr;
     if (hdBg)
     {
         updateBackgroundTextureHD(hdBg->data, hdBg->width, hdBg->height, hdBg->channels);
@@ -475,8 +475,8 @@ int ChoosePerso(void)
         {
             case 0:
             {
-                // Try HD replacement for character intro reading background
-                HDBackgroundInfo* hdBgIntro = loadHDBackground("ITD_RESS", AITD1_FOND_INTRO);
+                // Try HD replacement for character intro reading background (only in HD mode)
+                HDBackgroundInfo* hdBgIntro = g_remasterConfig.graphics.enableHDBackgrounds ? loadHDBackground("ITD_RESS", AITD1_FOND_INTRO) : nullptr;
                 bool usingHDIntro = (hdBgIntro != nullptr);
                 if (hdBgIntro)
                 {
@@ -517,8 +517,8 @@ int ChoosePerso(void)
             }
             case 1:
             {
-                // Try HD replacement for character intro reading background
-                HDBackgroundInfo* hdBgIntro = loadHDBackground("ITD_RESS", AITD1_FOND_INTRO);
+                // Try HD replacement for character intro reading background (only in HD mode)
+                HDBackgroundInfo* hdBgIntro = g_remasterConfig.graphics.enableHDBackgrounds ? loadHDBackground("ITD_RESS", AITD1_FOND_INTRO) : nullptr;
                 bool usingHDIntro = (hdBgIntro != nullptr);
                 if (hdBgIntro)
                 {

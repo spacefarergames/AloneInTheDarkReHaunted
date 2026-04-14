@@ -29,6 +29,9 @@ int AffObjet(int x, int y, int z, int alpha, int beta, int gamma, sBody* pBody);
 
 void setCurrentBodyNum(int bodyNum, sBody* pBody, const std::string& hqrName);
 
+struct ModelAtlasData;
+void setCurrentAtlas(ModelAtlasData* atlas);
+
 void computeScreenBox(int x, int y, int z, int alpha, int beta, int gamma, sBody* bodyPtr);
 
 void drawBlobShadow(int x, int y, int z, int alpha, int beta, int gamma, sBody* bodyPtr);
