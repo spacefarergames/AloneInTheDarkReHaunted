@@ -167,7 +167,6 @@ The *Re-Haunted* fork adds several enhancements on top of the original FITD engi
 | **HD depth masks** | ✅ Available | Hand-edited masks for correct 3D object occlusion with HD backgrounds |
 | **Atmospheric particles** | ✅ Available | Dust mote particles in the attic (floor 7) |
 | **Transparent menus** | ✅ Available | Blurred, semi-transparent system menu overlays |
-| **External music** | 🚧 In progress | OGG/MP3 track replacement via SoLoud |
 | **Crash recovery** | ✅ Available | Exception handler with crash logging to `crash_log.txt` |
 | **Auto-update checker** | ✅ Available | Non-blocking check for new GitHub releases at startup |
 
@@ -189,6 +188,8 @@ Copy `fitd_remaster.cfg.example` to `aitd_remaster.cfg` alongside the game data 
 | **Controls** | `controls.key.*`, `controls.pad.*` — per-action keyboard scancode and gamepad button bindings |
 | **Gameplay** | `gameplay.hints` — interactive hint overlay |
 | **Masks** | `masks.dump`, `masks.load` — HD depth mask dumping and loading |
+| **Sequence Dumping** | `sequences.dump`, `sequences.load` - HD sequence replacements (for AITD2 / AITD 3 only) |
+| **Game Data Settings** | `gamedata.steamless` - Steamless mode - Disables Steam Overlay and automatic installation into Steam / GOG copy. Set to false if you wish to run standalone, manual setup. |
 
 ---
 
