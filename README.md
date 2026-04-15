@@ -20,7 +20,7 @@ AITD-R (also known as *Alone In The Dark Re-Haunted*) lets you play the original
 
 ![573228488-b0206b5f-8026-46d0-89a6-b5dc6b7ba73e](https://github.com/user-attachments/assets/e7fa702a-6d17-4ce2-afc4-573c3be5340e)
 
-#Video (YouTube)
+## Video (YouTube)
 https://www.youtube.com/watch?v=fzi_xK2Jifw
 
 ## Graphics Target
