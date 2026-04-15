@@ -11,7 +11,8 @@
 		"D:/FITD/build/vs2026/zlib/zlib-build/cmake_install.cmake",
 		"D:/FITD/build/vs2026/tools/cmake_install.cmake",
 		"D:/FITD/build/vs2026/FitdLib/cmake_install.cmake",
-		"D:/FITD/build/vs2026/Fitd/cmake_install.cmake"
+		"D:/FITD/build/vs2026/Fitd/cmake_install.cmake",
+		"D:/FITD/build/vs2026/DOSBoxStub/cmake_install.cmake"
 	],
 	"Parallel" : false
 }

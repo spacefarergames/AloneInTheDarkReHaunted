@@ -23,6 +23,7 @@
 #define CON_BGREEN  "\033[1;32m"
 #define CON_BYELLOW "\033[1;33m"
 #define CON_BCYAN   "\033[1;36m"
+#define CON_PINK    "\033[95m"
 
 // ── Tag macro generator ────────────────────────────────────────────────────
 // TAG  = bold cyan   "[abbr] " reset   — general info

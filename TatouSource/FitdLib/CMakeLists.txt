@@ -28,6 +28,8 @@ file(GLOB_RECURSE SRC_ROOT
 set(SOURCES
  ${SOURCES}
  ${SRC_ROOT}
+ "bytecodePatches.cpp"
+ "bytecodePatches.h"
  "${THIRD_PARTY}/imgui/imgui.cpp"
  "${THIRD_PARTY}/imgui/imgui.h"
  "${THIRD_PARTY}/imgui/imgui_draw.cpp"

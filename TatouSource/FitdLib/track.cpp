@@ -192,6 +192,15 @@ void GereManualRot(int param)
 
 #define DISTANCE_TO_POINT_TRESSHOLD 400
 
+// Per-actor stuck detection for TL_GOTO waypoints.
+// When an actor is blocked by hard collision and cannot reach its waypoint,
+// these counters let us skip past the unreachable waypoint after a timeout
+// so the track can continue (prevents permanent freeze, e.g. zombie chicken
+// trying to pass through a narrow window).
+static unsigned int s_gotoLastDistance[NUM_MAX_OBJECT] = {};
+static unsigned int s_gotoStuckFrames[NUM_MAX_OBJECT] = {};
+#define GOTO_STUCK_FRAME_LIMIT 180  // ~3 seconds at 60fps
+
 unsigned int lastTimeForward = 0;
 
 char* getRoomLink(unsigned int room1, unsigned int room2)
@@ -432,6 +441,29 @@ void processTrack(void)
 
                     if(distanceToPoint >= DISTANCE_TO_POINT_TRESSHOLD) // not yet at position
                     {
+                        // Stuck detection: if the actor hasn't gotten closer to the
+                        // waypoint for GOTO_STUCK_FRAME_LIMIT frames (e.g. blocked
+                        // by hard collision at a narrow window), skip the waypoint
+                        // so the rest of the track can proceed.
+                        if (distanceToPoint < s_gotoLastDistance[currentProcessedActorIdx])
+                        {
+                            s_gotoStuckFrames[currentProcessedActorIdx] = 0;
+                        }
+                        else
+                        {
+                            s_gotoStuckFrames[currentProcessedActorIdx]++;
+                        }
+                        s_gotoLastDistance[currentProcessedActorIdx] = distanceToPoint;
+
+                        if (s_gotoStuckFrames[currentProcessedActorIdx] >= GOTO_STUCK_FRAME_LIMIT)
+                        {
+                            // Timed out — skip this unreachable waypoint
+                            s_gotoStuckFrames[currentProcessedActorIdx] = 0;
+                            s_gotoLastDistance[currentProcessedActorIdx] = 0;
+                            currentProcessedActorPtr->positionInTrack += 4;
+                            break;
+                        }
+
                         // If speed was zeroed (e.g. by TL_INIT_COOR, TL_STOP, or a track that
                         // starts directly with TL_GOTO without a preceding TL_WALK), the actor
                         // will turn toward the waypoint but never move, causing a permanent stuck.
@@ -462,6 +494,8 @@ void processTrack(void)
                     }
                     else // reached position
                     {
+                        s_gotoStuckFrames[currentProcessedActorIdx] = 0;
+                        s_gotoLastDistance[currentProcessedActorIdx] = 0;
                         currentProcessedActorPtr->positionInTrack += 4;
                     }
 
@@ -494,17 +528,42 @@ void processTrack(void)
                     z += (roomDataTable[currentProcessedActorPtr->room].worldZ - roomDataTable[roomNumber].worldZ) * 10;
                 }
 
-                // reached position?
-                if (y == currentProcessedActorPtr->roomY)
+                // reached position? Use tolerance like TL_GOTO_3DX/3DZ (exact match can
+                // fail due to integer rounding in Y interpolation, causing permanent stuck)
+                if (abs(y - currentProcessedActorPtr->roomY) <= 100)
                 {
                     int distance = GiveDistance2D(currentProcessedActorPtr->roomX + currentProcessedActorPtr->stepX, currentProcessedActorPtr->roomZ + currentProcessedActorPtr->stepZ, x, z);
                     if (distance < DISTANCE_TO_POINT_TRESSHOLD) {
+                        s_gotoStuckFrames[currentProcessedActorIdx] = 0;
+                        s_gotoLastDistance[currentProcessedActorIdx] = 0;
                         currentProcessedActorPtr->positionInTrack += 6;
                         break;
                     }
                 }
 
                 {
+                    // Stuck detection (same logic as TL_GOTO)
+                    unsigned int dist3d = GiveDistance2D(
+                        currentProcessedActorPtr->roomX + currentProcessedActorPtr->stepX,
+                        currentProcessedActorPtr->roomZ + currentProcessedActorPtr->stepZ, x, z);
+                    if (dist3d < s_gotoLastDistance[currentProcessedActorIdx])
+                    {
+                        s_gotoStuckFrames[currentProcessedActorIdx] = 0;
+                    }
+                    else
+                    {
+                        s_gotoStuckFrames[currentProcessedActorIdx]++;
+                    }
+                    s_gotoLastDistance[currentProcessedActorIdx] = dist3d;
+
+                    if (s_gotoStuckFrames[currentProcessedActorIdx] >= GOTO_STUCK_FRAME_LIMIT)
+                    {
+                        s_gotoStuckFrames[currentProcessedActorIdx] = 0;
+                        s_gotoLastDistance[currentProcessedActorIdx] = 0;
+                        currentProcessedActorPtr->positionInTrack += 6;
+                        break;
+                    }
+
                     // Recover speed if zeroed before this 3D goto, same reason as TL_GOTO.
                     if (currentProcessedActorPtr->speed == 0)
                         currentProcessedActorPtr->speed = 4;
@@ -541,6 +600,8 @@ void processTrack(void)
             }
             case TL_END: // stop
                 {
+                    s_gotoStuckFrames[currentProcessedActorIdx] = 0;
+                    s_gotoLastDistance[currentProcessedActorIdx] = 0;
                     currentProcessedActorPtr->speed = 0;
                     currentProcessedActorPtr->trackNumber = -1;
                     InitDeplacement(0,0);
@@ -548,6 +609,8 @@ void processTrack(void)
                 }
             case TL_REPEAT:
                 {
+                    s_gotoStuckFrames[currentProcessedActorIdx] = 0;
+                    s_gotoLastDistance[currentProcessedActorIdx] = 0;
                     currentProcessedActorPtr->positionInTrack = 0;
                     break;
                 }
@@ -572,12 +635,14 @@ void processTrack(void)
                 }
             case TL_STOP:
                 {
-                    // Stop only has a meaning in AITD1 where it means stop walking
-                    if (g_gameId == AITD1)
-                    {
-                        currentProcessedActorPtr->speed = 0;
-                        currentProcessedActorPtr->positionInTrack++;
-                    }
+                    currentProcessedActorPtr->speed = 0;
+                    currentProcessedActorPtr->positionInTrack++;
+                    break;
+                }
+            case TL_BACK:
+                {
+                    currentProcessedActorPtr->speed = -1;
+                    currentProcessedActorPtr->positionInTrack++;
                     break;
                 }
             case TL_SET_ANGLE: // TL_SET_ANGLE
@@ -669,6 +734,12 @@ void processTrack(void)
                     if(   currentProcessedActorPtr->roomY + currentProcessedActorPtr->stepY < y - 100
                         ||  currentProcessedActorPtr->roomY + currentProcessedActorPtr->stepY > y + 100)
                     {
+                        // Show letterbox when player starts climbing stairs
+                        if (currentProcessedActorIdx == currentCameraTargetActor)
+                        {
+                            osystem_startLetterbox();
+                        }
+
                         // Recover speed if zeroed before this stair goto, same reason as TL_GOTO.
                         if (currentProcessedActorPtr->speed == 0)
                             currentProcessedActorPtr->speed = 4;
@@ -716,11 +787,17 @@ void processTrack(void)
                         currentProcessedActorPtr->zv.ZVY2 += difY;
 
                         currentProcessedActorPtr->positionInTrack +=4;
+
+                        // Hide letterbox when player finishes climbing stairs
+                        if (currentProcessedActorIdx == currentCameraTargetActor)
+                        {
+                            osystem_endLetterboxWithCooldown();
+                        }
                     }
 
                     break;
                 }
-            case TL_GOTO_3DZ: // walk up/down stairs on Z
+            case TL_GOTO_3DZ:
                 {
                     int x;
                     int y;
@@ -743,6 +820,12 @@ void processTrack(void)
                     if(   currentProcessedActorPtr->roomY + currentProcessedActorPtr->stepY < y - 100
                         ||  currentProcessedActorPtr->roomY + currentProcessedActorPtr->stepY > y + 100)
                     {
+                        // Show letterbox when player starts climbing stairs
+                        if (currentProcessedActorIdx == currentCameraTargetActor)
+                        {
+                            osystem_startLetterbox();
+                        }
+
                         // Recover speed if zeroed before this stair goto, same reason as TL_GOTO.
                         if (currentProcessedActorPtr->speed == 0)
                             currentProcessedActorPtr->speed = 4;
@@ -791,11 +874,17 @@ void processTrack(void)
                         currentProcessedActorPtr->zv.ZVY2 += difY;
 
                         currentProcessedActorPtr->positionInTrack +=4;
+
+                        // Hide letterbox when player finishes climbing stairs
+                        if (currentProcessedActorIdx == currentCameraTargetActor)
+                        {
+                            osystem_endLetterboxWithCooldown();
+                        }
                     }
 
                     break;
                 }
-            case TL_ANGLE: // rotate
+            case TL_ANGLE:
                 {
                     currentProcessedActorPtr->alpha = *(s16*)(trackPtr);
                     trackPtr += 2;
@@ -823,5 +912,14 @@ void processTrack(void)
     }
 
     currentProcessedActorPtr->beta &= 0x3FF;
+}
+
+void resetTrackStuckCounters(int actorIdx)
+{
+    if (actorIdx >= 0 && actorIdx < NUM_MAX_OBJECT)
+    {
+        s_gotoStuckFrames[actorIdx] = 0;
+        s_gotoLastDistance[actorIdx] = 0;
+    }
 }
 

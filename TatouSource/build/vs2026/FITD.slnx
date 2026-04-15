@@ -7,6 +7,9 @@
 		<BuildType Name="RelWithDebInfo"/>
 		<Platform Name="x64"/>
 	</Configurations>
+	<Project Path="DOSBoxStub/DOSBoxStub.vcxproj" Type="8bc9ceb8-8b4a-11d0-8d11-00a0c91bc942" Id="aa7d4981-679b-38fd-a6f7-b7699a3292d6">
+		<BuildDependency Project="ZERO_CHECK.vcxproj"/>
+	</Project>
 	<Project Path="Fitd/Fitd.vcxproj" Type="8bc9ceb8-8b4a-11d0-8d11-00a0c91bc942" Id="b93b3d0e-4c41-3eea-a532-b1a10bc201de">
 		<BuildDependency Project="FitdLib/FitdLib.vcxproj"/>
 		<BuildDependency Project="ThirdParty/SDL/SDL3-static.vcxproj"/>
@@ -33,6 +36,7 @@
 	</Project>
 	<Project Path="tools/build_hda_archive.vcxproj" Type="8bc9ceb8-8b4a-11d0-8d11-00a0c91bc942" Id="c060931b-d6e9-3c75-a5b5-4d2cfb5602d9">
 		<BuildDependency Project="ZERO_CHECK.vcxproj"/>
+		<BuildDependency Project="zlib/zlib-build/zlibstatic.vcxproj"/>
 	</Project>
 	<Project Path="zlib/zlib-build/example.vcxproj" Type="8bc9ceb8-8b4a-11d0-8d11-00a0c91bc942" Id="39d0da2b-6c65-33a5-a6e2-882c52799224">
 		<BuildDependency Project="ZERO_CHECK.vcxproj"/>
@@ -53,6 +57,7 @@
 	</Project>
 	<Folder Name="/CMakePredefinedTargets/">
 		<Project Path="ALL_BUILD.vcxproj" Type="8bc9ceb8-8b4a-11d0-8d11-00a0c91bc942" Id="52499451-f137-3654-861f-b39f8e8e1693" DefaultStartup="true">
+			<BuildDependency Project="DOSBoxStub/DOSBoxStub.vcxproj"/>
 			<BuildDependency Project="Fitd/Fitd.vcxproj"/>
 			<BuildDependency Project="FitdLib/FitdLib.vcxproj"/>
 			<BuildDependency Project="ThirdParty/SDL/SDL3-static.vcxproj"/>

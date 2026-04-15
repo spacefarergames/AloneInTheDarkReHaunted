@@ -103,8 +103,7 @@ static int detectAvailableLanguages(int* availableLanguages, int maxCount)
     for (int i = 0; i < s_allLanguagesCount && count < maxCount; i++)
     {
         char pakFile[32];
-        strcpy(pakFile, s_allLanguages[i].pakName);
-        strcat(pakFile, ".PAK");
+        snprintf(pakFile, sizeof(pakFile), "%s.PAK", s_allLanguages[i].pakName);
         if (fileExists(pakFile))
         {
             availableLanguages[count++] = i;
@@ -262,6 +261,9 @@ int MainMenu(void)
     unsigned int chrono;
     int selectedEntry = -1;
     int AntiRebond = 0;
+
+    // End any active letterbox effect when returning to main menu
+    osystem_endLetterbox();
 
     flushScreen();
 

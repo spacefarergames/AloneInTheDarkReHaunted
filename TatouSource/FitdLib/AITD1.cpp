@@ -226,14 +226,51 @@ int makeIntroScreens(void)
 
 void CopyBox_Aux_Log(int x1, int y1, int x2, int y2)
 {
-    int i;
-    int j;
+    // Clamp coordinates to screen bounds to prevent buffer overflow
+    if (x1 < 0) x1 = 0;
+    if (y1 < 0) y1 = 0;
+    if (x2 > 320) x2 = 320;
+    if (y2 > 200) y2 = 200;
 
-    for (i = y1; i < y2; i++)
+    // Early exit if region is invalid
+    if (x1 >= x2 || y1 >= y2)
+        return;
+
+    for (int i = y1; i < y2; i++)
     {
-        for (j = x1; j < x2; j++)
+        for (int j = x1; j < x2; j++)
         {
             *(screenSm3 + i * 320 + j) = *(screenSm1 + i * 320 + j);
+        }
+    }
+}
+
+// Helper function to copy frame border (excluding portrait regions) to UI layer for HD backgrounds
+static void CopyFrameBorderToUILayer()
+{
+    // Define both character portrait regions to always exclude
+    const int leftPortraitX1 = 10, leftPortraitY1 = 10;
+    const int leftPortraitX2 = 149, leftPortraitY2 = 190;
+    const int rightPortraitX1 = 170, rightPortraitY1 = 10;
+    const int rightPortraitX2 = 309, rightPortraitY2 = 190;
+
+    for (int i = 0; i < 200; i++)
+    {
+        for (int j = 0; j < 320; j++)
+        {
+            // Skip both character portrait regions - let HD background show through
+            bool inLeftPortrait = (i >= leftPortraitY1 && i < leftPortraitY2 && j >= leftPortraitX1 && j < leftPortraitX2);
+            bool inRightPortrait = (i >= rightPortraitY1 && i < rightPortraitY2 && j >= rightPortraitX1 && j < rightPortraitX2);
+
+            if (inLeftPortrait || inRightPortrait)
+                continue;
+
+            unsigned char pixel = logicalScreen[i * 320 + j];
+            // Copy non-zero pixels (frame border only) to UI layer
+            if (pixel != 0)
+            {
+                uiLayer[i * 320 + j] = pixel;
+            }
         }
     }
 }
@@ -294,33 +331,7 @@ int ChoosePerso(void)
         // (exclude BOTH character portrait areas so HD background shows through for both)
         if (usingHDBackground)
         {
-            // Define both character portrait regions to always exclude
-            int leftPortraitX1 = 10, leftPortraitY1 = 10;
-            int leftPortraitX2 = 149, leftPortraitY2 = 190;
-            int rightPortraitX1 = 170, rightPortraitY1 = 10;
-            int rightPortraitX2 = 309, rightPortraitY2 = 190;
-
-            for (int i = 0; i < 200; i++)
-            {
-                for (int j = 0; j < 320; j++)
-                {
-                    // Skip both character portrait regions - let HD background show through
-                    bool inLeftPortrait = (i >= leftPortraitY1 && i < leftPortraitY2 && j >= leftPortraitX1 && j < leftPortraitX2);
-                    bool inRightPortrait = (i >= rightPortraitY1 && i < rightPortraitY2 && j >= rightPortraitX1 && j < rightPortraitX2);
-
-                    if (inLeftPortrait || inRightPortrait)
-                    {
-                        continue;
-                    }
-
-                    unsigned char pixel = logicalScreen[i * 320 + j];
-                    // Copy non-zero pixels (frame border only) to UI layer
-                    if (pixel != 0)
-                    {
-                        uiLayer[i * 320 + j] = pixel;
-                    }
-                }
-            }
+            CopyFrameBorderToUILayer();
         }
 
         FastCopyScreen(logicalScreen, frontBuffer);
@@ -363,33 +374,7 @@ int ChoosePerso(void)
                 if (usingHDBackground)
                 {
                     uiLayer.fill(0);
-
-                    // Always exclude both character portrait regions
-                    int leftPortraitX1 = 10, leftPortraitY1 = 10;
-                    int leftPortraitX2 = 149, leftPortraitY2 = 190;
-                    int rightPortraitX1 = 170, rightPortraitY1 = 10;
-                    int rightPortraitX2 = 309, rightPortraitY2 = 190;
-
-                    for (int i = 0; i < 200; i++)
-                    {
-                        for (int j = 0; j < 320; j++)
-                        {
-                            // Skip both character portrait regions
-                            bool inLeftPortrait = (i >= leftPortraitY1 && i < leftPortraitY2 && j >= leftPortraitX1 && j < leftPortraitX2);
-                            bool inRightPortrait = (i >= rightPortraitY1 && i < rightPortraitY2 && j >= rightPortraitX1 && j < rightPortraitX2);
-
-                            if (inLeftPortrait || inRightPortrait)
-                            {
-                                continue;
-                            }
-
-                            unsigned char pixel = logicalScreen[i * 320 + j];
-                            if (pixel != 0)
-                            {
-                                uiLayer[i * 320 + j] = pixel;
-                            }
-                        }
-                    }
+                    CopyFrameBorderToUILayer();
                 }
 
                 osystem_CopyBlockPhys((unsigned char*)logicalScreen, 0, 0, 320, 200);
@@ -413,33 +398,7 @@ int ChoosePerso(void)
                 if (usingHDBackground)
                 {
                     uiLayer.fill(0);
-
-                    // Always exclude both character portrait regions
-                    int leftPortraitX1 = 10, leftPortraitY1 = 10;
-                    int leftPortraitX2 = 149, leftPortraitY2 = 190;
-                    int rightPortraitX1 = 170, rightPortraitY1 = 10;
-                    int rightPortraitX2 = 309, rightPortraitY2 = 190;
-
-                    for (int i = 0; i < 200; i++)
-                    {
-                        for (int j = 0; j < 320; j++)
-                        {
-                            // Skip both character portrait regions
-                            bool inLeftPortrait = (i >= leftPortraitY1 && i < leftPortraitY2 && j >= leftPortraitX1 && j < leftPortraitX2);
-                            bool inRightPortrait = (i >= rightPortraitY1 && i < rightPortraitY2 && j >= rightPortraitX1 && j < rightPortraitX2);
-
-                            if (inLeftPortrait || inRightPortrait)
-                            {
-                                continue;
-                            }
-
-                            unsigned char pixel = logicalScreen[i * 320 + j];
-                            if (pixel != 0)
-                            {
-                                uiLayer[i * 320 + j] = pixel;
-                            }
-                        }
-                    }
+                    CopyFrameBorderToUILayer();
                 }
 
                 osystem_CopyBlockPhys((unsigned char*)logicalScreen, 0, 0, 320, 200);
@@ -451,7 +410,7 @@ int ChoosePerso(void)
                 }
             }
 
-            if (localKey == 1)
+            if (localKey == 0x1B)
             {
                 // Clear UI layer and reset HD background when leaving via escape
                 setCurrentAnimatedHDBackground(nullptr);
@@ -713,6 +672,7 @@ void startAITD1()
                 }
 
 #if !TARGET_OS_IOS
+                // Start intro sequence with cinematc letterbox (handled by InitView)
                 startGame(7, 1, 0);
 #endif
 

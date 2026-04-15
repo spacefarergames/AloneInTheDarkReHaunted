@@ -1,4 +1,4 @@
-﻿///////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////
 // Alone In The Dark Re-Haunted
 // Copyright (C) 2026 Infogrames / Spacefarer Retro Remasters LLC
 // Based on FITD by yaz0r, Re-haunted is released under GPL
@@ -98,6 +98,13 @@ struct RemasterConfig
     struct {
         bool steamless;         // Disable automatic file copying/installation when true (default: false)
     } gameData;
+
+    // Debug / diagnostics settings
+    struct {
+        bool logLifeScripts;    // Log every LIFE macro dispatch to console (default: false)
+        bool dumpLifeScripts;   // Dump all LISTLIFE scripts to file on startup (default: false)
+        bool generateNativeLifeScripts; // Generate native C code for all life scripts (default: false)
+    } debug;
 };
 
 extern RemasterConfig g_remasterConfig;

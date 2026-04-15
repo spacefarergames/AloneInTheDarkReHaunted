@@ -12,5 +12,6 @@
 
 void processTrack(void);
 void GereManualRot(int param);
+void resetTrackStuckCounters(int actorIdx);
 
 #endif

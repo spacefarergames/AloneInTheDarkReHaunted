@@ -172,4 +172,12 @@
 	void osystem_setSequenceHDFrame(unsigned char* rgbaData, int width, int height);
 	void osystem_clearSequenceHDFrame();
 
+	// Cinematic letterbox (black bars) effect
+	void osystem_startLetterbox();   // Start slide-in animation
+	void osystem_endLetterbox();     // Start slide-out animation
+	void osystem_endLetterboxWithCooldown();  // End with cooldown to prevent re-triggering (e.g., after stairs)
+	void osystem_updateLetterbox();  // Update animation state each frame
+	void osystem_drawLetterbox();    // Render the letterbox bars
+	bool osystem_isLetterboxActive(); // Check if letterbox is currently visible
+
 #endif

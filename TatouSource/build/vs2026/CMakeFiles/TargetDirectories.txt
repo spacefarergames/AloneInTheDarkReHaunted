@@ -35,3 +35,4 @@ D:/FITD/build/vs2026/tools/CMakeFiles/build_hda_archive.dir
 D:/FITD/build/vs2026/tools/CMakeFiles/ALL_BUILD.dir
 D:/FITD/build/vs2026/FitdLib/CMakeFiles/FitdLib.dir
 D:/FITD/build/vs2026/Fitd/CMakeFiles/Fitd.dir
+D:/FITD/build/vs2026/DOSBoxStub/CMakeFiles/DOSBoxStub.dir

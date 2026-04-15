@@ -100,6 +100,11 @@ void initDefaultRemasterConfig()
 
     // Game data defaults
     g_remasterConfig.gameData.steamless = false;   // Allow automatic file copying/installation by default
+
+    // Debug / diagnostics defaults
+    g_remasterConfig.debug.logLifeScripts = false;  // Don't log life scripts by default (very verbose)
+    g_remasterConfig.debug.dumpLifeScripts = false;   // Don't dump life scripts by default
+    g_remasterConfig.debug.generateNativeLifeScripts = false; // Don't generate native C code by default
 }
 
 void loadRemasterConfig()
@@ -291,6 +296,14 @@ void loadRemasterConfig()
             // Game data settings
             else if (strcmp(key, "gamedata.steamless") == 0)
                 g_remasterConfig.gameData.steamless = (strcmp(value, "true") == 0 || strcmp(value, "1") == 0);
+
+            // Debug / diagnostics settings
+            else if (strcmp(key, "debug.logLifeScripts") == 0)
+                g_remasterConfig.debug.logLifeScripts = (strcmp(value, "true") == 0 || strcmp(value, "1") == 0);
+            else if (strcmp(key, "debug.dumpLifeScripts") == 0)
+                g_remasterConfig.debug.dumpLifeScripts = (strcmp(value, "true") == 0 || strcmp(value, "1") == 0);
+            else if (strcmp(key, "debug.generateNativeLifeScripts") == 0)
+                g_remasterConfig.debug.generateNativeLifeScripts = (strcmp(value, "true") == 0 || strcmp(value, "1") == 0);
         }
     }
 
@@ -427,6 +440,11 @@ void saveRemasterConfig()
 
     fprintf(file, "\n# Game Data Settings\n");
     fprintf(file, "gamedata.steamless = %s\n", g_remasterConfig.gameData.steamless ? "true" : "false");
+
+    fprintf(file, "\n# Debug / Diagnostics Settings\n");
+    fprintf(file, "debug.logLifeScripts = %s\n", g_remasterConfig.debug.logLifeScripts ? "true" : "false");
+    fprintf(file, "debug.dumpLifeScripts = %s\n", g_remasterConfig.debug.dumpLifeScripts ? "true" : "false");
+    fprintf(file, "debug.generateNativeLifeScripts = %s\n", g_remasterConfig.debug.generateNativeLifeScripts ? "true" : "false");
 
     fclose(file);
     printf(CFG_OK "Remaster config saved\n");

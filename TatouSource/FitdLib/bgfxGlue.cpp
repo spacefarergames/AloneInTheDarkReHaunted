@@ -21,6 +21,7 @@
 #include "lightProbes.h"
 #include "dustParticles.h"
 #include "debugger.h"
+#include "osystem.h"
 
 #if BX_PLATFORM_OSX
 extern "C" {
@@ -210,6 +211,10 @@ void EndFrame()
 
     // Render vignette overlay (darkened screen edges for cinematic look)
     osystem_drawVignette();
+
+    // Update and render cinematic letterbox (black bars for intro scenes)
+    osystem_updateLetterbox();
+    osystem_drawLetterbox();
 
     // Render TTF text overlay before ImGui render
     renderTTFText();

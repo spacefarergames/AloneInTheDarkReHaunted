@@ -7,6 +7,9 @@
 // Cutscene sequence player declarations
 ///////////////////////////////////////////////////////////////////////////////
 
+#ifndef _SEQUENCE_H_
+#define _SEQUENCE_H_
+
 #define NUM_MAX_SEQUENCE_PARAM 30
 
 struct sequenceParamStruct
@@ -21,3 +24,5 @@ typedef struct sequenceParamStruct sequenceParamStruct;
 extern int numSequenceParam;
 
 extern sequenceParamStruct sequenceParams[NUM_MAX_SEQUENCE_PARAM];
+
+#endif // _SEQUENCE_H_

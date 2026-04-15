@@ -41,6 +41,7 @@ if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   include("D:/FITD/build/vs2026/tools/cmake_install.cmake")
   include("D:/FITD/build/vs2026/FitdLib/cmake_install.cmake")
   include("D:/FITD/build/vs2026/Fitd/cmake_install.cmake")
+  include("D:/FITD/build/vs2026/DOSBoxStub/cmake_install.cmake")
 
 endif()
 

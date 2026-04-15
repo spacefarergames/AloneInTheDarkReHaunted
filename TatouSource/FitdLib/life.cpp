@@ -15,6 +15,8 @@
 #include "hybrid.h"
 #include "hdBackground.h"
 #include "hdBackgroundRenderer.h"
+#include "nativeLife.h"
+#include "bytecodePatches.h"
 
 // HD background state (from hdBackgroundRenderer)
 extern bool g_currentBackgroundIsHD;
@@ -22,6 +24,138 @@ void recreateBackgroundTexture(int width, int height);
 
 int groundLevel;
 s16 specialTable[4] = { 144, 192, 48, 112 };
+
+static const char* getLifeMacroName(int macro)
+{
+    switch (macro)
+    {
+    case LM_DO_MOVE: return "DO_MOVE";
+    case LM_ANIM_ONCE: return "ANIM_ONCE";
+    case LM_ANIM_ALL_ONCE: return "ANIM_ALL_ONCE";
+    case LM_BODY: return "BODY";
+    case LM_IF_EGAL: return "IF_EGAL";
+    case LM_IF_DIFFERENT: return "IF_DIFFERENT";
+    case LM_IF_SUP_EGAL: return "IF_SUP_EGAL";
+    case LM_IF_SUP: return "IF_SUP";
+    case LM_IF_INF_EGAL: return "IF_INF_EGAL";
+    case LM_IF_INF: return "IF_INF";
+    case LM_GOTO: return "GOTO";
+    case LM_RETURN: return "RETURN";
+    case LM_END: return "END";
+    case LM_ANIM_REPEAT: return "ANIM_REPEAT";
+    case LM_ANIM_MOVE: return "ANIM_MOVE";
+    case LM_MOVE: return "MOVE";
+    case LM_HIT: return "HIT";
+    case LM_MESSAGE: return "MESSAGE";
+    case LM_MESSAGE_VALUE: return "MESSAGE_VALUE";
+    case LM_VAR: return "VAR";
+    case LM_INC: return "INC";
+    case LM_DEC: return "DEC";
+    case LM_ADD: return "ADD";
+    case LM_SUB: return "SUB";
+    case LM_LIFE_MODE: return "LIFE_MODE";
+    case LM_SWITCH: return "SWITCH";
+    case LM_CASE: return "CASE";
+    case LM_CAMERA: return "CAMERA";
+    case LM_START_CHRONO: return "START_CHRONO";
+    case LM_MULTI_CASE: return "MULTI_CASE";
+    case LM_FOUND: return "FOUND";
+    case LM_LIFE: return "LIFE";
+    case LM_DELETE: return "DELETE";
+    case LM_TAKE: return "TAKE";
+    case LM_IN_HAND: return "IN_HAND";
+    case LM_READ: return "READ";
+    case LM_ANIM_SAMPLE: return "ANIM_SAMPLE";
+    case LM_SPECIAL: return "SPECIAL";
+    case LM_DO_REAL_ZV: return "DO_REAL_ZV";
+    case LM_SAMPLE: return "SAMPLE";
+    case LM_TYPE: return "TYPE";
+    case LM_GAME_OVER: return "GAME_OVER";
+    case LM_MANUAL_ROT: return "MANUAL_ROT";
+    case LM_RND_FREQ: return "RND_FREQ";
+    case LM_MUSIC: return "MUSIC";
+    case LM_SET_BETA: return "SET_BETA";
+    case LM_DO_ROT_ZV: return "DO_ROT_ZV";
+    case LM_STAGE: return "STAGE";
+    case LM_FOUND_NAME: return "FOUND_NAME";
+    case LM_FOUND_FLAG: return "FOUND_FLAG";
+    case LM_FOUND_LIFE: return "FOUND_LIFE";
+    case LM_CAMERA_TARGET: return "CAMERA_TARGET";
+    case LM_DROP: return "DROP";
+    case LM_FIRE: return "FIRE";
+    case LM_TEST_COL: return "TEST_COL";
+    case LM_FOUND_BODY: return "FOUND_BODY";
+    case LM_SET_ALPHA: return "SET_ALPHA";
+    case LM_STOP_BETA: return "STOP_BETA";
+    case LM_DO_MAX_ZV: return "DO_MAX_ZV";
+    case LM_PUT: return "PUT";
+    case LM_C_VAR: return "C_VAR";
+    case LM_DO_NORMAL_ZV: return "DO_NORMAL_ZV";
+    case LM_DO_CARRE_ZV: return "DO_CARRE_ZV";
+    case LM_SAMPLE_THEN: return "SAMPLE_THEN";
+    case LM_LIGHT: return "LIGHT";
+    case LM_SHAKING: return "SHAKING";
+    case LM_INVENTORY: return "INVENTORY";
+    case LM_FOUND_WEIGHT: return "FOUND_WEIGHT";
+    case LM_UP_COOR_Y: return "UP_COOR_Y";
+    case LM_SPEED: return "SPEED";
+    case LM_PUT_AT: return "PUT_AT";
+    case LM_DEF_ZV: return "DEF_ZV";
+    case LM_HIT_OBJECT: return "HIT_OBJECT";
+    case LM_GET_HARD_CLIP: return "GET_HARD_CLIP";
+    case LM_ANGLE: return "ANGLE";
+    case LM_REP_SAMPLE: return "REP_SAMPLE";
+    case LM_THROW: return "THROW";
+    case LM_WATER: return "WATER";
+    case LM_PICTURE: return "PICTURE";
+    case LM_STOP_SAMPLE: return "STOP_SAMPLE";
+    case LM_NEXT_MUSIC: return "NEXT_MUSIC";
+    case LM_FADE_MUSIC: return "FADE_MUSIC";
+    case LM_STOP_HIT_OBJECT: return "STOP_HIT_OBJECT";
+    case LM_COPY_ANGLE: return "COPY_ANGLE";
+    case LM_END_SEQUENCE: return "END_SEQUENCE";
+    case LM_SAMPLE_THEN_REPEAT: return "SAMPLE_THEN_REPEAT";
+    case LM_WAIT_GAME_OVER: return "WAIT_GAME_OVER";
+    case LM_GET_MATRICE: return "GET_MATRICE";
+    case LM_STAGE_LIFE: return "STAGE_LIFE";
+    case LM_CONTINUE_TRACK: return "CONTINUE_TRACK";
+    case LM_ANIM_RESET: return "ANIM_RESET";
+    case LM_RESET_MOVE_MANUAL: return "RESET_MOVE_MANUAL";
+    case LM_PLUIE: return "PLUIE";
+    case LM_ANIM_HYBRIDE_ONCE: return "ANIM_HYBRIDE_ONCE";
+    case LM_ANIM_HYBRIDE_REPEAT: return "ANIM_HYBRIDE_REPEAT";
+    case LM_MODIF_C_VAR: return "MODIF_C_VAR";
+    case LM_CALL_INVENTORY: return "CALL_INVENTORY";
+    case LM_BODY_RESET: return "BODY_RESET";
+    case LM_DEL_INVENTORY: return "DEL_INVENTORY";
+    case LM_SET_INVENTORY: return "SET_INVENTORY";
+    case LM_PLAY_SEQUENCE: return "PLAY_SEQUENCE";
+    case LM_2D_ANIM_SAMPLE: return "2D_ANIM_SAMPLE";
+    case LM_SET_GROUND: return "SET_GROUND";
+    case LM_PROTECT: return "PROTECT";
+    case LM_DEF_ABS_ZV: return "DEF_ABS_ZV";
+    case LM_DEF_SEQUENCE_SAMPLE: return "DEF_SEQUENCE_SAMPLE";
+    case LM_READ_ON_PICTURE: return "READ_ON_PICTURE";
+    case LM_FIRE_UP_DOWN: return "FIRE_UP_DOWN";
+    case LM_DO_ROT_CLUT: return "DO_ROT_CLUT";
+    case LM_STOP_CLUT: return "STOP_CLUT";
+    case LM_IF_IN: return "IF_IN";
+    case LM_IF_OUT: return "IF_OUT";
+    case LM_SET_VOLUME_SAMPLE: return "SET_VOLUME_SAMPLE";
+    case LM_FADE_IN_MUSIC: return "FADE_IN_MUSIC";
+    case LM_SET_MUSIC_VOLUME: return "SET_MUSIC_VOLUME";
+    case LM_MUSIC_AND_LOOP: return "MUSIC_AND_LOOP";
+    case LM_MUSIC_THEN: return "MUSIC_THEN";
+    case LM_MUSIC_THEN_LOOP: return "MUSIC_THEN_LOOP";
+    case LM_START_FADE_IN_MUSIC: return "START_FADE_IN_MUSIC";
+    case LM_START_FADE_IN_MUSIC_THEN: return "START_FADE_IN_MUSIC_THEN";
+    case LM_START_FADE_IN_MUSIC_LOOP: return "START_FADE_IN_MUSIC_LOOP";
+    case LM_FADE_OUT_MUSIC_STOP: return "FADE_OUT_MUSIC_STOP";
+    case LM_MUSIC_ALTER_TEMPO: return "MUSIC_ALTER_TEMPO";
+    case LM_REP_SAMPLE_N_TIME: return "REP_SAMPLE_N_TIME";
+    default: return "UNKNOWN";
+    }
+}
 
 int numSequenceParam = 0;
 
@@ -626,6 +760,12 @@ void appendFormated(const char* format, ...)
 
 void processLife(int lifeNum, bool callFoundLife)
 {
+    // DISABLED: Native life scripts replaced with bytecode patch system
+    // Native scripts are kept in repository for reference/documentation only
+    // The bytecode interpreter now runs with runtime patches for bug fixes
+    // NativeLifeFunc nativeFunc = getNativeLifeScript(lifeNum);
+    // if (nativeFunc) { ... }
+
     int exitLife = 0;
     //int switchVal = 0;
     int var_6;
@@ -692,6 +832,9 @@ void processLife(int lifeNum, bool callFoundLife)
                     {
                         opcodeLocated = AITD2LifeMacroTable[currentOpcode & 0x7FFF];
                     }
+
+                    if (g_remasterConfig.debug.logLifeScripts)
+                        printf(LIFE_TAG "Actor %d | Life %d | Opcode 0x%02X -> %s (not-in-floor)" CON_RESET "\n", currentProcessedActorIdx, lifeNum, currentOpcode & 0x7FFF, getLifeMacroName(opcodeLocated));
 
                     switch (opcodeLocated)
                     {
@@ -905,6 +1048,12 @@ void processLife(int lifeNum, bool callFoundLife)
                 opcodeLocated = AITD2LifeMacroTable[currentOpcode & 0x7FFF];
             }
 
+            if (g_remasterConfig.debug.logLifeScripts)
+                printf(LIFE_TAG "Actor %d | Life %d | Opcode 0x%02X -> %s" CON_RESET "\n", currentProcessedActorIdx, lifeNum, currentOpcode & 0x7FFF, getLifeMacroName(opcodeLocated));
+
+            // Apply bytecode patches BEFORE opcode execution
+            applyBytecodePreOpcodePatches(lifeNum, opcodeLocated, currentProcessedActorPtr);
+
             switch (opcodeLocated)
             {
             case LM_BODY:
@@ -912,6 +1061,18 @@ void processLife(int lifeNum, bool callFoundLife)
                 lifeTempVar1 = evalVar();
 
                 ListWorldObjets[currentProcessedActorPtr->indexInWorld].body = lifeTempVar1;
+
+                // AITD2: Override player body to body 18 (atlas-compatible gun stance body)
+                // Only swap bodies with matching skeleton (same group count) to avoid replacing car/special bodies
+                if (g_gameId == AITD2 && currentProcessedActorIdx == currentCameraTargetActor && lifeTempVar1 != 18)
+                {
+                    sBody* requestedBody = HQR_Get(HQ_Bodys, lifeTempVar1);
+                    sBody* body18 = HQR_Get(HQ_Bodys, 18);
+                    if (requestedBody && body18 && (requestedBody->m_flags & INFO_ANIM) && requestedBody->m_groups.size() == body18->m_groups.size())
+                    {
+                        lifeTempVar1 = 18;
+                    }
+                }
 
                 if (currentProcessedActorPtr->bodyNum != lifeTempVar1)
                 {
@@ -957,6 +1118,17 @@ void processLife(int lifeNum, bool callFoundLife)
 
                 ListWorldObjets[currentProcessedActorPtr->indexInWorld].body = param1;
                 ListWorldObjets[currentProcessedActorPtr->indexInWorld].anim = param2;
+
+                // AITD2: Override player body to body 18 (atlas-compatible gun stance body)
+                if (g_gameId == AITD2 && currentProcessedActorIdx == currentCameraTargetActor && param1 != 18)
+                {
+                    sBody* requestedBody = HQR_Get(HQ_Bodys, param1);
+                    sBody* body18 = HQR_Get(HQ_Bodys, 18);
+                    if (requestedBody && body18 && (requestedBody->m_flags & INFO_ANIM) && requestedBody->m_groups.size() == body18->m_groups.size())
+                    {
+                        param1 = 18;
+                    }
+                }
 
                 currentProcessedActorPtr->bodyNum = param1;
 
@@ -1904,6 +2076,8 @@ void processLife(int lifeNum, bool callFoundLife)
                         if (currentProcessedActorPtr->frame == lifeTempVar3)
                         {
                             playSound(lifeTempVar1);
+
+                           
                             //setSampleFreq(0);
                         }
                     }
@@ -1948,6 +2122,12 @@ void processLife(int lifeNum, bool callFoundLife)
                 }
 
                 playSound(sampleNumber);
+
+                // Trigger letterbox when player plays a sound while dead
+                if (currentProcessedActorIdx == currentCameraTargetActor && vars[0] <= 0)
+                {
+                    osystem_startLetterbox();
+                }
                 //setSampleFreq(0);
                 break;
             }
@@ -2142,6 +2322,22 @@ void processLife(int lifeNum, bool callFoundLife)
             {
                 appendFormated("LM_CAMERA_TARGET ");
                 lifeTempVar1 = readNextArgument("Target");
+
+                // Cinematic letterbox when camera target changes (AITD1 only)
+                if (g_gameId == AITD1 && lifeTempVar1 != currentWorldTarget)
+                {
+                    int playerWorldTarget = CVars[getCVarsIdx(WORLD_NUM_PERSO)];
+                    if (lifeTempVar1 != playerWorldTarget)
+                    {
+                        // Camera redirected away from player - cinematic moment
+                        osystem_startLetterbox();
+                    }
+                    else
+                    {
+                        // Camera returning to player - end cinematic
+                        osystem_endLetterbox();
+                    }
+                }
 
                 if (lifeTempVar1 != currentWorldTarget) // same target
                 {
@@ -2422,6 +2618,9 @@ void processLife(int lifeNum, bool callFoundLife)
             {
                 appendFormated("LM_END_SEQUENCE ");
                 printf(LIFE_TAG "LM_END_SEQUENCE - Ending cinematic sequence, gameplay continues\n");
+
+                // Remove letterbox when cinematic sequence ends and gameplay resumes
+                osystem_endLetterbox();
                 break;
             }
             ////////////////////////////////////////////////////////////////////////
@@ -2672,12 +2871,17 @@ void processLife(int lifeNum, bool callFoundLife)
             case LM_GAME_OVER:
             {
                 appendFormated("LM_GAME_OVER ");
+
+                // Cinematic letterbox for death sequence
+                osystem_startLetterbox();
+
                 fadeMusic(0, 0, 0x8000);    // fade out music
                 startChrono(&musicChrono);
 
                 while (evalChrono(&musicChrono) < 120)
                 {
                     process_events();
+                    osystem_updateLetterbox();
                 }
                 FlagGameOver = 1;
                 exitLife = 1;
@@ -2733,6 +2937,9 @@ void processLife(int lifeNum, bool callFoundLife)
                 assert(0);
             }
             }
+
+            // Apply bytecode patches AFTER opcode execution
+            applyBytecodePostOpcodePatches(lifeNum, opcodeLocated, currentProcessedActorPtr);
         }
 
 #ifdef DEBUG

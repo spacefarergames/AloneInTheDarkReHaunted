@@ -18,8 +18,11 @@ extern void playMenuSound(const char* soundName);
 #include "fontTTF.h"
 
 #include "hdBackground.h"
+#include "nativeLife.h"
+#include "bytecodePatches.h"
 #include "hdBackgroundRenderer.h"
 #include "resourceGC.h"
+#include "track.h"
 
 #include <time.h>
 #include <math.h>
@@ -288,9 +291,13 @@ void executeFoundLife(int objIdx)
     currentActorLifePtr = currentLifeActorPtr;
     currentActorLifeNum = currentLifeNum;
 
-    if (currentLifeNum != -1)
+    if (currentLifeNum != -1 && currentLifePtr != nullptr)
     {
         lifeOffset = (int)((currentLifePtr - HQR_Get(listLife, currentActorLifeNum)) / 2);
+    }
+    else
+    {
+        lifeOffset = 0; // Native scripts don't use bytecode offset
     }
 
     var_2 = 0;
@@ -347,7 +354,7 @@ void executeFoundLife(int objIdx)
     currentLifeActorIdx = currentActorLifeIdx;
     currentLifeActorPtr = currentActorLifePtr;
 
-    if (currentActorLifeNum != -1)
+    if (currentActorLifeNum != -1 && currentLifePtr != nullptr)
     {
         currentLifeNum = currentActorLifeNum;
         currentLifePtr = HQR_Get(listLife, currentLifeNum) + lifeOffset * 2;
@@ -1444,6 +1451,13 @@ void LoadWorld(void)
         HQ_Hybrides = HQR_InitRessource<sHybrid>("LISTHYB", 20000, 10); // TODO: recheck size for other games
     }
 
+    // Native life scripts have been DISABLED in favor of bytecode patch system
+    // This provides better maintainability and keeps all script logic in one place
+    // initNativeLifeScripts();
+
+    // Initialize bytecode patch system (runtime bug fixes for bytecode execution)
+    initBytecodePatches();
+
     // TODO: missing dos memory check here
 
     if (g_gameId == AITD1)
@@ -1616,33 +1630,53 @@ void loadCamera(int cameraIdx)
     ResourceGC::flush();
     if (g_currentAnimatedHDBackground)
     {
+        // Animated backgrounds are never cached, so always free them
         freeHDBackground(g_currentAnimatedHDBackground);
         g_currentAnimatedHDBackground = nullptr;
     }
 
-    // Try to load HD background if enabled
-    // In dark rooms (no light source), try loading the _DARK variant first
+    // Try to get HD background - use preloaded cache if available for faster camera switches
     const char* bgSuffix = nullptr;
     if (g_gameId == AITD1 && g_roomIsDark)
         bgSuffix = "DARK";
-    HDBackgroundInfo* hdBg = loadHDBackground(name, cameraIdx, bgSuffix);
+
+    HDBackgroundInfo* hdBg = nullptr;
+    bool isFromCache = false;
+
+    // Check preload cache first (only for standard camera loads, not special ITD_RESS overrides)
+    // Note: Only static backgrounds are cached; animated ones are always loaded fresh
+    if (useSpecial == -1 && areHDBackgroundsPreloaded())
+    {
+        hdBg = getPreloadedHDBackground(cameraIdx, bgSuffix);
+        isFromCache = (hdBg != nullptr);
+    }
+
+    // Fall back to loading if not in cache
+    if (!hdBg)
+    {
+        hdBg = loadHDBackground(name, cameraIdx, bgSuffix);
+    }
+
     if (hdBg)
     {
-        // HD background was loaded successfully
+        // HD background available
         updateBackgroundTextureHD(hdBg->data, hdBg->width, hdBg->height, hdBg->channels);
 
         // If it's animated, keep it alive for animation updates
         if (hdBg->isAnimated)
         {
-            // This will clean up any previous animated background and set the new one
+            // Animated backgrounds are never from cache
             setCurrentAnimatedHDBackground(hdBg);
         }
         else
         {
             // Static background - clean up any previous animated background
             setCurrentAnimatedHDBackground(nullptr);
-            // Then free the static background immediately
-            freeHDBackground(hdBg);
+            // Only free if it wasn't from the cache (cached bgs are managed by the cache)
+            if (!isFromCache)
+            {
+                freeHDBackground(hdBg);
+            }
         }
     }
     else
@@ -2176,6 +2210,8 @@ void InitDeplacement(int trackMode, int trackNumber)
         // trackMode (e.g. follow-mode speedChange mid-ramp) that would produce
         // incorrect movement speed at the start of the patrol track.
         currentProcessedActorPtr->speedChange.numSteps = 0;
+        // Clear stuck-at-waypoint counters so the new track starts fresh.
+        resetTrackStuckCounters(currentProcessedActorIdx);
         break;
     }
     }
@@ -2550,6 +2586,14 @@ void InitView()
     if (g_currentFloor == 0 && roomDataTable[currentRoom].cameraIdxTable[NewNumCamera] == 0)
     {
         osystem_stopSample();
+        // Hide letterbox when transitioning from intro to first room
+        osystem_endLetterboxWithCooldown();
+    }
+
+    // Show letterbox when the intro camera (floor 7, camera 3) starts playing
+    if (g_currentFloor == 7 && roomDataTable[currentRoom].cameraIdxTable[NewNumCamera] == 3)
+    {
+        osystem_startLetterbox();
     }
 
     loadCamera(roomDataTable[currentRoom].cameraIdxTable[NewNumCamera]);
@@ -2978,6 +3022,11 @@ void drawProjectedQuad(float x1, float x2, float x3, float x4, float y1, float y
     z2 += cameraPerspective;
     z3 += cameraPerspective;
     z4 += cameraPerspective;
+
+    // Guard against division by zero - skip rendering if any Z is too small
+    const float MIN_Z = 1.0f;
+    if (z1 < MIN_Z || z2 < MIN_Z || z3 < MIN_Z || z4 < MIN_Z)
+        return;
 
     transformedX1 = ((x1 * cameraFovX) / (float)z1) + cameraCenterX;
     transformedX2 = ((x2 * cameraFovX) / (float)z2) + cameraCenterX;

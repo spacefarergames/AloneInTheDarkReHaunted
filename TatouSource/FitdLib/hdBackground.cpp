@@ -907,3 +907,157 @@ void resumeHDBackgroundAnimation(HDBackgroundInfo* bgInfo)
         bgInfo->isPaused = false;
     }
 }
+
+//////////////////////////////////////////////////////////////////////////////
+// HD Background Preloading Cache
+//////////////////////////////////////////////////////////////////////////////
+
+// Cache structure for preloaded HD backgrounds per floor
+static struct {
+    std::vector<HDBackgroundInfo*> backgrounds;  // Indexed by camera index
+    std::vector<HDBackgroundInfo*> darkBackgrounds; // DARK variants for dark rooms
+    int floorNumber;
+    char backgroundName[64];
+    bool initialized;
+} g_hdBackgroundCache = { {}, {}, -1, "", false };
+
+// Preload all HD backgrounds for a floor
+// Preload all HD backgrounds for a floor
+// NOTE: Only static backgrounds are cached. Animated backgrounds have mutable state
+// (currentFrame, frameTimer) that cannot be safely shared between camera switches.
+void preloadFloorHDBackgrounds(int floorNumber, int cameraCount, const char* backgroundName)
+{
+    if (!isHDBackgroundEnabled())
+    {
+        return;
+    }
+
+    // Clear any existing preloaded backgrounds
+    clearPreloadedHDBackgrounds();
+
+    if (cameraCount <= 0)
+    {
+        return;
+    }
+
+    printf(HDBG_TAG "Preloading HD backgrounds for floor %d (%d cameras)...\n", floorNumber, cameraCount);
+
+    g_hdBackgroundCache.floorNumber = floorNumber;
+    strncpy(g_hdBackgroundCache.backgroundName, backgroundName, sizeof(g_hdBackgroundCache.backgroundName) - 1);
+    g_hdBackgroundCache.backgroundName[sizeof(g_hdBackgroundCache.backgroundName) - 1] = '\0';
+    g_hdBackgroundCache.backgrounds.resize(cameraCount, nullptr);
+    g_hdBackgroundCache.darkBackgrounds.resize(cameraCount, nullptr);
+    g_hdBackgroundCache.initialized = true;
+
+    int loadedCount = 0;
+    int darkLoadedCount = 0;
+    int skippedAnimated = 0;
+
+    for (int i = 0; i < cameraCount; i++)
+    {
+        // Load normal background
+        HDBackgroundInfo* bg = loadHDBackground(backgroundName, i, nullptr);
+        if (bg)
+        {
+            // Only cache static backgrounds - animated ones have mutable state
+            if (bg->isAnimated)
+            {
+                freeHDBackground(bg);
+                skippedAnimated++;
+            }
+            else
+            {
+                g_hdBackgroundCache.backgrounds[i] = bg;
+                loadedCount++;
+            }
+        }
+
+        // Also preload DARK variant if it exists (for AITD1 dark rooms)
+        HDBackgroundInfo* darkBg = loadHDBackground(backgroundName, i, "DARK");
+        if (darkBg)
+        {
+            if (darkBg->isAnimated)
+            {
+                freeHDBackground(darkBg);
+            }
+            else
+            {
+                g_hdBackgroundCache.darkBackgrounds[i] = darkBg;
+                darkLoadedCount++;
+            }
+        }
+    }
+
+    printf(HDBG_OK "Preloaded %d/%d HD backgrounds (%d DARK, %d animated skipped) for floor %d\n", 
+           loadedCount, cameraCount, darkLoadedCount, skippedAnimated, floorNumber);
+}
+
+// Get a preloaded HD background by camera index
+HDBackgroundInfo* getPreloadedHDBackground(int cameraIdx, const char* suffix)
+{
+    if (!g_hdBackgroundCache.initialized)
+    {
+        return nullptr;
+    }
+
+    // Check for DARK variant request
+    bool wantDark = (suffix != nullptr && strcmp(suffix, "DARK") == 0);
+
+    if (wantDark)
+    {
+        if (cameraIdx >= 0 && cameraIdx < (int)g_hdBackgroundCache.darkBackgrounds.size())
+        {
+            return g_hdBackgroundCache.darkBackgrounds[cameraIdx];
+        }
+    }
+    else
+    {
+        if (cameraIdx >= 0 && cameraIdx < (int)g_hdBackgroundCache.backgrounds.size())
+        {
+            return g_hdBackgroundCache.backgrounds[cameraIdx];
+        }
+    }
+
+    return nullptr;
+}
+
+// Clear all preloaded HD backgrounds
+void clearPreloadedHDBackgrounds()
+{
+    if (!g_hdBackgroundCache.initialized)
+    {
+        return;
+    }
+
+    printf(HDBG_TAG "Clearing preloaded HD backgrounds for floor %d\n", g_hdBackgroundCache.floorNumber);
+
+    // Free all normal backgrounds
+    for (HDBackgroundInfo* bg : g_hdBackgroundCache.backgrounds)
+    {
+        if (bg)
+        {
+            freeHDBackground(bg);
+        }
+    }
+    g_hdBackgroundCache.backgrounds.clear();
+
+    // Free all dark backgrounds
+    for (HDBackgroundInfo* bg : g_hdBackgroundCache.darkBackgrounds)
+    {
+        if (bg)
+        {
+            freeHDBackground(bg);
+        }
+    }
+    g_hdBackgroundCache.darkBackgrounds.clear();
+
+    g_hdBackgroundCache.floorNumber = -1;
+    g_hdBackgroundCache.backgroundName[0] = '\0';
+    g_hdBackgroundCache.initialized = false;
+}
+
+// Check if HD backgrounds are preloaded for the current floor
+bool areHDBackgroundsPreloaded()
+{
+    return g_hdBackgroundCache.initialized && !g_hdBackgroundCache.backgrounds.empty();
+}

@@ -32,8 +32,7 @@ char* loadFromItd(const char* name)
         char* ptr;
 
         char filePath[512];
-        strcpy(filePath, homePath);
-        strcat(filePath, name);
+        snprintf(filePath, sizeof(filePath), "%s%s", homePath, name);
 
         fHandle = fopen(filePath,"rb");
         if(fHandle)

@@ -1,11 +1,5 @@
-///////////////////////////////////////////////////////////////////////////////
-// Alone In The Dark Re-Haunted
-// Copyright (C) 2026 Infogrames / Spacefarer Retro Remasters LLC
-// Based on FITD by yaz0r, Re-haunted is released under GPL
-// Author: Jake Jackson (jake@spacefarergames.com)
-//
-// Animation structures and constants
-///////////////////////////////////////////////////////////////////////////////
+#ifndef _ANIM_H_
+#define _ANIM_H_
 
 #define INFO_TRI 1
 #define INFO_ANIM 2
@@ -45,3 +39,5 @@ void ResetStartAnim(sBody* bodyPtr);
 void GereAnim(void);
 void InitCopyBox(char* var0, char* var1);
 
+
+#endif // _ANIM_H_

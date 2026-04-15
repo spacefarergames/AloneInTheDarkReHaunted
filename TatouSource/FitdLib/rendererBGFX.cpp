@@ -4237,5 +4237,137 @@ void osystem_destroyMapTexture()
     g_mapLoadedFloor = -1;
 }
 
+// ============================================================================
+// Cinematic Letterbox Effect
+// Creates black bars at top and bottom of screen that slide in/out for
+// cinematic intro sequences.
+// ============================================================================
+
+// Letterbox state
+enum class LetterboxState
+{
+    Inactive,   // No letterbox visible
+    SlidingIn,  // Bars animating from off-screen to target position
+    Active,     // Bars fully visible at target position
+    SlidingOut  // Bars animating from target position to off-screen
+};
+
+static LetterboxState s_letterboxState = LetterboxState::Inactive;
+static float s_letterboxProgress = 0.0f;  // 0.0 = hidden, 1.0 = fully visible
+static Uint64 s_letterboxAnimStartTime = 0;
+static Uint64 s_letterboxCooldownEndTime = 0;  // Cooldown to prevent re-triggering after stair completion
+static const float LETTERBOX_ANIM_DURATION = 1.5f;  // Animation duration in seconds
+static const float LETTERBOX_COOLDOWN_DURATION = 2.0f;  // Cooldown duration in seconds after stair completion
+static const float LETTERBOX_BAR_HEIGHT_RATIO = 0.08f;  // 8% of screen height for each bar
+
+void osystem_startLetterbox()
+{
+    if (s_letterboxState == LetterboxState::Active || s_letterboxState == LetterboxState::SlidingIn ||
+        s_letterboxState == LetterboxState::SlidingOut)
+        return;  // Already visible, animating in, or animating out (don't interrupt hide)
+
+    // Check cooldown timer to prevent re-triggering too soon after stair completion
+    if (s_letterboxCooldownEndTime > 0)
+    {
+        Uint64 now = SDL_GetPerformanceCounter();
+        if (now < s_letterboxCooldownEndTime)
+            return;  // Still in cooldown period
+        s_letterboxCooldownEndTime = 0;  // Cooldown expired, reset
+    }
+
+    s_letterboxState = LetterboxState::SlidingIn;
+    s_letterboxAnimStartTime = SDL_GetPerformanceCounter();
+    // If we were sliding out, start from current position
+    if (s_letterboxProgress < 0.0f)
+        s_letterboxProgress = 0.0f;
+}
+
+void osystem_endLetterbox()
+{
+    if (s_letterboxState == LetterboxState::Inactive || s_letterboxState == LetterboxState::SlidingOut)
+        return;  // Already hidden or animating out
+
+    s_letterboxState = LetterboxState::SlidingOut;
+    s_letterboxAnimStartTime = SDL_GetPerformanceCounter();
+}
+
+void osystem_endLetterboxWithCooldown()
+{
+    osystem_endLetterbox();
+
+    // Set cooldown to prevent re-triggering (e.g., after climbing stairs)
+    Uint64 cooldownTicks = (Uint64)(LETTERBOX_COOLDOWN_DURATION * SDL_GetPerformanceFrequency());
+    s_letterboxCooldownEndTime = SDL_GetPerformanceCounter() + cooldownTicks;
+}
+
+void osystem_updateLetterbox()
+{
+    if (s_letterboxState == LetterboxState::Inactive || s_letterboxState == LetterboxState::Active)
+        return;  // No animation needed
+
+    Uint64 now = SDL_GetPerformanceCounter();
+    float elapsed = (float)(now - s_letterboxAnimStartTime) / (float)SDL_GetPerformanceFrequency();
+    float t = elapsed / LETTERBOX_ANIM_DURATION;
+
+    if (t >= 1.0f)
+        t = 1.0f;
+
+    // Smooth ease-in-out curve
+    float easedT = t < 0.5f ? 2.0f * t * t : 1.0f - (-2.0f * t + 2.0f) * (-2.0f * t + 2.0f) / 2.0f;
+
+    if (s_letterboxState == LetterboxState::SlidingIn)
+    {
+        s_letterboxProgress = easedT;
+        if (t >= 1.0f)
+            s_letterboxState = LetterboxState::Active;
+    }
+    else if (s_letterboxState == LetterboxState::SlidingOut)
+    {
+        s_letterboxProgress = 1.0f - easedT;
+        if (t >= 1.0f)
+        {
+            s_letterboxState = LetterboxState::Inactive;
+            s_letterboxProgress = 0.0f;
+        }
+    }
+}
+
+void osystem_drawLetterbox()
+{
+    if (s_letterboxState == LetterboxState::Inactive || s_letterboxProgress <= 0.0f)
+        return;
+
+    // Don't draw letterbox when a menu is active (s_snapshotEnabled is false during menus)
+    if (!s_snapshotEnabled)
+        return;
+
+    ImVec2 displaySize = ImGui::GetIO().DisplaySize;
+    if (displaySize.x <= 0 || displaySize.y <= 0)
+        return;
+
+    ImDrawList* drawList = ImGui::GetBackgroundDrawList();
+    ImU32 blackColor = IM_COL32(0, 0, 0, 255);
+
+    float barHeight = displaySize.y * LETTERBOX_BAR_HEIGHT_RATIO;
+    float currentBarHeight = barHeight * s_letterboxProgress;
+
+    // Top bar - slides down from top
+    drawList->AddRectFilled(
+        ImVec2(0.0f, 0.0f),
+        ImVec2(displaySize.x, currentBarHeight),
+        blackColor);
+
+    // Bottom bar - slides up from bottom
+    drawList->AddRectFilled(
+        ImVec2(0.0f, displaySize.y - currentBarHeight),
+        ImVec2(displaySize.x, displaySize.y),
+        blackColor);
+}
+
+bool osystem_isLetterboxActive()
+{
+    return s_letterboxState != LetterboxState::Inactive;
+}
+
 
 

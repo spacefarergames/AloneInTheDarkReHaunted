@@ -8,6 +8,7 @@
 ///////////////////////////////////////////////////////////////////////////////
 
 #include "common.h"
+#include "hdBackground.h"
 
 u32 g_currentFloorRoomRawDataSize = 0;
 u32 g_currentFloorCameraRawDataSize;
@@ -31,6 +32,12 @@ void LoadEtage(int floorNumber)
     }
     g_currentFloorRoomRawDataSize = 0;
     g_currentFloorCameraRawDataSize = 0;
+
+    // Clear preloaded HD backgrounds from previous floor
+    clearPreloadedHDBackgrounds();
+
+    // End letterbox effect when changing floors
+    osystem_endLetterbox();
 
     //stopSounds();
 
@@ -403,6 +410,15 @@ void LoadEtage(int floorNumber)
             break;
         }
     }
+    // Preload all HD backgrounds for this floor to eliminate stutter on camera switches
+    if (expectedNumberOfCamera > 0)
+    {
+        char cameraName[16];
+        sprintf(cameraName, "CAMERA%02d", floorNumber);
+        preloadFloorHDBackgrounds(floorNumber, expectedNumberOfCamera, cameraName);
+    }
+
+
 
     // globalCameraDataTable = (cameraDataStruct*)realloc(globalCameraDataTable,sizeof(cameraDataStruct)*numGlobalCamera);
 

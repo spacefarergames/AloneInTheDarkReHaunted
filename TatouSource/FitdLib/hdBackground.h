@@ -109,4 +109,17 @@ unsigned char* getHDBackgroundCurrentFrame(HDBackgroundInfo* bgInfo);
 void pauseHDBackgroundAnimation(HDBackgroundInfo* bgInfo);
 void resumeHDBackgroundAnimation(HDBackgroundInfo* bgInfo);
 
+// HD background preloading per floor
+// Preload all HD backgrounds for a floor (call when floor is loaded)
+void preloadFloorHDBackgrounds(int floorNumber, int cameraCount, const char* backgroundName);
+
+// Get a preloaded HD background by camera index (returns nullptr if not preloaded)
+HDBackgroundInfo* getPreloadedHDBackground(int cameraIdx, const char* suffix = nullptr);
+
+// Clear all preloaded HD backgrounds (call when changing floors)
+void clearPreloadedHDBackgrounds();
+
+// Check if HD backgrounds are preloaded for the current floor
+bool areHDBackgroundsPreloaded();
+
 #endif // _HD_BACKGROUND_H_
