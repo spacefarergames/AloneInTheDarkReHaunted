@@ -1,3 +1,162 @@
+# Building Alone In The Dark Re-Haunted for Linux
+
+## Prerequisites
+
+Install the required build dependencies:
+
+```bash
+# Ubuntu/Debian
+sudo apt update
+sudo apt install -y \
+    build-essential \
+    cmake \
+    pkg-config \
+    libx11-dev \
+    libxext-dev \
+    libxrandr-dev \
+    libxinerama-dev \
+    libxcursor-dev \
+    libxi-dev \
+    libgl-dev \
+    libglu1-mesa-dev \
+    libasound2-dev \
+    libpulse-dev \
+    libwayland-dev \
+    libxkbcommon-dev \
+    libpipewire-0.3-dev
+
+# Fedora
+sudo dnf install -y \
+    gcc-c++ \
+    cmake \
+    pkgconfig \
+    libX11-devel \
+    libXext-devel \
+    libXrandr-devel \
+    libXinerama-devel \
+    libXcursor-devel \
+    libXi-devel \
+    mesa-libGL-devel \
+    mesa-libGLU-devel \
+    alsa-lib-devel \
+    pulseaudio-libs-devel \
+    wayland-devel \
+    libxkbcommon-devel \
+    pipewire-devel
+
+# Arch Linux
+sudo pacman -S --needed \
+    base-devel \
+    cmake \
+    pkgconf \
+    libx11 \
+    libxext \
+    libxrandr \
+    libxinerama \
+    libxcursor \
+    libxi \
+    mesa \
+    glu \
+    alsa-lib \
+    libpulse \
+    wayland \
+    libxkbcommon \
+    pipewire
+```
+
+## Building
+
+### Option 1: Using the build script
+
+```bash
+chmod +x build_linux.sh
+./build_linux.sh
+```
+
+### Option 2: Manual CMake build
+
+```bash
+# Create build directory
+mkdir -p build/linux
+cd build/linux
+
+# Configure
+cmake ../.. -DCMAKE_BUILD_TYPE=Release
+
+# Build (use -j for parallel compilation)
+cmake --build . --config Release -j$(nproc)
+```
+
+The executable will be at: `build/linux/Fitd/Tatou`
+
+## Running
+
+### Option 1: Using the launch script
+
+Copy `launch_tatou.sh` to the same directory as the `Tatou` binary:
+
+```bash
+cp launch_tatou.sh build/linux/Fitd/
+cd build/linux/Fitd
+chmod +x launch_tatou.sh
+./launch_tatou.sh
+```
+
+### Option 2: Direct execution
+
+```bash
+cd build/linux/Fitd
+./Tatou
+```
+
+**Important:** Run from the directory containing the game data files (PAK files, atlases, etc.).
+
+## Game Data
+
+The game requires the original Alone In The Dark data files. Place these in the working directory:
+- `*.PAK` files (ENGLISH.PAK, ITD_RESS.PAK, etc.)
+- `atlases/` directory (HD texture atlases)
+- `backgrounds_hd/` directory (HD backgrounds)
+- `audio.hda` (audio archive)
+
+## Troubleshooting
+
+### PipeWire warnings
+```
+can't load config client.conf: No such file or directory
+```
+This is harmless - audio will still work via PulseAudio/ALSA fallback.
+
+### Missing libGL
+```bash
+sudo apt install libgl1-mesa-dev
+```
+
+### X11 errors
+Ensure you have a display server running (X11 or Wayland with XWayland).
+
+### Permission denied
+```bash
+chmod +x build/linux/Fitd/Tatou
+```
+
+## Cross-compiling from Windows (WSL)
+
+You can build the Linux version from Windows using WSL:
+
+```powershell
+# In PowerShell
+wsl -d Ubuntu -- bash -c "cd /mnt/d/FITD && mkdir -p build/linux && cd build/linux && cmake ../.. -DCMAKE_BUILD_TYPE=Release && cmake --build . -j4"
+```
+
+## Build Output
+
+| File | Description |
+|------|-------------|
+| `build/linux/Fitd/Tatou` | Main game executable |
+| `build/linux/FitdLib/libFitdLib.a` | Static game library |
+
+
 # Building FITD
 
 This document covers how to build FITD on every supported platform.
