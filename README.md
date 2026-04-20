@@ -58,6 +58,24 @@ In Visual Studio:
 
 > The output executable is named `Tatou.exe`.
 
+## Quick Start (Linux)
+
+```bash
+# Install dependencies (Ubuntu/Debian)
+sudo apt install -y build-essential cmake pkg-config libx11-dev libxext-dev \
+    libxrandr-dev libxinerama-dev libxcursor-dev libxi-dev libgl-dev \
+    libglu1-mesa-dev libasound2-dev libpulse-dev libwayland-dev \
+    libxkbcommon-dev libpipewire-0.3-dev
+
+# Build
+mkdir -p build/linux && cd build/linux
+cmake ../.. -DCMAKE_BUILD_TYPE=Release
+cmake --build . -j$(nproc)
+
+# Run (from game data directory)
+cd Fitd && ./Tatou
+```
+
 For full multi-platform build instructions see **[BUILDING.md](BUILDING.md)**.
 
 ---
