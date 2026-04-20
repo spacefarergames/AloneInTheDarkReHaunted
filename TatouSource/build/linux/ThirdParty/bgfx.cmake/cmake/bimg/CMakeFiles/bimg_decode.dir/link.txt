@@ -1,0 +1,2 @@
+/usr/bin/ar qc libbimg_decode.a CMakeFiles/bimg_decode.dir/__/__/bimg/3rdparty/tinyexr/deps/miniz/miniz.c.o CMakeFiles/bimg_decode.dir/__/__/bimg/src/image_decode.cpp.o
+/usr/bin/ranlib libbimg_decode.a

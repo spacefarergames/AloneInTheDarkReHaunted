@@ -1,0 +1,1 @@
+/usr/bin/c++  -DBX_CONFIG_DEBUG=0 -O3 -DNDEBUG CMakeFiles/bin2c.dir/__/__/bx/tools/bin2c/bin2c.cpp.o -o bin2c  libbx.a -ldl -lrt 

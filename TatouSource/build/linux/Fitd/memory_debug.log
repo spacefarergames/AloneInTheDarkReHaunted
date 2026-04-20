@@ -1,0 +1,447 @@
+=== Memory Manager Initialized ===
+ALLOC: 0x7212f0499670, size 3072000, type stbi_load_from_memory, at /mnt/d/FITD/FitdLib/hdBackground.cpp:78
+ALLOC: 0x7212f07c5ea0, size 3072000, type stbi_load_from_memory, at /mnt/d/FITD/FitdLib/hdBackground.cpp:78
+ALLOC: 0x7212f0ab3eb0, size 3072000, type stbi_load_from_memory, at /mnt/d/FITD/FitdLib/hdBackground.cpp:78
+ALLOC: 0x7212f0da1ec0, size 3072000, type stbi_load_from_memory, at /mnt/d/FITD/FitdLib/hdBackground.cpp:78
+ALLOC: 0x7212f108fed0, size 3072000, type stbi_load_from_memory, at /mnt/d/FITD/FitdLib/hdBackground.cpp:78
+ALLOC: 0x7212f137dee0, size 3072000, type stbi_load_from_memory, at /mnt/d/FITD/FitdLib/hdBackground.cpp:78
+ALLOC: 0x7212f166bef0, size 3072000, type stbi_load_from_memory, at /mnt/d/FITD/FitdLib/hdBackground.cpp:78
+ALLOC: 0x7212f1959f00, size 3072000, type stbi_load_from_memory, at /mnt/d/FITD/FitdLib/hdBackground.cpp:78
+ALLOC: 0x7212f1c47f10, size 3072000, type stbi_load_from_memory, at /mnt/d/FITD/FitdLib/hdBackground.cpp:78
+ALLOC: 0x7212f1f35f20, size 3072000, type stbi_load_from_memory, at /mnt/d/FITD/FitdLib/hdBackground.cpp:78
+ALLOC: 0x7212f2223f30, size 3072000, type stbi_load_from_memory, at /mnt/d/FITD/FitdLib/hdBackground.cpp:78
+ALLOC: 0x7212f2511f40, size 3072000, type stbi_load_from_memory, at /mnt/d/FITD/FitdLib/hdBackground.cpp:78
+ALLOC: 0x7212f27fff50, size 3072000, type stbi_load_from_memory, at /mnt/d/FITD/FitdLib/hdBackground.cpp:78
+ALLOC: 0x7212f2aedf60, size 3072000, type stbi_load_from_memory, at /mnt/d/FITD/FitdLib/hdBackground.cpp:78
+ALLOC: 0x7212f2ddbf70, size 3072000, type stbi_load_from_memory, at /mnt/d/FITD/FitdLib/hdBackground.cpp:78
+ALLOC: 0x7212f30c9f80, size 3072000, type stbi_load_from_memory, at /mnt/d/FITD/FitdLib/hdBackground.cpp:78
+ALLOC: 0x7212f33b7f90, size 3072000, type stbi_load_from_memory, at /mnt/d/FITD/FitdLib/hdBackground.cpp:78
+ALLOC: 0x7212f36a5fa0, size 3072000, type stbi_load_from_memory, at /mnt/d/FITD/FitdLib/hdBackground.cpp:78
+ALLOC: 0x7212f3993fb0, size 3072000, type stbi_load_from_memory, at /mnt/d/FITD/FitdLib/hdBackground.cpp:78
+ALLOC: 0x7212f3c81fc0, size 3072000, type stbi_load_from_memory, at /mnt/d/FITD/FitdLib/hdBackground.cpp:78
+ALLOC: 0x721234000040, size 3072000, type stbi_load_from_memory, at /mnt/d/FITD/FitdLib/hdBackground.cpp:78
+ALLOC: 0x7212342ee050, size 3072000, type stbi_load_from_memory, at /mnt/d/FITD/FitdLib/hdBackground.cpp:78
+ALLOC: 0x7212345dc060, size 3072000, type stbi_load_from_memory, at /mnt/d/FITD/FitdLib/hdBackground.cpp:78
+ALLOC: 0x7212348ca070, size 3072000, type stbi_load_from_memory, at /mnt/d/FITD/FitdLib/hdBackground.cpp:78
+ALLOC: 0x721234bb8080, size 3072000, type stbi_load_from_memory, at /mnt/d/FITD/FitdLib/hdBackground.cpp:78
+ALLOC: 0x721234ea6090, size 3072000, type stbi_load_from_memory, at /mnt/d/FITD/FitdLib/hdBackground.cpp:78
+ALLOC: 0x7212351940a0, size 3072000, type stbi_load_from_memory, at /mnt/d/FITD/FitdLib/hdBackground.cpp:78
+ALLOC: 0x7212354820b0, size 3072000, type stbi_load_from_memory, at /mnt/d/FITD/FitdLib/hdBackground.cpp:78
+ALLOC: 0x7212357700c0, size 3072000, type stbi_load_from_memory, at /mnt/d/FITD/FitdLib/hdBackground.cpp:78
+ALLOC: 0x721235a5e0d0, size 3072000, type stbi_load_from_memory, at /mnt/d/FITD/FitdLib/hdBackground.cpp:78
+ALLOC: 0x721235d4c0e0, size 3072000, type stbi_load_from_memory, at /mnt/d/FITD/FitdLib/hdBackground.cpp:78
+ALLOC: 0x72123603a0f0, size 3072000, type stbi_load_from_memory, at /mnt/d/FITD/FitdLib/hdBackground.cpp:78
+ALLOC: 0x721236328100, size 3072000, type stbi_load_from_memory, at /mnt/d/FITD/FitdLib/hdBackground.cpp:78
+ALLOC: 0x721236616110, size 3072000, type stbi_load_from_memory, at /mnt/d/FITD/FitdLib/hdBackground.cpp:78
+ALLOC: 0x721236904120, size 3072000, type stbi_load_from_memory, at /mnt/d/FITD/FitdLib/hdBackground.cpp:78
+ALLOC: 0x721236bf2130, size 3072000, type stbi_load_from_memory, at /mnt/d/FITD/FitdLib/hdBackground.cpp:78
+ALLOC: 0x721236ee0140, size 3072000, type stbi_load_from_memory, at /mnt/d/FITD/FitdLib/hdBackground.cpp:78
+ALLOC: 0x7212371ce150, size 3072000, type stbi_load_from_memory, at /mnt/d/FITD/FitdLib/hdBackground.cpp:78
+ALLOC: 0x7212374bc160, size 3072000, type stbi_load_from_memory, at /mnt/d/FITD/FitdLib/hdBackground.cpp:78
+ALLOC: 0x7212377aa170, size 3072000, type stbi_load_from_memory, at /mnt/d/FITD/FitdLib/hdBackground.cpp:78
+ALLOC: 0x721237a98180, size 3072000, type stbi_load_from_memory, at /mnt/d/FITD/FitdLib/hdBackground.cpp:78
+ALLOC: 0x721238000040, size 3072000, type stbi_load_from_memory, at /mnt/d/FITD/FitdLib/hdBackground.cpp:78
+ALLOC: 0x7212382ee050, size 3072000, type stbi_load_from_memory, at /mnt/d/FITD/FitdLib/hdBackground.cpp:78
+ALLOC: 0x7212385dc060, size 3072000, type stbi_load_from_memory, at /mnt/d/FITD/FitdLib/hdBackground.cpp:78
+ALLOC: 0x7212388ca070, size 3072000, type stbi_load_from_memory, at /mnt/d/FITD/FitdLib/hdBackground.cpp:78
+ALLOC: 0x721238bb8080, size 3072000, type stbi_load_from_memory, at /mnt/d/FITD/FitdLib/hdBackground.cpp:78
+ALLOC: 0x721238ea6090, size 3072000, type stbi_load_from_memory, at /mnt/d/FITD/FitdLib/hdBackground.cpp:78
+ALLOC: 0x7212391940a0, size 3072000, type stbi_load_from_memory, at /mnt/d/FITD/FitdLib/hdBackground.cpp:78
+ALLOC: 0x7212394820b0, size 3072000, type stbi_load_from_memory, at /mnt/d/FITD/FitdLib/hdBackground.cpp:78
+ALLOC: 0x7212397700c0, size 3072000, type stbi_load_from_memory, at /mnt/d/FITD/FitdLib/hdBackground.cpp:78
+ALLOC: 0x721239a5e0d0, size 3072000, type stbi_load_from_memory, at /mnt/d/FITD/FitdLib/hdBackground.cpp:78
+ALLOC: 0x721239d4c0e0, size 3072000, type stbi_load_from_memory, at /mnt/d/FITD/FitdLib/hdBackground.cpp:78
+ALLOC: 0x72123a03a0f0, size 3072000, type stbi_load_from_memory, at /mnt/d/FITD/FitdLib/hdBackground.cpp:78
+ALLOC: 0x72123a328100, size 3072000, type stbi_load_from_memory, at /mnt/d/FITD/FitdLib/hdBackground.cpp:78
+ALLOC: 0x72123a616110, size 3072000, type stbi_load_from_memory, at /mnt/d/FITD/FitdLib/hdBackground.cpp:78
+ALLOC: 0x72123a904120, size 3072000, type stbi_load_from_memory, at /mnt/d/FITD/FitdLib/hdBackground.cpp:78
+ALLOC: 0x72123abf2130, size 3072000, type stbi_load_from_memory, at /mnt/d/FITD/FitdLib/hdBackground.cpp:78
+ALLOC: 0x72123aee0140, size 3072000, type stbi_load_from_memory, at /mnt/d/FITD/FitdLib/hdBackground.cpp:78
+ALLOC: 0x72123b1ce150, size 3072000, type stbi_load_from_memory, at /mnt/d/FITD/FitdLib/hdBackground.cpp:78
+ALLOC: 0x72123b4bc160, size 3072000, type stbi_load_from_memory, at /mnt/d/FITD/FitdLib/hdBackground.cpp:78
+ALLOC: 0x72123b7aa170, size 3072000, type stbi_load_from_memory, at /mnt/d/FITD/FitdLib/hdBackground.cpp:78
+ALLOC: 0x72123ba98180, size 3072000, type stbi_load_from_memory, at /mnt/d/FITD/FitdLib/hdBackground.cpp:78
+ALLOC: 0x72122c000040, size 3072000, type stbi_load_from_memory, at /mnt/d/FITD/FitdLib/hdBackground.cpp:78
+ALLOC: 0x72122c2ee050, size 3072000, type stbi_load_from_memory, at /mnt/d/FITD/FitdLib/hdBackground.cpp:78
+ALLOC: 0x72122c5dc060, size 3072000, type stbi_load_from_memory, at /mnt/d/FITD/FitdLib/hdBackground.cpp:78
+ALLOC: 0x72122c8ca070, size 3072000, type stbi_load_from_memory, at /mnt/d/FITD/FitdLib/hdBackground.cpp:78
+ALLOC: 0x72122cbb8080, size 3072000, type stbi_load_from_memory, at /mnt/d/FITD/FitdLib/hdBackground.cpp:78
+ALLOC: 0x72122cea6090, size 3072000, type stbi_load_from_memory, at /mnt/d/FITD/FitdLib/hdBackground.cpp:78
+ALLOC: 0x72122d1940a0, size 3072000, type stbi_load_from_memory, at /mnt/d/FITD/FitdLib/hdBackground.cpp:78
+ALLOC: 0x72122d4820b0, size 3072000, type stbi_load_from_memory, at /mnt/d/FITD/FitdLib/hdBackground.cpp:78
+ALLOC: 0x72122d7700c0, size 3072000, type stbi_load_from_memory, at /mnt/d/FITD/FitdLib/hdBackground.cpp:78
+ALLOC: 0x72122da5e0d0, size 3072000, type stbi_load_from_memory, at /mnt/d/FITD/FitdLib/hdBackground.cpp:78
+ALLOC: 0x72122dd4c0e0, size 3072000, type stbi_load_from_memory, at /mnt/d/FITD/FitdLib/hdBackground.cpp:78
+ALLOC: 0x72122e03a0f0, size 3072000, type stbi_load_from_memory, at /mnt/d/FITD/FitdLib/hdBackground.cpp:78
+ALLOC: 0x72122e328100, size 3072000, type stbi_load_from_memory, at /mnt/d/FITD/FitdLib/hdBackground.cpp:78
+ALLOC: 0x72122e616110, size 3072000, type stbi_load_from_memory, at /mnt/d/FITD/FitdLib/hdBackground.cpp:78
+ALLOC: 0x72122e904120, size 3072000, type stbi_load_from_memory, at /mnt/d/FITD/FitdLib/hdBackground.cpp:78
+ALLOC: 0x72122ebf2130, size 3072000, type stbi_load_from_memory, at /mnt/d/FITD/FitdLib/hdBackground.cpp:78
+ALLOC: 0x72122eee0140, size 3072000, type stbi_load_from_memory, at /mnt/d/FITD/FitdLib/hdBackground.cpp:78
+ALLOC: 0x72122f1ce150, size 3072000, type stbi_load_from_memory, at /mnt/d/FITD/FitdLib/hdBackground.cpp:78
+ALLOC: 0x72122f4bc160, size 3072000, type stbi_load_from_memory, at /mnt/d/FITD/FitdLib/hdBackground.cpp:78
+ALLOC: 0x72122f7aa170, size 3072000, type stbi_load_from_memory, at /mnt/d/FITD/FitdLib/hdBackground.cpp:78
+ALLOC: 0x72122fa98180, size 3072000, type stbi_load_from_memory, at /mnt/d/FITD/FitdLib/hdBackground.cpp:78
+ALLOC: 0x721230000040, size 3072000, type stbi_load_from_memory, at /mnt/d/FITD/FitdLib/hdBackground.cpp:78
+ALLOC: 0x7212302ee050, size 3072000, type stbi_load_from_memory, at /mnt/d/FITD/FitdLib/hdBackground.cpp:78
+ALLOC: 0x7212305dc060, size 3072000, type stbi_load_from_memory, at /mnt/d/FITD/FitdLib/hdBackground.cpp:78
+ALLOC: 0x7212308ca070, size 3072000, type stbi_load_from_memory, at /mnt/d/FITD/FitdLib/hdBackground.cpp:78
+ALLOC: 0x721230bb8080, size 3072000, type stbi_load_from_memory, at /mnt/d/FITD/FitdLib/hdBackground.cpp:78
+ALLOC: 0x721230ea6090, size 3072000, type stbi_load_from_memory, at /mnt/d/FITD/FitdLib/hdBackground.cpp:78
+ALLOC: 0x7212311940a0, size 3072000, type stbi_load_from_memory, at /mnt/d/FITD/FitdLib/hdBackground.cpp:78
+ALLOC: 0x7212314820b0, size 3072000, type stbi_load_from_memory, at /mnt/d/FITD/FitdLib/hdBackground.cpp:78
+ALLOC: 0x7212317700c0, size 3072000, type stbi_load_from_memory, at /mnt/d/FITD/FitdLib/hdBackground.cpp:78
+ALLOC: 0x721231a5e0d0, size 3072000, type stbi_load_from_memory, at /mnt/d/FITD/FitdLib/hdBackground.cpp:78
+ALLOC: 0x721231d4c0e0, size 3072000, type stbi_load_from_memory, at /mnt/d/FITD/FitdLib/hdBackground.cpp:78
+ALLOC: 0x72123203a0f0, size 3072000, type stbi_load_from_memory, at /mnt/d/FITD/FitdLib/hdBackground.cpp:78
+ALLOC: 0x721232328100, size 3072000, type stbi_load_from_memory, at /mnt/d/FITD/FitdLib/hdBackground.cpp:78
+ALLOC: 0x721232616110, size 3072000, type stbi_load_from_memory, at /mnt/d/FITD/FitdLib/hdBackground.cpp:78
+ALLOC: 0x721232904120, size 3072000, type stbi_load_from_memory, at /mnt/d/FITD/FitdLib/hdBackground.cpp:78
+ALLOC: 0x721232bf2130, size 3072000, type stbi_load_from_memory, at /mnt/d/FITD/FitdLib/hdBackground.cpp:78
+ALLOC: 0x721232ee0140, size 3072000, type stbi_load_from_memory, at /mnt/d/FITD/FitdLib/hdBackground.cpp:78
+ALLOC: 0x7212331ce150, size 3072000, type stbi_load_from_memory, at /mnt/d/FITD/FitdLib/hdBackground.cpp:78
+ALLOC: 0x7212334bc160, size 3072000, type stbi_load_from_memory, at /mnt/d/FITD/FitdLib/hdBackground.cpp:78
+ALLOC: 0x7212337aa170, size 3072000, type stbi_load_from_memory, at /mnt/d/FITD/FitdLib/hdBackground.cpp:78
+ALLOC: 0x721233a98180, size 3072000, type stbi_load_from_memory, at /mnt/d/FITD/FitdLib/hdBackground.cpp:78
+ALLOC: 0x721224000040, size 3072000, type stbi_load_from_memory, at /mnt/d/FITD/FitdLib/hdBackground.cpp:78
+ALLOC: 0x7212242ee050, size 3072000, type stbi_load_from_memory, at /mnt/d/FITD/FitdLib/hdBackground.cpp:78
+ALLOC: 0x7212245dc060, size 3072000, type stbi_load_from_memory, at /mnt/d/FITD/FitdLib/hdBackground.cpp:78
+ALLOC: 0x7212248ca070, size 3072000, type stbi_load_from_memory, at /mnt/d/FITD/FitdLib/hdBackground.cpp:78
+ALLOC: 0x721224bb8080, size 3072000, type stbi_load_from_memory, at /mnt/d/FITD/FitdLib/hdBackground.cpp:78
+ALLOC: 0x721224ea6090, size 3072000, type stbi_load_from_memory, at /mnt/d/FITD/FitdLib/hdBackground.cpp:78
+ALLOC: 0x7212251940a0, size 3072000, type stbi_load_from_memory, at /mnt/d/FITD/FitdLib/hdBackground.cpp:78
+ALLOC: 0x7212254820b0, size 3072000, type stbi_load_from_memory, at /mnt/d/FITD/FitdLib/hdBackground.cpp:78
+ALLOC: 0x7212257700c0, size 3072000, type stbi_load_from_memory, at /mnt/d/FITD/FitdLib/hdBackground.cpp:78
+ALLOC: 0x721225a5e0d0, size 3072000, type stbi_load_from_memory, at /mnt/d/FITD/FitdLib/hdBackground.cpp:78
+ALLOC: 0x721225d4c0e0, size 3072000, type stbi_load_from_memory, at /mnt/d/FITD/FitdLib/hdBackground.cpp:78
+ALLOC: 0x72122603a0f0, size 3072000, type stbi_load_from_memory, at /mnt/d/FITD/FitdLib/hdBackground.cpp:78
+ALLOC: 0x721226328100, size 3072000, type stbi_load_from_memory, at /mnt/d/FITD/FitdLib/hdBackground.cpp:78
+ALLOC: 0x721226616110, size 3072000, type stbi_load_from_memory, at /mnt/d/FITD/FitdLib/hdBackground.cpp:78
+ALLOC: 0x721226904120, size 3072000, type stbi_load_from_memory, at /mnt/d/FITD/FitdLib/hdBackground.cpp:78
+ALLOC: 0x721226bf2130, size 3072000, type stbi_load_from_memory, at /mnt/d/FITD/FitdLib/hdBackground.cpp:78
+ALLOC: 0x721226ee0140, size 3072000, type stbi_load_from_memory, at /mnt/d/FITD/FitdLib/hdBackground.cpp:78
+ALLOC: 0x7212f0310510, size 64, type malloc, at /mnt/d/FITD/FitdLib/hdBackground.cpp:469
+ALLOC: 0x7212271ce150, size 4096000, type malloc, at /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:163
+FREE: 0x7212271ce150, size 4096000, type malloc (was /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:163), freed via free at /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:102
+ALLOC: 0x7212271ce150, size 4096000, type malloc, at /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:163
+FREE: 0x7212271ce150, size 4096000, type malloc (was /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:163), freed via free at /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:102
+ALLOC: 0x7212271ce150, size 4096000, type malloc, at /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:163
+FREE: 0x7212271ce150, size 4096000, type malloc (was /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:163), freed via free at /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:102
+ALLOC: 0x7212271ce150, size 4096000, type malloc, at /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:163
+FREE: 0x7212271ce150, size 4096000, type malloc (was /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:163), freed via free at /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:102
+ALLOC: 0x7212271ce150, size 4096000, type malloc, at /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:163
+FREE: 0x7212271ce150, size 4096000, type malloc (was /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:163), freed via free at /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:102
+ALLOC: 0x7212271ce150, size 4096000, type malloc, at /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:163
+FREE: 0x7212271ce150, size 4096000, type malloc (was /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:163), freed via free at /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:102
+ALLOC: 0x7212271ce150, size 4096000, type malloc, at /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:163
+FREE: 0x7212271ce150, size 4096000, type malloc (was /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:163), freed via free at /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:102
+ALLOC: 0x7212271ce150, size 4096000, type malloc, at /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:163
+FREE: 0x7212271ce150, size 4096000, type malloc (was /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:163), freed via free at /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:102
+ALLOC: 0x7212271ce150, size 4096000, type malloc, at /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:163
+FREE: 0x7212271ce150, size 4096000, type malloc (was /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:163), freed via free at /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:102
+ALLOC: 0x7212271ce150, size 4096000, type malloc, at /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:163
+FREE: 0x7212271ce150, size 4096000, type malloc (was /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:163), freed via free at /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:102
+ALLOC: 0x7212271ce150, size 4096000, type malloc, at /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:163
+FREE: 0x7212271ce150, size 4096000, type malloc (was /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:163), freed via free at /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:102
+ALLOC: 0x7212271ce150, size 4096000, type malloc, at /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:163
+FREE: 0x7212271ce150, size 4096000, type malloc (was /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:163), freed via free at /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:102
+ALLOC: 0x7212271ce150, size 4096000, type malloc, at /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:163
+FREE: 0x7212271ce150, size 4096000, type malloc (was /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:163), freed via free at /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:102
+ALLOC: 0x7212271ce150, size 4096000, type malloc, at /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:163
+FREE: 0x7212271ce150, size 4096000, type malloc (was /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:163), freed via free at /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:102
+ALLOC: 0x7212271ce150, size 4096000, type malloc, at /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:163
+FREE: 0x7212271ce150, size 4096000, type malloc (was /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:163), freed via free at /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:102
+ALLOC: 0x7212271ce150, size 4096000, type malloc, at /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:163
+FREE: 0x7212271ce150, size 4096000, type malloc (was /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:163), freed via free at /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:102
+ALLOC: 0x7212271ce150, size 4096000, type malloc, at /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:163
+FREE: 0x7212271ce150, size 4096000, type malloc (was /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:163), freed via free at /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:102
+ALLOC: 0x7212271ce150, size 4096000, type malloc, at /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:163
+FREE: 0x7212271ce150, size 4096000, type malloc (was /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:163), freed via free at /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:102
+ALLOC: 0x7212271ce150, size 4096000, type malloc, at /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:163
+FREE: 0x7212271ce150, size 4096000, type malloc (was /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:163), freed via free at /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:102
+ALLOC: 0x7212271ce150, size 4096000, type malloc, at /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:163
+FREE: 0x7212271ce150, size 4096000, type malloc (was /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:163), freed via free at /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:102
+ALLOC: 0x7212271ce150, size 4096000, type malloc, at /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:163
+FREE: 0x7212271ce150, size 4096000, type malloc (was /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:163), freed via free at /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:102
+ALLOC: 0x7212271ce150, size 4096000, type malloc, at /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:163
+FREE: 0x7212271ce150, size 4096000, type malloc (was /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:163), freed via free at /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:102
+ALLOC: 0x7212271ce150, size 4096000, type malloc, at /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:163
+FREE: 0x7212271ce150, size 4096000, type malloc (was /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:163), freed via free at /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:102
+ALLOC: 0x7212271ce150, size 4096000, type malloc, at /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:163
+FREE: 0x7212271ce150, size 4096000, type malloc (was /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:163), freed via free at /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:102
+ALLOC: 0x7212271ce150, size 4096000, type malloc, at /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:163
+FREE: 0x7212271ce150, size 4096000, type malloc (was /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:163), freed via free at /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:102
+ALLOC: 0x7212271ce150, size 4096000, type malloc, at /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:163
+FREE: 0x7212271ce150, size 4096000, type malloc (was /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:163), freed via free at /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:102
+ALLOC: 0x7212271ce150, size 4096000, type malloc, at /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:163
+FREE: 0x7212271ce150, size 4096000, type malloc (was /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:163), freed via free at /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:102
+ALLOC: 0x7212271ce150, size 4096000, type malloc, at /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:163
+FREE: 0x7212271ce150, size 4096000, type malloc (was /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:163), freed via free at /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:102
+ALLOC: 0x7212271ce150, size 4096000, type malloc, at /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:163
+FREE: 0x7212271ce150, size 4096000, type malloc (was /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:163), freed via free at /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:102
+ALLOC: 0x7212271ce150, size 4096000, type malloc, at /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:163
+FREE: 0x7212271ce150, size 4096000, type malloc (was /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:163), freed via free at /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:102
+ALLOC: 0x7212271ce150, size 4096000, type malloc, at /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:163
+FREE: 0x7212271ce150, size 4096000, type malloc (was /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:163), freed via free at /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:102
+ALLOC: 0x7212271ce150, size 4096000, type malloc, at /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:163
+FREE: 0x7212271ce150, size 4096000, type malloc (was /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:163), freed via free at /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:102
+ALLOC: 0x7212271ce150, size 4096000, type malloc, at /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:163
+FREE: 0x7212271ce150, size 4096000, type malloc (was /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:163), freed via free at /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:102
+ALLOC: 0x7212271ce150, size 4096000, type malloc, at /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:163
+FREE: 0x7212271ce150, size 4096000, type malloc (was /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:163), freed via free at /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:102
+ALLOC: 0x7212271ce150, size 4096000, type malloc, at /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:163
+FREE: 0x7212271ce150, size 4096000, type malloc (was /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:163), freed via free at /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:102
+ALLOC: 0x7212271ce150, size 4096000, type malloc, at /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:163
+FREE: 0x7212271ce150, size 4096000, type malloc (was /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:163), freed via free at /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:102
+ALLOC: 0x7212271ce150, size 4096000, type malloc, at /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:163
+FREE: 0x7212271ce150, size 4096000, type malloc (was /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:163), freed via free at /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:102
+ALLOC: 0x7212271ce150, size 4096000, type malloc, at /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:163
+FREE: 0x7212271ce150, size 4096000, type malloc (was /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:163), freed via free at /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:102
+ALLOC: 0x7212271ce150, size 4096000, type malloc, at /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:163
+FREE: 0x7212271ce150, size 4096000, type malloc (was /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:163), freed via free at /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:102
+ALLOC: 0x7212271ce150, size 4096000, type malloc, at /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:163
+FREE: 0x7212271ce150, size 4096000, type malloc (was /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:163), freed via free at /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:102
+ALLOC: 0x7212271ce150, size 4096000, type malloc, at /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:163
+FREE: 0x7212271ce150, size 4096000, type malloc (was /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:163), freed via free at /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:102
+ALLOC: 0x7212271ce150, size 4096000, type malloc, at /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:163
+FREE: 0x7212271ce150, size 4096000, type malloc (was /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:163), freed via free at /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:102
+ALLOC: 0x7212271ce150, size 4096000, type malloc, at /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:163
+FREE: 0x7212271ce150, size 4096000, type malloc (was /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:163), freed via free at /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:102
+ALLOC: 0x7212271ce150, size 4096000, type malloc, at /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:163
+FREE: 0x7212271ce150, size 4096000, type malloc (was /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:163), freed via free at /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:102
+ALLOC: 0x7212271ce150, size 4096000, type malloc, at /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:163
+FREE: 0x7212271ce150, size 4096000, type malloc (was /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:163), freed via free at /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:102
+ALLOC: 0x7212271ce150, size 4096000, type malloc, at /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:163
+FREE: 0x7212271ce150, size 4096000, type malloc (was /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:163), freed via free at /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:102
+ALLOC: 0x7212271ce150, size 4096000, type malloc, at /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:163
+FREE: 0x7212271ce150, size 4096000, type malloc (was /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:163), freed via free at /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:102
+ALLOC: 0x7212271ce150, size 4096000, type malloc, at /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:163
+FREE: 0x7212271ce150, size 4096000, type malloc (was /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:163), freed via free at /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:102
+ALLOC: 0x7212271ce150, size 4096000, type malloc, at /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:163
+FREE: 0x7212271ce150, size 4096000, type malloc (was /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:163), freed via free at /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:102
+ALLOC: 0x7212271ce150, size 4096000, type malloc, at /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:163
+FREE: 0x7212271ce150, size 4096000, type malloc (was /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:163), freed via free at /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:102
+ALLOC: 0x7212271ce150, size 4096000, type malloc, at /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:163
+FREE: 0x7212271ce150, size 4096000, type malloc (was /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:163), freed via free at /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:102
+ALLOC: 0x7212271ce150, size 4096000, type malloc, at /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:163
+FREE: 0x7212271ce150, size 4096000, type malloc (was /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:163), freed via free at /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:102
+ALLOC: 0x7212271ce150, size 4096000, type malloc, at /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:163
+FREE: 0x7212271ce150, size 4096000, type malloc (was /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:163), freed via free at /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:102
+ALLOC: 0x7212271ce150, size 4096000, type malloc, at /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:163
+FREE: 0x7212271ce150, size 4096000, type malloc (was /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:163), freed via free at /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:102
+ALLOC: 0x7212271ce150, size 4096000, type malloc, at /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:163
+FREE: 0x7212271ce150, size 4096000, type malloc (was /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:163), freed via free at /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:102
+ALLOC: 0x7212271ce150, size 4096000, type malloc, at /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:163
+FREE: 0x7212271ce150, size 4096000, type malloc (was /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:163), freed via free at /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:102
+ALLOC: 0x7212271ce150, size 4096000, type malloc, at /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:163
+FREE: 0x7212271ce150, size 4096000, type malloc (was /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:163), freed via free at /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:102
+ALLOC: 0x7212271ce150, size 4096000, type malloc, at /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:163
+FREE: 0x7212271ce150, size 4096000, type malloc (was /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:163), freed via free at /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:102
+ALLOC: 0x7212271ce150, size 4096000, type malloc, at /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:163
+FREE: 0x7212271ce150, size 4096000, type malloc (was /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:163), freed via free at /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:102
+ALLOC: 0x7212271ce150, size 4096000, type malloc, at /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:163
+FREE: 0x7212271ce150, size 4096000, type malloc (was /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:163), freed via free at /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:102
+ALLOC: 0x7212271ce150, size 4096000, type malloc, at /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:163
+FREE: 0x7212271ce150, size 4096000, type malloc (was /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:163), freed via free at /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:102
+ALLOC: 0x7212271ce150, size 4096000, type malloc, at /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:163
+FREE: 0x7212271ce150, size 4096000, type malloc (was /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:163), freed via free at /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:102
+ALLOC: 0x7212271ce150, size 4096000, type malloc, at /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:163
+FREE: 0x7212271ce150, size 4096000, type malloc (was /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:163), freed via free at /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:102
+ALLOC: 0x7212271ce150, size 4096000, type malloc, at /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:163
+FREE: 0x7212271ce150, size 4096000, type malloc (was /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:163), freed via free at /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:102
+ALLOC: 0x7212271ce150, size 4096000, type malloc, at /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:163
+FREE: 0x7212271ce150, size 4096000, type malloc (was /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:163), freed via free at /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:102
+ALLOC: 0x7212271ce150, size 4096000, type malloc, at /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:163
+FREE: 0x7212271ce150, size 4096000, type malloc (was /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:163), freed via free at /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:102
+ALLOC: 0x7212271ce150, size 4096000, type malloc, at /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:163
+FREE: 0x7212271ce150, size 4096000, type malloc (was /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:163), freed via free at /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:102
+ALLOC: 0x7212271ce150, size 4096000, type malloc, at /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:163
+FREE: 0x7212271ce150, size 4096000, type malloc (was /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:163), freed via free at /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:102
+ALLOC: 0x7212271ce150, size 4096000, type malloc, at /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:163
+FREE: 0x7212271ce150, size 4096000, type malloc (was /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:163), freed via free at /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:102
+ALLOC: 0x7212271ce150, size 4096000, type malloc, at /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:163
+FREE: 0x7212271ce150, size 4096000, type malloc (was /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:163), freed via free at /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:102
+ALLOC: 0x7212271ce150, size 4096000, type malloc, at /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:163
+FREE: 0x7212271ce150, size 4096000, type malloc (was /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:163), freed via free at /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:102
+ALLOC: 0x7212271ce150, size 4096000, type malloc, at /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:163
+FREE: 0x7212271ce150, size 4096000, type malloc (was /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:163), freed via free at /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:102
+ALLOC: 0x7212271ce150, size 4096000, type malloc, at /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:163
+FREE: 0x7212271ce150, size 4096000, type malloc (was /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:163), freed via free at /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:102
+ALLOC: 0x7212271ce150, size 4096000, type malloc, at /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:163
+FREE: 0x7212271ce150, size 4096000, type malloc (was /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:163), freed via free at /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:102
+ALLOC: 0x7212271ce150, size 4096000, type malloc, at /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:163
+FREE: 0x7212271ce150, size 4096000, type malloc (was /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:163), freed via free at /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:102
+ALLOC: 0x7212271ce150, size 4096000, type malloc, at /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:163
+FREE: 0x7212271ce150, size 4096000, type malloc (was /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:163), freed via free at /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:102
+ALLOC: 0x7212271ce150, size 4096000, type malloc, at /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:163
+FREE: 0x7212271ce150, size 4096000, type malloc (was /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:163), freed via free at /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:102
+ALLOC: 0x7212271ce150, size 4096000, type malloc, at /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:163
+FREE: 0x7212271ce150, size 4096000, type malloc (was /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:163), freed via free at /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:102
+ALLOC: 0x7212271ce150, size 4096000, type malloc, at /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:163
+FREE: 0x7212271ce150, size 4096000, type malloc (was /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:163), freed via free at /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:102
+ALLOC: 0x7212271ce150, size 4096000, type malloc, at /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:163
+FREE: 0x7212271ce150, size 4096000, type malloc (was /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:163), freed via free at /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:102
+ALLOC: 0x7212271ce150, size 4096000, type malloc, at /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:163
+FREE: 0x7212271ce150, size 4096000, type malloc (was /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:163), freed via free at /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:102
+ALLOC: 0x7212271ce150, size 4096000, type malloc, at /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:163
+FREE: 0x7212271ce150, size 4096000, type malloc (was /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:163), freed via free at /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:102
+ALLOC: 0x7212271ce150, size 4096000, type malloc, at /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:163
+FREE: 0x7212271ce150, size 4096000, type malloc (was /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:163), freed via free at /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:102
+ALLOC: 0x7212271ce150, size 4096000, type malloc, at /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:163
+FREE: 0x7212271ce150, size 4096000, type malloc (was /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:163), freed via free at /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:102
+ALLOC: 0x7212271ce150, size 4096000, type malloc, at /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:163
+FREE: 0x7212271ce150, size 4096000, type malloc (was /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:163), freed via free at /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:102
+ALLOC: 0x7212271ce150, size 4096000, type malloc, at /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:163
+FREE: 0x7212271ce150, size 4096000, type malloc (was /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:163), freed via free at /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:102
+ALLOC: 0x7212271ce150, size 4096000, type malloc, at /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:163
+FREE: 0x7212271ce150, size 4096000, type malloc (was /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:163), freed via free at /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:102
+ALLOC: 0x7212271ce150, size 4096000, type malloc, at /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:163
+FREE: 0x7212271ce150, size 4096000, type malloc (was /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:163), freed via free at /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:102
+ALLOC: 0x7212271ce150, size 4096000, type malloc, at /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:163
+FREE: 0x7212271ce150, size 4096000, type malloc (was /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:163), freed via free at /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:102
+ALLOC: 0x7212271ce150, size 4096000, type malloc, at /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:163
+FREE: 0x7212271ce150, size 4096000, type malloc (was /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:163), freed via free at /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:102
+ALLOC: 0x7212271ce150, size 4096000, type malloc, at /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:163
+FREE: 0x7212271ce150, size 4096000, type malloc (was /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:163), freed via free at /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:102
+ALLOC: 0x7212271ce150, size 4096000, type malloc, at /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:163
+FREE: 0x7212271ce150, size 4096000, type malloc (was /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:163), freed via free at /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:102
+ALLOC: 0x7212271ce150, size 4096000, type malloc, at /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:163
+FREE: 0x7212271ce150, size 4096000, type malloc (was /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:163), freed via free at /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:102
+ALLOC: 0x7212271ce150, size 4096000, type malloc, at /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:163
+FREE: 0x7212271ce150, size 4096000, type malloc (was /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:163), freed via free at /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:102
+ALLOC: 0x7212271ce150, size 4096000, type malloc, at /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:163
+ALLOC: 0x7211f07c99b0, size 3072000, type stbi_load_from_memory, at /mnt/d/FITD/FitdLib/hdBackground.cpp:78
+ALLOC: 0x7212f02110f0, size 64, type malloc, at /mnt/d/FITD/FitdLib/hdBackground.cpp:469
+FREE: 0x7212271ce150, size 4096000, type malloc (was /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:163), freed via free at /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:102
+ALLOC: 0x7212271ce150, size 4096000, type malloc, at /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:163
+FREE: 0x7212f0499670, size 3072000, type stbi_load_from_memory (was /mnt/d/FITD/FitdLib/hdBackground.cpp:78), freed via stbi_image_free at /mnt/d/FITD/FitdLib/hdBackground.cpp:673
+FREE: 0x7212f07c5ea0, size 3072000, type stbi_load_from_memory (was /mnt/d/FITD/FitdLib/hdBackground.cpp:78), freed via stbi_image_free at /mnt/d/FITD/FitdLib/hdBackground.cpp:673
+FREE: 0x7212f0ab3eb0, size 3072000, type stbi_load_from_memory (was /mnt/d/FITD/FitdLib/hdBackground.cpp:78), freed via stbi_image_free at /mnt/d/FITD/FitdLib/hdBackground.cpp:673
+FREE: 0x7212f0da1ec0, size 3072000, type stbi_load_from_memory (was /mnt/d/FITD/FitdLib/hdBackground.cpp:78), freed via stbi_image_free at /mnt/d/FITD/FitdLib/hdBackground.cpp:673
+FREE: 0x7212f108fed0, size 3072000, type stbi_load_from_memory (was /mnt/d/FITD/FitdLib/hdBackground.cpp:78), freed via stbi_image_free at /mnt/d/FITD/FitdLib/hdBackground.cpp:673
+FREE: 0x7212f137dee0, size 3072000, type stbi_load_from_memory (was /mnt/d/FITD/FitdLib/hdBackground.cpp:78), freed via stbi_image_free at /mnt/d/FITD/FitdLib/hdBackground.cpp:673
+FREE: 0x7212f166bef0, size 3072000, type stbi_load_from_memory (was /mnt/d/FITD/FitdLib/hdBackground.cpp:78), freed via stbi_image_free at /mnt/d/FITD/FitdLib/hdBackground.cpp:673
+FREE: 0x7212f1959f00, size 3072000, type stbi_load_from_memory (was /mnt/d/FITD/FitdLib/hdBackground.cpp:78), freed via stbi_image_free at /mnt/d/FITD/FitdLib/hdBackground.cpp:673
+FREE: 0x7212f1c47f10, size 3072000, type stbi_load_from_memory (was /mnt/d/FITD/FitdLib/hdBackground.cpp:78), freed via stbi_image_free at /mnt/d/FITD/FitdLib/hdBackground.cpp:673
+FREE: 0x7212f1f35f20, size 3072000, type stbi_load_from_memory (was /mnt/d/FITD/FitdLib/hdBackground.cpp:78), freed via stbi_image_free at /mnt/d/FITD/FitdLib/hdBackground.cpp:673
+FREE: 0x7212f2223f30, size 3072000, type stbi_load_from_memory (was /mnt/d/FITD/FitdLib/hdBackground.cpp:78), freed via stbi_image_free at /mnt/d/FITD/FitdLib/hdBackground.cpp:673
+FREE: 0x7212f2511f40, size 3072000, type stbi_load_from_memory (was /mnt/d/FITD/FitdLib/hdBackground.cpp:78), freed via stbi_image_free at /mnt/d/FITD/FitdLib/hdBackground.cpp:673
+FREE: 0x7212f27fff50, size 3072000, type stbi_load_from_memory (was /mnt/d/FITD/FitdLib/hdBackground.cpp:78), freed via stbi_image_free at /mnt/d/FITD/FitdLib/hdBackground.cpp:673
+FREE: 0x7212f2aedf60, size 3072000, type stbi_load_from_memory (was /mnt/d/FITD/FitdLib/hdBackground.cpp:78), freed via stbi_image_free at /mnt/d/FITD/FitdLib/hdBackground.cpp:673
+FREE: 0x7212f2ddbf70, size 3072000, type stbi_load_from_memory (was /mnt/d/FITD/FitdLib/hdBackground.cpp:78), freed via stbi_image_free at /mnt/d/FITD/FitdLib/hdBackground.cpp:673
+FREE: 0x7212f30c9f80, size 3072000, type stbi_load_from_memory (was /mnt/d/FITD/FitdLib/hdBackground.cpp:78), freed via stbi_image_free at /mnt/d/FITD/FitdLib/hdBackground.cpp:673
+FREE: 0x7212f33b7f90, size 3072000, type stbi_load_from_memory (was /mnt/d/FITD/FitdLib/hdBackground.cpp:78), freed via stbi_image_free at /mnt/d/FITD/FitdLib/hdBackground.cpp:673
+FREE: 0x7212f36a5fa0, size 3072000, type stbi_load_from_memory (was /mnt/d/FITD/FitdLib/hdBackground.cpp:78), freed via stbi_image_free at /mnt/d/FITD/FitdLib/hdBackground.cpp:673
+FREE: 0x7212f3993fb0, size 3072000, type stbi_load_from_memory (was /mnt/d/FITD/FitdLib/hdBackground.cpp:78), freed via stbi_image_free at /mnt/d/FITD/FitdLib/hdBackground.cpp:673
+FREE: 0x7212f3c81fc0, size 3072000, type stbi_load_from_memory (was /mnt/d/FITD/FitdLib/hdBackground.cpp:78), freed via stbi_image_free at /mnt/d/FITD/FitdLib/hdBackground.cpp:673
+FREE: 0x721234000040, size 3072000, type stbi_load_from_memory (was /mnt/d/FITD/FitdLib/hdBackground.cpp:78), freed via stbi_image_free at /mnt/d/FITD/FitdLib/hdBackground.cpp:673
+FREE: 0x7212342ee050, size 3072000, type stbi_load_from_memory (was /mnt/d/FITD/FitdLib/hdBackground.cpp:78), freed via stbi_image_free at /mnt/d/FITD/FitdLib/hdBackground.cpp:673
+FREE: 0x7212345dc060, size 3072000, type stbi_load_from_memory (was /mnt/d/FITD/FitdLib/hdBackground.cpp:78), freed via stbi_image_free at /mnt/d/FITD/FitdLib/hdBackground.cpp:673
+FREE: 0x7212348ca070, size 3072000, type stbi_load_from_memory (was /mnt/d/FITD/FitdLib/hdBackground.cpp:78), freed via stbi_image_free at /mnt/d/FITD/FitdLib/hdBackground.cpp:673
+FREE: 0x721234bb8080, size 3072000, type stbi_load_from_memory (was /mnt/d/FITD/FitdLib/hdBackground.cpp:78), freed via stbi_image_free at /mnt/d/FITD/FitdLib/hdBackground.cpp:673
+FREE: 0x721234ea6090, size 3072000, type stbi_load_from_memory (was /mnt/d/FITD/FitdLib/hdBackground.cpp:78), freed via stbi_image_free at /mnt/d/FITD/FitdLib/hdBackground.cpp:673
+FREE: 0x7212351940a0, size 3072000, type stbi_load_from_memory (was /mnt/d/FITD/FitdLib/hdBackground.cpp:78), freed via stbi_image_free at /mnt/d/FITD/FitdLib/hdBackground.cpp:673
+FREE: 0x7212354820b0, size 3072000, type stbi_load_from_memory (was /mnt/d/FITD/FitdLib/hdBackground.cpp:78), freed via stbi_image_free at /mnt/d/FITD/FitdLib/hdBackground.cpp:673
+FREE: 0x7212357700c0, size 3072000, type stbi_load_from_memory (was /mnt/d/FITD/FitdLib/hdBackground.cpp:78), freed via stbi_image_free at /mnt/d/FITD/FitdLib/hdBackground.cpp:673
+FREE: 0x721235a5e0d0, size 3072000, type stbi_load_from_memory (was /mnt/d/FITD/FitdLib/hdBackground.cpp:78), freed via stbi_image_free at /mnt/d/FITD/FitdLib/hdBackground.cpp:673
+FREE: 0x721235d4c0e0, size 3072000, type stbi_load_from_memory (was /mnt/d/FITD/FitdLib/hdBackground.cpp:78), freed via stbi_image_free at /mnt/d/FITD/FitdLib/hdBackground.cpp:673
+FREE: 0x72123603a0f0, size 3072000, type stbi_load_from_memory (was /mnt/d/FITD/FitdLib/hdBackground.cpp:78), freed via stbi_image_free at /mnt/d/FITD/FitdLib/hdBackground.cpp:673
+FREE: 0x721236328100, size 3072000, type stbi_load_from_memory (was /mnt/d/FITD/FitdLib/hdBackground.cpp:78), freed via stbi_image_free at /mnt/d/FITD/FitdLib/hdBackground.cpp:673
+FREE: 0x721236616110, size 3072000, type stbi_load_from_memory (was /mnt/d/FITD/FitdLib/hdBackground.cpp:78), freed via stbi_image_free at /mnt/d/FITD/FitdLib/hdBackground.cpp:673
+FREE: 0x721236904120, size 3072000, type stbi_load_from_memory (was /mnt/d/FITD/FitdLib/hdBackground.cpp:78), freed via stbi_image_free at /mnt/d/FITD/FitdLib/hdBackground.cpp:673
+FREE: 0x721236bf2130, size 3072000, type stbi_load_from_memory (was /mnt/d/FITD/FitdLib/hdBackground.cpp:78), freed via stbi_image_free at /mnt/d/FITD/FitdLib/hdBackground.cpp:673
+FREE: 0x721236ee0140, size 3072000, type stbi_load_from_memory (was /mnt/d/FITD/FitdLib/hdBackground.cpp:78), freed via stbi_image_free at /mnt/d/FITD/FitdLib/hdBackground.cpp:673
+FREE: 0x7212371ce150, size 3072000, type stbi_load_from_memory (was /mnt/d/FITD/FitdLib/hdBackground.cpp:78), freed via stbi_image_free at /mnt/d/FITD/FitdLib/hdBackground.cpp:673
+FREE: 0x7212374bc160, size 3072000, type stbi_load_from_memory (was /mnt/d/FITD/FitdLib/hdBackground.cpp:78), freed via stbi_image_free at /mnt/d/FITD/FitdLib/hdBackground.cpp:673
+FREE: 0x7212377aa170, size 3072000, type stbi_load_from_memory (was /mnt/d/FITD/FitdLib/hdBackground.cpp:78), freed via stbi_image_free at /mnt/d/FITD/FitdLib/hdBackground.cpp:673
+FREE: 0x721237a98180, size 3072000, type stbi_load_from_memory (was /mnt/d/FITD/FitdLib/hdBackground.cpp:78), freed via stbi_image_free at /mnt/d/FITD/FitdLib/hdBackground.cpp:673
+FREE: 0x721238000040, size 3072000, type stbi_load_from_memory (was /mnt/d/FITD/FitdLib/hdBackground.cpp:78), freed via stbi_image_free at /mnt/d/FITD/FitdLib/hdBackground.cpp:673
+FREE: 0x7212382ee050, size 3072000, type stbi_load_from_memory (was /mnt/d/FITD/FitdLib/hdBackground.cpp:78), freed via stbi_image_free at /mnt/d/FITD/FitdLib/hdBackground.cpp:673
+FREE: 0x7212385dc060, size 3072000, type stbi_load_from_memory (was /mnt/d/FITD/FitdLib/hdBackground.cpp:78), freed via stbi_image_free at /mnt/d/FITD/FitdLib/hdBackground.cpp:673
+FREE: 0x7212388ca070, size 3072000, type stbi_load_from_memory (was /mnt/d/FITD/FitdLib/hdBackground.cpp:78), freed via stbi_image_free at /mnt/d/FITD/FitdLib/hdBackground.cpp:673
+FREE: 0x721238bb8080, size 3072000, type stbi_load_from_memory (was /mnt/d/FITD/FitdLib/hdBackground.cpp:78), freed via stbi_image_free at /mnt/d/FITD/FitdLib/hdBackground.cpp:673
+FREE: 0x721238ea6090, size 3072000, type stbi_load_from_memory (was /mnt/d/FITD/FitdLib/hdBackground.cpp:78), freed via stbi_image_free at /mnt/d/FITD/FitdLib/hdBackground.cpp:673
+FREE: 0x7212391940a0, size 3072000, type stbi_load_from_memory (was /mnt/d/FITD/FitdLib/hdBackground.cpp:78), freed via stbi_image_free at /mnt/d/FITD/FitdLib/hdBackground.cpp:673
+FREE: 0x7212394820b0, size 3072000, type stbi_load_from_memory (was /mnt/d/FITD/FitdLib/hdBackground.cpp:78), freed via stbi_image_free at /mnt/d/FITD/FitdLib/hdBackground.cpp:673
+FREE: 0x7212397700c0, size 3072000, type stbi_load_from_memory (was /mnt/d/FITD/FitdLib/hdBackground.cpp:78), freed via stbi_image_free at /mnt/d/FITD/FitdLib/hdBackground.cpp:673
+FREE: 0x721239a5e0d0, size 3072000, type stbi_load_from_memory (was /mnt/d/FITD/FitdLib/hdBackground.cpp:78), freed via stbi_image_free at /mnt/d/FITD/FitdLib/hdBackground.cpp:673
+FREE: 0x721239d4c0e0, size 3072000, type stbi_load_from_memory (was /mnt/d/FITD/FitdLib/hdBackground.cpp:78), freed via stbi_image_free at /mnt/d/FITD/FitdLib/hdBackground.cpp:673
+FREE: 0x72123a03a0f0, size 3072000, type stbi_load_from_memory (was /mnt/d/FITD/FitdLib/hdBackground.cpp:78), freed via stbi_image_free at /mnt/d/FITD/FitdLib/hdBackground.cpp:673
+FREE: 0x72123a328100, size 3072000, type stbi_load_from_memory (was /mnt/d/FITD/FitdLib/hdBackground.cpp:78), freed via stbi_image_free at /mnt/d/FITD/FitdLib/hdBackground.cpp:673
+FREE: 0x72123a616110, size 3072000, type stbi_load_from_memory (was /mnt/d/FITD/FitdLib/hdBackground.cpp:78), freed via stbi_image_free at /mnt/d/FITD/FitdLib/hdBackground.cpp:673
+FREE: 0x72123a904120, size 3072000, type stbi_load_from_memory (was /mnt/d/FITD/FitdLib/hdBackground.cpp:78), freed via stbi_image_free at /mnt/d/FITD/FitdLib/hdBackground.cpp:673
+FREE: 0x72123abf2130, size 3072000, type stbi_load_from_memory (was /mnt/d/FITD/FitdLib/hdBackground.cpp:78), freed via stbi_image_free at /mnt/d/FITD/FitdLib/hdBackground.cpp:673
+FREE: 0x72123aee0140, size 3072000, type stbi_load_from_memory (was /mnt/d/FITD/FitdLib/hdBackground.cpp:78), freed via stbi_image_free at /mnt/d/FITD/FitdLib/hdBackground.cpp:673
+FREE: 0x72123b1ce150, size 3072000, type stbi_load_from_memory (was /mnt/d/FITD/FitdLib/hdBackground.cpp:78), freed via stbi_image_free at /mnt/d/FITD/FitdLib/hdBackground.cpp:673
+FREE: 0x72123b4bc160, size 3072000, type stbi_load_from_memory (was /mnt/d/FITD/FitdLib/hdBackground.cpp:78), freed via stbi_image_free at /mnt/d/FITD/FitdLib/hdBackground.cpp:673
+FREE: 0x72123b7aa170, size 3072000, type stbi_load_from_memory (was /mnt/d/FITD/FitdLib/hdBackground.cpp:78), freed via stbi_image_free at /mnt/d/FITD/FitdLib/hdBackground.cpp:673
+FREE: 0x72123ba98180, size 3072000, type stbi_load_from_memory (was /mnt/d/FITD/FitdLib/hdBackground.cpp:78), freed via stbi_image_free at /mnt/d/FITD/FitdLib/hdBackground.cpp:673
+FREE: 0x72122c000040, size 3072000, type stbi_load_from_memory (was /mnt/d/FITD/FitdLib/hdBackground.cpp:78), freed via stbi_image_free at /mnt/d/FITD/FitdLib/hdBackground.cpp:673
+FREE: 0x72122c2ee050, size 3072000, type stbi_load_from_memory (was /mnt/d/FITD/FitdLib/hdBackground.cpp:78), freed via stbi_image_free at /mnt/d/FITD/FitdLib/hdBackground.cpp:673
+FREE: 0x72122c5dc060, size 3072000, type stbi_load_from_memory (was /mnt/d/FITD/FitdLib/hdBackground.cpp:78), freed via stbi_image_free at /mnt/d/FITD/FitdLib/hdBackground.cpp:673
+FREE: 0x72122c8ca070, size 3072000, type stbi_load_from_memory (was /mnt/d/FITD/FitdLib/hdBackground.cpp:78), freed via stbi_image_free at /mnt/d/FITD/FitdLib/hdBackground.cpp:673
+FREE: 0x72122cbb8080, size 3072000, type stbi_load_from_memory (was /mnt/d/FITD/FitdLib/hdBackground.cpp:78), freed via stbi_image_free at /mnt/d/FITD/FitdLib/hdBackground.cpp:673
+FREE: 0x72122cea6090, size 3072000, type stbi_load_from_memory (was /mnt/d/FITD/FitdLib/hdBackground.cpp:78), freed via stbi_image_free at /mnt/d/FITD/FitdLib/hdBackground.cpp:673
+FREE: 0x72122d1940a0, size 3072000, type stbi_load_from_memory (was /mnt/d/FITD/FitdLib/hdBackground.cpp:78), freed via stbi_image_free at /mnt/d/FITD/FitdLib/hdBackground.cpp:673
+FREE: 0x72122d4820b0, size 3072000, type stbi_load_from_memory (was /mnt/d/FITD/FitdLib/hdBackground.cpp:78), freed via stbi_image_free at /mnt/d/FITD/FitdLib/hdBackground.cpp:673
+FREE: 0x72122d7700c0, size 3072000, type stbi_load_from_memory (was /mnt/d/FITD/FitdLib/hdBackground.cpp:78), freed via stbi_image_free at /mnt/d/FITD/FitdLib/hdBackground.cpp:673
+FREE: 0x72122da5e0d0, size 3072000, type stbi_load_from_memory (was /mnt/d/FITD/FitdLib/hdBackground.cpp:78), freed via stbi_image_free at /mnt/d/FITD/FitdLib/hdBackground.cpp:673
+FREE: 0x72122dd4c0e0, size 3072000, type stbi_load_from_memory (was /mnt/d/FITD/FitdLib/hdBackground.cpp:78), freed via stbi_image_free at /mnt/d/FITD/FitdLib/hdBackground.cpp:673
+FREE: 0x72122e03a0f0, size 3072000, type stbi_load_from_memory (was /mnt/d/FITD/FitdLib/hdBackground.cpp:78), freed via stbi_image_free at /mnt/d/FITD/FitdLib/hdBackground.cpp:673
+FREE: 0x72122e328100, size 3072000, type stbi_load_from_memory (was /mnt/d/FITD/FitdLib/hdBackground.cpp:78), freed via stbi_image_free at /mnt/d/FITD/FitdLib/hdBackground.cpp:673
+FREE: 0x72122e616110, size 3072000, type stbi_load_from_memory (was /mnt/d/FITD/FitdLib/hdBackground.cpp:78), freed via stbi_image_free at /mnt/d/FITD/FitdLib/hdBackground.cpp:673
+FREE: 0x72122e904120, size 3072000, type stbi_load_from_memory (was /mnt/d/FITD/FitdLib/hdBackground.cpp:78), freed via stbi_image_free at /mnt/d/FITD/FitdLib/hdBackground.cpp:673
+FREE: 0x72122ebf2130, size 3072000, type stbi_load_from_memory (was /mnt/d/FITD/FitdLib/hdBackground.cpp:78), freed via stbi_image_free at /mnt/d/FITD/FitdLib/hdBackground.cpp:673
+FREE: 0x72122eee0140, size 3072000, type stbi_load_from_memory (was /mnt/d/FITD/FitdLib/hdBackground.cpp:78), freed via stbi_image_free at /mnt/d/FITD/FitdLib/hdBackground.cpp:673
+FREE: 0x72122f1ce150, size 3072000, type stbi_load_from_memory (was /mnt/d/FITD/FitdLib/hdBackground.cpp:78), freed via stbi_image_free at /mnt/d/FITD/FitdLib/hdBackground.cpp:673
+FREE: 0x72122f4bc160, size 3072000, type stbi_load_from_memory (was /mnt/d/FITD/FitdLib/hdBackground.cpp:78), freed via stbi_image_free at /mnt/d/FITD/FitdLib/hdBackground.cpp:673
+FREE: 0x72122f7aa170, size 3072000, type stbi_load_from_memory (was /mnt/d/FITD/FitdLib/hdBackground.cpp:78), freed via stbi_image_free at /mnt/d/FITD/FitdLib/hdBackground.cpp:673
+FREE: 0x72122fa98180, size 3072000, type stbi_load_from_memory (was /mnt/d/FITD/FitdLib/hdBackground.cpp:78), freed via stbi_image_free at /mnt/d/FITD/FitdLib/hdBackground.cpp:673
+FREE: 0x721230000040, size 3072000, type stbi_load_from_memory (was /mnt/d/FITD/FitdLib/hdBackground.cpp:78), freed via stbi_image_free at /mnt/d/FITD/FitdLib/hdBackground.cpp:673
+FREE: 0x7212302ee050, size 3072000, type stbi_load_from_memory (was /mnt/d/FITD/FitdLib/hdBackground.cpp:78), freed via stbi_image_free at /mnt/d/FITD/FitdLib/hdBackground.cpp:673
+FREE: 0x7212305dc060, size 3072000, type stbi_load_from_memory (was /mnt/d/FITD/FitdLib/hdBackground.cpp:78), freed via stbi_image_free at /mnt/d/FITD/FitdLib/hdBackground.cpp:673
+FREE: 0x7212308ca070, size 3072000, type stbi_load_from_memory (was /mnt/d/FITD/FitdLib/hdBackground.cpp:78), freed via stbi_image_free at /mnt/d/FITD/FitdLib/hdBackground.cpp:673
+FREE: 0x721230bb8080, size 3072000, type stbi_load_from_memory (was /mnt/d/FITD/FitdLib/hdBackground.cpp:78), freed via stbi_image_free at /mnt/d/FITD/FitdLib/hdBackground.cpp:673
+FREE: 0x721230ea6090, size 3072000, type stbi_load_from_memory (was /mnt/d/FITD/FitdLib/hdBackground.cpp:78), freed via stbi_image_free at /mnt/d/FITD/FitdLib/hdBackground.cpp:673
+FREE: 0x7212311940a0, size 3072000, type stbi_load_from_memory (was /mnt/d/FITD/FitdLib/hdBackground.cpp:78), freed via stbi_image_free at /mnt/d/FITD/FitdLib/hdBackground.cpp:673
+FREE: 0x7212314820b0, size 3072000, type stbi_load_from_memory (was /mnt/d/FITD/FitdLib/hdBackground.cpp:78), freed via stbi_image_free at /mnt/d/FITD/FitdLib/hdBackground.cpp:673
+FREE: 0x7212317700c0, size 3072000, type stbi_load_from_memory (was /mnt/d/FITD/FitdLib/hdBackground.cpp:78), freed via stbi_image_free at /mnt/d/FITD/FitdLib/hdBackground.cpp:673
+FREE: 0x721231a5e0d0, size 3072000, type stbi_load_from_memory (was /mnt/d/FITD/FitdLib/hdBackground.cpp:78), freed via stbi_image_free at /mnt/d/FITD/FitdLib/hdBackground.cpp:673
+FREE: 0x721231d4c0e0, size 3072000, type stbi_load_from_memory (was /mnt/d/FITD/FitdLib/hdBackground.cpp:78), freed via stbi_image_free at /mnt/d/FITD/FitdLib/hdBackground.cpp:673
+FREE: 0x72123203a0f0, size 3072000, type stbi_load_from_memory (was /mnt/d/FITD/FitdLib/hdBackground.cpp:78), freed via stbi_image_free at /mnt/d/FITD/FitdLib/hdBackground.cpp:673
+FREE: 0x721232328100, size 3072000, type stbi_load_from_memory (was /mnt/d/FITD/FitdLib/hdBackground.cpp:78), freed via stbi_image_free at /mnt/d/FITD/FitdLib/hdBackground.cpp:673
+FREE: 0x721232616110, size 3072000, type stbi_load_from_memory (was /mnt/d/FITD/FitdLib/hdBackground.cpp:78), freed via stbi_image_free at /mnt/d/FITD/FitdLib/hdBackground.cpp:673
+FREE: 0x721232904120, size 3072000, type stbi_load_from_memory (was /mnt/d/FITD/FitdLib/hdBackground.cpp:78), freed via stbi_image_free at /mnt/d/FITD/FitdLib/hdBackground.cpp:673
+FREE: 0x721232bf2130, size 3072000, type stbi_load_from_memory (was /mnt/d/FITD/FitdLib/hdBackground.cpp:78), freed via stbi_image_free at /mnt/d/FITD/FitdLib/hdBackground.cpp:673
+FREE: 0x721232ee0140, size 3072000, type stbi_load_from_memory (was /mnt/d/FITD/FitdLib/hdBackground.cpp:78), freed via stbi_image_free at /mnt/d/FITD/FitdLib/hdBackground.cpp:673
+FREE: 0x7212331ce150, size 3072000, type stbi_load_from_memory (was /mnt/d/FITD/FitdLib/hdBackground.cpp:78), freed via stbi_image_free at /mnt/d/FITD/FitdLib/hdBackground.cpp:673
+FREE: 0x7212334bc160, size 3072000, type stbi_load_from_memory (was /mnt/d/FITD/FitdLib/hdBackground.cpp:78), freed via stbi_image_free at /mnt/d/FITD/FitdLib/hdBackground.cpp:673
+FREE: 0x7212337aa170, size 3072000, type stbi_load_from_memory (was /mnt/d/FITD/FitdLib/hdBackground.cpp:78), freed via stbi_image_free at /mnt/d/FITD/FitdLib/hdBackground.cpp:673
+FREE: 0x721233a98180, size 3072000, type stbi_load_from_memory (was /mnt/d/FITD/FitdLib/hdBackground.cpp:78), freed via stbi_image_free at /mnt/d/FITD/FitdLib/hdBackground.cpp:673
+FREE: 0x721224000040, size 3072000, type stbi_load_from_memory (was /mnt/d/FITD/FitdLib/hdBackground.cpp:78), freed via stbi_image_free at /mnt/d/FITD/FitdLib/hdBackground.cpp:673
+FREE: 0x7212242ee050, size 3072000, type stbi_load_from_memory (was /mnt/d/FITD/FitdLib/hdBackground.cpp:78), freed via stbi_image_free at /mnt/d/FITD/FitdLib/hdBackground.cpp:673
+FREE: 0x7212245dc060, size 3072000, type stbi_load_from_memory (was /mnt/d/FITD/FitdLib/hdBackground.cpp:78), freed via stbi_image_free at /mnt/d/FITD/FitdLib/hdBackground.cpp:673
+FREE: 0x7212248ca070, size 3072000, type stbi_load_from_memory (was /mnt/d/FITD/FitdLib/hdBackground.cpp:78), freed via stbi_image_free at /mnt/d/FITD/FitdLib/hdBackground.cpp:673
+FREE: 0x721224bb8080, size 3072000, type stbi_load_from_memory (was /mnt/d/FITD/FitdLib/hdBackground.cpp:78), freed via stbi_image_free at /mnt/d/FITD/FitdLib/hdBackground.cpp:673
+FREE: 0x721224ea6090, size 3072000, type stbi_load_from_memory (was /mnt/d/FITD/FitdLib/hdBackground.cpp:78), freed via stbi_image_free at /mnt/d/FITD/FitdLib/hdBackground.cpp:673
+FREE: 0x7212251940a0, size 3072000, type stbi_load_from_memory (was /mnt/d/FITD/FitdLib/hdBackground.cpp:78), freed via stbi_image_free at /mnt/d/FITD/FitdLib/hdBackground.cpp:673
+FREE: 0x7212254820b0, size 3072000, type stbi_load_from_memory (was /mnt/d/FITD/FitdLib/hdBackground.cpp:78), freed via stbi_image_free at /mnt/d/FITD/FitdLib/hdBackground.cpp:673
+FREE: 0x7212257700c0, size 3072000, type stbi_load_from_memory (was /mnt/d/FITD/FitdLib/hdBackground.cpp:78), freed via stbi_image_free at /mnt/d/FITD/FitdLib/hdBackground.cpp:673
+FREE: 0x721225a5e0d0, size 3072000, type stbi_load_from_memory (was /mnt/d/FITD/FitdLib/hdBackground.cpp:78), freed via stbi_image_free at /mnt/d/FITD/FitdLib/hdBackground.cpp:673
+FREE: 0x721225d4c0e0, size 3072000, type stbi_load_from_memory (was /mnt/d/FITD/FitdLib/hdBackground.cpp:78), freed via stbi_image_free at /mnt/d/FITD/FitdLib/hdBackground.cpp:673
+FREE: 0x72122603a0f0, size 3072000, type stbi_load_from_memory (was /mnt/d/FITD/FitdLib/hdBackground.cpp:78), freed via stbi_image_free at /mnt/d/FITD/FitdLib/hdBackground.cpp:673
+FREE: 0x721226328100, size 3072000, type stbi_load_from_memory (was /mnt/d/FITD/FitdLib/hdBackground.cpp:78), freed via stbi_image_free at /mnt/d/FITD/FitdLib/hdBackground.cpp:673
+FREE: 0x721226616110, size 3072000, type stbi_load_from_memory (was /mnt/d/FITD/FitdLib/hdBackground.cpp:78), freed via stbi_image_free at /mnt/d/FITD/FitdLib/hdBackground.cpp:673
+FREE: 0x721226904120, size 3072000, type stbi_load_from_memory (was /mnt/d/FITD/FitdLib/hdBackground.cpp:78), freed via stbi_image_free at /mnt/d/FITD/FitdLib/hdBackground.cpp:673
+FREE: 0x721226bf2130, size 3072000, type stbi_load_from_memory (was /mnt/d/FITD/FitdLib/hdBackground.cpp:78), freed via stbi_image_free at /mnt/d/FITD/FitdLib/hdBackground.cpp:673
+FREE: 0x721226ee0140, size 3072000, type stbi_load_from_memory (was /mnt/d/FITD/FitdLib/hdBackground.cpp:78), freed via stbi_image_free at /mnt/d/FITD/FitdLib/hdBackground.cpp:673
+FREE: 0x7212f0310510, size 64, type malloc (was /mnt/d/FITD/FitdLib/hdBackground.cpp:469), freed via free at /mnt/d/FITD/FitdLib/hdBackground.cpp:704
+FREE: 0x7211f07c99b0, size 3072000, type stbi_load_from_memory (was /mnt/d/FITD/FitdLib/hdBackground.cpp:78), freed via stbi_image_free at /mnt/d/FITD/FitdLib/hdBackground.cpp:673
+FREE: 0x7212f02110f0, size 64, type malloc (was /mnt/d/FITD/FitdLib/hdBackground.cpp:469), freed via free at /mnt/d/FITD/FitdLib/hdBackground.cpp:704
+ALLOC: 0x7212244bb330, size 4960104, type stbi_load_from_memory, at /mnt/d/FITD/FitdLib/hdBackground.cpp:78
+FREE: 0x7212244bb330, size 4960104, type stbi_load_from_memory (was /mnt/d/FITD/FitdLib/hdBackground.cpp:78), freed via stbi_image_free at /mnt/d/FITD/FitdLib/hdBackground.cpp:251
+ALLOC: 0x7212247d0080, size 12288000, type stbi_load_from_memory, at /mnt/d/FITD/FitdLib/hdBackground.cpp:78
+FREE: 0x7212247d0080, size 12288000, type stbi_load_from_memory (was /mnt/d/FITD/FitdLib/hdBackground.cpp:78), freed via stbi_image_free at /mnt/d/FITD/FitdLib/hdBackground.cpp:251
+
+=== WARNING: 1 leaked allocations detected ===
+Leaked: 0x7212271ce150, size 4096000, type malloc, allocated at /mnt/d/FITD/FitdLib/hdBackgroundRenderer.cpp:163

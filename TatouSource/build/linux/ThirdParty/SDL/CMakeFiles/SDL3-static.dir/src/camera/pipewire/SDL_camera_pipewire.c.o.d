@@ -1,0 +1,139 @@
+ThirdParty/SDL/CMakeFiles/SDL3-static.dir/src/camera/pipewire/SDL_camera_pipewire.c.o: \
+ /mnt/d/FITD/ThirdParty/SDL/src/camera/pipewire/SDL_camera_pipewire.c \
+ /usr/include/stdc-predef.h /mnt/d/FITD/ThirdParty/SDL/src/SDL_internal.h \
+ /mnt/d/FITD/ThirdParty/SDL/src/camera/pipewire/../SDL_syscamera.h \
+ /mnt/d/FITD/ThirdParty/SDL/src/camera/pipewire/../../SDL_internal.h \
+ /mnt/d/FITD/ThirdParty/SDL/src/camera/pipewire/../../video/SDL_surface_c.h \
+ /mnt/d/FITD/ThirdParty/SDL/src/camera/pipewire/../../video/SDL_blit.h \
+ /usr/include/spa-0.2/spa/utils/type.h \
+ /usr/include/spa-0.2/spa/utils/defs.h \
+ /usr/lib/gcc/x86_64-linux-gnu/13/include/stdbool.h \
+ /usr/include/inttypes.h /usr/include/signal.h /usr/include/features.h \
+ /usr/include/x86_64-linux-gnu/bits/types.h \
+ /usr/include/x86_64-linux-gnu/bits/signum-generic.h \
+ /usr/include/x86_64-linux-gnu/bits/signum-arch.h \
+ /usr/include/x86_64-linux-gnu/bits/types/sig_atomic_t.h \
+ /usr/include/x86_64-linux-gnu/bits/types/sigset_t.h \
+ /usr/include/x86_64-linux-gnu/bits/types/struct_timespec.h \
+ /usr/include/x86_64-linux-gnu/bits/types/siginfo_t.h \
+ /usr/include/x86_64-linux-gnu/bits/wordsize.h \
+ /usr/include/x86_64-linux-gnu/bits/types/__sigval_t.h \
+ /usr/include/x86_64-linux-gnu/bits/siginfo-arch.h \
+ /usr/include/x86_64-linux-gnu/bits/siginfo-consts.h \
+ /usr/include/x86_64-linux-gnu/bits/siginfo-consts-arch.h \
+ /usr/include/x86_64-linux-gnu/bits/types/sigval_t.h \
+ /usr/include/x86_64-linux-gnu/bits/types/sigevent_t.h \
+ /usr/include/x86_64-linux-gnu/bits/sigevent-consts.h \
+ /usr/include/x86_64-linux-gnu/bits/sigaction.h \
+ /usr/include/x86_64-linux-gnu/bits/sigcontext.h \
+ /usr/lib/gcc/x86_64-linux-gnu/13/include/stddef.h \
+ /usr/include/x86_64-linux-gnu/bits/types/stack_t.h \
+ /usr/include/x86_64-linux-gnu/sys/ucontext.h \
+ /usr/include/x86_64-linux-gnu/bits/sigstack.h \
+ /usr/include/x86_64-linux-gnu/bits/sigstksz.h /usr/include/unistd.h \
+ /usr/include/x86_64-linux-gnu/bits/posix_opt.h \
+ /usr/include/x86_64-linux-gnu/bits/environments.h \
+ /usr/include/x86_64-linux-gnu/bits/confname.h \
+ /usr/include/x86_64-linux-gnu/bits/getopt_posix.h \
+ /usr/include/x86_64-linux-gnu/bits/getopt_core.h \
+ /usr/include/x86_64-linux-gnu/bits/unistd.h \
+ /usr/include/x86_64-linux-gnu/bits/unistd-decl.h \
+ /usr/include/x86_64-linux-gnu/bits/unistd_ext.h \
+ /usr/include/linux/close_range.h \
+ /usr/include/x86_64-linux-gnu/bits/ss_flags.h \
+ /usr/include/x86_64-linux-gnu/bits/types/struct_sigstack.h \
+ /usr/include/x86_64-linux-gnu/bits/pthreadtypes.h \
+ /usr/include/x86_64-linux-gnu/bits/sigthread.h \
+ /usr/include/x86_64-linux-gnu/bits/types/__sigset_t.h \
+ /usr/include/x86_64-linux-gnu/bits/signal_ext.h /usr/include/stdlib.h \
+ /usr/include/string.h /usr/include/stdio.h \
+ /usr/include/spa-0.2/spa/pod/builder.h \
+ /usr/lib/gcc/x86_64-linux-gnu/13/include/stdarg.h \
+ /usr/include/spa-0.2/spa/utils/hook.h \
+ /usr/include/spa-0.2/spa/utils/list.h \
+ /usr/include/spa-0.2/spa/pod/iter.h /usr/include/errno.h \
+ /usr/include/x86_64-linux-gnu/bits/errno.h /usr/include/linux/errno.h \
+ /usr/include/x86_64-linux-gnu/asm/errno.h \
+ /usr/include/asm-generic/errno.h /usr/include/asm-generic/errno-base.h \
+ /usr/include/x86_64-linux-gnu/bits/types/error_t.h \
+ /usr/include/x86_64-linux-gnu/sys/types.h \
+ /usr/include/spa-0.2/spa/pod/pod.h /usr/include/spa-0.2/spa/pod/vararg.h \
+ /usr/include/spa-0.2/spa/param/video/raw.h \
+ /usr/include/spa-0.2/spa/param/format.h \
+ /usr/include/spa-0.2/spa/param/param.h \
+ /usr/include/spa-0.2/spa/param/buffers.h \
+ /usr/include/spa-0.2/spa/param/profile.h \
+ /usr/include/spa-0.2/spa/param/port-config.h \
+ /usr/include/spa-0.2/spa/param/route.h \
+ /usr/include/spa-0.2/spa/param/video/chroma.h \
+ /usr/include/spa-0.2/spa/param/video/color.h \
+ /usr/include/spa-0.2/spa/param/video/multiview.h \
+ /usr/include/spa-0.2/spa/param/video/format.h \
+ /usr/include/spa-0.2/spa/param/video/dsp.h \
+ /usr/include/spa-0.2/spa/param/video/encoded.h \
+ /usr/include/spa-0.2/spa/param/video/h264.h \
+ /usr/include/spa-0.2/spa/param/video/mjpg.h \
+ /usr/include/spa-0.2/spa/utils/result.h \
+ /usr/include/spa-0.2/spa/utils/json.h \
+ /usr/lib/gcc/x86_64-linux-gnu/13/include/stdint.h /usr/include/math.h \
+ /usr/lib/gcc/x86_64-linux-gnu/13/include/float.h \
+ /usr/include/spa-0.2/spa/utils/string.h /usr/include/locale.h \
+ /usr/include/x86_64-linux-gnu/bits/locale.h \
+ /usr/include/x86_64-linux-gnu/bits/types/locale_t.h \
+ /usr/include/pipewire-0.3/pipewire/pipewire.h \
+ /usr/include/spa-0.2/spa/support/plugin.h \
+ /usr/include/spa-0.2/spa/utils/dict.h \
+ /usr/include/pipewire-0.3/pipewire/array.h \
+ /usr/include/pipewire-0.3/pipewire/client.h \
+ /usr/include/pipewire-0.3/pipewire/proxy.h \
+ /usr/include/pipewire-0.3/pipewire/protocol.h \
+ /usr/include/pipewire-0.3/pipewire/context.h \
+ /usr/include/pipewire-0.3/pipewire/core.h \
+ /usr/include/pipewire-0.3/pipewire/properties.h \
+ /usr/include/pipewire-0.3/pipewire/loop.h \
+ /usr/include/spa-0.2/spa/support/loop.h \
+ /usr/include/spa-0.2/spa/support/system.h /usr/include/time.h \
+ /usr/include/x86_64-linux-gnu/bits/time.h \
+ /usr/include/x86_64-linux-gnu/bits/timex.h \
+ /usr/include/x86_64-linux-gnu/bits/types/struct_timeval.h \
+ /usr/include/x86_64-linux-gnu/bits/types/clock_t.h \
+ /usr/include/x86_64-linux-gnu/bits/types/time_t.h \
+ /usr/include/x86_64-linux-gnu/bits/types/struct_tm.h \
+ /usr/include/x86_64-linux-gnu/bits/types/clockid_t.h \
+ /usr/include/x86_64-linux-gnu/bits/types/timer_t.h \
+ /usr/include/x86_64-linux-gnu/bits/types/struct_itimerspec.h \
+ /usr/include/pipewire-0.3/pipewire/utils.h \
+ /usr/include/x86_64-linux-gnu/sys/un.h \
+ /usr/include/x86_64-linux-gnu/sys/cdefs.h \
+ /usr/include/x86_64-linux-gnu/bits/sockaddr.h \
+ /usr/include/pipewire-0.3/pipewire/permission.h \
+ /usr/include/pipewire-0.3/pipewire/conf.h \
+ /usr/include/pipewire-0.3/pipewire/device.h \
+ /usr/include/pipewire-0.3/pipewire/buffers.h \
+ /usr/include/spa-0.2/spa/node/node.h \
+ /usr/include/spa-0.2/spa/buffer/buffer.h \
+ /usr/include/spa-0.2/spa/buffer/meta.h \
+ /usr/include/spa-0.2/spa/node/event.h \
+ /usr/include/spa-0.2/spa/pod/event.h \
+ /usr/include/spa-0.2/spa/node/command.h \
+ /usr/include/spa-0.2/spa/pod/command.h \
+ /usr/include/pipewire-0.3/pipewire/mem.h \
+ /usr/include/pipewire-0.3/pipewire/factory.h \
+ /usr/include/pipewire-0.3/pipewire/keys.h \
+ /usr/include/pipewire-0.3/pipewire/log.h \
+ /usr/include/spa-0.2/spa/support/log.h \
+ /usr/include/pipewire-0.3/pipewire/link.h \
+ /usr/include/pipewire-0.3/pipewire/main-loop.h \
+ /usr/include/pipewire-0.3/pipewire/map.h \
+ /usr/include/pipewire-0.3/pipewire/module.h \
+ /usr/include/pipewire-0.3/pipewire/node.h \
+ /usr/include/pipewire-0.3/pipewire/port.h \
+ /usr/include/pipewire-0.3/pipewire/stream.h \
+ /usr/include/pipewire-0.3/pipewire/filter.h \
+ /usr/include/spa-0.2/spa/node/io.h \
+ /usr/include/pipewire-0.3/pipewire/thread-loop.h \
+ /usr/include/pipewire-0.3/pipewire/data-loop.h \
+ /usr/include/spa-0.2/spa/support/thread.h \
+ /usr/include/pipewire-0.3/pipewire/type.h \
+ /usr/include/pipewire-0.3/pipewire/version.h \
+ /usr/include/pipewire-0.3/pipewire/extensions/metadata.h

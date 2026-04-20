@@ -1,0 +1,1 @@
+/usr/bin/c++  -DBX_CONFIG_DEBUG=0 -O3 -DNDEBUG CMakeFiles/texturec.dir/__/__/bimg/tools/texturec/texturec.cpp.o -o texturec  libbimg_decode.a libbimg_encode.a libbimg.a ../bx/libbx.a -ldl -lrt 

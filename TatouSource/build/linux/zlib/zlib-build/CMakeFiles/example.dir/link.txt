@@ -1,0 +1,1 @@
+/usr/bin/cc -O3 -DNDEBUG CMakeFiles/example.dir/test/example.c.o -o example  -Wl,-rpath,/mnt/d/FITD/build/linux/zlib/zlib-build libz.so.1.2.11 
