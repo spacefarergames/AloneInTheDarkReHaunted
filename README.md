@@ -34,7 +34,9 @@ https://www.youtube.com/watch?v=0yaWv7vF3bA
 |------|-------|-----|--------|
 | Alone in the Dark 1 | [Store page](https://store.steampowered.com/app/548090/Alone_in_the_Dark_1/) | [Trilogy](https://www.gog.com/en/game/alone_in_the_dark_the_trilogy_123) | ✅ Completable
 
-Future Rehaunted projects. AKA Jack Is Back (Again!) and AITD3 are coming soon.
+## Future Forks (And Project Names)
+| Alone in the Dark 2 - Jack Is Back Again |✅ In Progress
+| Alone in the Dark 3 - Rhinestone Cowboy | ✅ Planned
 
 ---
 
