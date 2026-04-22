@@ -182,7 +182,7 @@ The *Re-Haunted* fork adds several enhancements on top of the original FITD engi
 | Feature | Status | Details |
 |---------|--------|---------|
 | **Dynamic Recomp of Life System** | ✅ Available | All native code, LISTLIFE Life System converted to C |
-| **Dynamic Lamp Lighting** | ✅ Available | Now features illumaniation of Backgrounds and AO inspired by AITD4 |
+| **Dynamic Lamp Lighting** | ✅ Available | Now features illumination of HD BGS and AO inspired by AITD4 |
 | **HD backgrounds** | ✅ Available | Upscaled camera views (2×–8×) with PNG/TGA support, including animated backgrounds |
 | **Textured 3D models** | ✅ Available | High-quality textured replacements for core 3D models via texture atlas |
 | **TTF font rendering** | ✅ Available | Smooth anti-aliased overlay fonts via ImGui (configurable font, size, and style) |
