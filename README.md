@@ -23,7 +23,9 @@ AITD-R (also known as *Alone In The Dark Re-Haunted*) lets you play the original
 ## Video (YouTube)
 https://www.youtube.com/watch?v=fzi_xK2Jifw
 
-## Graphics Target
+## Lamp Dynamic Lighting
+https://www.youtube.com/watch?v=0yaWv7vF3bA
+<img width="1920" height="1080" alt="vlcsnap-2026-04-22-13h52m48s765" src="https://github.com/user-attachments/assets/9f25879b-5c99-4313-b427-b17670c19a83" />
 
 <img width="1536" height="1024" alt="image" src="https://github.com/user-attachments/assets/45771c9c-349a-41ab-8c73-643221c001c7" />
 
