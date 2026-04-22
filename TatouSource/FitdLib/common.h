@@ -11,6 +11,7 @@
 #define _COMMON_H_
 
 #include "config.h"
+#include "platform_compat.h"
 
 #ifdef USE_IMGUI
 #include "imgui.h"

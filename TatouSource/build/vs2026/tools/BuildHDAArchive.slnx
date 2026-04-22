@@ -7,18 +7,27 @@
 		<BuildType Name="RelWithDebInfo"/>
 		<Platform Name="x64"/>
 	</Configurations>
-	<Project Path="build_hda_archive.vcxproj" Type="8bc9ceb8-8b4a-11d0-8d11-00a0c91bc942" Id="c060931b-d6e9-3c75-a5b5-4d2cfb5602d9">
+	<Project Path="build_hda_archive.vcxproj" Type="8bc9ceb8-8b4a-11d0-8d11-00a0c91bc942" Id="380b0869-b0f0-3eb6-b8a6-47c2c026bd89">
+		<BuildDependency Project="../ZERO_CHECK.vcxproj"/>
+		<BuildDependency Project="../zlib/zlib-build/zlibstatic.vcxproj"/>
+	</Project>
+	<Project Path="unpack_hda_archive.vcxproj" Type="8bc9ceb8-8b4a-11d0-8d11-00a0c91bc942" Id="5239edd7-73df-3242-abad-4469dad94d60">
+		<BuildDependency Project="../ZERO_CHECK.vcxproj"/>
+		<BuildDependency Project="../zlib/zlib-build/zlibstatic.vcxproj"/>
+	</Project>
+	<Project Path="../zlib/zlib-build/zlibstatic.vcxproj" Type="8bc9ceb8-8b4a-11d0-8d11-00a0c91bc942" Id="aadf985d-415d-31bd-a86c-ff35b6da8505">
 		<BuildDependency Project="../ZERO_CHECK.vcxproj"/>
 	</Project>
 	<Folder Name="/CMakePredefinedTargets/">
-		<Project Path="ALL_BUILD.vcxproj" Type="8bc9ceb8-8b4a-11d0-8d11-00a0c91bc942" Id="52499451-f137-3654-861f-b39f8e8e1693" DefaultStartup="true">
+		<Project Path="ALL_BUILD.vcxproj" Type="8bc9ceb8-8b4a-11d0-8d11-00a0c91bc942" Id="887d6561-4a10-375c-833a-3acc7d2cacf2" DefaultStartup="true">
 			<BuildDependency Project="../ZERO_CHECK.vcxproj"/>
 			<BuildDependency Project="build_hda_archive.vcxproj"/>
+			<BuildDependency Project="unpack_hda_archive.vcxproj"/>
 			<Build Solution="Debug|*" Project="false"/>
 			<Build Solution="Release|*" Project="false"/>
 			<Build Solution="MinSizeRel|*" Project="false"/>
 			<Build Solution="RelWithDebInfo|*" Project="false"/>
 		</Project>
-		<Project Path="../ZERO_CHECK.vcxproj" Type="8bc9ceb8-8b4a-11d0-8d11-00a0c91bc942" Id="a64e50de-6981-3875-ad91-29157346a96c"/>
+		<Project Path="../ZERO_CHECK.vcxproj" Type="8bc9ceb8-8b4a-11d0-8d11-00a0c91bc942" Id="f785fce9-6420-3c90-95e8-4a488bb8ee84"/>
 	</Folder>
 </Solution>

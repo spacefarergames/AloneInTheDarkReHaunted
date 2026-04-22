@@ -1,0 +1,249 @@
+{
+    "version": 6,
+    "cmakeMinimumRequired": {
+        "major": 3,
+        "minor": 9,
+        "patch": 0
+    },
+    "configurePresets": [
+        {
+            "name": "windows-debug",
+            "displayName": "Windows Debug",
+            "generator": "Visual Studio 17 2022",
+            "binaryDir": "${sourceDir}/build/vs2026",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Debug"
+            },
+            "condition": {
+                "type": "equals",
+                "lhs": "${hostSystemName}",
+                "rhs": "Windows"
+            }
+        },
+        {
+            "name": "windows-release",
+            "displayName": "Windows Release",
+            "generator": "Visual Studio 17 2022",
+            "binaryDir": "${sourceDir}/build/vs2026",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "RelWithDebInfo"
+            },
+            "condition": {
+                "type": "equals",
+                "lhs": "${hostSystemName}",
+                "rhs": "Windows"
+            }
+        },
+        {
+            "name": "linux-debug",
+            "displayName": "Linux Debug",
+            "generator": "Unix Makefiles",
+            "binaryDir": "${sourceDir}/build/linux-debug",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Debug",
+                "CMAKE_EXPORT_COMPILE_COMMANDS": "ON"
+            },
+            "condition": {
+                "type": "equals",
+                "lhs": "${hostSystemName}",
+                "rhs": "Linux"
+            }
+        },
+        {
+            "name": "linux-release",
+            "displayName": "Linux Release",
+            "generator": "Unix Makefiles",
+            "binaryDir": "${sourceDir}/build/linux-release",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Release",
+                "CMAKE_EXPORT_COMPILE_COMMANDS": "ON"
+            },
+            "condition": {
+                "type": "equals",
+                "lhs": "${hostSystemName}",
+                "rhs": "Linux"
+            }
+        },
+        {
+            "name": "linux-wsl",
+            "displayName": "Linux (WSL)",
+            "description": "Build on WSL from Visual Studio",
+            "generator": "Unix Makefiles",
+            "binaryDir": "${sourceDir}/build/linux-wsl",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "RelWithDebInfo",
+                "CMAKE_EXPORT_COMPILE_COMMANDS": "ON"
+            },
+            "vendor": {
+                "microsoft.com/VisualStudioSettings/CMake/1.0": {
+                    "hostOS": [ "Linux" ],
+                    "intelliSenseMode": "linux-gcc-x64"
+                }
+            }
+        },
+        {
+            "name": "nx-debug",
+            "displayName": "Nintendo Switch Debug",
+            "generator": "Ninja",
+            "binaryDir": "${sourceDir}/build/nx-debug",
+            "toolchainFile": "${sourceDir}/cmake/NintendoSwitch.toolchain.cmake",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Debug",
+                "NINTENDO_SDK_ROOT": "F:/Unity6000.3.0_LTS-NXAddon20.5.14-Unity6.3/NintendoSDK",
+                "CMAKE_EXPORT_COMPILE_COMMANDS": "ON"
+            },
+            "condition": {
+                "type": "equals",
+                "lhs": "${hostSystemName}",
+                "rhs": "Windows"
+            }
+        },
+        {
+            "name": "nx-release",
+            "displayName": "Nintendo Switch Release",
+            "generator": "Ninja",
+            "binaryDir": "${sourceDir}/build/nx-release",
+            "toolchainFile": "${sourceDir}/cmake/NintendoSwitch.toolchain.cmake",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Release",
+                "NINTENDO_SDK_ROOT": "F:/Unity6000.3.0_LTS-NXAddon20.5.14-Unity6.3/NintendoSDK",
+                "CMAKE_EXPORT_COMPILE_COMMANDS": "ON"
+            },
+            "condition": {
+                "type": "equals",
+                "lhs": "${hostSystemName}",
+                "rhs": "Windows"
+            }
+        },
+        {
+            "name": "uwp-x64-debug",
+            "displayName": "UWP x64 Debug",
+            "generator": "Ninja",
+            "architecture": "x64",
+            "binaryDir": "${sourceDir}/build/uwp-x64-debug",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Debug",
+                "CMAKE_SYSTEM_NAME": "WindowsStore",
+                "CMAKE_SYSTEM_VERSION": "10.0",
+                "CMAKE_VS_WINDOWS_TARGET_PLATFORM_VERSION": "10.0.22621.0",
+                "CMAKE_C_COMPILER": "cl.exe",
+                "CMAKE_CXX_COMPILER": "cl.exe"
+            },
+            "condition": {
+                "type": "equals",
+                "lhs": "${hostSystemName}",
+                "rhs": "Windows"
+            }
+        },
+        {
+            "name": "uwp-x64-release",
+            "displayName": "UWP x64 Release",
+            "generator": "Ninja",
+            "architecture": "x64",
+            "binaryDir": "${sourceDir}/build/uwp-x64-release",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Release",
+                "CMAKE_SYSTEM_NAME": "WindowsStore",
+                "CMAKE_SYSTEM_VERSION": "10.0",
+                "CMAKE_VS_WINDOWS_TARGET_PLATFORM_VERSION": "10.0.22621.0",
+                "CMAKE_C_COMPILER": "cl.exe",
+                "CMAKE_CXX_COMPILER": "cl.exe"
+            },
+            "condition": {
+                "type": "equals",
+                "lhs": "${hostSystemName}",
+                "rhs": "Windows"
+            }
+        },
+        {
+            "name": "uwp-arm64-debug",
+            "displayName": "UWP ARM64 Debug",
+            "generator": "Visual Studio 17 2022",
+            "architecture": "ARM64",
+            "binaryDir": "${sourceDir}/build/uwp-arm64-debug",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Debug",
+                "CMAKE_SYSTEM_NAME": "WindowsStore",
+                "CMAKE_SYSTEM_VERSION": "10.0",
+                "CMAKE_VS_WINDOWS_TARGET_PLATFORM_VERSION": "10.0.22621.0"
+            },
+            "condition": {
+                "type": "equals",
+                "lhs": "${hostSystemName}",
+                "rhs": "Windows"
+            }
+        },
+        {
+            "name": "uwp-arm64-release",
+            "displayName": "UWP ARM64 Release",
+            "generator": "Visual Studio 17 2022",
+            "architecture": "ARM64",
+            "binaryDir": "${sourceDir}/build/uwp-arm64-release",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Release",
+                "CMAKE_SYSTEM_NAME": "WindowsStore",
+                "CMAKE_SYSTEM_VERSION": "10.0",
+                "CMAKE_VS_WINDOWS_TARGET_PLATFORM_VERSION": "10.0.22621.0"
+            },
+            "condition": {
+                "type": "equals",
+                "lhs": "${hostSystemName}",
+                "rhs": "Windows"
+            }
+        }
+    ],
+    "buildPresets": [
+        {
+            "name": "windows-debug",
+            "configurePreset": "windows-debug",
+            "configuration": "Debug"
+        },
+        {
+            "name": "windows-release",
+            "configurePreset": "windows-release",
+            "configuration": "RelWithDebInfo"
+        },
+        {
+            "name": "linux-debug",
+            "configurePreset": "linux-debug"
+        },
+        {
+            "name": "linux-release",
+            "configurePreset": "linux-release"
+        },
+        {
+            "name": "linux-wsl",
+            "configurePreset": "linux-wsl"
+        },
+        {
+            "name": "nx-debug",
+            "configurePreset": "nx-debug",
+            "configuration": "Debug"
+        },
+        {
+            "name": "nx-release",
+            "configurePreset": "nx-release",
+            "configuration": "Release"
+        },
+        {
+            "name": "uwp-x64-debug",
+            "configurePreset": "uwp-x64-debug",
+            "configuration": "Debug"
+        },
+        {
+            "name": "uwp-x64-release",
+            "configurePreset": "uwp-x64-release",
+            "configuration": "Release"
+        },
+        {
+            "name": "uwp-arm64-debug",
+            "configurePreset": "uwp-arm64-debug",
+            "configuration": "Debug"
+        },
+        {
+            "name": "uwp-arm64-release",
+            "configurePreset": "uwp-arm64-release",
+            "configuration": "Release"
+        }
+    ]
+}

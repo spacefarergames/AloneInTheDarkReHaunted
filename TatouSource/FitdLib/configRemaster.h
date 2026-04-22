@@ -1,4 +1,4 @@
-///////////////////////////////////////////////////////////////////////////////
+﻿///////////////////////////////////////////////////////////////////////////////
 // Alone In The Dark Re-Haunted
 // Copyright (C) 2026 Infogrames / Spacefarer Retro Remasters LLC
 // Based on FITD by yaz0r, Re-haunted is released under GPL
@@ -36,6 +36,8 @@ struct RemasterConfig
         // "opengl", "vulkan", "metal". "auto" lets bgfx choose the best
         // backend for the current platform.
         char rendererBackend[32];
+        int msaaLevel;          // MSAA anti-aliasing: 0=off, 2=2x, 4=4x, 8=8x, 16=16x
+        bool enableWallDepth;   // Render wall collision geometry to depth buffer for SSAO edge darkening
     } graphics;
 
     // Post-processing settings

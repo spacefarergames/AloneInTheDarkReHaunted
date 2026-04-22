@@ -25,7 +25,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{52499451-F137-3654-861F-B39F8E8E1693}</ProjectGuid>
+    <ProjectGuid>{887D6561-4A10-375C-833A-3ACC7D2CACF2}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <WindowsTargetPlatformVersion>10.0.26100.0</WindowsTargetPlatformVersion>
     <Platform>x64</Platform>
@@ -69,7 +69,7 @@
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <Midl>
-      <AdditionalIncludeDirectories>D:\FITD\ThirdParty\zlib;D:\FITD\build\vs2026\zlib\zlib-build;D:\FITD;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>D:\FITD\ThirdParty\zlib;D:\FITD\build\vs2026-new\zlib\zlib-build;D:\FITD;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
       <HeaderFileName>%(Filename).h</HeaderFileName>
       <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
@@ -79,7 +79,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <Midl>
-      <AdditionalIncludeDirectories>D:\FITD\ThirdParty\zlib;D:\FITD\build\vs2026\zlib\zlib-build;D:\FITD;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>D:\FITD\ThirdParty\zlib;D:\FITD\build\vs2026-new\zlib\zlib-build;D:\FITD;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
       <HeaderFileName>%(Filename).h</HeaderFileName>
       <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
@@ -89,7 +89,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">
     <Midl>
-      <AdditionalIncludeDirectories>D:\FITD\ThirdParty\zlib;D:\FITD\build\vs2026\zlib\zlib-build;D:\FITD;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>D:\FITD\ThirdParty\zlib;D:\FITD\build\vs2026-new\zlib\zlib-build;D:\FITD;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
       <HeaderFileName>%(Filename).h</HeaderFileName>
       <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
@@ -99,7 +99,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">
     <Midl>
-      <AdditionalIncludeDirectories>D:\FITD\ThirdParty\zlib;D:\FITD\build\vs2026\zlib\zlib-build;D:\FITD;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>D:\FITD\ThirdParty\zlib;D:\FITD\build\vs2026-new\zlib\zlib-build;D:\FITD;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
       <HeaderFileName>%(Filename).h</HeaderFileName>
       <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
@@ -112,7 +112,7 @@
       <UseUtf8Encoding>Always</UseUtf8Encoding>
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Building Custom Rule D:/FITD/ThirdParty/zlib/CMakeLists.txt</Message>
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">setlocal
-"C:\Program Files\CMake\bin\cmake.exe" -SD:/FITD -BD:/FITD/build/vs2026 --check-stamp-file D:/FITD/build/vs2026/zlib/zlib-build/CMakeFiles/generate.stamp
+"C:\Program Files\CMake\bin\cmake.exe" -SD:/FITD -BD:/FITD/build/vs2026-new --check-stamp-file D:/FITD/build/vs2026-new/zlib/zlib-build/CMakeFiles/generate.stamp
 if %errorlevel% neq 0 goto :cmEnd
 :cmEnd
 endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
@@ -121,11 +121,11 @@ exit /b %1
 :cmDone
 if %errorlevel% neq 0 goto :VCEnd</Command>
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">C:\Program Files\CMake\share\cmake-4.2\Modules\CheckCSourceCompiles.cmake;C:\Program Files\CMake\share\cmake-4.2\Modules\CheckFunctionExists.cmake;C:\Program Files\CMake\share\cmake-4.2\Modules\CheckIncludeFile.cmake;C:\Program Files\CMake\share\cmake-4.2\Modules\CheckIncludeFileCXX.cmake;C:\Program Files\CMake\share\cmake-4.2\Modules\CheckTypeSize.cmake;D:\FITD\ThirdParty\zlib\zconf.h.cmakein;D:\FITD\ThirdParty\zlib\zlib.pc.cmakein;%(AdditionalInputs)</AdditionalInputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">D:\FITD\build\vs2026\zlib\zlib-build\CMakeFiles\generate.stamp</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">D:\FITD\build\vs2026-new\zlib\zlib-build\CMakeFiles\generate.stamp</Outputs>
       <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</LinkObjects>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Building Custom Rule D:/FITD/ThirdParty/zlib/CMakeLists.txt</Message>
       <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">setlocal
-"C:\Program Files\CMake\bin\cmake.exe" -SD:/FITD -BD:/FITD/build/vs2026 --check-stamp-file D:/FITD/build/vs2026/zlib/zlib-build/CMakeFiles/generate.stamp
+"C:\Program Files\CMake\bin\cmake.exe" -SD:/FITD -BD:/FITD/build/vs2026-new --check-stamp-file D:/FITD/build/vs2026-new/zlib/zlib-build/CMakeFiles/generate.stamp
 if %errorlevel% neq 0 goto :cmEnd
 :cmEnd
 endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
@@ -134,11 +134,11 @@ exit /b %1
 :cmDone
 if %errorlevel% neq 0 goto :VCEnd</Command>
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">C:\Program Files\CMake\share\cmake-4.2\Modules\CheckCSourceCompiles.cmake;C:\Program Files\CMake\share\cmake-4.2\Modules\CheckFunctionExists.cmake;C:\Program Files\CMake\share\cmake-4.2\Modules\CheckIncludeFile.cmake;C:\Program Files\CMake\share\cmake-4.2\Modules\CheckIncludeFileCXX.cmake;C:\Program Files\CMake\share\cmake-4.2\Modules\CheckTypeSize.cmake;D:\FITD\ThirdParty\zlib\zconf.h.cmakein;D:\FITD\ThirdParty\zlib\zlib.pc.cmakein;%(AdditionalInputs)</AdditionalInputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">D:\FITD\build\vs2026\zlib\zlib-build\CMakeFiles\generate.stamp</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">D:\FITD\build\vs2026-new\zlib\zlib-build\CMakeFiles\generate.stamp</Outputs>
       <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</LinkObjects>
       <Message Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">Building Custom Rule D:/FITD/ThirdParty/zlib/CMakeLists.txt</Message>
       <Command Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">setlocal
-"C:\Program Files\CMake\bin\cmake.exe" -SD:/FITD -BD:/FITD/build/vs2026 --check-stamp-file D:/FITD/build/vs2026/zlib/zlib-build/CMakeFiles/generate.stamp
+"C:\Program Files\CMake\bin\cmake.exe" -SD:/FITD -BD:/FITD/build/vs2026-new --check-stamp-file D:/FITD/build/vs2026-new/zlib/zlib-build/CMakeFiles/generate.stamp
 if %errorlevel% neq 0 goto :cmEnd
 :cmEnd
 endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
@@ -147,11 +147,11 @@ exit /b %1
 :cmDone
 if %errorlevel% neq 0 goto :VCEnd</Command>
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">C:\Program Files\CMake\share\cmake-4.2\Modules\CheckCSourceCompiles.cmake;C:\Program Files\CMake\share\cmake-4.2\Modules\CheckFunctionExists.cmake;C:\Program Files\CMake\share\cmake-4.2\Modules\CheckIncludeFile.cmake;C:\Program Files\CMake\share\cmake-4.2\Modules\CheckIncludeFileCXX.cmake;C:\Program Files\CMake\share\cmake-4.2\Modules\CheckTypeSize.cmake;D:\FITD\ThirdParty\zlib\zconf.h.cmakein;D:\FITD\ThirdParty\zlib\zlib.pc.cmakein;%(AdditionalInputs)</AdditionalInputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">D:\FITD\build\vs2026\zlib\zlib-build\CMakeFiles\generate.stamp</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">D:\FITD\build\vs2026-new\zlib\zlib-build\CMakeFiles\generate.stamp</Outputs>
       <LinkObjects Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">false</LinkObjects>
       <Message Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">Building Custom Rule D:/FITD/ThirdParty/zlib/CMakeLists.txt</Message>
       <Command Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">setlocal
-"C:\Program Files\CMake\bin\cmake.exe" -SD:/FITD -BD:/FITD/build/vs2026 --check-stamp-file D:/FITD/build/vs2026/zlib/zlib-build/CMakeFiles/generate.stamp
+"C:\Program Files\CMake\bin\cmake.exe" -SD:/FITD -BD:/FITD/build/vs2026-new --check-stamp-file D:/FITD/build/vs2026-new/zlib/zlib-build/CMakeFiles/generate.stamp
 if %errorlevel% neq 0 goto :cmEnd
 :cmEnd
 endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
@@ -160,7 +160,7 @@ exit /b %1
 :cmDone
 if %errorlevel% neq 0 goto :VCEnd</Command>
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">C:\Program Files\CMake\share\cmake-4.2\Modules\CheckCSourceCompiles.cmake;C:\Program Files\CMake\share\cmake-4.2\Modules\CheckFunctionExists.cmake;C:\Program Files\CMake\share\cmake-4.2\Modules\CheckIncludeFile.cmake;C:\Program Files\CMake\share\cmake-4.2\Modules\CheckIncludeFileCXX.cmake;C:\Program Files\CMake\share\cmake-4.2\Modules\CheckTypeSize.cmake;D:\FITD\ThirdParty\zlib\zconf.h.cmakein;D:\FITD\ThirdParty\zlib\zlib.pc.cmakein;%(AdditionalInputs)</AdditionalInputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">D:\FITD\build\vs2026\zlib\zlib-build\CMakeFiles\generate.stamp</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">D:\FITD\build\vs2026-new\zlib\zlib-build\CMakeFiles\generate.stamp</Outputs>
       <LinkObjects Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">false</LinkObjects>
     </CustomBuild>
   </ItemGroup>
@@ -168,26 +168,26 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
-    <ProjectReference Include="D:\FITD\build\vs2026\ZERO_CHECK.vcxproj">
-      <Project>{A64E50DE-6981-3875-AD91-29157346A96C}</Project>
+    <ProjectReference Include="D:\FITD\build\vs2026-new\ZERO_CHECK.vcxproj">
+      <Project>{F785FCE9-6420-3C90-95E8-4A488BB8EE84}</Project>
       <Name>ZERO_CHECK</Name>
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </ProjectReference>
-    <ProjectReference Include="D:\FITD\build\vs2026\zlib\zlib-build\example.vcxproj">
-      <Project>{39D0DA2B-6C65-33A5-A6E2-882C52799224}</Project>
+    <ProjectReference Include="D:\FITD\build\vs2026-new\zlib\zlib-build\example.vcxproj">
+      <Project>{539027A5-140C-30C7-BBC1-66B01B305DDD}</Project>
       <Name>example</Name>
     </ProjectReference>
-    <ProjectReference Include="D:\FITD\build\vs2026\zlib\zlib-build\minigzip.vcxproj">
-      <Project>{AFE34857-954F-3BA0-9D64-A41157DDCE20}</Project>
+    <ProjectReference Include="D:\FITD\build\vs2026-new\zlib\zlib-build\minigzip.vcxproj">
+      <Project>{542C5F52-6B3A-3F06-8F63-B76BC19C6811}</Project>
       <Name>minigzip</Name>
     </ProjectReference>
-    <ProjectReference Include="D:\FITD\build\vs2026\zlib\zlib-build\zlib.vcxproj">
-      <Project>{4ABCD946-4207-339F-A0A9-970A6F52FFBC}</Project>
+    <ProjectReference Include="D:\FITD\build\vs2026-new\zlib\zlib-build\zlib.vcxproj">
+      <Project>{AB1C1E5D-BC86-3C1E-87DD-95DC5A04C5FB}</Project>
       <Name>zlib</Name>
     </ProjectReference>
-    <ProjectReference Include="D:\FITD\build\vs2026\zlib\zlib-build\zlibstatic.vcxproj">
-      <Project>{85A75E18-8977-3788-BF34-7F4DE00AB25D}</Project>
+    <ProjectReference Include="D:\FITD\build\vs2026-new\zlib\zlib-build\zlibstatic.vcxproj">
+      <Project>{AADF985D-415D-31BD-A86C-FF35B6DA8505}</Project>
       <Name>zlibstatic</Name>
     </ProjectReference>
   </ItemGroup>

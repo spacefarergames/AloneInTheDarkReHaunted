@@ -1,14 +1,20 @@
-$input a_position, a_color0
-$output v_color0
+$input a_position, a_color0, a_color1
+$output v_color0, v_color1
 
 #include <bgfx_shader.sh>
 
 void main()
 {
-    // Screen-space positions pass through with model-view-proj transform
-    vec4 pos = vec4(a_position.xyz, 1.0);
-    gl_Position = mul(pos, u_modelViewProj);
+    // Screen-space orthographic projection - match background shader
+    // Convert from 320x200 game space to normalized device coordinates (-1 to 1)
+    float x = (a_position.x / 160.0) - 1.0;  // 0-320 to -1..1
+    float y = 1.0 - (a_position.y / 100.0);  // 0-200 to 1..-1 (inverted)
 
-    // Dust color (warm whitish) with alpha
-    v_color0 = vec4(0.95, 0.93, 0.90, a_color0.x);
+    // IMPORTANT: Use z=0.0 to match other screen-space overlays
+    // Screen-space rendering doesn't need depth; always render on top
+    gl_Position = vec4(x, y, 0.0, 1.0);
+
+    // Pass through alpha and isDirt flag to pixel shader
+    v_color0 = a_color0;  // alpha
+    v_color1 = a_color1;  // isDirt (0.0 = white dust, 1.0 = brown dirt)
 }

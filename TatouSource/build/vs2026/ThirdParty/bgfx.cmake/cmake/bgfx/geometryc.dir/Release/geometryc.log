@@ -1,0 +1,20 @@
+﻿  Building Custom Rule D:/FITD/ThirdParty/bgfx.cmake/cmake/bgfx/CMakeLists.txt
+  allocator.cpp
+  clusterizer.cpp
+  indexanalyzer.cpp
+  indexcodec.cpp
+  indexgenerator.cpp
+  overdrawoptimizer.cpp
+  partition.cpp
+  quantization.cpp
+  rasterizer.cpp
+  simplifier.cpp
+  spatialorder.cpp
+  stripifier.cpp
+  vcacheoptimizer.cpp
+  vertexcodec.cpp
+  vertexfilter.cpp
+  vfetchoptimizer.cpp
+  geometryc.cpp
+  vertexlayout.cpp
+  geometryc.vcxproj -> D:\FITD\build\vs2026-new\ThirdParty\bgfx.cmake\cmake\bgfx\Release\geometryc.exe

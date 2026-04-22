@@ -17,6 +17,7 @@
 #include "hdBackgroundRenderer.h"
 #include "nativeLife.h"
 #include "bytecodePatches.h"
+#include "lanternLighting.h"
 
 // HD background state (from hdBackgroundRenderer)
 extern bool g_currentBackgroundIsHD;
@@ -2470,6 +2471,7 @@ void processLife(int lifeNum, bool callFoundLife)
 
                 //soundFunc(0);
 
+                g_menuActive = true;
                 do
                 {
                     unsigned int time;
@@ -2485,6 +2487,7 @@ void processLife(int lifeNum, bool callFoundLife)
                     if (time > (unsigned int)delay)
                         break;
                 } while (!key && !Click);
+                g_menuActive = false;
 
                 RestoreTimerAnim();
 
@@ -2905,7 +2908,11 @@ void processLife(int lifeNum, bool callFoundLife)
             case LM_CALL_INVENTORY:
             {
                 appendFormated("LM_CALL_INVENTORY ");
+                // Immediately suppress lantern light to prevent UI bleed
+                setLanternMenuActive(true);
                 processInventory();
+                // Re-enable lantern lighting after inventory closes
+                setLanternMenuActive(false);
                 break;
             }
             case LM_DO_ROT_CLUT: // DO_ROT_CLUT

@@ -1,2 +1,3 @@
-﻿  example.c
-  example.vcxproj -> D:\FITD\build\vs2026\zlib\zlib-build\Release\example.exe
+﻿  Building Custom Rule D:/FITD/ThirdParty/zlib/CMakeLists.txt
+  example.c
+  example.vcxproj -> D:\FITD\build\vs2026-new\zlib\zlib-build\Release\example.exe

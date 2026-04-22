@@ -23,6 +23,11 @@ extern int BBox3D4;
 extern std::array<point3dStruct, NUM_MAX_POINT_IN_POINT_BUFFER> pointBuffer;
 extern int numOfPoints;
 
+// Track which body's primitives are currently in primTable[]
+// External code (like lantern glow detection) can check this to verify
+// they're scanning the correct body's primitives, not some other body
+extern int g_currentPrimTableBodyNum;
+
 void transformPoint(float* ax, float* bx, float* cx);
 
 int AffObjet(int x, int y, int z, int alpha, int beta, int gamma, sBody* pBody);

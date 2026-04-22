@@ -14,6 +14,8 @@
 #include "stdio.h"
 #include "stdlib.h"
 #include "string.h"
+#include <cstddef>
+#include <functional>
 
 #ifdef FITD_DEBUGGER
 #include "debugFont.h"
@@ -24,12 +26,11 @@
 #endif
 
 #define byte char
-//#ifndef bool
-//#define bool char
-//#endif
 #define u8 unsigned char
+#ifndef __cplusplus
 #define true 1
 #define false 0
+#endif
 
     enum e_rendererType
     {
@@ -88,6 +89,9 @@
 	void osystem_clearVocCache();
 
 	extern float g_voPitchMultiplier;
+	extern bool g_playWorldActive;
+	extern bool g_3dFlushedThisFrame;
+	extern bool g_menuActive;
 	//    void getMouseStatus(mouseStatusStruct * mouseData);
 
 	void osystem_createMask(const std::array<u8, 320 * 200>& mask, int roomId, int maskId, int actualRoomNumber, int maskX1, int maskY1, int maskX2, int maskY2);
@@ -109,6 +113,7 @@
 	void osystem_drawSphere(float X, float Y, float Z, u8 color, u8 material, float size);
 	void osystem_drawPoint(float X, float Y, float Z, u8 color, u8 material, float size);
 	void osystem_flushPendingPrimitives();
+	void renderHardColDepthPass();
 	void osystem_drawUILayer();
 
 	void osystem_drawPortraitOverlay(int choice);

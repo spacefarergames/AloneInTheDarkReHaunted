@@ -16,15 +16,17 @@ extern void playMenuSound(const char* soundName);
 
 #include "anim2d.h"
 #include "fontTTF.h"
+#include "menuMouse.h"
 
 #include "hdBackground.h"
 #include "nativeLife.h"
 #include "bytecodePatches.h"
+#include "bgAnimGrassMask.h"
 #include "hdBackgroundRenderer.h"
 #include "resourceGC.h"
 #include "track.h"
-
-#include <time.h>
+#include "lanternLighting.h"
+#include "menuMouse.h"
 #include <math.h>
 #include <SDL.h>
 
@@ -674,6 +676,18 @@ void freeAll(void)
 
 textEntryStruct* getTextFromIdx(int index)
 {
+#ifndef _WIN32
+    // Platform-specific text overrides for Linux
+    // String 13 = "Return to Windows" -> "Return to Linux"
+    if (index == 13)
+    {
+        static textEntryStruct linuxReturnEntry = { 13, (u8*)"Return to Linux", 0 };
+        if (linuxReturnEntry.width == 0)
+            linuxReturnEntry.width = ExtGetSizeFont(linuxReturnEntry.textPtr);
+        return &linuxReturnEntry;
+    }
+#endif
+
     int currentIndex;
 
     for (currentIndex = 0; currentIndex < NUM_MAX_TEXT_ENTRY; currentIndex++)
@@ -797,6 +811,9 @@ void readBook(int index, int type, int vocIndex)
     g_remasterConfig.postProcessing.enableFilmGrain = false;
     g_remasterConfig.postProcessing.enableSSAO = false;
 
+    // Force endScene() to fire during book render frames (same as system menu / map)
+    g_menuActive = true;
+
     switch (g_gameId)
     {
     case AITD1:
@@ -812,6 +829,8 @@ void readBook(int index, int type, int vocIndex)
         assert(0);
 
     }
+
+    g_menuActive = false;
 
     // Restore post-processing state
     g_remasterConfig.postProcessing.enableBloom = savedBloom;
@@ -837,6 +856,9 @@ int Lire(int index, int startx, int top, int endx, int bottom, int demoMode, int
     int currentTextIdx;
     int maxStringWidth;
     u8* textPtr;
+
+    // Stop lantern lighting while reading book
+    setLanternMenuActive(true);
 
     SetFont(PtrFont, color);
 
@@ -1167,6 +1189,18 @@ int Lire(int index, int startx, int top, int endx, int bottom, int demoMode, int
                 localJoyD = JoyD;
                 localClick = Click;
 
+                // Mouse: click anywhere to exit, left region for prev page, right region for next page
+                {
+                    static ImVec2 s_lireMouse = { -1.0f, -1.0f };
+                    ImVec2 gm = menuGetGameMouse();
+                    if (menuMouseClicked() && gm.x >= 0.0f)
+                    {
+                        // Click anywhere: exit book
+                        quit = 1;
+                        break;
+                    }
+                }
+
                 if ((localKey == 1) || localClick)
                 {
                     quit = 1;
@@ -1261,6 +1295,9 @@ int Lire(int index, int startx, int top, int endx, int bottom, int demoMode, int
     }
 
     HQ_Free_Malloc(HQ_Memory, textIndexMalloc);
+
+    // Resume lantern lighting when book closes
+    setLanternMenuActive(false);
 
     return(demoMode);
 }
@@ -1667,11 +1704,13 @@ void loadCamera(int cameraIdx)
         {
             // Animated backgrounds are never from cache
             setCurrentAnimatedHDBackground(hdBg);
+            bgAnimGrassMask_onAnimatedBackgroundLoaded(name, cameraIdx, hdBg);
         }
         else
         {
             // Static background - clean up any previous animated background
             setCurrentAnimatedHDBackground(nullptr);
+            bgAnimGrassMask_onAnimatedBackgroundLoaded(nullptr, -1, nullptr);
             // Only free if it wasn't from the cache (cached bgs are managed by the cache)
             if (!isFromCache)
             {
@@ -1683,6 +1722,7 @@ void loadCamera(int cameraIdx)
     {
         // No HD background loaded, clean up any previous animated background
         setCurrentAnimatedHDBackground(nullptr);
+        bgAnimGrassMask_onAnimatedBackgroundLoaded(nullptr, -1, nullptr);
 
         // No HD background, ensure we're using standard resolution
         if (g_currentBackgroundIsHD)
@@ -2821,9 +2861,6 @@ void deleteObject(int objIdx)
     DeleteInventoryObjet(objIdx);
 }
 
-#ifdef FITD_DEBUGGER
-void line(int x1, int y1, int x2, int y2, char c);
-
 void drawProjectedLine(s32 x1s, s32 y1s, s32 z1s, s32 x2s, s32 y2s, s32 z2s, int c)
 {
     float x1 = (float)x1s;
@@ -2869,6 +2906,39 @@ void drawProjectedLine(s32 x1s, s32 y1s, s32 z1s, s32 x2s, s32 y2s, s32 z2s, int
         osystem_draw3dLine(transformedX1, transformedY1, z1, transformedX2, transformedY2, z2, c);
 #endif
 }
+
+// Draw a red laser sight beam for actors in the WAIT_TIR_ANIM (gun-aiming) state.
+// Controlled by the Hints toggle in the system menu.
+// Uses the same aim angle (beta - 0x100) and range (animActionParam) as DO_TIR.
+void drawLaserSight(tObject* actorPtr)
+{
+    if (!g_remasterConfig.graphics.enableHints)
+        return;
+    if (actorPtr->animActionType != 4) // WAIT_TIR_ANIM
+        return;
+
+    int startX = actorPtr->worldX + actorPtr->hotPoint.x + actorPtr->stepX;
+    int startY = actorPtr->worldY + actorPtr->hotPoint.y + actorPtr->stepY;
+    int startZ = actorPtr->worldZ + actorPtr->hotPoint.z + actorPtr->stepZ;
+
+    int range = actorPtr->animActionParam;
+    if (range <= 0)
+        return;
+
+    // Compute aim endpoint — same convention as DO_TIR raycast (beta - 0x100)
+    int dz, dx;
+    Rotate((unsigned int)(actorPtr->beta - 0x100) & 0x3FF, 0, -range, &dz, &dx);
+
+    int endX = startX + dx;
+    int endY = startY;
+    int endZ = startZ + dz;
+
+    // Color 0x3C = bank 3, index 12 — bright red on the AITD ramp palette
+    drawProjectedLine(startX, startY, startZ, endX, endY, endZ, 0x3C);
+}
+
+#ifdef FITD_DEBUGGER
+void line(int x1, int y1, int x2, int y2, char c);
 
 void drawZv(const ZVStruct& localZv) {
     // bottom
@@ -3299,6 +3369,14 @@ void drawBgOverlay(tObject* actorPtr)
     //if(actorPtr->trackMode != 1)
     //	return;
 
+    // Allow bytecode patches to exempt specific actors from camera mask occlusion
+    // (e.g., the frog actor in the intro must stay visible on top of the scenery).
+    if (bytecodePatch_shouldSkipMaskForActor(actorPtr))
+    {
+        SetClip(0, 0, 319, 199);
+        return;
+    }
+
     SetClip(BBox3D1, BBox3D2, BBox3D3, BBox3D4);
 
     cameraDataStruct* pCamera = cameraDataTable[NumCamera];
@@ -3649,6 +3727,9 @@ void drawSceneObjects()
     // Only marks masks that are covering the player.
     drawShadowMaskStencilPrepass();
 
+    // Render wall collision boxes as depth-only geometry for SSAO edge darkening
+    renderHardColDepthPass();
+
     for (int i = 0; i < NbAffObjets; i++)
     {
         int currentDrawActor = Index[i];
@@ -3669,6 +3750,11 @@ void drawSceneObjects()
 
         bool shouldDrawShadows = (actorPtr->room == currentRoom) &&
             ((actorPtr->life > 0) || (actorPtr->lifeMode != 0) || (currentDrawActor == 0));
+
+        // Bytecode patch: hide shadow for actors still flagged hidden (e.g. Zombie
+        // Chickens behind a window before they crash through).
+        if (shouldDrawShadows && bytecodePatch_shouldHideShadowForActor(actorPtr))
+            shouldDrawShadows = false;
 
         // Non-character objects (doors, etc.) only cast shadows while moving
         if (shouldDrawShadows && bodyPtr && !(bodyPtr->m_flags & INFO_ANIM))
@@ -3692,7 +3778,6 @@ void drawSceneObjects()
             drawPlanarShadow(actorPtr->worldX + actorPtr->stepX, actorPtr->worldY + actorPtr->stepY, actorPtr->worldZ + actorPtr->stepZ, actorPtr->alpha, actorPtr->beta, actorPtr->gamma, bodyPtr);
             drawWallPlanarShadow(actorPtr->worldX + actorPtr->stepX, actorPtr->worldY + actorPtr->stepY, actorPtr->worldZ + actorPtr->stepZ, actorPtr->alpha, actorPtr->beta, actorPtr->gamma, bodyPtr, actorPtr->room);
         }
-
         if (BBox3D1 < 0) BBox3D1 = 0;
         if (BBox3D3 > 319) BBox3D3 = 319;
         if (BBox3D2 < 0) BBox3D2 = 0;
@@ -3708,6 +3793,10 @@ void drawSceneObjects()
             }
         }
     }
+
+    // Animated grass-mask overlay (e.g. CAMERA07_004) - drawn AFTER all
+    // actors so the per-frame grass occludes 3D objects standing in it.
+    osystem_drawAnimatedGrassMask();
 
     SetClip(0, 0, 319, 199);
 }
@@ -3806,6 +3895,11 @@ void AllRedraw(int flagFlip)
                         bool shouldDrawShadows = (actorPtr->room == currentRoom) &&
                             ((actorPtr->life > 0) || (actorPtr->lifeMode != 0) || (currentDrawActor == 0));
 
+                        // Bytecode patch: hide shadow for actors still flagged hidden
+                        // (e.g. Zombie Chickens behind a window before they crash through).
+                        if (shouldDrawShadows && bytecodePatch_shouldHideShadowForActor(actorPtr))
+                            shouldDrawShadows = false;
+
                         // Non-character objects (doors, etc.) only cast shadows while moving
                         if (shouldDrawShadows && bodyPtr && !(bodyPtr->m_flags & INFO_ANIM))
                         {
@@ -3823,6 +3917,13 @@ void AllRedraw(int flagFlip)
                         setCurrentBodyNum(actorPtr->bodyNum, bodyPtr, HQ_Bodys->string);
                         AffObjet(actorPtr->worldX + actorPtr->stepX, actorPtr->worldY + actorPtr->stepY, actorPtr->worldZ + actorPtr->stepZ, actorPtr->alpha, actorPtr->beta, actorPtr->gamma, bodyPtr);
 
+                        // CRITICAL: Populate lamp primitive cache immediately after body 11 is rendered
+                        // This must happen BEFORE any subsequent AffObjet() call overwrites primTable[]
+                        if (actorPtr->bodyNum == 11)  // Body 11 is held lit lamp
+                        {
+                            populateLampPrimitiveCache();
+                        }
+
                         if (shouldDrawShadows)
                         {
                             drawPlanarShadow(actorPtr->worldX + actorPtr->stepX, actorPtr->worldY + actorPtr->stepY, actorPtr->worldZ + actorPtr->stepZ, actorPtr->alpha, actorPtr->beta, actorPtr->gamma, bodyPtr);
@@ -3837,6 +3938,8 @@ void AllRedraw(int flagFlip)
                                 getHotPoint(actorPtr->hotPointID, bodyPtr, &actorPtr->hotPoint);
                             }
                         }
+
+                        drawLaserSight(actorPtr);
                     }
                 }
 
@@ -5035,6 +5138,9 @@ int parseAllSaves(int arg)
     int initialDelay = 15; // Frames to wait before accepting Enter/click to prevent accidental selection
     static Uint64 s_saveMenuSelTime = 0; // For pulsing highlight effect
 
+    // Suppress lantern glow when opening save/restore screen
+    setLanternMenuActive(true);
+
     // HD mode detection
     bool useHD = g_remasterConfig.graphics.enableHDBackgrounds;
 
@@ -5217,6 +5323,30 @@ int parseAllSaves(int arg)
         int localClick = Click;
         int localJoyD = JoyD;
 
+        // Mouse: hover selects slot, click confirms (keyboard/gamepad take priority)
+        if (initialDelay == 0)
+        {
+            static ImVec2 s_saveMouse = { -1.0f, -1.0f };
+            ImVec2 gm = menuGetGameMouse();
+            if (menuMouseMoved(s_saveMouse, localKey || localJoyD))
+            {
+                // Slots are in the left column: X 28-160, startY=30, lineHeight=16
+                int hit = menuMouseHitList(gm.x, gm.y, 28, 160, 30, 16, NUM_SAVE_SLOTS);
+                if (hit >= 0 && hit != currentSelectedSlot)
+                {
+                    currentSelectedSlot = hit;
+                    notifyTTFMenuSelectionChanged();
+                    s_saveMenuSelTime = SDL_GetTicks();
+                }
+            }
+            if (menuMouseClicked())
+            {
+                int hit = menuMouseHitList(gm.x, gm.y, 28, 160, 30, 16, NUM_SAVE_SLOTS);
+                if (hit >= 0)
+                    localClick = 1; // treat as confirm on the hovered slot
+            }
+        }
+
         if (!AntiRebond)
         {
             // Enter key or mouse click - select current slot (only after initial delay)
@@ -5290,6 +5420,9 @@ int parseAllSaves(int arg)
 
     // Clear TTF text when leaving save/load screen
     notifyTTFMenuSelectionChanged();
+
+    // Re-enable lantern glow when exiting save/restore screen
+    setLanternMenuActive(false);
 
     return selectedSlot;
 }

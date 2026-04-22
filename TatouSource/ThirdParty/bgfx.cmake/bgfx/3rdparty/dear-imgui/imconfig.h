@@ -10,6 +10,9 @@
 #define IMGUI_DISABLE_OBSOLETE_KEYIO
 #define IMGUI_DISABLE_DEFAULT_ALLOCATORS
 
+//---- Use 32-bit indices (default is 16-bit) to allow large meshes with more than 64K vertices.
+#define ImDrawIdx unsigned int
+
 //---- Define your own ImVector<> type if you don't want to use the provided implementation defined in imgui.h
 //#include <vector>
 //#define ImVector  std::vector

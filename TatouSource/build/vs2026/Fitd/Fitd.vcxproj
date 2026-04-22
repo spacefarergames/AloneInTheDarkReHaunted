@@ -22,7 +22,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{B93B3D0E-4C41-3EEA-A532-B1A10BC201DE}</ProjectGuid>
+    <ProjectGuid>{B3B65795-0FF3-32C0-88DB-3D13539907AA}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <WindowsTargetPlatformVersion>10.0.26100.0</WindowsTargetPlatformVersion>
     <Platform>x64</Platform>
@@ -59,28 +59,28 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup>
     <_ProjectFileVersion>10.0.20506.1</_ProjectFileVersion>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">D:\FITD\build\vs2026\Fitd\Debug\</OutDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">D:\FITD\build\vs2026-new\Fitd\Debug\</OutDir>
     <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Fitd.dir\Debug\</IntDir>
     <TargetName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Tatou</TargetName>
     <TargetExt Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">.exe</TargetExt>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</LinkIncremental>
     <GenerateManifest Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</GenerateManifest>
     <LocalDebuggerWorkingDirectory Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">D:/SteamLibrary/steamapps/common/Alone in the Dark 2/INDARK2</LocalDebuggerWorkingDirectory>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">D:\FITD\build\vs2026\Fitd\Release\</OutDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">D:\FITD\build\vs2026-new\Fitd\Release\</OutDir>
     <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Fitd.dir\Release\</IntDir>
     <TargetName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Tatou</TargetName>
     <TargetExt Condition="'$(Configuration)|$(Platform)'=='Release|x64'">.exe</TargetExt>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</LinkIncremental>
     <GenerateManifest Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</GenerateManifest>
     <LocalDebuggerWorkingDirectory Condition="'$(Configuration)|$(Platform)'=='Release|x64'">D:/SteamLibrary/steamapps/common/Alone in the Dark 2/INDARK2</LocalDebuggerWorkingDirectory>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">D:\FITD\build\vs2026\Fitd\MinSizeRel\</OutDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">D:\FITD\build\vs2026-new\Fitd\MinSizeRel\</OutDir>
     <IntDir Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">Fitd.dir\MinSizeRel\</IntDir>
     <TargetName Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">Tatou</TargetName>
     <TargetExt Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">.exe</TargetExt>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">false</LinkIncremental>
     <GenerateManifest Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">true</GenerateManifest>
     <LocalDebuggerWorkingDirectory Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">D:/SteamLibrary/steamapps/common/Alone in the Dark 2/INDARK2</LocalDebuggerWorkingDirectory>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">D:\FITD\build\vs2026\Fitd\RelWithDebInfo\</OutDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">D:\FITD\build\vs2026-new\Fitd\RelWithDebInfo\</OutDir>
     <IntDir Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">Fitd.dir\RelWithDebInfo\</IntDir>
     <TargetName Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">Tatou</TargetName>
     <TargetExt Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">.exe</TargetExt>
@@ -90,7 +90,7 @@
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
-      <AdditionalIncludeDirectories>D:\FITD\Fitd\.;D:\FITD\FitdLib;D:\FITD\ThirdParty\bgfx.cmake\bgfx\include;D:\FITD\build\vs2026\ThirdParty\SDL\include-revision;D:\FITD\ThirdParty\SDL\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>D:\FITD\Fitd\.;D:\FITD\FitdLib;D:\FITD\ThirdParty\bgfx.cmake\bgfx\include;D:\FITD\build\vs2026-new\ThirdParty\SDL\include-revision;D:\FITD\ThirdParty\SDL\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <BufferSecurityCheck></BufferSecurityCheck>
@@ -117,10 +117,10 @@
     </ClCompile>
     <ResourceCompile>
       <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_DEBUG;_WINDOWS;BX_CONFIG_DEBUG=0;BX_CONFIG_DEBUG=1;BGFX_CONFIG_DEBUG_ANNOTATION=1;BGFX_CONFIG_MULTITHREADED=1;CMAKE_INTDIR=\"Debug\"</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>D:\FITD\Fitd\.;D:\FITD\FitdLib;D:\FITD\ThirdParty\bgfx.cmake\bgfx\include;D:\FITD\build\vs2026\ThirdParty\SDL\include-revision;D:\FITD\ThirdParty\SDL\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>D:\FITD\Fitd\.;D:\FITD\FitdLib;D:\FITD\ThirdParty\bgfx.cmake\bgfx\include;D:\FITD\build\vs2026-new\ThirdParty\SDL\include-revision;D:\FITD\ThirdParty\SDL\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Midl>
-      <AdditionalIncludeDirectories>D:\FITD\Fitd\.;D:\FITD\FitdLib;D:\FITD\ThirdParty\bgfx.cmake\bgfx\include;D:\FITD\build\vs2026\ThirdParty\SDL\include-revision;D:\FITD\ThirdParty\SDL\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>D:\FITD\Fitd\.;D:\FITD\FitdLib;D:\FITD\ThirdParty\bgfx.cmake\bgfx\include;D:\FITD\build\vs2026-new\ThirdParty\SDL\include-revision;D:\FITD\ThirdParty\SDL\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
       <HeaderFileName>%(Filename).h</HeaderFileName>
       <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
@@ -135,9 +135,9 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
       <ImageHasSafeExceptionHandlers></ImageHasSafeExceptionHandlers>
-      <ImportLibrary>D:/FITD/build/vs2026/Fitd/Debug/Tatou.lib</ImportLibrary>
+      <ImportLibrary>D:/FITD/build/vs2026-new/Fitd/Debug/Tatou.lib</ImportLibrary>
       <LinkErrorReporting></LinkErrorReporting>
-      <ProgramDataBaseFile>D:/FITD/build/vs2026/Fitd/Debug/Tatou.pdb</ProgramDataBaseFile>
+      <ProgramDataBaseFile>D:/FITD/build/vs2026-new/Fitd/Debug/Tatou.pdb</ProgramDataBaseFile>
       <RandomizedBaseAddress></RandomizedBaseAddress>
       <SubSystem>Console</SubSystem>
     </Link>
@@ -147,7 +147,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
-      <AdditionalIncludeDirectories>D:\FITD\Fitd\.;D:\FITD\FitdLib;D:\FITD\ThirdParty\bgfx.cmake\bgfx\include;D:\FITD\build\vs2026\ThirdParty\SDL\include-revision;D:\FITD\ThirdParty\SDL\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>D:\FITD\Fitd\.;D:\FITD\FitdLib;D:\FITD\ThirdParty\bgfx.cmake\bgfx\include;D:\FITD\build\vs2026-new\ThirdParty\SDL\include-revision;D:\FITD\ThirdParty\SDL\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
       <BasicRuntimeChecks>Default</BasicRuntimeChecks>
       <BufferSecurityCheck></BufferSecurityCheck>
@@ -175,10 +175,10 @@
     </ClCompile>
     <ResourceCompile>
       <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;BX_CONFIG_DEBUG=0;NDEBUG;BGFX_CONFIG_DEBUG_ANNOTATION=0;BGFX_CONFIG_MULTITHREADED=1;CMAKE_INTDIR=\"Release\"</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>D:\FITD\Fitd\.;D:\FITD\FitdLib;D:\FITD\ThirdParty\bgfx.cmake\bgfx\include;D:\FITD\build\vs2026\ThirdParty\SDL\include-revision;D:\FITD\ThirdParty\SDL\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>D:\FITD\Fitd\.;D:\FITD\FitdLib;D:\FITD\ThirdParty\bgfx.cmake\bgfx\include;D:\FITD\build\vs2026-new\ThirdParty\SDL\include-revision;D:\FITD\ThirdParty\SDL\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Midl>
-      <AdditionalIncludeDirectories>D:\FITD\Fitd\.;D:\FITD\FitdLib;D:\FITD\ThirdParty\bgfx.cmake\bgfx\include;D:\FITD\build\vs2026\ThirdParty\SDL\include-revision;D:\FITD\ThirdParty\SDL\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>D:\FITD\Fitd\.;D:\FITD\FitdLib;D:\FITD\ThirdParty\bgfx.cmake\bgfx\include;D:\FITD\build\vs2026-new\ThirdParty\SDL\include-revision;D:\FITD\ThirdParty\SDL\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
       <HeaderFileName>%(Filename).h</HeaderFileName>
       <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
@@ -193,9 +193,9 @@
       <GenerateDebugInformation>false</GenerateDebugInformation>
       <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
       <ImageHasSafeExceptionHandlers></ImageHasSafeExceptionHandlers>
-      <ImportLibrary>D:/FITD/build/vs2026/Fitd/Release/Tatou.lib</ImportLibrary>
+      <ImportLibrary>D:/FITD/build/vs2026-new/Fitd/Release/Tatou.lib</ImportLibrary>
       <LinkErrorReporting></LinkErrorReporting>
-      <ProgramDataBaseFile>D:/FITD/build/vs2026/Fitd/Release/Tatou.pdb</ProgramDataBaseFile>
+      <ProgramDataBaseFile>D:/FITD/build/vs2026-new/Fitd/Release/Tatou.pdb</ProgramDataBaseFile>
       <RandomizedBaseAddress></RandomizedBaseAddress>
       <SubSystem>Console</SubSystem>
     </Link>
@@ -205,7 +205,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">
     <ClCompile>
-      <AdditionalIncludeDirectories>D:\FITD\Fitd\.;D:\FITD\FitdLib;D:\FITD\ThirdParty\bgfx.cmake\bgfx\include;D:\FITD\build\vs2026\ThirdParty\SDL\include-revision;D:\FITD\ThirdParty\SDL\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>D:\FITD\Fitd\.;D:\FITD\FitdLib;D:\FITD\ThirdParty\bgfx.cmake\bgfx\include;D:\FITD\build\vs2026-new\ThirdParty\SDL\include-revision;D:\FITD\ThirdParty\SDL\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
       <BasicRuntimeChecks>Default</BasicRuntimeChecks>
       <BufferSecurityCheck></BufferSecurityCheck>
@@ -233,10 +233,10 @@
     </ClCompile>
     <ResourceCompile>
       <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;BX_CONFIG_DEBUG=0;NDEBUG;BGFX_CONFIG_DEBUG_ANNOTATION=0;BGFX_CONFIG_MULTITHREADED=1;CMAKE_INTDIR=\"MinSizeRel\"</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>D:\FITD\Fitd\.;D:\FITD\FitdLib;D:\FITD\ThirdParty\bgfx.cmake\bgfx\include;D:\FITD\build\vs2026\ThirdParty\SDL\include-revision;D:\FITD\ThirdParty\SDL\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>D:\FITD\Fitd\.;D:\FITD\FitdLib;D:\FITD\ThirdParty\bgfx.cmake\bgfx\include;D:\FITD\build\vs2026-new\ThirdParty\SDL\include-revision;D:\FITD\ThirdParty\SDL\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Midl>
-      <AdditionalIncludeDirectories>D:\FITD\Fitd\.;D:\FITD\FitdLib;D:\FITD\ThirdParty\bgfx.cmake\bgfx\include;D:\FITD\build\vs2026\ThirdParty\SDL\include-revision;D:\FITD\ThirdParty\SDL\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>D:\FITD\Fitd\.;D:\FITD\FitdLib;D:\FITD\ThirdParty\bgfx.cmake\bgfx\include;D:\FITD\build\vs2026-new\ThirdParty\SDL\include-revision;D:\FITD\ThirdParty\SDL\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
       <HeaderFileName>%(Filename).h</HeaderFileName>
       <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
@@ -251,9 +251,9 @@
       <GenerateDebugInformation>false</GenerateDebugInformation>
       <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
       <ImageHasSafeExceptionHandlers></ImageHasSafeExceptionHandlers>
-      <ImportLibrary>D:/FITD/build/vs2026/Fitd/MinSizeRel/Tatou.lib</ImportLibrary>
+      <ImportLibrary>D:/FITD/build/vs2026-new/Fitd/MinSizeRel/Tatou.lib</ImportLibrary>
       <LinkErrorReporting></LinkErrorReporting>
-      <ProgramDataBaseFile>D:/FITD/build/vs2026/Fitd/MinSizeRel/Tatou.pdb</ProgramDataBaseFile>
+      <ProgramDataBaseFile>D:/FITD/build/vs2026-new/Fitd/MinSizeRel/Tatou.pdb</ProgramDataBaseFile>
       <RandomizedBaseAddress></RandomizedBaseAddress>
       <SubSystem>Console</SubSystem>
     </Link>
@@ -263,7 +263,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">
     <ClCompile>
-      <AdditionalIncludeDirectories>D:\FITD\Fitd\.;D:\FITD\FitdLib;D:\FITD\ThirdParty\bgfx.cmake\bgfx\include;D:\FITD\build\vs2026\ThirdParty\SDL\include-revision;D:\FITD\ThirdParty\SDL\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>D:\FITD\Fitd\.;D:\FITD\FitdLib;D:\FITD\ThirdParty\bgfx.cmake\bgfx\include;D:\FITD\build\vs2026-new\ThirdParty\SDL\include-revision;D:\FITD\ThirdParty\SDL\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
       <BasicRuntimeChecks>Default</BasicRuntimeChecks>
       <BufferSecurityCheck></BufferSecurityCheck>
@@ -290,10 +290,10 @@
     </ClCompile>
     <ResourceCompile>
       <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;BX_CONFIG_DEBUG=0;NDEBUG;BGFX_CONFIG_DEBUG_ANNOTATION=0;BGFX_CONFIG_MULTITHREADED=1;CMAKE_INTDIR=\"RelWithDebInfo\"</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>D:\FITD\Fitd\.;D:\FITD\FitdLib;D:\FITD\ThirdParty\bgfx.cmake\bgfx\include;D:\FITD\build\vs2026\ThirdParty\SDL\include-revision;D:\FITD\ThirdParty\SDL\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>D:\FITD\Fitd\.;D:\FITD\FitdLib;D:\FITD\ThirdParty\bgfx.cmake\bgfx\include;D:\FITD\build\vs2026-new\ThirdParty\SDL\include-revision;D:\FITD\ThirdParty\SDL\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Midl>
-      <AdditionalIncludeDirectories>D:\FITD\Fitd\.;D:\FITD\FitdLib;D:\FITD\ThirdParty\bgfx.cmake\bgfx\include;D:\FITD\build\vs2026\ThirdParty\SDL\include-revision;D:\FITD\ThirdParty\SDL\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>D:\FITD\Fitd\.;D:\FITD\FitdLib;D:\FITD\ThirdParty\bgfx.cmake\bgfx\include;D:\FITD\build\vs2026-new\ThirdParty\SDL\include-revision;D:\FITD\ThirdParty\SDL\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
       <HeaderFileName>%(Filename).h</HeaderFileName>
       <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
@@ -308,9 +308,9 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
       <ImageHasSafeExceptionHandlers></ImageHasSafeExceptionHandlers>
-      <ImportLibrary>D:/FITD/build/vs2026/Fitd/RelWithDebInfo/Tatou.lib</ImportLibrary>
+      <ImportLibrary>D:/FITD/build/vs2026-new/Fitd/RelWithDebInfo/Tatou.lib</ImportLibrary>
       <LinkErrorReporting></LinkErrorReporting>
-      <ProgramDataBaseFile>D:/FITD/build/vs2026/Fitd/RelWithDebInfo/Tatou.pdb</ProgramDataBaseFile>
+      <ProgramDataBaseFile>D:/FITD/build/vs2026-new/Fitd/RelWithDebInfo/Tatou.pdb</ProgramDataBaseFile>
       <RandomizedBaseAddress></RandomizedBaseAddress>
       <SubSystem>Console</SubSystem>
     </Link>
@@ -323,7 +323,7 @@
       <UseUtf8Encoding>Always</UseUtf8Encoding>
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Building Custom Rule D:/FITD/Fitd/CMakeLists.txt</Message>
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">setlocal
-"C:\Program Files\CMake\bin\cmake.exe" -SD:/FITD -BD:/FITD/build/vs2026 --check-stamp-file D:/FITD/build/vs2026/Fitd/CMakeFiles/generate.stamp
+"C:\Program Files\CMake\bin\cmake.exe" -SD:/FITD -BD:/FITD/build/vs2026-new --check-stamp-file D:/FITD/build/vs2026-new/Fitd/CMakeFiles/generate.stamp
 if %errorlevel% neq 0 goto :cmEnd
 :cmEnd
 endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
@@ -332,11 +332,11 @@ exit /b %1
 :cmDone
 if %errorlevel% neq 0 goto :VCEnd</Command>
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(AdditionalInputs)</AdditionalInputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">D:\FITD\build\vs2026\Fitd\CMakeFiles\generate.stamp</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">D:\FITD\build\vs2026-new\Fitd\CMakeFiles\generate.stamp</Outputs>
       <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</LinkObjects>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Building Custom Rule D:/FITD/Fitd/CMakeLists.txt</Message>
       <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">setlocal
-"C:\Program Files\CMake\bin\cmake.exe" -SD:/FITD -BD:/FITD/build/vs2026 --check-stamp-file D:/FITD/build/vs2026/Fitd/CMakeFiles/generate.stamp
+"C:\Program Files\CMake\bin\cmake.exe" -SD:/FITD -BD:/FITD/build/vs2026-new --check-stamp-file D:/FITD/build/vs2026-new/Fitd/CMakeFiles/generate.stamp
 if %errorlevel% neq 0 goto :cmEnd
 :cmEnd
 endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
@@ -345,11 +345,11 @@ exit /b %1
 :cmDone
 if %errorlevel% neq 0 goto :VCEnd</Command>
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(AdditionalInputs)</AdditionalInputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">D:\FITD\build\vs2026\Fitd\CMakeFiles\generate.stamp</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">D:\FITD\build\vs2026-new\Fitd\CMakeFiles\generate.stamp</Outputs>
       <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</LinkObjects>
       <Message Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">Building Custom Rule D:/FITD/Fitd/CMakeLists.txt</Message>
       <Command Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">setlocal
-"C:\Program Files\CMake\bin\cmake.exe" -SD:/FITD -BD:/FITD/build/vs2026 --check-stamp-file D:/FITD/build/vs2026/Fitd/CMakeFiles/generate.stamp
+"C:\Program Files\CMake\bin\cmake.exe" -SD:/FITD -BD:/FITD/build/vs2026-new --check-stamp-file D:/FITD/build/vs2026-new/Fitd/CMakeFiles/generate.stamp
 if %errorlevel% neq 0 goto :cmEnd
 :cmEnd
 endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
@@ -358,11 +358,11 @@ exit /b %1
 :cmDone
 if %errorlevel% neq 0 goto :VCEnd</Command>
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">%(AdditionalInputs)</AdditionalInputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">D:\FITD\build\vs2026\Fitd\CMakeFiles\generate.stamp</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">D:\FITD\build\vs2026-new\Fitd\CMakeFiles\generate.stamp</Outputs>
       <LinkObjects Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">false</LinkObjects>
       <Message Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">Building Custom Rule D:/FITD/Fitd/CMakeLists.txt</Message>
       <Command Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">setlocal
-"C:\Program Files\CMake\bin\cmake.exe" -SD:/FITD -BD:/FITD/build/vs2026 --check-stamp-file D:/FITD/build/vs2026/Fitd/CMakeFiles/generate.stamp
+"C:\Program Files\CMake\bin\cmake.exe" -SD:/FITD -BD:/FITD/build/vs2026-new --check-stamp-file D:/FITD/build/vs2026-new/Fitd/CMakeFiles/generate.stamp
 if %errorlevel% neq 0 goto :cmEnd
 :cmEnd
 endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
@@ -371,7 +371,7 @@ exit /b %1
 :cmDone
 if %errorlevel% neq 0 goto :VCEnd</Command>
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">%(AdditionalInputs)</AdditionalInputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">D:\FITD\build\vs2026\Fitd\CMakeFiles\generate.stamp</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">D:\FITD\build\vs2026-new\Fitd\CMakeFiles\generate.stamp</Outputs>
       <LinkObjects Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">false</LinkObjects>
     </CustomBuild>
   </ItemGroup>
@@ -382,38 +382,38 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
-    <ProjectReference Include="D:\FITD\build\vs2026\ZERO_CHECK.vcxproj">
-      <Project>{A64E50DE-6981-3875-AD91-29157346A96C}</Project>
+    <ProjectReference Include="D:\FITD\build\vs2026-new\ZERO_CHECK.vcxproj">
+      <Project>{F785FCE9-6420-3C90-95E8-4A488BB8EE84}</Project>
       <Name>ZERO_CHECK</Name>
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </ProjectReference>
-    <ProjectReference Include="D:\FITD\build\vs2026\FitdLib\FitdLib.vcxproj">
-      <Project>{D1F17BAC-CD99-3074-B596-F4514F3F3A9A}</Project>
+    <ProjectReference Include="D:\FITD\build\vs2026-new\FitdLib\FitdLib.vcxproj">
+      <Project>{5870E52A-EBB7-3F7F-8B1D-7658FF62BD6E}</Project>
       <Name>FitdLib</Name>
     </ProjectReference>
-    <ProjectReference Include="D:\FITD\build\vs2026\ThirdParty\SDL\SDL3-static.vcxproj">
-      <Project>{3B335601-A585-3165-B94C-6F0ABD225808}</Project>
+    <ProjectReference Include="D:\FITD\build\vs2026-new\ThirdParty\SDL\SDL3-static.vcxproj">
+      <Project>{DFEA2F91-8E4D-31DA-BB8B-D1B345B6307A}</Project>
       <Name>SDL3-static</Name>
     </ProjectReference>
-    <ProjectReference Include="D:\FITD\build\vs2026\ThirdParty\bgfx.cmake\cmake\bgfx\bgfx.vcxproj">
-      <Project>{E618A171-8433-3E45-ACDE-D96696917E03}</Project>
+    <ProjectReference Include="D:\FITD\build\vs2026-new\ThirdParty\bgfx.cmake\cmake\bgfx\bgfx.vcxproj">
+      <Project>{A03CED8C-93DE-3396-82D8-8E303414424A}</Project>
       <Name>bgfx</Name>
     </ProjectReference>
-    <ProjectReference Include="D:\FITD\build\vs2026\ThirdParty\bgfx.cmake\cmake\bimg\bimg.vcxproj">
-      <Project>{0EDEB0B0-2070-3C71-8C83-09CAA73F06DC}</Project>
+    <ProjectReference Include="D:\FITD\build\vs2026-new\ThirdParty\bgfx.cmake\cmake\bimg\bimg.vcxproj">
+      <Project>{7477ABFE-E514-364A-9984-1ABD94BAE66E}</Project>
       <Name>bimg</Name>
     </ProjectReference>
-    <ProjectReference Include="D:\FITD\build\vs2026\ThirdParty\bgfx.cmake\cmake\bx\bx.vcxproj">
-      <Project>{FA37E5B2-C200-3515-A4DE-B51A9F737B67}</Project>
+    <ProjectReference Include="D:\FITD\build\vs2026-new\ThirdParty\bgfx.cmake\cmake\bx\bx.vcxproj">
+      <Project>{050CC7A1-D02E-32EA-B014-4FB32222D75B}</Project>
       <Name>bx</Name>
     </ProjectReference>
-    <ProjectReference Include="D:\FITD\build\vs2026\ThirdParty\soloud.cmake\soloud.vcxproj">
-      <Project>{4B1EC6B0-4830-363D-80FA-FA600C344D28}</Project>
+    <ProjectReference Include="D:\FITD\build\vs2026-new\ThirdParty\soloud.cmake\soloud.vcxproj">
+      <Project>{97686DD0-CC99-36DD-AAD3-1F52BA62DBA7}</Project>
       <Name>soloud</Name>
     </ProjectReference>
-    <ProjectReference Include="D:\FITD\build\vs2026\zlib\zlib-build\zlibstatic.vcxproj">
-      <Project>{85A75E18-8977-3788-BF34-7F4DE00AB25D}</Project>
+    <ProjectReference Include="D:\FITD\build\vs2026-new\zlib\zlib-build\zlibstatic.vcxproj">
+      <Project>{AADF985D-415D-31BD-A86C-FF35B6DA8505}</Project>
       <Name>zlibstatic</Name>
     </ProjectReference>
   </ItemGroup>

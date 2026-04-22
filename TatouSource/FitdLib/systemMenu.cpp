@@ -14,9 +14,11 @@
 #include "controlsMenu.h"
 #include "input.h"
 #include "bgfxGlue.h"
+#include "lanternLighting.h"
+#include "menuMouse.h"
 void SetLevelDestPal(palette_t& inPalette, palette_t& outPalette, int coef);
 
-// Helper function to play menu navigation sounds
+// Helper function
 void playMenuSound(const char* soundName)
 {
     if (soundEnabled)
@@ -380,8 +382,37 @@ void AffOptionList(int selectedStringNumber, bool hdPreview)
     menuWaitVSync();
 }
 
+// Returns which menu item (0-9) the mouse is currently hovering over, or -1 if none
+static int getSystemMenuItemAtMouse(bool useHDBG)
+{
+    ImGuiIO& io = ImGui::GetIO();
+    if (io.DisplaySize.x <= 0.0f || io.DisplaySize.y <= 0.0f)
+        return -1;
+
+    float gameX = io.MousePos.x * 320.0f / io.DisplaySize.x;
+    float gameY = io.MousePos.y * 200.0f / io.DisplaySize.y;
+
+    int wx1 = useHDBG ? 8   : 0;
+    int wy1 = useHDBG ? 8   : 0;
+    int wx2 = useHDBG ? 311 : 320;
+    int wy2 = useHDBG ? 191 : 200;
+
+    if (gameX < wx1 || gameX > wx2)
+        return -1;
+
+    for (int n = 0; n < NB_OPTIONS; n++)
+    {
+        int itemY = wy1 + (wy2 - wy1) / 2 - (NB_OPTIONS * SIZE_FONT) / 2 + n * SIZE_FONT;
+        if (gameY >= itemY && gameY < itemY + SIZE_FONT)
+            return n;
+    }
+    return -1;
+}
+
 void processSystemMenu(void)
 {
+    struct MenuGuard { MenuGuard() { setLanternMenuActive(true); } ~MenuGuard() { setLanternMenuActive(false); } } menuGuard;
+
     //int entry = -1;
     int exitMenu = 0;
     int currentSelectedEntry;
@@ -427,16 +458,18 @@ void processSystemMenu(void)
     SaveTimerAnim();
     //pauseShaking();
 
-    if(lightOff)
-    {
-        //makeBlackPalette();
-    }
+	if(lightOff)
+	{
+		//makeBlackPalette();
+		//FadeInPhys(0x40,0);
+	}
 
-    //clearScreenSystemMenu(unkScreenVar,aux2);
+	//clearScreenSystemMenu(unkScreenVar,aux2);
 
 	currentSelectedEntry = 0;
 
 	int previewFrameCounter = 0;
+	ImVec2 lastMousePos = { -1.0f, -1.0f }; // reset each menu open so hover requires deliberate movement
 
 	while(!exitMenu)
 	{
@@ -456,6 +489,14 @@ void processSystemMenu(void)
 			setPalette(darkenedPalette);
 		}
 
+		// In non-HD mode, reset logicalScreen to the captured game frame each iteration
+		// so AffBigCadre/AffOption always paint over a clean base with no leftover pixels.
+		if (!useHDBG)
+		{
+			memcpy(logicalScreen, aux2, 64000);
+		}
+
+		clearTTFTextQueue();
 		AffOptionList(currentSelectedEntry, useHDBG);
 		osystem_CopyBlockPhys((unsigned char*)logicalScreen,0,0,320,200);
 		osystem_startFrame();
@@ -477,16 +518,29 @@ void processSystemMenu(void)
 
 		flushScreen();
 
-        if(lightOff)
-        {
-            FadeInPhys(0x40,0);
-        }
-
-        //  while(!exitMenu)
+		//  while(!exitMenu)
         {
             localKey = key;
             localClick = Click;
             localJoyD = JoyD;
+
+            // Mouse: hover selects, click confirms (keyboard/gamepad take priority)
+            {
+                if (menuMouseMoved(lastMousePos, localKey || localJoyD))
+                {
+                    int mouseItem = getSystemMenuItemAtMouse(useHDBG);
+                    if (mouseItem >= 0 && mouseItem != currentSelectedEntry)
+                    {
+                        currentSelectedEntry = mouseItem;
+                        notifyTTFMenuSelectionChanged();
+                    }
+                }
+                if (menuMouseClicked() && getSystemMenuItemAtMouse(useHDBG) >= 0)
+                {
+                    localKey = 0x1C;
+                    localClick = 0;
+                }
+            }
 
             if(!AntiRebond)
             {
@@ -625,8 +679,12 @@ void processSystemMenu(void)
                         // Update HD backgrounds setting
                         g_remasterConfig.graphics.enableHDBackgrounds = (detailLevel == 1);
 
-                        // Also toggle TTF fonts with HD graphics
+                        // Also toggle TTF fonts with HD graphics, and reload/unload
+                        // the font system so the change takes effect immediately.
                         g_remasterConfig.font.enableTTF = (detailLevel == 1);
+                        shutdownTTFFont();
+                        if (g_remasterConfig.font.enableTTF)
+                            initTTFFont();
 
                         // Toggle post-processing with HD graphics
                         g_remasterConfig.postProcessing.enableBloom = (detailLevel == 1);
@@ -825,6 +883,10 @@ void processMapScreen(void)
 			localKey = key;
 			localJoyD = JoyD;
 			localClick = Click;
+
+			// Mouse click anywhere closes the map screen
+			if (!AntiRebond && menuMouseClicked())
+				localClick = 1;
 
 			if (!AntiRebond)
 			{

@@ -42,4 +42,18 @@ void setCurrentAnimatedHDBackground(HDBackgroundInfo* bgInfo);
 void pauseCurrentAnimatedHDBackground();
 void resumeCurrentAnimatedHDBackground();
 
+// -----------------------------------------------------------------------
+// Luminance-guided lantern lighting for HD backgrounds
+// Call once per frame from the lantern system with current light state.
+//   screenX/Y    : lantern position in screen UV space (0..1)
+//   intensity    : effective glow intensity with flicker applied (0..1)
+//   lightR/G/B   : warm light color (e.g. 1.0, 0.75, 0.25 for oil lantern)
+//   influence    : backgroundLightInfluence from LanternState (0..1)
+//   lightRadius  : radius in UV space over which the light falls off (~0.35-0.5)
+//   ambientDarken: how deeply unlit shadow areas are darkened (0=black, 1=no change)
+// -----------------------------------------------------------------------
+void setHDBackgroundLanternUniforms(float screenX, float screenY, float intensity,
+                                    float lightR, float lightG, float lightB,
+                                    float influence, float lightRadius, float ambientDarken);
+
 #endif // _HD_BACKGROUND_RENDERER_H_

@@ -1,1 +1,3 @@
-﻿  bin2c.vcxproj -> D:\FITD\build\vs2026\ThirdParty\bgfx.cmake\cmake\bx\Release\bin2c.exe
+﻿  Building Custom Rule D:/FITD/ThirdParty/bgfx.cmake/cmake/bx/CMakeLists.txt
+  bin2c.cpp
+  bin2c.vcxproj -> D:\FITD\build\vs2026-new\ThirdParty\bgfx.cmake\cmake\bx\Release\bin2c.exe

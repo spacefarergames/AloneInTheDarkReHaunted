@@ -155,3 +155,35 @@ void dumpBytecodePatches();
 /// Get total number of registered patches
 ///
 int getBytecodePatches();
+
+///
+/// Query whether an actor's stencil/blob/planar shadow should be hidden this frame
+///
+/// Used by the renderer to suppress shadows for specific actors based on patch state.
+/// For example, zombie chickens behind a window should not cast a shadow until they
+/// crash through into the player's room.
+///
+/// Parameters:
+///   - actor: The actor being rendered (may be nullptr; returns false in that case)
+///
+/// Returns:
+///   - true:  Caller should skip all shadow rendering for this actor.
+///   - false: Normal shadow rendering applies.
+///
+bool bytecodePatch_shouldHideShadowForActor(tObject* actor);
+
+///
+/// Query whether an actor should be exempt from camera mask (BgOverlay) occlusion
+///
+/// Used by the renderer to skip drawing the camera mask overlay for specific actors.
+/// For example, the frog actor (life 267) in the intro should not be masked by the
+/// foreground scenery since it is meant to stay visible on top of the background.
+///
+/// Parameters:
+///   - actor: The actor being rendered (may be nullptr; returns false in that case)
+///
+/// Returns:
+///   - true:  Caller should skip camera mask rendering for this actor.
+///   - false: Normal mask rendering applies.
+///
+bool bytecodePatch_shouldSkipMaskForActor(tObject* actor);

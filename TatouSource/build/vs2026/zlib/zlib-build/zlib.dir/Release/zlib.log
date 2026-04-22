@@ -1,4 +1,5 @@
-﻿  adler32.c
+﻿  Building Custom Rule D:/FITD/ThirdParty/zlib/CMakeLists.txt
+  adler32.c
   compress.c
   crc32.c
   deflate.c
@@ -6,12 +7,6 @@
   gzlib.c
   gzread.c
   gzwrite.c
-D:\FITD\ThirdParty\zlib\gzread.c(319,17): warning C4267: '=': conversion from 'size_t' to 'unsigned int', possible loss of data
-D:\FITD\ThirdParty\zlib\gzread.c(400,11): warning C4267: '=': conversion from 'size_t' to 'unsigned int', possible loss of data
-D:\FITD\ThirdParty\zlib\gzread.c(472,11): warning C4267: '=': conversion from 'size_t' to 'int', possible loss of data
-D:\FITD\ThirdParty\zlib\gzwrite.c(212,24): warning C4267: '=': conversion from 'size_t' to 'unsigned int', possible loss of data
-D:\FITD\ThirdParty\zlib\gzwrite.c(232,21): warning C4267: '=': conversion from 'size_t' to 'unsigned int', possible loss of data
-D:\FITD\ThirdParty\zlib\gzwrite.c(371,11): warning C4267: '=': conversion from 'size_t' to 'int', possible loss of data
   inflate.c
   infback.c
   inftrees.c
@@ -19,6 +14,11 @@ D:\FITD\ThirdParty\zlib\gzwrite.c(371,11): warning C4267: '=': conversion from '
   trees.c
   uncompr.c
   zutil.c
-  Generating Code...
-     Creating library D:/FITD/build/vs2026/zlib/zlib-build/Release/zlib.lib and object D:/FITD/build/vs2026/zlib/zlib-build/Release/zlib.exp
-  zlib.vcxproj -> D:\FITD\build\vs2026\zlib\zlib-build\Release\zlib.dll
+D:\FITD\ThirdParty\zlib\gzwrite.c(212,24): warning C4267: '=': conversion from 'size_t' to 'unsigned int', possible loss of data
+D:\FITD\ThirdParty\zlib\gzwrite.c(232,21): warning C4267: '=': conversion from 'size_t' to 'unsigned int', possible loss of data
+D:\FITD\ThirdParty\zlib\gzwrite.c(371,11): warning C4267: '=': conversion from 'size_t' to 'int', possible loss of data
+D:\FITD\ThirdParty\zlib\gzread.c(319,17): warning C4267: '=': conversion from 'size_t' to 'unsigned int', possible loss of data
+D:\FITD\ThirdParty\zlib\gzread.c(400,11): warning C4267: '=': conversion from 'size_t' to 'unsigned int', possible loss of data
+D:\FITD\ThirdParty\zlib\gzread.c(472,11): warning C4267: '=': conversion from 'size_t' to 'int', possible loss of data
+     Creating library D:/FITD/build/vs2026-new/zlib/zlib-build/Release/zlib.lib and object D:/FITD/build/vs2026-new/zlib/zlib-build/Release/zlib.exp
+  zlib.vcxproj -> D:\FITD\build\vs2026-new\zlib\zlib-build\Release\zlib.dll

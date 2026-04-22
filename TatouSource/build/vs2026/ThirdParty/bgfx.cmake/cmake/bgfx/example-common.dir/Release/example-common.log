@@ -1,0 +1,50 @@
+﻿  Building Custom Rule D:/FITD/ThirdParty/bgfx.cmake/cmake/bgfx/CMakeLists.txt
+  debugdraw.cpp
+  cmd.cpp
+  dialog.cpp
+  entry.cpp
+  entry_android.cpp
+  entry_glfw.cpp
+  entry_html5.cpp
+  entry_noop.cpp
+  entry_sdl.cpp
+  entry_windows.cpp
+  entry_x11.cpp
+  input.cpp
+  font_manager.cpp
+  text_buffer_manager.cpp
+  text_metrics.cpp
+  utf8.cpp
+  nanovg.cpp
+  nanovg_bgfx.cpp
+  particle_system.cpp
+  bgfx_utils.cpp
+  camera.cpp
+  cube_atlas.cpp
+  example-glue.cpp
+  imgui_demo.cpp
+  imgui_draw.cpp
+  imgui_tables.cpp
+  imgui_widgets.cpp
+  allocator.cpp
+  clusterizer.cpp
+  indexanalyzer.cpp
+  indexcodec.cpp
+  indexgenerator.cpp
+  overdrawoptimizer.cpp
+  partition.cpp
+  quantization.cpp
+  rasterizer.cpp
+  simplifier.cpp
+  spatialorder.cpp
+  stripifier.cpp
+  vcacheoptimizer.cpp
+  vertexcodec.cpp
+  vertexfilter.cpp
+  vfetchoptimizer.cpp
+  imgui.cpp
+D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\stb\stb_truetype.h(4562,25): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+  (compiling source file '../../../../../../ThirdParty/bgfx.cmake/bgfx/examples/common/imgui/imgui.cpp')
+  
+  imgui.cpp
+  example-common.vcxproj -> D:\FITD\build\vs2026-new\ThirdParty\bgfx.cmake\cmake\bgfx\Release\example-common.lib

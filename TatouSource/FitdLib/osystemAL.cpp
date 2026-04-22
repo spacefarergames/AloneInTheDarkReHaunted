@@ -369,33 +369,6 @@ static void stopCDAudio()
     }
 }
 
-void osystem_stopTrack()
-{
-    if (gSoloud)
-    {
-        if (pWavStream)
-        {
-            pWavStream->stop();
-            delete pWavStream;
-            pWavStream = nullptr;
-        }
-
-        if (pFile)
-        {
-            delete pFile;
-            pFile = nullptr;
-        }
-
-        if (s_musicArchiveBuf)
-        {
-            delete[] s_musicArchiveBuf;
-            s_musicArchiveBuf = nullptr;
-        }
-    }
-
-    stopCDAudio();
-}
-
 // Play a CD audio track via MCI.  Returns true on success.
 static bool playCDAudioTrack(int trackId)
 {
@@ -451,6 +424,33 @@ static bool playCDAudioTrack(int trackId)
 static void stopCDAudio() {}
 static bool playCDAudioTrack(int) { return false; }
 #endif
+
+void osystem_stopTrack()
+{
+    if (gSoloud)
+    {
+        if (pWavStream)
+        {
+            pWavStream->stop();
+            delete pWavStream;
+            pWavStream = nullptr;
+        }
+
+        if (pFile)
+        {
+            delete pFile;
+            pFile = nullptr;
+        }
+
+        if (s_musicArchiveBuf)
+        {
+            delete[] s_musicArchiveBuf;
+            s_musicArchiveBuf = nullptr;
+        }
+    }
+
+    stopCDAudio();
+}
 
 void osystemAL_init()
 {

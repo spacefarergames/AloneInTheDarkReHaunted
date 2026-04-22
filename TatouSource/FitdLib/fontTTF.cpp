@@ -12,6 +12,7 @@
 #include "configRemaster.h"
 #include "consoleLog.h"
 #include "font.h"
+#include "lanternLighting.h"
 #include <vector>
 #include <string>
 #include <bgfx/bgfx.h>
@@ -20,9 +21,14 @@
 #include "imgui.h"
 
 static ImFont* g_ttfFont = nullptr;
+static ImFont* g_ttfFontCached = nullptr;  // Persists across shutdown/re-enable cycles
 static std::vector<TTFTextCommand> g_textQueue;
 static bool g_ttfInitialized = false;
 static float g_fontLoadResolutionY = 0.0f;
+
+// Oil message suppression tracking (suppress lantern for ~3 seconds when message appears)
+static int g_oilMessageSuppressFrames = 0;
+static bool g_oilMessageWasShown = false;
 
 extern s16 g_fontInterWordSpace;
 extern s16 g_fontInterLetterSpace;
@@ -130,6 +136,18 @@ void initTTFFont()
     if (!g_remasterConfig.font.enableTTF)
         return;
 
+    // Fast-restore: if the font was already added to the ImGui atlas in a previous
+    // initTTFFont() call (same session), re-use the cached pointer instead of adding
+    // it to the atlas again (which would create duplicates and corrupt the texture).
+    if (g_ttfFontCached)
+    {
+        g_ttfFont = g_ttfFontCached;
+        g_ttfInitialized = true;
+        printf(TTF_OK CON_GREEN "Font restored from cache" CON_RESET " (ptr=%p)\n", g_ttfFont);
+        printf(TTF_TAG CON_BOLD "════════════════════════════════════════\n" CON_RESET);
+        return;
+    }
+
     printf(TTF_TAG CON_DIM "Acquiring ImGui IO..." CON_RESET "\n");
     ImGuiIO& io = ImGui::GetIO();
 
@@ -223,6 +241,7 @@ void initTTFFont()
     }
 
     g_ttfInitialized = true;
+    g_ttfFontCached = g_ttfFont;  // Cache for re-enable without atlas re-add
     g_fontLoadResolutionY = kReferenceResolutionY;
     printf(TTF_OK CON_BGREEN "System ready" CON_RESET " " CON_DIM "(font=%p, refResY=%.0f)" CON_RESET "\n", g_ttfFont, g_fontLoadResolutionY);
 
@@ -239,6 +258,9 @@ void shutdownTTFFont()
     g_textQueue.clear();
     g_ttfFont = nullptr;
     g_ttfInitialized = false;
+    // Note: g_ttfFontCached is intentionally NOT cleared here.
+    // The ImFont* remains valid in ImGui's atlas for the lifetime of the process.
+    // initTTFFont() will restore from cache if TTF is re-enabled in the same session.
 }
 
 int getTTFTextWidth(u8* string)
@@ -267,6 +289,13 @@ int getTTFTextWidth(u8* string)
 static int g_ttfFrameCounter = 0;
 static int g_lastTextQueueFrame = 0;
 
+// Batch fade-in: fade new text in only when it follows a genuine gap (scene
+// transition), not a quick menu-navigation clear (1-2 frames).
+static const int kTextFadeInFrames = 45; // ramp duration  (~0.75 s at 60 FPS)
+static const int kTextFadeInMinGap = 20; // min empty frames to trigger a ramp
+static int g_textQueueEmptyFrame   = -1000; // frame when queue last became empty
+static int g_textBatchFadeInStart  = 0;     // frame when current batch's ramp began
+
 // Track menu state to detect transitions
 static int g_lastMenuSelection = -1;
 static bool g_wasInMenu = false;
@@ -280,6 +309,21 @@ static bool g_lastFullscreenState = false;
 void incrementTTFFrameCounter()
 {
     g_ttfFrameCounter++;
+
+    // Update oil message suppression counter
+    if (g_oilMessageSuppressFrames > 0)
+    {
+        g_oilMessageSuppressFrames--;
+
+        // When suppression counter expires, mark message as no longer shown
+        // and allow lantern glow to resume
+        if (g_oilMessageSuppressFrames == 0)
+        {
+            printf(TTF_TAG CON_GREEN "Oil message suppression expired, resuming lantern" CON_RESET "\n");
+            g_oilMessageWasShown = false;
+            setLanternMenuActive(false);  // Re-enable lantern glow with fade-in
+        }
+    }
 }
 
 // Call this when menu selection changes (up/down navigation)
@@ -346,6 +390,18 @@ void queueTTFText(int x, int y, u8* string, int color, bool shadow, int shadowCo
     // Convert CP850 to UTF-8 and apply all display substitutions
     std::string utf8Str = transformTTFText(string);
 
+    // Detect "The lamp has no oil" message and suppress lantern glow
+    if (utf8Str.find("lamp has no oil") != std::string::npos)
+    {
+        if (!g_oilMessageWasShown)
+        {
+            printf(TTF_TAG CON_YELLOW "Oil message detected, suppressing lantern for 3 seconds" CON_RESET "\n");
+            g_oilMessageWasShown = true;
+            g_oilMessageSuppressFrames = 180;  // ~3 seconds at 60 FPS
+            setLanternMenuActive(true);  // Suppress lantern glow immediately
+        }
+    }
+
     TTFTextCommand cmd;
     cmd.x = x;
     cmd.y = y;
@@ -354,10 +410,23 @@ void queueTTFText(int x, int y, u8* string, int color, bool shadow, int shadowCo
     cmd.shadow = shadow;
     cmd.shadowColor = shadowColor;
 
+    // If this is the first command of a new batch, decide whether to fade in.
+    // Quick re-populations (menu navigation clears) skip the ramp so there
+    // is no flicker frame of invisible text.
+    if (g_textQueue.empty())
+    {
+        int emptyDuration = g_ttfFrameCounter - g_textQueueEmptyFrame;
+        if (emptyDuration >= kTextFadeInMinGap)
+            g_textBatchFadeInStart = g_ttfFrameCounter;          // genuine gap  -> ramp
+        else
+            g_textBatchFadeInStart = g_ttfFrameCounter - kTextFadeInFrames; // quick clear -> snap
+    }
+
     g_textQueue.push_back(cmd);
 
-    // Detect fade-out effect: when color=31 and queue reaches 55-56 or 76 items,
-    // this indicates the text is fading out and should be cleared
+    // Fade-out detection: when color=31 and the queue hits known sizes the
+    // engine is cycling through a palette-fade-to-black.  Clear immediately
+    // so stale text does not linger after the scene transition.
     size_t queueSize = g_textQueue.size();
     if (color == 31 && (queueSize == 55 || queueSize == 56 || queueSize == 60 || queueSize == 65 || queueSize == 76))
     {
@@ -443,6 +512,12 @@ void renderTTFText()
     ImDrawList* drawList = ImGui::GetForegroundDrawList();
     ImGui::PushFont(g_ttfFont);
 
+    // Batch fade-in: ramp from 0->fadeAlpha over kTextFadeInFrames when text
+    // follows a genuine gap.  Quick re-queues (menu navigation) snap to full.
+    int batchAge = g_ttfFrameCounter - g_textBatchFadeInStart;
+    float fadeInT = (batchAge >= kTextFadeInFrames) ? 1.0f : (float)batchAge / (float)kTextFadeInFrames;
+    unsigned char batchAlpha = (unsigned char)(fadeAlpha * fadeInT);
+
     for (const auto& cmd : g_textQueue)
     {
         // Scale from game coordinates (320x200) to viewport
@@ -458,14 +533,15 @@ void renderTTFText()
         unsigned char g = (unsigned char)RGB_Pal[colorIndex * 3 + 1];
         unsigned char b = (unsigned char)RGB_Pal[colorIndex * 3 + 2];
 
-        // Fallback to white if palette entry is black, but only when NOT
-        // fading — during a fade-out the palette intentionally goes to black
-        if (r == 0 && g == 0 && b == 0 && colorIndex != 0 && fadeAlpha == 255)
-        {
-            r = g = b = 255;
-        }
+        // If the palette entry has faded to black and this isn't intentional
+        // colour index 0 (which is legitimately black), make the text fully
+        // transparent.  Without this, a palette-fade-to-black produces opaque
+        // black glyphs that stay stuck on screen after the scene transition.
+        unsigned char cmdAlpha = batchAlpha;
+        if (r == 0 && g == 0 && b == 0 && colorIndex != 0)
+            cmdAlpha = 0;
 
-        ImU32 color = IM_COL32(r, g, b, fadeAlpha);
+        ImU32 color = IM_COL32(r, g, b, cmdAlpha);
 
         // Render outline/shadow for better readability against any background
         if (cmd.shadow)
@@ -481,7 +557,7 @@ void renderTTFText()
             float outlineSize = scaleY * 0.6f;
             if (outlineSize < 1.0f) outlineSize = 1.0f;
 
-            ImU32 outlineColor = IM_COL32(sr, sg, sb, fadeAlpha);
+            ImU32 outlineColor = IM_COL32(sr, sg, sb, cmdAlpha);
 
             // 4-cardinal outline pass (readable against any background, low cost)
             drawList->AddText(ImVec2(screenX - outlineSize, screenY), outlineColor, cmd.text.c_str());
@@ -490,7 +566,7 @@ void renderTTFText()
             drawList->AddText(ImVec2(screenX, screenY + outlineSize), outlineColor, cmd.text.c_str());
 
             // Drop shadow for depth
-            drawList->AddText(ImVec2(screenX + outlineSize * 0.8f, screenY + outlineSize * 1.2f), IM_COL32(0, 0, 0, (unsigned char)((100 * fadeAlpha) / 255)), cmd.text.c_str());
+            drawList->AddText(ImVec2(screenX + outlineSize * 0.8f, screenY + outlineSize * 1.2f), IM_COL32(0, 0, 0, (unsigned char)((100 * cmdAlpha) / 255)), cmd.text.c_str());
         }
 
         // Render main text
@@ -502,7 +578,17 @@ void renderTTFText()
 
 void clearTTFTextQueue()
 {
+    // If text queue is being cleared and oil message was shown,
+    // accelerate the suppression expiration
+    if (g_oilMessageWasShown && g_oilMessageSuppressFrames > 60)
+    {
+        // Cap suppression at ~1 second to avoid prolonged darkness after message clears
+        g_oilMessageSuppressFrames = 60;
+        printf(TTF_TAG CON_DIM "Queue cleared while oil message active, capping suppression to 1 second" CON_RESET "\n");
+    }
+
     g_textQueue.clear();
+    g_textQueueEmptyFrame = g_ttfFrameCounter;
 }
 
 #else // !USE_IMGUI

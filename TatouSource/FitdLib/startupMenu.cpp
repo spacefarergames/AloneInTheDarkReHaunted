@@ -11,6 +11,8 @@
 #include "fontTTF.h"
 #include "input.h"
 #include "configRemaster.h"
+#include "lanternLighting.h"
+#include "menuMouse.h"
 #include <SDL.h>
 #include <math.h>
 
@@ -203,6 +205,32 @@ void LanguageSelectionMenu(void)
             osystem_CopyBlockPhys((unsigned char*)logicalScreen, 0, 0, 320, 200);
         }
 
+        // Mouse: hover selects, click confirms (keyboard/gamepad take priority)
+        {
+            static ImVec2 s_langMouse = { -1.0f, -1.0f };
+            ImVec2 gm = menuGetGameMouse();
+            int startY = 100 - (availableCount * 16) / 2;
+            if (menuMouseMoved(s_langMouse, JoyD || key))
+            {
+                int hit = menuMouseHitList(gm.x, gm.y, 8, 311, startY, 16, availableCount);
+                if (hit >= 0 && hit != currentSelectedEntry)
+                {
+                    currentSelectedEntry = hit;
+                    s_langMenuSelTime = (u32)SDL_GetTicks();
+                    notifyTTFMenuSelectionChanged();
+                }
+            }
+            if (menuMouseClicked())
+            {
+                int hit = menuMouseHitList(gm.x, gm.y, 8, 311, startY, 16, availableCount);
+                if (hit >= 0)
+                {
+                    playMenuSound("Select.wav");
+                    selectedEntry = hit;
+                }
+            }
+        }
+
         if(AntiRebond)
         {
             if(!JoyD && !key && !Click)
@@ -262,6 +290,9 @@ int MainMenu(void)
     int selectedEntry = -1;
     int AntiRebond = 0;
 
+    // Suppress lantern glow when opening startup menu
+    setLanternMenuActive(true);
+
     // End any active letterbox effect when returning to main menu
     osystem_endLetterbox();
 
@@ -312,6 +343,33 @@ int MainMenu(void)
 		}
 
 
+		// Mouse: hover selects, click confirms (keyboard/gamepad take priority)
+		{
+			static ImVec2 s_mainMenuMouse = { -1.0f, -1.0f };
+			ImVec2 gm = menuGetGameMouse();
+			if (menuMouseMoved(s_mainMenuMouse, JoyD || key))
+			{
+				// 3 items starting at Y=76, 16px each
+				int hit = menuMouseHitList(gm.x, gm.y, 8, 311, 76, 16, 3);
+				if (hit >= 0 && hit != currentSelectedEntry)
+				{
+					currentSelectedEntry = hit;
+					s_mainMenuSelTime = (u32)SDL_GetTicks();
+					notifyTTFMenuSelectionChanged();
+					startChrono(&chrono);
+				}
+			}
+			if (menuMouseClicked())
+			{
+				int hit = menuMouseHitList(gm.x, gm.y, 8, 311, 76, 16, 3);
+				if (hit >= 0)
+				{
+					playMenuSound("Select.wav");
+					selectedEntry = hit;
+				}
+			}
+		}
+
 		if(AntiRebond)
 		{
 			if(!JoyD && !key && !Click)
@@ -361,6 +419,9 @@ int MainMenu(void)
     {
         process_events();
     }
+
+    // Re-enable lantern glow when exiting startup menu
+    setLanternMenuActive(false);
 
     return(selectedEntry);
 }

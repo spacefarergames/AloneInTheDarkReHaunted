@@ -15,6 +15,7 @@
 #include "bgfxGlue.h"
 #include "startupMenu.h"
 #include "asyncLoader.h"
+#include "menuMouse.h"
 
 // DEMO mapping
 /*
@@ -407,6 +408,42 @@ int ChoosePerso(void)
                 while (JoyD != 0)
                 {
                     process_events();
+                }
+            }
+
+            // Mouse: hovering/clicking on a portrait selects or confirms
+            {
+                static ImVec2 s_chooseMouse = { -1.0f, -1.0f };
+                ImVec2 gm = menuGetGameMouse();
+                bool anyKey = (JoyD != 0);
+                if (menuMouseMoved(s_chooseMouse, anyKey) && gm.x >= 0.0f)
+                {
+                    int newChoice = (gm.x < 160.0f) ? 0 : 1;
+                    if (newChoice != choice)
+                    {
+                        choice = newChoice;
+                        g_portraitOverlayChoice = choice;
+                        FastCopyScreen(aux2, logicalScreen);
+                        if (choice == 0)
+                        {
+                            AffBigCadre(80, 100, 160, 200);
+                            CopyBox_Aux_Log(10, 10, 149, 190);
+                        }
+                        else
+                        {
+                            AffBigCadre(240, 100, 160, 200);
+                            CopyBox_Aux_Log(170, 10, 309, 190);
+                        }
+                        if (usingHDBackground) { uiLayer.fill(0); CopyFrameBorderToUILayer(); }
+                        osystem_CopyBlockPhys((unsigned char*)logicalScreen, 0, 0, 320, 200);
+                        notifyTTFMenuSelectionChanged();
+                    }
+                }
+                if (menuMouseClicked() && gm.x >= 0.0f)
+                {
+                    choice = (gm.x < 160.0f) ? 0 : 1;
+                    g_portraitOverlayChoice = choice;
+                    localKey = 0x1C; // treat as Enter to exit inner loop
                 }
             }
 

@@ -35,6 +35,8 @@ void initDefaultRemasterConfig()
     g_remasterConfig.graphics.enableArtwork = true;
     g_remasterConfig.graphics.fullscreen = false;
     strcpy(g_remasterConfig.graphics.rendererBackend, "auto");
+    g_remasterConfig.graphics.msaaLevel = 4; // 4x MSAA by default in HD mode
+    g_remasterConfig.graphics.enableWallDepth = true; // Wall depth for SSAO edge darkening
 
     // Post-processing defaults
     g_remasterConfig.postProcessing.enableBloom = true;
@@ -166,6 +168,10 @@ void loadRemasterConfig()
                 strncpy(g_remasterConfig.graphics.rendererBackend, value, 31);
                 g_remasterConfig.graphics.rendererBackend[31] = '\0';
             }
+            else if (strcmp(key, "graphics.msaa") == 0)
+                g_remasterConfig.graphics.msaaLevel = atoi(value);
+            else if (strcmp(key, "graphics.wallDepth") == 0)
+                g_remasterConfig.graphics.enableWallDepth = (strcmp(value, "true") == 0 || strcmp(value, "1") == 0);
 
             // External music settings
             else if (strcmp(key, "music.external") == 0)
@@ -317,6 +323,12 @@ void loadRemasterConfig()
 
     if (g_remasterConfig.graphics.backgroundScale < 1) g_remasterConfig.graphics.backgroundScale = 1;
     if (g_remasterConfig.graphics.backgroundScale > 8) g_remasterConfig.graphics.backgroundScale = 8;
+
+    // Clamp MSAA to valid values
+    if (g_remasterConfig.graphics.msaaLevel != 0 && g_remasterConfig.graphics.msaaLevel != 2 &&
+        g_remasterConfig.graphics.msaaLevel != 4 && g_remasterConfig.graphics.msaaLevel != 8 &&
+        g_remasterConfig.graphics.msaaLevel != 16)
+        g_remasterConfig.graphics.msaaLevel = 4;
     if (g_remasterConfig.graphics.menuBlurAmount < 0.0f) g_remasterConfig.graphics.menuBlurAmount = 0.0f;
     if (g_remasterConfig.graphics.menuBlurAmount > 10.0f) g_remasterConfig.graphics.menuBlurAmount = 10.0f;
 
@@ -374,7 +386,11 @@ void saveRemasterConfig()
     fprintf(file, "graphics.useArtwork = %s\n", g_remasterConfig.graphics.enableArtwork ? "true" : "false");
     fprintf(file, "graphics.fullscreen = %s\n", g_remasterConfig.graphics.fullscreen ? "true" : "false");
     fprintf(file, "# Renderer backend: auto, d3d11, d3d12, opengl, vulkan, metal\n");
-    fprintf(file, "graphics.renderer = %s\n\n", g_remasterConfig.graphics.rendererBackend);
+    fprintf(file, "graphics.renderer = %s\n", g_remasterConfig.graphics.rendererBackend);
+    fprintf(file, "# MSAA anti-aliasing for 3D models in HD mode: 0, 2, 4, 8, or 16\n");
+    fprintf(file, "graphics.msaa = %d\n", g_remasterConfig.graphics.msaaLevel);
+    fprintf(file, "# Render wall collision boxes to depth buffer for SSAO edge darkening\n");
+    fprintf(file, "graphics.wallDepth = %s\n\n", g_remasterConfig.graphics.enableWallDepth ? "true" : "false");
 
     fprintf(file, "# External Music Settings\n");
     fprintf(file, "music.external = %s\n", g_remasterConfig.music.enableExternalMusic ? "true" : "false");

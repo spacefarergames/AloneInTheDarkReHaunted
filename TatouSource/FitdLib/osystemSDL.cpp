@@ -104,6 +104,7 @@ extern "C" {
 // Must be a plain C-style function (no C++ destructors on stack) for __try/__except.
 static int FitdMainProtected(void* unused)
 {
+#ifdef _WIN32
     __try
     {
         return FitdMain(unused);
@@ -114,6 +115,9 @@ static int FitdMainProtected(void* unused)
         OutputDebugStringA("CRITICAL: FitdMainThread top-level exception caught and handled\n");
         return -1;
     }
+#else
+    return FitdMain(unused);
+#endif
 }
 
 SDL_Semaphore* startOfRender = NULL;
@@ -415,6 +419,16 @@ bool fileExists(const char* name)
 void osystem_init()  // that's the constructor of the system dependent
 // object used for the SDL port
 {
+#if defined(__linux__)
+    // On Linux, prefer the Wayland backend with X11 as fallback. On modern
+    // Wayland-first distros (e.g. CachyOS, Fedora, recent Ubuntu) some libX11
+    // versions interact badly with the shipped SDL3 X11 path and can fault
+    // inside libX11 with a corrupted Display*. Setting this hint here is a
+    // no-op if the user already exported SDL_VIDEODRIVER / SDL_VIDEO_DRIVER
+    // (env vars override hints at OVERRIDE priority).
+    SDL_SetHint(SDL_HINT_VIDEO_DRIVER, "wayland,x11");
+#endif
+
     if (!SDL_Init(SDL_INIT_VIDEO))
     {
         fprintf(stderr, "Couldn't initialize SDL: %s\n", SDL_GetError());

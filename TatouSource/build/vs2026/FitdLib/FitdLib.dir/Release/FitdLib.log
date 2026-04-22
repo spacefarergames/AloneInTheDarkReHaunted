@@ -1,0 +1,103 @@
+﻿  AITD1.cpp
+  controlsMenu.cpp
+  main.cpp
+  mainLoop.cpp
+  startupMenu.cpp
+  systemMenu.cpp
+D:\FITD\FitdLib\menuMouse.h(27,36): warning C4244: 'initializing': conversion from 'Uint64' to 'Uint32', possible loss of data
+  (compiling source file '../../../FitdLib/controlsMenu.cpp')
+  
+D:\FITD\FitdLib\menuMouse.h(51,36): warning C4244: '=': conversion from 'Uint64' to 'Uint32', possible loss of data
+  (compiling source file '../../../FitdLib/controlsMenu.cpp')
+  
+D:\FITD\FitdLib\menuMouse.h(77,32): warning C4244: '=': conversion from 'Uint64' to 'Uint32', possible loss of data
+  (compiling source file '../../../FitdLib/controlsMenu.cpp')
+  
+D:\FITD\FitdLib\controlsMenu.cpp(340,5): warning C4996: 'strncpy': This function or variable may be unsafe. Consider using strncpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+D:\FITD\FitdLib\menuMouse.h(27,36): warning C4244: 'initializing': conversion from 'Uint64' to 'Uint32', possible loss of data
+  (compiling source file '../../../FitdLib/main.cpp')
+  
+D:\FITD\FitdLib\menuMouse.h(51,36): warning C4244: '=': conversion from 'Uint64' to 'Uint32', possible loss of data
+  (compiling source file '../../../FitdLib/main.cpp')
+  
+D:\FITD\FitdLib\menuMouse.h(77,32): warning C4244: '=': conversion from 'Uint64' to 'Uint32', possible loss of data
+  (compiling source file '../../../FitdLib/main.cpp')
+  
+D:\FITD\FitdLib\menuMouse.h(27,36): warning C4244: 'initializing': conversion from 'Uint64' to 'Uint32', possible loss of data
+  (compiling source file '../../../FitdLib/startupMenu.cpp')
+  
+D:\FITD\FitdLib\menuMouse.h(51,36): warning C4244: '=': conversion from 'Uint64' to 'Uint32', possible loss of data
+  (compiling source file '../../../FitdLib/startupMenu.cpp')
+  
+D:\FITD\FitdLib\menuMouse.h(77,32): warning C4244: '=': conversion from 'Uint64' to 'Uint32', possible loss of data
+  (compiling source file '../../../FitdLib/startupMenu.cpp')
+  
+D:\FITD\FitdLib\menuMouse.h(27,36): warning C4244: 'initializing': conversion from 'Uint64' to 'Uint32', possible loss of data
+  (compiling source file '../../../FitdLib/AITD1.cpp')
+  
+D:\FITD\FitdLib\menuMouse.h(51,36): warning C4244: '=': conversion from 'Uint64' to 'Uint32', possible loss of data
+  (compiling source file '../../../FitdLib/AITD1.cpp')
+  
+D:\FITD\FitdLib\menuMouse.h(77,32): warning C4244: '=': conversion from 'Uint64' to 'Uint32', possible loss of data
+  (compiling source file '../../../FitdLib/AITD1.cpp')
+  
+D:\FITD\FitdLib\menuMouse.h(27,36): warning C4244: 'initializing': conversion from 'Uint64' to 'Uint32', possible loss of data
+  (compiling source file '../../../FitdLib/mainLoop.cpp')
+  
+D:\FITD\FitdLib\menuMouse.h(51,36): warning C4244: '=': conversion from 'Uint64' to 'Uint32', possible loss of data
+  (compiling source file '../../../FitdLib/mainLoop.cpp')
+  
+D:\FITD\FitdLib\menuMouse.h(77,32): warning C4244: '=': conversion from 'Uint64' to 'Uint32', possible loss of data
+  (compiling source file '../../../FitdLib/mainLoop.cpp')
+  
+D:\FITD\FitdLib\mainLoop.cpp(221,13): warning C4244: 'initializing': conversion from 'Uint64' to 'u32', possible loss of data
+D:\FITD\FitdLib\mainLoop.cpp(294,27): warning C4018: '<': signed/unsigned mismatch
+D:\FITD\FitdLib\mainLoop.cpp(692,21): warning C4244: 'initializing': conversion from 'Uint64' to 'u32', possible loss of data
+D:\FITD\FitdLib\menuMouse.h(27,36): warning C4244: 'initializing': conversion from 'Uint64' to 'Uint32', possible loss of data
+  (compiling source file '../../../FitdLib/systemMenu.cpp')
+  
+D:\FITD\FitdLib\menuMouse.h(51,36): warning C4244: '=': conversion from 'Uint64' to 'Uint32', possible loss of data
+  (compiling source file '../../../FitdLib/systemMenu.cpp')
+  
+D:\FITD\FitdLib\menuMouse.h(77,32): warning C4244: '=': conversion from 'Uint64' to 'Uint32', possible loss of data
+  (compiling source file '../../../FitdLib/systemMenu.cpp')
+  
+D:\FITD\FitdLib\main.cpp(57,12): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+D:\FITD\FitdLib\main.cpp(401,13): warning C4996: 'strcpy': This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+D:\FITD\FitdLib\main.cpp(402,13): warning C4996: 'strcat': This function or variable may be unsafe. Consider using strcat_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+D:\FITD\FitdLib\main.cpp(635,9): warning C4996: 'strcpy': This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+D:\FITD\FitdLib\main.cpp(639,9): warning C4996: 'strcpy': This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+D:\FITD\FitdLib\main.cpp(1327,13): warning C4996: 'strcpy': This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+D:\FITD\FitdLib\main.cpp(1328,13): warning C4996: 'strcat': This function or variable may be unsafe. Consider using strcat_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+D:\FITD\FitdLib\main.cpp(1460,13): warning C4996: 'strcpy': This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+D:\FITD\FitdLib\main.cpp(1461,13): warning C4996: 'strcat': This function or variable may be unsafe. Consider using strcat_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+D:\FITD\FitdLib\main.cpp(1329,23): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+D:\FITD\FitdLib\main.cpp(1463,23): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+D:\FITD\FitdLib\main.cpp(1624,13): warning C4996: 'strcpy': This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+D:\FITD\FitdLib\main.cpp(1582,5): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+D:\FITD\FitdLib\main.cpp(1756,5): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+D:\FITD\FitdLib\main.cpp(3417,63): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+D:\FITD\FitdLib\main.cpp(3417,52): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+D:\FITD\FitdLib\main.cpp(3417,43): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+D:\FITD\FitdLib\main.cpp(3417,33): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+D:\FITD\FitdLib\main.cpp(3464,67): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+D:\FITD\FitdLib\main.cpp(3464,56): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+D:\FITD\FitdLib\main.cpp(3464,47): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+D:\FITD\FitdLib\main.cpp(3464,37): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+D:\FITD\FitdLib\main.cpp(5162,9): warning C4996: 'strcpy': This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+D:\FITD\FitdLib\main.cpp(5165,9): warning C4996: 'strcat': This function or variable may be unsafe. Consider using strcat_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+D:\FITD\FitdLib\main.cpp(5192,17): warning C4996: 'strcpy': This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+D:\FITD\FitdLib\main.cpp(5195,17): warning C4996: 'strcat': This function or variable may be unsafe. Consider using strcat_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+D:\FITD\FitdLib\main.cpp(5164,9): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+D:\FITD\FitdLib\main.cpp(5194,17): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+D:\FITD\FitdLib\main.cpp(5238,17): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+D:\FITD\FitdLib\main.cpp(5242,17): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+animAction.cpp.obj : warning LNK4006: "void __cdecl GereFrappe(void)" (?GereFrappe@@YAXXZ) already defined in animAction.cpp.obj; second definition ignored
+modelAtlas.obj : warning LNK4006: "bool __cdecl dumpModelAtlas(int,struct sBody *,class std::basic_string<char,struct std::char_traits<char>,class std::allocator<char> > const &)" (?dumpModelAtlas@@YA_NHPEAUsBody@@AEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@Z) already defined in modelAtlas_fixed.obj; second definition ignored
+modelAtlas.obj : warning LNK4006: "bool __cdecl dumpSphereAtlas(int,struct sBody *,class std::basic_string<char,struct std::char_traits<char>,class std::allocator<char> > const &)" (?dumpSphereAtlas@@YA_NHPEAUsBody@@AEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@Z) already defined in modelAtlas_fixed.obj; second definition ignored
+modelAtlas.obj : warning LNK4006: "bool __cdecl dumpFlatPolyAtlas(int,struct sBody *,class std::basic_string<char,struct std::char_traits<char>,class std::allocator<char> > const &)" (?dumpFlatPolyAtlas@@YA_NHPEAUsBody@@AEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@Z) already defined in modelAtlas_fixed.obj; second definition ignored
+modelAtlas.obj : warning LNK4006: "bool __cdecl dumpRampAtlas(int,struct sBody *,class std::basic_string<char,struct std::char_traits<char>,class std::allocator<char> > const &)" (?dumpRampAtlas@@YA_NHPEAUsBody@@AEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@Z) already defined in modelAtlas_fixed.obj; second definition ignored
+modelAtlas.obj : warning LNK4006: "bool __cdecl dumpOtherAtlas(int,struct sBody *,class std::basic_string<char,struct std::char_traits<char>,class std::allocator<char> > const &)" (?dumpOtherAtlas@@YA_NHPEAUsBody@@AEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@Z) already defined in modelAtlas_fixed.obj; second definition ignored
+modelAtlas.obj : warning LNK4006: "struct ModelAtlasData * __cdecl loadModelAtlas(int,struct sBody *,class std::basic_string<char,struct std::char_traits<char>,class std::allocator<char> > const &)" (?loadModelAtlas@@YAPEAUModelAtlasData@@HPEAUsBody@@AEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@Z) already defined in modelAtlas_fixed.obj; second definition ignored
+modelAtlas.obj : warning LNK4006: "void __cdecl clearModelAtlases(void)" (?clearModelAtlases@@YAXXZ) already defined in modelAtlas_fixed.obj; second definition ignored
+  FitdLib.vcxproj -> D:\FITD\build\vs2026-new\FitdLib\Release\FitdLib.lib

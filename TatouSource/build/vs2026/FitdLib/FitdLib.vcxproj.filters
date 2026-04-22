@@ -16,7 +16,10 @@
     <ClCompile Include="D:\FITD\FitdLib\animAction.cpp" />
     <ClCompile Include="D:\FITD\FitdLib\animAction_temp.cpp" />
     <ClCompile Include="D:\FITD\FitdLib\asyncLoader.cpp" />
+    <ClCompile Include="D:\FITD\FitdLib\bgAnimGrassMask.cpp" />
     <ClCompile Include="D:\FITD\FitdLib\bgfxGlue.cpp" />
+    <ClCompile Include="D:\FITD\FitdLib\bloodParticles.cpp" />
+    <ClCompile Include="D:\FITD\FitdLib\bytecodePatches.cpp" />
     <ClCompile Include="D:\FITD\FitdLib\configRemaster.cpp" />
     <ClCompile Include="D:\FITD\FitdLib\controlsMenu.cpp" />
     <ClCompile Include="D:\FITD\FitdLib\cosTable.cpp" />
@@ -150,6 +153,7 @@
     <ClCompile Include="D:\FITD\FitdLib\fmopl.cpp" />
     <ClCompile Include="D:\FITD\FitdLib\font.cpp" />
     <ClCompile Include="D:\FITD\FitdLib\fontTTF.cpp" />
+    <ClCompile Include="D:\FITD\FitdLib\gameDataCopy.cpp" />
     <ClCompile Include="D:\FITD\FitdLib\gameTime.cpp" />
     <ClCompile Include="D:\FITD\FitdLib\hdArchive.cpp" />
     <ClCompile Include="D:\FITD\FitdLib\hdBackground.cpp" />
@@ -160,15 +164,21 @@
     <ClCompile Include="D:\FITD\FitdLib\input.cpp" />
     <ClCompile Include="D:\FITD\FitdLib\inventory.cpp" />
     <ClCompile Include="D:\FITD\FitdLib\jobSystem.cpp" />
+    <ClCompile Include="D:\FITD\FitdLib\lanternLighting.cpp" />
     <ClCompile Include="D:\FITD\FitdLib\life.cpp" />
     <ClCompile Include="D:\FITD\FitdLib\lifeMacroTable.cpp" />
     <ClCompile Include="D:\FITD\FitdLib\lightProbes.cpp" />
     <ClCompile Include="D:\FITD\FitdLib\lines.cpp" />
     <ClCompile Include="D:\FITD\FitdLib\main.cpp" />
     <ClCompile Include="D:\FITD\FitdLib\mainLoop.cpp" />
+    <ClCompile Include="D:\FITD\FitdLib\menuFade.cpp" />
     <ClCompile Include="D:\FITD\FitdLib\modelAtlas.cpp" />
     <ClCompile Include="D:\FITD\FitdLib\modelAtlas_fixed.cpp" />
     <ClCompile Include="D:\FITD\FitdLib\music.cpp" />
+    <ClCompile Include="D:\FITD\FitdLib\nativeLife.cpp" />
+    <ClCompile Include="D:\FITD\FitdLib\nativeLifeHelpersImpl.cpp" />
+    <ClCompile Include="D:\FITD\FitdLib\nativeLifeScripts_AITD1.cpp" />
+    <ClCompile Include="D:\FITD\FitdLib\nativeLifeScripts_generated.cpp" />
     <ClCompile Include="D:\FITD\FitdLib\object.cpp" />
     <ClCompile Include="D:\FITD\FitdLib\osystemAL.cpp" />
     <ClCompile Include="D:\FITD\FitdLib\osystemAL_adlib.cpp" />
@@ -190,6 +200,7 @@
     </ClCompile>
     <ClCompile Include="D:\FITD\FitdLib\sprite.cpp" />
     <ClCompile Include="D:\FITD\FitdLib\startupMenu.cpp" />
+    <ClCompile Include="D:\FITD\FitdLib\steamOverlay.cpp" />
     <ClCompile Include="D:\FITD\FitdLib\systemMenu.cpp" />
     <ClCompile Include="D:\FITD\FitdLib\tatou.cpp" />
     <ClCompile Include="D:\FITD\FitdLib\threadCode.cpp" />
@@ -230,7 +241,10 @@
     <ClInclude Include="D:\FITD\FitdLib\appArchive.h" />
     <ClInclude Include="D:\FITD\FitdLib\asyncLoader.h" />
     <ClInclude Include="D:\FITD\FitdLib\baseTypes.h" />
+    <ClInclude Include="D:\FITD\FitdLib\bgAnimGrassMask.h" />
     <ClInclude Include="D:\FITD\FitdLib\bgfxGlue.h" />
+    <ClInclude Include="D:\FITD\FitdLib\bloodParticles.h" />
+    <ClInclude Include="D:\FITD\FitdLib\bytecodePatches.h" />
     <ClInclude Include="D:\FITD\FitdLib\common.h" />
     <ClInclude Include="D:\FITD\FitdLib\config.h" />
     <ClInclude Include="D:\FITD\FitdLib\configRemaster.h" />
@@ -251,6 +265,7 @@
     <ClInclude Include="D:\FITD\FitdLib\fmopl.h" />
     <ClInclude Include="D:\FITD\FitdLib\font.h" />
     <ClInclude Include="D:\FITD\FitdLib\fontTTF.h" />
+    <ClInclude Include="D:\FITD\FitdLib\gameDataCopy.h" />
     <ClInclude Include="D:\FITD\FitdLib\gameTime.h" />
     <ClInclude Include="D:\FITD\FitdLib\hdArchive.h" />
     <ClInclude Include="D:\FITD\FitdLib\hdBackground.h" />
@@ -262,19 +277,25 @@
     <ClInclude Include="D:\FITD\FitdLib\inventory.h" />
     <ClInclude Include="D:\FITD\FitdLib\jobSystem.h" />
     <ClInclude Include="D:\FITD\FitdLib\jobSystemInit.h" />
+    <ClInclude Include="D:\FITD\FitdLib\lanternLighting.h" />
     <ClInclude Include="D:\FITD\FitdLib\life.h" />
     <ClInclude Include="D:\FITD\FitdLib\lightProbes.h" />
     <ClInclude Include="D:\FITD\FitdLib\main.h" />
     <ClInclude Include="D:\FITD\FitdLib\mainLoop.h" />
     <ClInclude Include="D:\FITD\FitdLib\memoryManager.h" />
+    <ClInclude Include="D:\FITD\FitdLib\menuFade.h" />
+    <ClInclude Include="D:\FITD\FitdLib\menuMouse.h" />
     <ClInclude Include="D:\FITD\FitdLib\modelAtlas.h" />
     <ClInclude Include="D:\FITD\FitdLib\music.h" />
+    <ClInclude Include="D:\FITD\FitdLib\nativeLife.h" />
+    <ClInclude Include="D:\FITD\FitdLib\nativeLifeHelpers.h" />
     <ClInclude Include="D:\FITD\FitdLib\object.h" />
     <ClInclude Include="D:\FITD\FitdLib\osystem.h" />
     <ClInclude Include="D:\FITD\FitdLib\osystemAL.h" />
     <ClInclude Include="D:\FITD\FitdLib\osystemAL_mp3.h" />
     <ClInclude Include="D:\FITD\FitdLib\pak.h" />
     <ClInclude Include="D:\FITD\FitdLib\palette.h" />
+    <ClInclude Include="D:\FITD\FitdLib\platform_compat.h" />
     <ClInclude Include="D:\FITD\FitdLib\postProcessing.h" />
     <ClInclude Include="D:\FITD\FitdLib\renderer.h" />
     <ClInclude Include="D:\FITD\FitdLib\reshadecompat.h" />
@@ -312,6 +333,18 @@
       <Filter>shaders\generated\dx10</Filter>
     </ClInclude>
     <ClInclude Include="D:\FITD\FitdLib\shaders\generated\dx10\hdBackground_ps.sc.bin.h">
+      <Filter>shaders\generated\dx10</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\FitdLib\shaders\generated\dx10\lantern_bloom_ps.sc.bin.h">
+      <Filter>shaders\generated\dx10</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\FitdLib\shaders\generated\dx10\lantern_bloom_vs.sc.bin.h">
+      <Filter>shaders\generated\dx10</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\FitdLib\shaders\generated\dx10\lantern_shadow_ps.sc.bin.h">
+      <Filter>shaders\generated\dx10</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\FitdLib\shaders\generated\dx10\lantern_shadow_vs.sc.bin.h">
       <Filter>shaders\generated\dx10</Filter>
     </ClInclude>
     <ClInclude Include="D:\FITD\FitdLib\shaders\generated\dx10\maskBackground_ps.sc.bin.h">
@@ -395,6 +428,18 @@
     <ClInclude Include="D:\FITD\FitdLib\shaders\generated\dx11\hdBackground_ps.sc.bin.h">
       <Filter>shaders\generated\dx11</Filter>
     </ClInclude>
+    <ClInclude Include="D:\FITD\FitdLib\shaders\generated\dx11\lantern_bloom_ps.sc.bin.h">
+      <Filter>shaders\generated\dx11</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\FitdLib\shaders\generated\dx11\lantern_bloom_vs.sc.bin.h">
+      <Filter>shaders\generated\dx11</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\FitdLib\shaders\generated\dx11\lantern_shadow_ps.sc.bin.h">
+      <Filter>shaders\generated\dx11</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\FitdLib\shaders\generated\dx11\lantern_shadow_vs.sc.bin.h">
+      <Filter>shaders\generated\dx11</Filter>
+    </ClInclude>
     <ClInclude Include="D:\FITD\FitdLib\shaders\generated\dx11\maskBackground_ps.sc.bin.h">
       <Filter>shaders\generated\dx11</Filter>
     </ClInclude>
@@ -474,6 +519,18 @@
       <Filter>shaders\generated\essl</Filter>
     </ClInclude>
     <ClInclude Include="D:\FITD\FitdLib\shaders\generated\essl\hdBackground_ps.sc.bin.h">
+      <Filter>shaders\generated\essl</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\FitdLib\shaders\generated\essl\lantern_bloom_ps.sc.bin.h">
+      <Filter>shaders\generated\essl</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\FitdLib\shaders\generated\essl\lantern_bloom_vs.sc.bin.h">
+      <Filter>shaders\generated\essl</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\FitdLib\shaders\generated\essl\lantern_shadow_ps.sc.bin.h">
+      <Filter>shaders\generated\essl</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\FitdLib\shaders\generated\essl\lantern_shadow_vs.sc.bin.h">
       <Filter>shaders\generated\essl</Filter>
     </ClInclude>
     <ClInclude Include="D:\FITD\FitdLib\shaders\generated\essl\maskBackground_ps.sc.bin.h">
@@ -557,6 +614,18 @@
     <ClInclude Include="D:\FITD\FitdLib\shaders\generated\glsl\hdBackground_ps.sc.bin.h">
       <Filter>shaders\generated\glsl</Filter>
     </ClInclude>
+    <ClInclude Include="D:\FITD\FitdLib\shaders\generated\glsl\lantern_bloom_ps.sc.bin.h">
+      <Filter>shaders\generated\glsl</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\FitdLib\shaders\generated\glsl\lantern_bloom_vs.sc.bin.h">
+      <Filter>shaders\generated\glsl</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\FitdLib\shaders\generated\glsl\lantern_shadow_ps.sc.bin.h">
+      <Filter>shaders\generated\glsl</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\FitdLib\shaders\generated\glsl\lantern_shadow_vs.sc.bin.h">
+      <Filter>shaders\generated\glsl</Filter>
+    </ClInclude>
     <ClInclude Include="D:\FITD\FitdLib\shaders\generated\glsl\maskBackground_ps.sc.bin.h">
       <Filter>shaders\generated\glsl</Filter>
     </ClInclude>
@@ -614,9 +683,6 @@
     <ClInclude Include="D:\FITD\FitdLib\shaders\generated\glsl\ui_vs.sc.bin.h">
       <Filter>shaders\generated\glsl</Filter>
     </ClInclude>
-    <ClInclude Include="D:\FITD\FitdLib\shaders\generated\metal\textured_ps.sc.bin.h">
-      <Filter>shaders\generated\metal</Filter>
-    </ClInclude>
     <ClInclude Include="D:\FITD\FitdLib\shaders\generated\spirv\background_ps.sc.bin.h">
       <Filter>shaders\generated\spirv</Filter>
     </ClInclude>
@@ -639,6 +705,18 @@
       <Filter>shaders\generated\spirv</Filter>
     </ClInclude>
     <ClInclude Include="D:\FITD\FitdLib\shaders\generated\spirv\hdBackground_ps.sc.bin.h">
+      <Filter>shaders\generated\spirv</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\FitdLib\shaders\generated\spirv\lantern_bloom_ps.sc.bin.h">
+      <Filter>shaders\generated\spirv</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\FitdLib\shaders\generated\spirv\lantern_bloom_vs.sc.bin.h">
+      <Filter>shaders\generated\spirv</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\FitdLib\shaders\generated\spirv\lantern_shadow_ps.sc.bin.h">
+      <Filter>shaders\generated\spirv</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\FitdLib\shaders\generated\spirv\lantern_shadow_vs.sc.bin.h">
       <Filter>shaders\generated\spirv</Filter>
     </ClInclude>
     <ClInclude Include="D:\FITD\FitdLib\shaders\generated\spirv\maskBackground_ps.sc.bin.h">
@@ -700,6 +778,7 @@
     </ClInclude>
     <ClInclude Include="D:\FITD\FitdLib\sprite.h" />
     <ClInclude Include="D:\FITD\FitdLib\startupMenu.h" />
+    <ClInclude Include="D:\FITD\FitdLib\steamOverlay.h" />
     <ClInclude Include="D:\FITD\FitdLib\systemMenu.h" />
     <ClInclude Include="D:\FITD\FitdLib\tatou.h" />
     <ClInclude Include="D:\FITD\FitdLib\threadCode.h" />
@@ -741,6 +820,18 @@
       <Filter>shaders</Filter>
     </CustomBuild>
     <CustomBuild Include="D:\FITD\FitdLib\shaders\hdBackground_ps.sc">
+      <Filter>shaders</Filter>
+    </CustomBuild>
+    <CustomBuild Include="D:\FITD\FitdLib\shaders\lantern_bloom_ps.sc">
+      <Filter>shaders</Filter>
+    </CustomBuild>
+    <CustomBuild Include="D:\FITD\FitdLib\shaders\lantern_bloom_vs.sc">
+      <Filter>shaders</Filter>
+    </CustomBuild>
+    <CustomBuild Include="D:\FITD\FitdLib\shaders\lantern_shadow_ps.sc">
+      <Filter>shaders</Filter>
+    </CustomBuild>
+    <CustomBuild Include="D:\FITD\FitdLib\shaders\lantern_shadow_vs.sc">
       <Filter>shaders</Filter>
     </CustomBuild>
     <CustomBuild Include="D:\FITD\FitdLib\shaders\maskBackground_ps.sc">
@@ -830,49 +921,52 @@
     <None Include="D:\FITD\FitdLib\shaders\particle.varying.def.sc">
       <Filter>shaders</Filter>
     </None>
+    <None Include="D:\FITD\FitdLib\shaders\lantern_bloom.varying.def.sc">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="D:\FITD\FitdLib\shaders\lantern_shadow.varying.def.sc">
+      <Filter>shaders</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="..">
-      <UniqueIdentifier>{40CD7D45-5AE5-3573-9453-933DD1FB053E}</UniqueIdentifier>
+      <UniqueIdentifier>{138E18A4-FB15-3027-85CA-BB81B5A16E53}</UniqueIdentifier>
     </Filter>
     <Filter Include="..\ThirdParty">
-      <UniqueIdentifier>{CEB7FD9B-AA47-3F0F-A756-F449580599E5}</UniqueIdentifier>
+      <UniqueIdentifier>{5D1E6953-48DD-3608-9F66-DDA89D238228}</UniqueIdentifier>
     </Filter>
     <Filter Include="..\ThirdParty\imgui">
-      <UniqueIdentifier>{2404F1D1-105B-3E9A-AF21-5107E9204BD7}</UniqueIdentifier>
+      <UniqueIdentifier>{622EAA44-88E9-3C6E-B8FE-B4D06F2CB961}</UniqueIdentifier>
     </Filter>
     <Filter Include="..\ThirdParty\imgui\backends">
-      <UniqueIdentifier>{6EF93418-4D8D-3060-BD3C-998F82944615}</UniqueIdentifier>
+      <UniqueIdentifier>{86BB70A7-2ADC-3D34-AA89-39EEBDF46E31}</UniqueIdentifier>
     </Filter>
     <Filter Include="LockedFiles">
-      <UniqueIdentifier>{8F625F66-0A5F-30AB-88B8-734C16B92E76}</UniqueIdentifier>
+      <UniqueIdentifier>{ACD7DFD8-11DD-3998-808B-DF7E91D5C70D}</UniqueIdentifier>
     </Filter>
     <Filter Include="embedded">
-      <UniqueIdentifier>{74FCE931-E394-3011-9EB0-36366261836F}</UniqueIdentifier>
+      <UniqueIdentifier>{D2F15B03-E024-3B03-B490-90B3AFFCD258}</UniqueIdentifier>
     </Filter>
     <Filter Include="shaders">
-      <UniqueIdentifier>{CADAEEEC-1E7B-3E03-BC0E-39E0FC941162}</UniqueIdentifier>
+      <UniqueIdentifier>{8F0285C3-AAD2-3E94-86A2-AE5BB5E39AE0}</UniqueIdentifier>
     </Filter>
     <Filter Include="shaders\generated">
-      <UniqueIdentifier>{09CCB73B-C420-3A5C-9C6C-586F6B771CB7}</UniqueIdentifier>
+      <UniqueIdentifier>{703BE3AA-1A21-3094-89E9-352F62D716B5}</UniqueIdentifier>
     </Filter>
     <Filter Include="shaders\generated\dx10">
-      <UniqueIdentifier>{B62E6782-3720-3C0C-B1A7-B0A1C4641149}</UniqueIdentifier>
+      <UniqueIdentifier>{4743D1C8-79DC-3BC3-8D67-424811DEED28}</UniqueIdentifier>
     </Filter>
     <Filter Include="shaders\generated\dx11">
-      <UniqueIdentifier>{75A0C5D8-FBF8-3937-B81B-F80B1C421DD5}</UniqueIdentifier>
+      <UniqueIdentifier>{F6E4F2DB-6CB0-3E9E-8F7C-84A44C21DC69}</UniqueIdentifier>
     </Filter>
     <Filter Include="shaders\generated\essl">
-      <UniqueIdentifier>{F9C12815-088C-3E51-B7E8-A6144C536184}</UniqueIdentifier>
+      <UniqueIdentifier>{9484949C-EE29-3ABD-92EC-467F197DF53A}</UniqueIdentifier>
     </Filter>
     <Filter Include="shaders\generated\glsl">
-      <UniqueIdentifier>{02BAA1BE-0EC3-34D2-A752-91A73BA70672}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="shaders\generated\metal">
-      <UniqueIdentifier>{F90FE3C2-B2CB-3796-9B02-C518F2F7195B}</UniqueIdentifier>
+      <UniqueIdentifier>{39F32B2D-963C-31D9-8394-170FFA0803C3}</UniqueIdentifier>
     </Filter>
     <Filter Include="shaders\generated\spirv">
-      <UniqueIdentifier>{C9696BEB-4609-3CF9-97F8-907087F2E159}</UniqueIdentifier>
+      <UniqueIdentifier>{A8FA937E-89B4-3D6B-93C8-579BE2D4CD33}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

@@ -7,22 +7,22 @@
 		<BuildType Name="RelWithDebInfo"/>
 		<Platform Name="x64"/>
 	</Configurations>
-	<Project Path="example.vcxproj" Type="8bc9ceb8-8b4a-11d0-8d11-00a0c91bc942" Id="39d0da2b-6c65-33a5-a6e2-882c52799224">
+	<Project Path="example.vcxproj" Type="8bc9ceb8-8b4a-11d0-8d11-00a0c91bc942" Id="539027a5-140c-30c7-bbc1-66b01b305ddd">
 		<BuildDependency Project="../../ZERO_CHECK.vcxproj"/>
 		<BuildDependency Project="zlib.vcxproj"/>
 	</Project>
-	<Project Path="minigzip.vcxproj" Type="8bc9ceb8-8b4a-11d0-8d11-00a0c91bc942" Id="afe34857-954f-3ba0-9d64-a41157ddce20">
+	<Project Path="minigzip.vcxproj" Type="8bc9ceb8-8b4a-11d0-8d11-00a0c91bc942" Id="542c5f52-6b3a-3f06-8f63-b76bc19c6811">
 		<BuildDependency Project="../../ZERO_CHECK.vcxproj"/>
 		<BuildDependency Project="zlib.vcxproj"/>
 	</Project>
-	<Project Path="zlib.vcxproj" Type="8bc9ceb8-8b4a-11d0-8d11-00a0c91bc942" Id="4abcd946-4207-339f-a0a9-970a6f52ffbc">
+	<Project Path="zlib.vcxproj" Type="8bc9ceb8-8b4a-11d0-8d11-00a0c91bc942" Id="ab1c1e5d-bc86-3c1e-87dd-95dc5a04c5fb">
 		<BuildDependency Project="../../ZERO_CHECK.vcxproj"/>
 	</Project>
-	<Project Path="zlibstatic.vcxproj" Type="8bc9ceb8-8b4a-11d0-8d11-00a0c91bc942" Id="85a75e18-8977-3788-bf34-7f4de00ab25d">
+	<Project Path="zlibstatic.vcxproj" Type="8bc9ceb8-8b4a-11d0-8d11-00a0c91bc942" Id="aadf985d-415d-31bd-a86c-ff35b6da8505">
 		<BuildDependency Project="../../ZERO_CHECK.vcxproj"/>
 	</Project>
 	<Folder Name="/CMakePredefinedTargets/">
-		<Project Path="ALL_BUILD.vcxproj" Type="8bc9ceb8-8b4a-11d0-8d11-00a0c91bc942" Id="52499451-f137-3654-861f-b39f8e8e1693" DefaultStartup="true">
+		<Project Path="ALL_BUILD.vcxproj" Type="8bc9ceb8-8b4a-11d0-8d11-00a0c91bc942" Id="887d6561-4a10-375c-833a-3acc7d2cacf2" DefaultStartup="true">
 			<BuildDependency Project="../../ZERO_CHECK.vcxproj"/>
 			<BuildDependency Project="example.vcxproj"/>
 			<BuildDependency Project="minigzip.vcxproj"/>
@@ -33,6 +33,6 @@
 			<Build Solution="MinSizeRel|*" Project="false"/>
 			<Build Solution="RelWithDebInfo|*" Project="false"/>
 		</Project>
-		<Project Path="../../ZERO_CHECK.vcxproj" Type="8bc9ceb8-8b4a-11d0-8d11-00a0c91bc942" Id="a64e50de-6981-3875-ad91-29157346a96c"/>
+		<Project Path="../../ZERO_CHECK.vcxproj" Type="8bc9ceb8-8b4a-11d0-8d11-00a0c91bc942" Id="f785fce9-6420-3c90-95e8-4a488bb8ee84"/>
 	</Folder>
 </Solution>

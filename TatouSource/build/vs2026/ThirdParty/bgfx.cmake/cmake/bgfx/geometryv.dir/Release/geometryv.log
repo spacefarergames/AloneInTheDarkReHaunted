@@ -1,0 +1,4 @@
+﻿  Building Custom Rule D:/FITD/ThirdParty/bgfx.cmake/cmake/bgfx/CMakeLists.txt
+  geometryv.cpp
+     Creating library D:/FITD/build/vs2026-new/ThirdParty/bgfx.cmake/cmake/bgfx/Release/geometryv.lib and object D:/FITD/build/vs2026-new/ThirdParty/bgfx.cmake/cmake/bgfx/Release/geometryv.exp
+  geometryv.vcxproj -> D:\FITD\build\vs2026-new\ThirdParty\bgfx.cmake\cmake\bgfx\Release\geometryv.exe

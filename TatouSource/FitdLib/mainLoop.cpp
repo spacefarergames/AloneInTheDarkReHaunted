@@ -13,6 +13,8 @@
 #include "fontTTF.h"
 #include "hdBackgroundRenderer.h"
 #include "jobSystem.h"
+#include "lanternLighting.h"
+#include "menuMouse.h"
 
 #ifndef WIN32
 #include <sys/time.h>
@@ -324,23 +326,29 @@ static bool detectNearbyInteractiveHotspot()
 
 void PlayWorld(int allowSystemMenu, int deltaTime)
 {
+    g_playWorldActive = true;
     bool bLoop = true;
 
     while(bLoop)
-    {
-        // Process pending job callbacks from background threads
-        JobSystem::instance().processPendingCallbacks();
+	{
+		// Process pending job callbacks from background threads
+		JobSystem::instance().processPendingCallbacks();
 
 		process_events();
-        
-        localKey = key;
-        localJoyD = JoyD;
-        localClick = Click;
+
+		// Auto-hide cursor during gameplay after inactivity
+		menuUpdateGameplayCursor();
+
+		localKey = key;
+		localJoyD = JoyD;
+		localClick = Click;
 
         if(localKey)
         {
             if(localKey == 0x1B)
             {
+                // g_playWorldActive = false;
+
                 // Freeze the scene snapshot NOW, before the ESC-draining loop.
                 // The snapshot still holds the last game frame (with 3D objects).
                 // Without this, each process_events() in the loop would overwrite
@@ -355,10 +363,15 @@ void PlayWorld(int allowSystemMenu, int deltaTime)
                 // Pause HD background animation when entering menu
                 pauseCurrentAnimatedHDBackground();
 
+                // Ensure cursor is visible in menu
+                menuRestoreCursorForMenu();
+
                 // Notify TTF that we're entering the menu
                 notifyTTFMenuStateChanged(true, true);
 
+                g_menuActive = true;
                 processSystemMenu();
+                g_menuActive = false;
 
                 // Notify TTF that we're exiting the menu
                 notifyTTFMenuStateChanged(false, false);
@@ -377,24 +390,37 @@ void PlayWorld(int allowSystemMenu, int deltaTime)
             {
                 if(allowSystemMenu && statusScreenAllowed)
                 {
+                    // g_playWorldActive = false;
+
                     while(key==0x0F)
                     {
                         process_events();
                     }
 
+                    // Immediately suppress lantern light to prevent UI bleed
+                    setLanternMenuActive(true);
+
                     // Pause HD background animation when entering map
                     pauseCurrentAnimatedHDBackground();
+
+                    // Ensure cursor is visible in map
+                    menuRestoreCursorForMenu();
 
                     // Notify TTF that we're entering the map screen
                     notifyTTFMenuStateChanged(true, true);
 
+                    g_menuActive = true;
                     processMapScreen();
+                    g_menuActive = false;
 
                     // Notify TTF that we're exiting the map screen
                     notifyTTFMenuStateChanged(false, false);
 
                     // Resume HD background animation when exiting map
                     resumeCurrentAnimatedHDBackground();
+
+                    // Re-enable lantern lighting after map closes
+                    setLanternMenuActive(false);
 
                     while(key==0x0F || key == 0x1B)
                     {
@@ -413,8 +439,17 @@ void PlayWorld(int allowSystemMenu, int deltaTime)
 
                 if(statusScreenAllowed)
                 {
+                    // Temporarily exit PlayWorld gate so inventory frames render normally
+                    // g_playWorldActive = false;
+
+                    // Immediately suppress lantern light to prevent UI bleed
+                    setLanternMenuActive(true);
+
                     // Pause HD background animation when entering inventory
                     pauseCurrentAnimatedHDBackground();
+
+                    // Ensure cursor is visible in inventory
+                    menuRestoreCursorForMenu();
 
                     // Notify TTF that we're entering the inventory/status screen
                     notifyTTFMenuStateChanged(true, true);
@@ -426,6 +461,15 @@ void PlayWorld(int allowSystemMenu, int deltaTime)
 
                     // Resume HD background animation when exiting inventory
                     resumeCurrentAnimatedHDBackground();
+
+                    // Re-enable lantern lighting after inventory closes
+                    setLanternMenuActive(false);
+
+                    while(key==0x1C || key==0x17 || key==0x1B)
+                    {
+                        process_events();
+                        localKey = key;
+                    }
                 }
             }
         }
@@ -670,6 +714,7 @@ void PlayWorld(int allowSystemMenu, int deltaTime)
     shakingAmplitude = 0;
 
     stopShaking();
+    g_playWorldActive = false;
     //  stopSounds();
 }
 

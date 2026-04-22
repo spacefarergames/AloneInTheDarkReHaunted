@@ -2,13 +2,13 @@
 <Project>
   <ProjectOutputs>
     <ProjectOutput>
-      <FullPath>D:\FITD\build\vs2026\x64\Debug\ZERO_CHECK</FullPath>
+      <FullPath>D:\FITD\build\vs2026-new\x64\Debug\ZERO_CHECK</FullPath>
     </ProjectOutput>
     <ProjectOutput>
-      <FullPath>D:\FITD\build\vs2026\ThirdParty\bgfx.cmake\cmake\bgfx\Debug\shaderc.exe</FullPath>
+      <FullPath>D:\FITD\build\vs2026-new\ThirdParty\bgfx.cmake\cmake\bgfx\Debug\shaderc.exe</FullPath>
     </ProjectOutput>
     <ProjectOutput>
-      <FullPath>D:\FITD\build\vs2026\Fitd\Debug\Tatou.exe</FullPath>
+      <FullPath>D:\FITD\build\vs2026-new\Fitd\Debug\Tatou.exe</FullPath>
     </ProjectOutput>
   </ProjectOutputs>
   <ContentFiles />

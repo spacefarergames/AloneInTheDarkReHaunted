@@ -1,3 +1,4 @@
-﻿  minigzip.c
+﻿  Building Custom Rule D:/FITD/ThirdParty/zlib/CMakeLists.txt
+  minigzip.c
 D:\FITD\ThirdParty\zlib\test\minigzip.c(503,20): warning C4267: 'initializing': conversion from 'size_t' to 'unsigned int', possible loss of data
-  minigzip.vcxproj -> D:\FITD\build\vs2026\zlib\zlib-build\Release\minigzip.exe
+  minigzip.vcxproj -> D:\FITD\build\vs2026-new\zlib\zlib-build\Release\minigzip.exe

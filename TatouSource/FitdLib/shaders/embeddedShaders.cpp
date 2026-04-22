@@ -29,6 +29,10 @@
 #include "shaders/generated/spirv/ssgi_blur_ps.sc.bin.h"
 #include "shaders/generated/spirv/particle_vs.sc.bin.h"
 #include "shaders/generated/spirv/particle_ps.sc.bin.h"
+#include "shaders/generated/spirv/lantern_bloom_vs.sc.bin.h"
+#include "shaders/generated/spirv/lantern_bloom_ps.sc.bin.h"
+#include "shaders/generated/spirv/lantern_shadow_vs.sc.bin.h"
+#include "shaders/generated/spirv/lantern_shadow_ps.sc.bin.h"
 #endif
 
 #if BGFX_PLATFORM_SUPPORTS_METAL
@@ -87,6 +91,10 @@
 #include "shaders/generated/glsl/ssgi_blur_ps.sc.bin.h"
 #include "shaders/generated/glsl/particle_vs.sc.bin.h"
 #include "shaders/generated/glsl/particle_ps.sc.bin.h"
+#include "shaders/generated/glsl/lantern_bloom_vs.sc.bin.h"
+#include "shaders/generated/glsl/lantern_bloom_ps.sc.bin.h"
+#include "shaders/generated/glsl/lantern_shadow_vs.sc.bin.h"
+#include "shaders/generated/glsl/lantern_shadow_ps.sc.bin.h"
 #endif
 
 #if BGFX_PLATFORM_SUPPORTS_DXBC
@@ -117,6 +125,10 @@
 #include "shaders/generated/dx11/ssgi_blur_ps.sc.bin.h"
 #include "shaders/generated/dx11/particle_vs.sc.bin.h"
 #include "shaders/generated/dx11/particle_ps.sc.bin.h"
+#include "shaders/generated/dx11/lantern_bloom_vs.sc.bin.h"
+#include "shaders/generated/dx11/lantern_bloom_ps.sc.bin.h"
+#include "shaders/generated/dx11/lantern_shadow_vs.sc.bin.h"
+#include "shaders/generated/dx11/lantern_shadow_ps.sc.bin.h"
 #endif
 
 static const bgfx::EmbeddedShader s_embeddedShaders[] =
@@ -148,6 +160,10 @@ BGFX_EMBEDDED_SHADER(ssgi_ps),
 BGFX_EMBEDDED_SHADER(ssgi_blur_ps),
 BGFX_EMBEDDED_SHADER(particle_vs),
 BGFX_EMBEDDED_SHADER(particle_ps),
+BGFX_EMBEDDED_SHADER(lantern_bloom_vs),
+BGFX_EMBEDDED_SHADER(lantern_bloom_ps),
+BGFX_EMBEDDED_SHADER(lantern_shadow_vs),
+BGFX_EMBEDDED_SHADER(lantern_shadow_ps),
 
 BGFX_EMBEDDED_SHADER_END()
 };

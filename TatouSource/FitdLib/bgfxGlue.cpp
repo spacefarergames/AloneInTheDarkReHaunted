@@ -12,6 +12,8 @@
 #include <bgfx/platform.h>
 #include <bx/platform.h>
 #include <backends/imgui_impl_sdl3.h>
+#include <vector>
+#include <chrono>
 #include "imguiBGFX.h"
 #include "SDL3/SDL.h"
 #include "fontTTF.h"
@@ -20,8 +22,12 @@
 #include "postProcessing.h"
 #include "lightProbes.h"
 #include "dustParticles.h"
+#include "lanternLighting.h"
+#include "bloodParticles.h"
+#include "inventory.h"
 #include "debugger.h"
 #include "osystem.h"
+#include "menuFade.h"
 
 #if BX_PLATFORM_OSX
 extern "C" {
@@ -90,6 +96,21 @@ extern "C" {
 
 int outputResolution[2] = { -1, -1 };
 
+static uint32_t getMsaaResetFlags()
+{
+    if (!g_remasterConfig.graphics.enableHDBackgrounds)
+        return 0;
+
+    switch (g_remasterConfig.graphics.msaaLevel)
+    {
+    case 2:  return BGFX_RESET_MSAA_X2;
+    case 4:  return BGFX_RESET_MSAA_X4;
+    case 8:  return BGFX_RESET_MSAA_X8;
+    case 16: return BGFX_RESET_MSAA_X16;
+    default: return 0;
+    }
+}
+
 void StartFrame()
 {
     int oldResolution[2];
@@ -103,7 +124,7 @@ void StartFrame()
         // Guard against zero dimensions (e.g. during minimize or window transitions)
         if (outputResolution[0] > 0 && outputResolution[1] > 0)
         {
-            bgfx::reset(outputResolution[0], outputResolution[1], BGFX_RESET_VSYNC);
+            bgfx::reset(outputResolution[0], outputResolution[1], BGFX_RESET_VSYNC | getMsaaResetFlags());
 
             // Resize post-processing framebuffers (always active for scene capture)
             if (g_postProcessing)
@@ -173,19 +194,79 @@ void StartFrame()
         float deltaTime = (float)(currentTime - lastUpdateTime) / (float)SDL_GetPerformanceFrequency();
         lastUpdateTime = currentTime;
 
-        // Enable dust particles only in the attic (ETAGE00)
+        // Enable dust particles in:
+        // - Floor 0 (attic) for atmospheric white dust
+        // - Floor 7 (intro sequence) for car dirt particles
         bool isAttic = (g_currentFloor == 0);
+        bool isIntro = (g_currentFloor == 7);
+        bool isDustEnabled = isAttic || isIntro;
 
         // Debug: print floor change
         static s16 lastFloor = -999;
         if (lastFloor != g_currentFloor)
         {
-            printf("[DUST] Floor changed to %d, dust %s\n", g_currentFloor, isAttic ? "ENABLED" : "disabled");
+            printf("[DUST] Floor changed to %d, dust %s\n", g_currentFloor, isDustEnabled ? "ENABLED" : "disabled");
             lastFloor = g_currentFloor;
         }
 
-        g_dustParticles->setEnabled(isAttic);
+        g_dustParticles->setEnabled(isDustEnabled);
         g_dustParticles->update(deltaTime);
+    }
+
+    // Update lantern lighting - scan all inHandTable slots for a held lantern
+    {
+        extern std::vector<tWorldObject> ListWorldObjets;
+
+        // Check all inventory slots - life_InHand() can target any slot, not just currentInventory
+        bool lanternFound = false;
+        for (int inv = 0; inv < NUM_MAX_INVENTORY; inv++)
+        {
+            s16 heldObjIdx = inHandTable[inv];
+            if (heldObjIdx < 0 || heldObjIdx >= (s16)ListWorldObjets.size())
+                continue;
+
+            tWorldObject& heldObj = ListWorldObjets[heldObjIdx];
+
+            // Debug: print foundBody when held item changes
+            static s16 lastHeldObjIdx[NUM_MAX_INVENTORY] = { -1, -1 };
+            if (heldObjIdx != lastHeldObjIdx[inv])
+            {
+                printf("[LANTERN-DEBUG] Inv[%d] held world obj %d: foundBody=%d\n",
+                    inv, (int)heldObjIdx, (int)heldObj.foundBody);
+                lastHeldObjIdx[inv] = heldObjIdx;
+            }
+
+            const bool isLitLantern   = (heldObj.foundBody == LANTERN_LIT_BODY_NUM);
+            const bool isUnlitLantern = (heldObj.foundBody == LANTERN_BODY_NUM);
+
+            if (isLitLantern || isUnlitLantern)
+            {
+                lanternFound = true;
+                setLanternInHand(heldObjIdx, true);
+                // Only apply glow when the lantern is actually lit (oil + matches)
+                setLanternOil(heldObjIdx, isLitLantern, isLitLantern ? 1.0f : 0.0f);
+            }
+        }
+
+        if (!lanternFound)
+        {
+            // No lantern in any hand slot - clear all held lanterns
+            for (auto& pair : g_lanternStates)
+            {
+                if (pair.second.isInHand)
+                    setLanternInHand(pair.first, false);
+            }
+        }
+
+        updateLanternLighting();
+
+        // Update blood particle effects
+        static auto lastBloodUpdateTime = std::chrono::high_resolution_clock::now();
+        auto currentBloodUpdateTime = std::chrono::high_resolution_clock::now();
+        float bloodDeltaTime = std::chrono::duration<float>(currentBloodUpdateTime - lastBloodUpdateTime).count();
+        lastBloodUpdateTime = currentBloodUpdateTime;
+        if (bloodDeltaTime > 0.1f) bloodDeltaTime = 0.1f;  // Cap to prevent large jumps
+        updateBloodParticles(bloodDeltaTime);
     }
 
     bgfx::setViewRect(0, 0, 0, outputResolution[0], outputResolution[1]);
@@ -204,10 +285,17 @@ void EndFrame()
 #endif
 
     // Render dust particles (attic atmosphere effect)
+    // Use view 1 to match 3D models (gameViewId = 1)
     if (g_dustParticles && g_dustParticles->isEnabled())
     {
-        g_dustParticles->render(0);
+        g_dustParticles->render(1);
     }
+
+    // Render lantern glow overlay when a lit lantern is held
+    renderLanternGlow();
+
+    // Render blood particle effects
+    renderBloodParticles();
 
     // Render vignette overlay (darkened screen edges for cinematic look)
     osystem_drawVignette();
@@ -224,7 +312,9 @@ void EndFrame()
 
     // Composite the offscreen framebuffer to the backbuffer (applies PP effects if enabled,
     // otherwise does a simple pass-through). Always active for scene snapshot capture.
-    if (g_postProcessing)
+    // Skip endScene() when in PlayWorld but no 3D geometry was submitted yet (e.g. first
+    // iteration or camera transitions) to avoid presenting background-only frames.
+    if (g_postProcessing && (!g_playWorldActive || g_menuActive || g_3dFlushedThisFrame))
     {
         g_postProcessing->endScene();
     }
@@ -262,16 +352,21 @@ bgfx::Init initparam;
 void createBgfxInitParams()
 {
 #if BX_PLATFORM_LINUX
-    if (SDL_strcmp(SDL_GetCurrentVideoDriver(), "x11") == 0)
+    const char* sdlVideoDriver = SDL_GetCurrentVideoDriver();
+    if (sdlVideoDriver == NULL) sdlVideoDriver = "(null)";
+    if (SDL_strcmp(sdlVideoDriver, "x11") == 0)
     {
         initparam.platformData.ndt = (void*)SDL_GetPointerProperty(SDL_GetWindowProperties(gWindowBGFX), SDL_PROP_WINDOW_X11_DISPLAY_POINTER, NULL);
         initparam.platformData.nwh = (void*)SDL_GetNumberProperty(SDL_GetWindowProperties(gWindowBGFX), SDL_PROP_WINDOW_X11_WINDOW_NUMBER, 0);
+        initparam.platformData.type = bgfx::NativeWindowHandleType::Default;
     }
-    else if (SDL_strcmp(SDL_GetCurrentVideoDriver(), "wayland") == 0)
+    else if (SDL_strcmp(sdlVideoDriver, "wayland") == 0)
     {
         initparam.platformData.ndt = (void*)SDL_GetPointerProperty(SDL_GetWindowProperties(gWindowBGFX), SDL_PROP_WINDOW_WAYLAND_DISPLAY_POINTER, NULL);
         initparam.platformData.nwh = (void*)SDL_GetPointerProperty(SDL_GetWindowProperties(gWindowBGFX), SDL_PROP_WINDOW_WAYLAND_SURFACE_POINTER, NULL);
+        initparam.platformData.type = bgfx::NativeWindowHandleType::Wayland;
     }
+    printf("[BGFX] Linux SDL video driver='%s' ndt=%p nwh=%p\n", sdlVideoDriver, initparam.platformData.ndt, initparam.platformData.nwh);
 #elif BX_PLATFORM_OSX
     initparam.platformData.ndt = NULL;
     initparam.platformData.nwh = cbSetupMetalLayer((void*)SDL_GetPointerProperty(SDL_GetWindowProperties(gWindowBGFX), SDL_PROP_WINDOW_COCOA_WINDOW_POINTER, NULL));
@@ -330,7 +425,13 @@ int initBgfxGlue(int argc, char* argv[])
         else if (strcmp(backend, "metal") == 0)
             initparam.type = bgfx::RendererType::Metal;
         else
+#if BX_PLATFORM_LINUX
+            initparam.type = bgfx::RendererType::Vulkan; // Linux default (Wayland surface handled via platformData.type)
+#elif BX_PLATFORM_OSX
+            initparam.type = bgfx::RendererType::Metal;
+#else
             initparam.type = bgfx::RendererType::Direct3D11; // default fallback
+#endif
 
         printf(BGFX_TAG "Using %s renderer (from config)\n", backend);
     }
@@ -341,7 +442,7 @@ int initBgfxGlue(int argc, char* argv[])
     SDL_GetWindowSizeInPixels(gWindowBGFX, &windowWidth, &windowHeight);
     initparam.resolution.width = windowWidth;
     initparam.resolution.height = windowHeight;
-    initparam.resolution.reset = BGFX_RESET_VSYNC; // Enable VSync for stability
+    initparam.resolution.reset = BGFX_RESET_VSYNC | getMsaaResetFlags();
 
     // Set buffer sizes for stable rendering
     initparam.limits.transientVbSize = 6 << 20; // 6MB
@@ -417,11 +518,27 @@ int initBgfxGlue(int argc, char* argv[])
 
     printf(BGFX_OK "Dust particle system initialized\n");
 
+    // Initialize lantern oil lighting system
+    initLanternLighting();
+
+    printf(BGFX_OK "Lantern lighting system initialized\n");
+
+    // Initialize blood particle system
+    initBloodParticles();
+
+    printf(BGFX_OK "Blood particle system initialized\n");
+
     return true;
 }
 
 void deleteBgfxGlue()
 {
+    // Shutdown blood particle system
+    shutdownBloodParticles();
+
+    // Shutdown lantern lighting system
+    shutdownLanternLighting();
+
     // Shutdown dust particle system
     if (g_dustParticles)
     {

@@ -22,7 +22,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{C12F3D1F-C565-3BD5-ADB2-AF296168EFEC}</ProjectGuid>
+    <ProjectGuid>{5CD18CC3-5A04-3239-8331-97D530953B15}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <WindowsTargetPlatformVersion>10.0.26100.0</WindowsTargetPlatformVersion>
     <Platform>x64</Platform>
@@ -109,7 +109,7 @@
       <UseUtf8Encoding>Always</UseUtf8Encoding>
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Building Custom Rule D:/FITD/ThirdParty/bgfx.cmake/cmake/bgfx/CMakeLists.txt</Message>
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">setlocal
-"C:\Program Files\CMake\bin\cmake.exe" -SD:/FITD -BD:/FITD/build/vs2026 --check-stamp-file D:/FITD/build/vs2026/ThirdParty/bgfx.cmake/cmake/bgfx/CMakeFiles/generate.stamp
+"C:\Program Files\CMake\bin\cmake.exe" -SD:/FITD -BD:/FITD/build/vs2026-new --check-stamp-file D:/FITD/build/vs2026-new/ThirdParty/bgfx.cmake/cmake/bgfx/CMakeFiles/generate.stamp
 if %errorlevel% neq 0 goto :cmEnd
 :cmEnd
 endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
@@ -118,11 +118,11 @@ exit /b %1
 :cmDone
 if %errorlevel% neq 0 goto :VCEnd</Command>
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">C:\Program Files\CMake\share\cmake-4.2\Modules\CMakeParseArguments.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\3rdparty\dear-imgui.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\3rdparty\fcpp.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\3rdparty\glsl-optimizer.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\3rdparty\glslang.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\3rdparty\meshoptimizer.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\3rdparty\spirv-cross.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\3rdparty\spirv-opt.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\3rdparty\webgpu.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\bgfx.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\examples.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\generated\shader.cpp.in;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\generated\vertexlayout.cpp.in;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\geometryc.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\geometryv.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\shaderc.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\shared.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\texturev.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\util\ConfigureDebugging.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfxToolUtils.cmake;%(AdditionalInputs)</AdditionalInputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">D:\FITD\build\vs2026\ThirdParty\bgfx.cmake\cmake\bgfx\CMakeFiles\generate.stamp</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">D:\FITD\build\vs2026-new\ThirdParty\bgfx.cmake\cmake\bgfx\CMakeFiles\generate.stamp</Outputs>
       <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</LinkObjects>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Building Custom Rule D:/FITD/ThirdParty/bgfx.cmake/cmake/bgfx/CMakeLists.txt</Message>
       <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">setlocal
-"C:\Program Files\CMake\bin\cmake.exe" -SD:/FITD -BD:/FITD/build/vs2026 --check-stamp-file D:/FITD/build/vs2026/ThirdParty/bgfx.cmake/cmake/bgfx/CMakeFiles/generate.stamp
+"C:\Program Files\CMake\bin\cmake.exe" -SD:/FITD -BD:/FITD/build/vs2026-new --check-stamp-file D:/FITD/build/vs2026-new/ThirdParty/bgfx.cmake/cmake/bgfx/CMakeFiles/generate.stamp
 if %errorlevel% neq 0 goto :cmEnd
 :cmEnd
 endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
@@ -131,11 +131,11 @@ exit /b %1
 :cmDone
 if %errorlevel% neq 0 goto :VCEnd</Command>
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">C:\Program Files\CMake\share\cmake-4.2\Modules\CMakeParseArguments.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\3rdparty\dear-imgui.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\3rdparty\fcpp.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\3rdparty\glsl-optimizer.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\3rdparty\glslang.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\3rdparty\meshoptimizer.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\3rdparty\spirv-cross.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\3rdparty\spirv-opt.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\3rdparty\webgpu.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\bgfx.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\examples.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\generated\shader.cpp.in;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\generated\vertexlayout.cpp.in;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\geometryc.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\geometryv.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\shaderc.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\shared.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\texturev.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\util\ConfigureDebugging.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfxToolUtils.cmake;%(AdditionalInputs)</AdditionalInputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">D:\FITD\build\vs2026\ThirdParty\bgfx.cmake\cmake\bgfx\CMakeFiles\generate.stamp</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">D:\FITD\build\vs2026-new\ThirdParty\bgfx.cmake\cmake\bgfx\CMakeFiles\generate.stamp</Outputs>
       <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</LinkObjects>
       <Message Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">Building Custom Rule D:/FITD/ThirdParty/bgfx.cmake/cmake/bgfx/CMakeLists.txt</Message>
       <Command Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">setlocal
-"C:\Program Files\CMake\bin\cmake.exe" -SD:/FITD -BD:/FITD/build/vs2026 --check-stamp-file D:/FITD/build/vs2026/ThirdParty/bgfx.cmake/cmake/bgfx/CMakeFiles/generate.stamp
+"C:\Program Files\CMake\bin\cmake.exe" -SD:/FITD -BD:/FITD/build/vs2026-new --check-stamp-file D:/FITD/build/vs2026-new/ThirdParty/bgfx.cmake/cmake/bgfx/CMakeFiles/generate.stamp
 if %errorlevel% neq 0 goto :cmEnd
 :cmEnd
 endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
@@ -144,11 +144,11 @@ exit /b %1
 :cmDone
 if %errorlevel% neq 0 goto :VCEnd</Command>
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">C:\Program Files\CMake\share\cmake-4.2\Modules\CMakeParseArguments.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\3rdparty\dear-imgui.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\3rdparty\fcpp.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\3rdparty\glsl-optimizer.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\3rdparty\glslang.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\3rdparty\meshoptimizer.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\3rdparty\spirv-cross.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\3rdparty\spirv-opt.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\3rdparty\webgpu.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\bgfx.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\examples.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\generated\shader.cpp.in;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\generated\vertexlayout.cpp.in;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\geometryc.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\geometryv.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\shaderc.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\shared.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\texturev.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\util\ConfigureDebugging.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfxToolUtils.cmake;%(AdditionalInputs)</AdditionalInputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">D:\FITD\build\vs2026\ThirdParty\bgfx.cmake\cmake\bgfx\CMakeFiles\generate.stamp</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">D:\FITD\build\vs2026-new\ThirdParty\bgfx.cmake\cmake\bgfx\CMakeFiles\generate.stamp</Outputs>
       <LinkObjects Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">false</LinkObjects>
       <Message Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">Building Custom Rule D:/FITD/ThirdParty/bgfx.cmake/cmake/bgfx/CMakeLists.txt</Message>
       <Command Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">setlocal
-"C:\Program Files\CMake\bin\cmake.exe" -SD:/FITD -BD:/FITD/build/vs2026 --check-stamp-file D:/FITD/build/vs2026/ThirdParty/bgfx.cmake/cmake/bgfx/CMakeFiles/generate.stamp
+"C:\Program Files\CMake\bin\cmake.exe" -SD:/FITD -BD:/FITD/build/vs2026-new --check-stamp-file D:/FITD/build/vs2026-new/ThirdParty/bgfx.cmake/cmake/bgfx/CMakeFiles/generate.stamp
 if %errorlevel% neq 0 goto :cmEnd
 :cmEnd
 endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
@@ -157,7 +157,7 @@ exit /b %1
 :cmDone
 if %errorlevel% neq 0 goto :VCEnd</Command>
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">C:\Program Files\CMake\share\cmake-4.2\Modules\CMakeParseArguments.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\3rdparty\dear-imgui.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\3rdparty\fcpp.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\3rdparty\glsl-optimizer.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\3rdparty\glslang.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\3rdparty\meshoptimizer.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\3rdparty\spirv-cross.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\3rdparty\spirv-opt.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\3rdparty\webgpu.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\bgfx.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\examples.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\generated\shader.cpp.in;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\generated\vertexlayout.cpp.in;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\geometryc.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\geometryv.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\shaderc.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\shared.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\texturev.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfx\util\ConfigureDebugging.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bgfxToolUtils.cmake;%(AdditionalInputs)</AdditionalInputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">D:\FITD\build\vs2026\ThirdParty\bgfx.cmake\cmake\bgfx\CMakeFiles\generate.stamp</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">D:\FITD\build\vs2026-new\ThirdParty\bgfx.cmake\cmake\bgfx\CMakeFiles\generate.stamp</Outputs>
       <LinkObjects Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">false</LinkObjects>
     </CustomBuild>
   </ItemGroup>
@@ -165,8 +165,8 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
-    <ProjectReference Include="D:\FITD\build\vs2026\ZERO_CHECK.vcxproj">
-      <Project>{A64E50DE-6981-3875-AD91-29157346A96C}</Project>
+    <ProjectReference Include="D:\FITD\build\vs2026-new\ZERO_CHECK.vcxproj">
+      <Project>{F785FCE9-6420-3C90-95E8-4A488BB8EE84}</Project>
       <Name>ZERO_CHECK</Name>
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>

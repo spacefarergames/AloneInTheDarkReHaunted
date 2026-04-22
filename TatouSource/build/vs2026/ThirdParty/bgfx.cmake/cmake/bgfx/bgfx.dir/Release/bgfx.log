@@ -1,0 +1,24 @@
+﻿  Building Custom Rule D:/FITD/ThirdParty/bgfx.cmake/cmake/bgfx/CMakeLists.txt
+  bgfx.cpp
+  debug_renderdoc.cpp
+  dxgi.cpp
+  glcontext_egl.cpp
+  glcontext_html5.cpp
+  glcontext_wgl.cpp
+  nvapi.cpp
+  renderer_agc.cpp
+  renderer_d3d11.cpp
+  renderer_d3d12.cpp
+  renderer_gl.cpp
+  renderer_gnm.cpp
+  renderer_noop.cpp
+  renderer_nvn.cpp
+  renderer_vk.cpp
+  shader.cpp
+  shader_dxbc.cpp
+  shader_spirv.cpp
+  topology.cpp
+  vertexlayout.cpp
+D:\FITD\ThirdParty\bgfx.cmake\bgfx\src\renderer_vk.cpp(4382,47): warning C4244: 'argument': conversion from 'const VkDeviceSize' to 'uint32_t', possible loss of data
+D:\FITD\ThirdParty\bgfx.cmake\bgfx\src\renderer_vk.cpp(4407,23): warning C4244: '=': conversion from 'VkDeviceSize' to 'uint32_t', possible loss of data
+  bgfx.vcxproj -> D:\FITD\build\vs2026-new\ThirdParty\bgfx.cmake\cmake\bgfx\Release\bgfx.lib

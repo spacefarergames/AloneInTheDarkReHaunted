@@ -22,7 +22,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{FA37E5B2-C200-3515-A4DE-B51A9F737B67}</ProjectGuid>
+    <ProjectGuid>{050CC7A1-D02E-32EA-B014-4FB32222D75B}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <WindowsTargetPlatformVersion>10.0.26100.0</WindowsTargetPlatformVersion>
     <Platform>x64</Platform>
@@ -59,19 +59,19 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup>
     <_ProjectFileVersion>10.0.20506.1</_ProjectFileVersion>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">D:\FITD\build\vs2026\ThirdParty\bgfx.cmake\cmake\bx\Debug\</OutDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">D:\FITD\build\vs2026-new\ThirdParty\bgfx.cmake\cmake\bx\Debug\</OutDir>
     <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">bx.dir\Debug\</IntDir>
     <TargetName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">bx</TargetName>
     <TargetExt Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">.lib</TargetExt>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">D:\FITD\build\vs2026\ThirdParty\bgfx.cmake\cmake\bx\Release\</OutDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">D:\FITD\build\vs2026-new\ThirdParty\bgfx.cmake\cmake\bx\Release\</OutDir>
     <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">bx.dir\Release\</IntDir>
     <TargetName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">bx</TargetName>
     <TargetExt Condition="'$(Configuration)|$(Platform)'=='Release|x64'">.lib</TargetExt>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">D:\FITD\build\vs2026\ThirdParty\bgfx.cmake\cmake\bx\MinSizeRel\</OutDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">D:\FITD\build\vs2026-new\ThirdParty\bgfx.cmake\cmake\bx\MinSizeRel\</OutDir>
     <IntDir Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">bx.dir\MinSizeRel\</IntDir>
     <TargetName Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">bx</TargetName>
     <TargetExt Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">.lib</TargetExt>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">D:\FITD\build\vs2026\ThirdParty\bgfx.cmake\cmake\bx\RelWithDebInfo\</OutDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">D:\FITD\build\vs2026-new\ThirdParty\bgfx.cmake\cmake\bx\RelWithDebInfo\</OutDir>
     <IntDir Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">bx.dir\RelWithDebInfo\</IntDir>
     <TargetName Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">bx</TargetName>
     <TargetExt Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">.lib</TargetExt>
@@ -263,7 +263,7 @@
       <UseUtf8Encoding>Always</UseUtf8Encoding>
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Building Custom Rule D:/FITD/ThirdParty/bgfx.cmake/cmake/bx/CMakeLists.txt</Message>
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">setlocal
-"C:\Program Files\CMake\bin\cmake.exe" -SD:/FITD -BD:/FITD/build/vs2026 --check-stamp-file D:/FITD/build/vs2026/ThirdParty/bgfx.cmake/cmake/bx/CMakeFiles/generate.stamp
+"C:\Program Files\CMake\bin\cmake.exe" -SD:/FITD -BD:/FITD/build/vs2026-new --check-stamp-file D:/FITD/build/vs2026-new/ThirdParty/bgfx.cmake/cmake/bx/CMakeFiles/generate.stamp
 if %errorlevel% neq 0 goto :cmEnd
 :cmEnd
 endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
@@ -272,11 +272,11 @@ exit /b %1
 :cmDone
 if %errorlevel% neq 0 goto :VCEnd</Command>
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">C:\Program Files\CMake\share\cmake-4.2\Modules\GNUInstallDirs.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bx\bin2c.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bx\bx.cmake;%(AdditionalInputs)</AdditionalInputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">D:\FITD\build\vs2026\ThirdParty\bgfx.cmake\cmake\bx\CMakeFiles\generate.stamp</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">D:\FITD\build\vs2026-new\ThirdParty\bgfx.cmake\cmake\bx\CMakeFiles\generate.stamp</Outputs>
       <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</LinkObjects>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Building Custom Rule D:/FITD/ThirdParty/bgfx.cmake/cmake/bx/CMakeLists.txt</Message>
       <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">setlocal
-"C:\Program Files\CMake\bin\cmake.exe" -SD:/FITD -BD:/FITD/build/vs2026 --check-stamp-file D:/FITD/build/vs2026/ThirdParty/bgfx.cmake/cmake/bx/CMakeFiles/generate.stamp
+"C:\Program Files\CMake\bin\cmake.exe" -SD:/FITD -BD:/FITD/build/vs2026-new --check-stamp-file D:/FITD/build/vs2026-new/ThirdParty/bgfx.cmake/cmake/bx/CMakeFiles/generate.stamp
 if %errorlevel% neq 0 goto :cmEnd
 :cmEnd
 endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
@@ -285,11 +285,11 @@ exit /b %1
 :cmDone
 if %errorlevel% neq 0 goto :VCEnd</Command>
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">C:\Program Files\CMake\share\cmake-4.2\Modules\GNUInstallDirs.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bx\bin2c.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bx\bx.cmake;%(AdditionalInputs)</AdditionalInputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">D:\FITD\build\vs2026\ThirdParty\bgfx.cmake\cmake\bx\CMakeFiles\generate.stamp</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">D:\FITD\build\vs2026-new\ThirdParty\bgfx.cmake\cmake\bx\CMakeFiles\generate.stamp</Outputs>
       <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</LinkObjects>
       <Message Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">Building Custom Rule D:/FITD/ThirdParty/bgfx.cmake/cmake/bx/CMakeLists.txt</Message>
       <Command Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">setlocal
-"C:\Program Files\CMake\bin\cmake.exe" -SD:/FITD -BD:/FITD/build/vs2026 --check-stamp-file D:/FITD/build/vs2026/ThirdParty/bgfx.cmake/cmake/bx/CMakeFiles/generate.stamp
+"C:\Program Files\CMake\bin\cmake.exe" -SD:/FITD -BD:/FITD/build/vs2026-new --check-stamp-file D:/FITD/build/vs2026-new/ThirdParty/bgfx.cmake/cmake/bx/CMakeFiles/generate.stamp
 if %errorlevel% neq 0 goto :cmEnd
 :cmEnd
 endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
@@ -298,11 +298,11 @@ exit /b %1
 :cmDone
 if %errorlevel% neq 0 goto :VCEnd</Command>
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">C:\Program Files\CMake\share\cmake-4.2\Modules\GNUInstallDirs.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bx\bin2c.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bx\bx.cmake;%(AdditionalInputs)</AdditionalInputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">D:\FITD\build\vs2026\ThirdParty\bgfx.cmake\cmake\bx\CMakeFiles\generate.stamp</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">D:\FITD\build\vs2026-new\ThirdParty\bgfx.cmake\cmake\bx\CMakeFiles\generate.stamp</Outputs>
       <LinkObjects Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">false</LinkObjects>
       <Message Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">Building Custom Rule D:/FITD/ThirdParty/bgfx.cmake/cmake/bx/CMakeLists.txt</Message>
       <Command Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">setlocal
-"C:\Program Files\CMake\bin\cmake.exe" -SD:/FITD -BD:/FITD/build/vs2026 --check-stamp-file D:/FITD/build/vs2026/ThirdParty/bgfx.cmake/cmake/bx/CMakeFiles/generate.stamp
+"C:\Program Files\CMake\bin\cmake.exe" -SD:/FITD -BD:/FITD/build/vs2026-new --check-stamp-file D:/FITD/build/vs2026-new/ThirdParty/bgfx.cmake/cmake/bx/CMakeFiles/generate.stamp
 if %errorlevel% neq 0 goto :cmEnd
 :cmEnd
 endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
@@ -311,7 +311,7 @@ exit /b %1
 :cmDone
 if %errorlevel% neq 0 goto :VCEnd</Command>
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">C:\Program Files\CMake\share\cmake-4.2\Modules\GNUInstallDirs.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bx\bin2c.cmake;D:\FITD\ThirdParty\bgfx.cmake\cmake\bx\bx.cmake;%(AdditionalInputs)</AdditionalInputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">D:\FITD\build\vs2026\ThirdParty\bgfx.cmake\cmake\bx\CMakeFiles\generate.stamp</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">D:\FITD\build\vs2026-new\ThirdParty\bgfx.cmake\cmake\bx\CMakeFiles\generate.stamp</Outputs>
       <LinkObjects Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">false</LinkObjects>
     </CustomBuild>
   </ItemGroup>
@@ -439,8 +439,8 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
-    <ProjectReference Include="D:\FITD\build\vs2026\ZERO_CHECK.vcxproj">
-      <Project>{A64E50DE-6981-3875-AD91-29157346A96C}</Project>
+    <ProjectReference Include="D:\FITD\build\vs2026-new\ZERO_CHECK.vcxproj">
+      <Project>{F785FCE9-6420-3C90-95E8-4A488BB8EE84}</Project>
       <Name>ZERO_CHECK</Name>
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>

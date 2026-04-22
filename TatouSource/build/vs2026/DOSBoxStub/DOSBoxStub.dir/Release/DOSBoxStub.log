@@ -1,1 +1,3 @@
-﻿  DOSBoxStub.vcxproj -> D:\FITD\build\vs2026\DOSBoxStub\Release\DOSBox.exe
+﻿  Building Custom Rule D:/FITD/DOSBoxStub/CMakeLists.txt
+  main.cpp
+  DOSBoxStub.vcxproj -> D:\FITD\build\vs2026-new\DOSBoxStub\Release\DOSBox.exe

@@ -22,7 +22,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{D1F17BAC-CD99-3074-B596-F4514F3F3A9A}</ProjectGuid>
+    <ProjectGuid>{5870E52A-EBB7-3F7F-8B1D-7658FF62BD6E}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <WindowsTargetPlatformVersion>10.0.26100.0</WindowsTargetPlatformVersion>
     <Platform>x64</Platform>
@@ -59,26 +59,26 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup>
     <_ProjectFileVersion>10.0.20506.1</_ProjectFileVersion>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">D:\FITD\build\vs2026\FitdLib\Debug\</OutDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">D:\FITD\build\vs2026-new\FitdLib\Debug\</OutDir>
     <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">FitdLib.dir\Debug\</IntDir>
     <TargetName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">FitdLib</TargetName>
     <TargetExt Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">.lib</TargetExt>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">D:\FITD\build\vs2026\FitdLib\Release\</OutDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">D:\FITD\build\vs2026-new\FitdLib\Release\</OutDir>
     <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">FitdLib.dir\Release\</IntDir>
     <TargetName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">FitdLib</TargetName>
     <TargetExt Condition="'$(Configuration)|$(Platform)'=='Release|x64'">.lib</TargetExt>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">D:\FITD\build\vs2026\FitdLib\MinSizeRel\</OutDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">D:\FITD\build\vs2026-new\FitdLib\MinSizeRel\</OutDir>
     <IntDir Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">FitdLib.dir\MinSizeRel\</IntDir>
     <TargetName Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">FitdLib</TargetName>
     <TargetExt Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">.lib</TargetExt>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">D:\FITD\build\vs2026\FitdLib\RelWithDebInfo\</OutDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">D:\FITD\build\vs2026-new\FitdLib\RelWithDebInfo\</OutDir>
     <IntDir Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">FitdLib.dir\RelWithDebInfo\</IntDir>
     <TargetName Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">FitdLib</TargetName>
     <TargetExt Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">.lib</TargetExt>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
-      <AdditionalIncludeDirectories>D:\FITD\FitdLib\.;D:\FITD\ThirdParty\SDL\include\SDL3;D:\FITD\ThirdParty\SDL\include;D:\FITD\ThirdParty\imgui;D:\FITD\ThirdParty\soloud.cmake\soloud\include;D:\FITD\ThirdParty\bgfx.cmake\bgfx\include;D:\FITD\ThirdParty\bgfx.cmake\bx\include;D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty;D:\FITD\ThirdParty\bgfx.cmake\bimg\include;D:\FITD\ThirdParty\bgfx.cmake\bx\include\compat\msvc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>D:\FITD\FitdLib\.;D:\FITD\ThirdParty\imgui;D:\FITD\ThirdParty\bgfx.cmake\bgfx\include;D:\FITD\ThirdParty\bgfx.cmake\bx\include;D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty;D:\FITD\ThirdParty\bgfx.cmake\bimg\include;D:\FITD\ThirdParty\SDL\include\SDL3;D:\FITD\ThirdParty\SDL\include;D:\FITD\ThirdParty\soloud.cmake\soloud\include;D:\FITD\ThirdParty\bgfx.cmake\bx\include\compat\msvc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalOptions>%(AdditionalOptions) /Zc:__cplusplus</AdditionalOptions>
       <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
@@ -107,10 +107,10 @@
     </ClCompile>
     <ResourceCompile>
       <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_DEBUG;_WINDOWS;BX_CONFIG_DEBUG=0;CMAKE_INTDIR=\"Debug\"</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>D:\FITD\FitdLib\.;D:\FITD\ThirdParty\SDL\include\SDL3;D:\FITD\ThirdParty\SDL\include;D:\FITD\ThirdParty\imgui;D:\FITD\ThirdParty\soloud.cmake\soloud\include;D:\FITD\ThirdParty\bgfx.cmake\bgfx\include;D:\FITD\ThirdParty\bgfx.cmake\bx\include;D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty;D:\FITD\ThirdParty\bgfx.cmake\bimg\include;D:\FITD\ThirdParty\bgfx.cmake\bx\include\compat\msvc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>D:\FITD\FitdLib\.;D:\FITD\ThirdParty\imgui;D:\FITD\ThirdParty\bgfx.cmake\bgfx\include;D:\FITD\ThirdParty\bgfx.cmake\bx\include;D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty;D:\FITD\ThirdParty\bgfx.cmake\bimg\include;D:\FITD\ThirdParty\SDL\include\SDL3;D:\FITD\ThirdParty\SDL\include;D:\FITD\ThirdParty\soloud.cmake\soloud\include;D:\FITD\ThirdParty\bgfx.cmake\bx\include\compat\msvc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Midl>
-      <AdditionalIncludeDirectories>D:\FITD\FitdLib\.;D:\FITD\ThirdParty\SDL\include\SDL3;D:\FITD\ThirdParty\SDL\include;D:\FITD\ThirdParty\imgui;D:\FITD\ThirdParty\soloud.cmake\soloud\include;D:\FITD\ThirdParty\bgfx.cmake\bgfx\include;D:\FITD\ThirdParty\bgfx.cmake\bx\include;D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty;D:\FITD\ThirdParty\bgfx.cmake\bimg\include;D:\FITD\ThirdParty\bgfx.cmake\bx\include\compat\msvc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>D:\FITD\FitdLib\.;D:\FITD\ThirdParty\imgui;D:\FITD\ThirdParty\bgfx.cmake\bgfx\include;D:\FITD\ThirdParty\bgfx.cmake\bx\include;D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty;D:\FITD\ThirdParty\bgfx.cmake\bimg\include;D:\FITD\ThirdParty\SDL\include\SDL3;D:\FITD\ThirdParty\SDL\include;D:\FITD\ThirdParty\soloud.cmake\soloud\include;D:\FITD\ThirdParty\bgfx.cmake\bx\include\compat\msvc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
       <HeaderFileName>%(Filename).h</HeaderFileName>
       <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
@@ -123,7 +123,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
-      <AdditionalIncludeDirectories>D:\FITD\FitdLib\.;D:\FITD\ThirdParty\SDL\include\SDL3;D:\FITD\ThirdParty\SDL\include;D:\FITD\ThirdParty\imgui;D:\FITD\ThirdParty\soloud.cmake\soloud\include;D:\FITD\ThirdParty\bgfx.cmake\bgfx\include;D:\FITD\ThirdParty\bgfx.cmake\bx\include;D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty;D:\FITD\ThirdParty\bgfx.cmake\bimg\include;D:\FITD\ThirdParty\bgfx.cmake\bx\include\compat\msvc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>D:\FITD\FitdLib\.;D:\FITD\ThirdParty\imgui;D:\FITD\ThirdParty\bgfx.cmake\bgfx\include;D:\FITD\ThirdParty\bgfx.cmake\bx\include;D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty;D:\FITD\ThirdParty\bgfx.cmake\bimg\include;D:\FITD\ThirdParty\SDL\include\SDL3;D:\FITD\ThirdParty\SDL\include;D:\FITD\ThirdParty\soloud.cmake\soloud\include;D:\FITD\ThirdParty\bgfx.cmake\bx\include\compat\msvc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalOptions>%(AdditionalOptions) /Zc:__cplusplus</AdditionalOptions>
       <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
       <BasicRuntimeChecks>Default</BasicRuntimeChecks>
@@ -153,10 +153,10 @@
     </ClCompile>
     <ResourceCompile>
       <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;BX_CONFIG_DEBUG=0;NDEBUG;CMAKE_INTDIR=\"Release\"</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>D:\FITD\FitdLib\.;D:\FITD\ThirdParty\SDL\include\SDL3;D:\FITD\ThirdParty\SDL\include;D:\FITD\ThirdParty\imgui;D:\FITD\ThirdParty\soloud.cmake\soloud\include;D:\FITD\ThirdParty\bgfx.cmake\bgfx\include;D:\FITD\ThirdParty\bgfx.cmake\bx\include;D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty;D:\FITD\ThirdParty\bgfx.cmake\bimg\include;D:\FITD\ThirdParty\bgfx.cmake\bx\include\compat\msvc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>D:\FITD\FitdLib\.;D:\FITD\ThirdParty\imgui;D:\FITD\ThirdParty\bgfx.cmake\bgfx\include;D:\FITD\ThirdParty\bgfx.cmake\bx\include;D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty;D:\FITD\ThirdParty\bgfx.cmake\bimg\include;D:\FITD\ThirdParty\SDL\include\SDL3;D:\FITD\ThirdParty\SDL\include;D:\FITD\ThirdParty\soloud.cmake\soloud\include;D:\FITD\ThirdParty\bgfx.cmake\bx\include\compat\msvc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Midl>
-      <AdditionalIncludeDirectories>D:\FITD\FitdLib\.;D:\FITD\ThirdParty\SDL\include\SDL3;D:\FITD\ThirdParty\SDL\include;D:\FITD\ThirdParty\imgui;D:\FITD\ThirdParty\soloud.cmake\soloud\include;D:\FITD\ThirdParty\bgfx.cmake\bgfx\include;D:\FITD\ThirdParty\bgfx.cmake\bx\include;D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty;D:\FITD\ThirdParty\bgfx.cmake\bimg\include;D:\FITD\ThirdParty\bgfx.cmake\bx\include\compat\msvc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>D:\FITD\FitdLib\.;D:\FITD\ThirdParty\imgui;D:\FITD\ThirdParty\bgfx.cmake\bgfx\include;D:\FITD\ThirdParty\bgfx.cmake\bx\include;D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty;D:\FITD\ThirdParty\bgfx.cmake\bimg\include;D:\FITD\ThirdParty\SDL\include\SDL3;D:\FITD\ThirdParty\SDL\include;D:\FITD\ThirdParty\soloud.cmake\soloud\include;D:\FITD\ThirdParty\bgfx.cmake\bx\include\compat\msvc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
       <HeaderFileName>%(Filename).h</HeaderFileName>
       <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
@@ -169,7 +169,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">
     <ClCompile>
-      <AdditionalIncludeDirectories>D:\FITD\FitdLib\.;D:\FITD\ThirdParty\SDL\include\SDL3;D:\FITD\ThirdParty\SDL\include;D:\FITD\ThirdParty\imgui;D:\FITD\ThirdParty\soloud.cmake\soloud\include;D:\FITD\ThirdParty\bgfx.cmake\bgfx\include;D:\FITD\ThirdParty\bgfx.cmake\bx\include;D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty;D:\FITD\ThirdParty\bgfx.cmake\bimg\include;D:\FITD\ThirdParty\bgfx.cmake\bx\include\compat\msvc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>D:\FITD\FitdLib\.;D:\FITD\ThirdParty\imgui;D:\FITD\ThirdParty\bgfx.cmake\bgfx\include;D:\FITD\ThirdParty\bgfx.cmake\bx\include;D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty;D:\FITD\ThirdParty\bgfx.cmake\bimg\include;D:\FITD\ThirdParty\SDL\include\SDL3;D:\FITD\ThirdParty\SDL\include;D:\FITD\ThirdParty\soloud.cmake\soloud\include;D:\FITD\ThirdParty\bgfx.cmake\bx\include\compat\msvc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalOptions>%(AdditionalOptions) /Zc:__cplusplus</AdditionalOptions>
       <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
       <BasicRuntimeChecks>Default</BasicRuntimeChecks>
@@ -199,10 +199,10 @@
     </ClCompile>
     <ResourceCompile>
       <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;BX_CONFIG_DEBUG=0;NDEBUG;CMAKE_INTDIR=\"MinSizeRel\"</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>D:\FITD\FitdLib\.;D:\FITD\ThirdParty\SDL\include\SDL3;D:\FITD\ThirdParty\SDL\include;D:\FITD\ThirdParty\imgui;D:\FITD\ThirdParty\soloud.cmake\soloud\include;D:\FITD\ThirdParty\bgfx.cmake\bgfx\include;D:\FITD\ThirdParty\bgfx.cmake\bx\include;D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty;D:\FITD\ThirdParty\bgfx.cmake\bimg\include;D:\FITD\ThirdParty\bgfx.cmake\bx\include\compat\msvc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>D:\FITD\FitdLib\.;D:\FITD\ThirdParty\imgui;D:\FITD\ThirdParty\bgfx.cmake\bgfx\include;D:\FITD\ThirdParty\bgfx.cmake\bx\include;D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty;D:\FITD\ThirdParty\bgfx.cmake\bimg\include;D:\FITD\ThirdParty\SDL\include\SDL3;D:\FITD\ThirdParty\SDL\include;D:\FITD\ThirdParty\soloud.cmake\soloud\include;D:\FITD\ThirdParty\bgfx.cmake\bx\include\compat\msvc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Midl>
-      <AdditionalIncludeDirectories>D:\FITD\FitdLib\.;D:\FITD\ThirdParty\SDL\include\SDL3;D:\FITD\ThirdParty\SDL\include;D:\FITD\ThirdParty\imgui;D:\FITD\ThirdParty\soloud.cmake\soloud\include;D:\FITD\ThirdParty\bgfx.cmake\bgfx\include;D:\FITD\ThirdParty\bgfx.cmake\bx\include;D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty;D:\FITD\ThirdParty\bgfx.cmake\bimg\include;D:\FITD\ThirdParty\bgfx.cmake\bx\include\compat\msvc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>D:\FITD\FitdLib\.;D:\FITD\ThirdParty\imgui;D:\FITD\ThirdParty\bgfx.cmake\bgfx\include;D:\FITD\ThirdParty\bgfx.cmake\bx\include;D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty;D:\FITD\ThirdParty\bgfx.cmake\bimg\include;D:\FITD\ThirdParty\SDL\include\SDL3;D:\FITD\ThirdParty\SDL\include;D:\FITD\ThirdParty\soloud.cmake\soloud\include;D:\FITD\ThirdParty\bgfx.cmake\bx\include\compat\msvc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
       <HeaderFileName>%(Filename).h</HeaderFileName>
       <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
@@ -215,7 +215,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">
     <ClCompile>
-      <AdditionalIncludeDirectories>D:\FITD\FitdLib\.;D:\FITD\ThirdParty\SDL\include\SDL3;D:\FITD\ThirdParty\SDL\include;D:\FITD\ThirdParty\imgui;D:\FITD\ThirdParty\soloud.cmake\soloud\include;D:\FITD\ThirdParty\bgfx.cmake\bgfx\include;D:\FITD\ThirdParty\bgfx.cmake\bx\include;D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty;D:\FITD\ThirdParty\bgfx.cmake\bimg\include;D:\FITD\ThirdParty\bgfx.cmake\bx\include\compat\msvc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>D:\FITD\FitdLib\.;D:\FITD\ThirdParty\imgui;D:\FITD\ThirdParty\bgfx.cmake\bgfx\include;D:\FITD\ThirdParty\bgfx.cmake\bx\include;D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty;D:\FITD\ThirdParty\bgfx.cmake\bimg\include;D:\FITD\ThirdParty\SDL\include\SDL3;D:\FITD\ThirdParty\SDL\include;D:\FITD\ThirdParty\soloud.cmake\soloud\include;D:\FITD\ThirdParty\bgfx.cmake\bx\include\compat\msvc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalOptions>%(AdditionalOptions) /Zc:__cplusplus</AdditionalOptions>
       <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
       <BasicRuntimeChecks>Default</BasicRuntimeChecks>
@@ -244,10 +244,10 @@
     </ClCompile>
     <ResourceCompile>
       <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;BX_CONFIG_DEBUG=0;NDEBUG;CMAKE_INTDIR=\"RelWithDebInfo\"</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>D:\FITD\FitdLib\.;D:\FITD\ThirdParty\SDL\include\SDL3;D:\FITD\ThirdParty\SDL\include;D:\FITD\ThirdParty\imgui;D:\FITD\ThirdParty\soloud.cmake\soloud\include;D:\FITD\ThirdParty\bgfx.cmake\bgfx\include;D:\FITD\ThirdParty\bgfx.cmake\bx\include;D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty;D:\FITD\ThirdParty\bgfx.cmake\bimg\include;D:\FITD\ThirdParty\bgfx.cmake\bx\include\compat\msvc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>D:\FITD\FitdLib\.;D:\FITD\ThirdParty\imgui;D:\FITD\ThirdParty\bgfx.cmake\bgfx\include;D:\FITD\ThirdParty\bgfx.cmake\bx\include;D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty;D:\FITD\ThirdParty\bgfx.cmake\bimg\include;D:\FITD\ThirdParty\SDL\include\SDL3;D:\FITD\ThirdParty\SDL\include;D:\FITD\ThirdParty\soloud.cmake\soloud\include;D:\FITD\ThirdParty\bgfx.cmake\bx\include\compat\msvc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Midl>
-      <AdditionalIncludeDirectories>D:\FITD\FitdLib\.;D:\FITD\ThirdParty\SDL\include\SDL3;D:\FITD\ThirdParty\SDL\include;D:\FITD\ThirdParty\imgui;D:\FITD\ThirdParty\soloud.cmake\soloud\include;D:\FITD\ThirdParty\bgfx.cmake\bgfx\include;D:\FITD\ThirdParty\bgfx.cmake\bx\include;D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty;D:\FITD\ThirdParty\bgfx.cmake\bimg\include;D:\FITD\ThirdParty\bgfx.cmake\bx\include\compat\msvc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>D:\FITD\FitdLib\.;D:\FITD\ThirdParty\imgui;D:\FITD\ThirdParty\bgfx.cmake\bgfx\include;D:\FITD\ThirdParty\bgfx.cmake\bx\include;D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty;D:\FITD\ThirdParty\bgfx.cmake\bimg\include;D:\FITD\ThirdParty\SDL\include\SDL3;D:\FITD\ThirdParty\SDL\include;D:\FITD\ThirdParty\soloud.cmake\soloud\include;D:\FITD\ThirdParty\bgfx.cmake\bx\include\compat\msvc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
       <HeaderFileName>%(Filename).h</HeaderFileName>
       <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
@@ -1279,6 +1279,518 @@ exit /b %1
 if %errorlevel% neq 0 goto :VCEnd</Command>
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">D:\FITD\FitdLib\shaders\background.varying.def.sc;%(AdditionalInputs)</AdditionalInputs>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">D:\FITD\FitdLib\shaders\generated\glsl\hdBackground_ps.sc.bin.h;D:\FITD\FitdLib\shaders\generated\essl\hdBackground_ps.sc.bin.h;D:\FITD\FitdLib\shaders\generated\spirv\hdBackground_ps.sc.bin.h;D:\FITD\FitdLib\shaders\generated\dx10\hdBackground_ps.sc.bin.h;D:\FITD\FitdLib\shaders\generated\dx11\hdBackground_ps.sc.bin.h</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">false</LinkObjects>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="D:\FITD\FitdLib\shaders\lantern_bloom_ps.sc">
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Generating D:/FITD/FitdLib/shaders/generated/glsl/lantern_bloom_ps.sc.bin.h, D:/FITD/FitdLib/shaders/generated/essl/lantern_bloom_ps.sc.bin.h, D:/FITD/FitdLib/shaders/generated/spirv/lantern_bloom_ps.sc.bin.h, D:/FITD/FitdLib/shaders/generated/dx10/lantern_bloom_ps.sc.bin.h, D:/FITD/FitdLib/shaders/generated/dx11/lantern_bloom_ps.sc.bin.h</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -E make_directory D:/FITD/FitdLib/shaders/generated/glsl
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files\CMake\bin\cmake.exe" -E make_directory D:/FITD/FitdLib/shaders/generated/essl
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files\CMake\bin\cmake.exe" -E make_directory D:/FITD/FitdLib/shaders/generated/spirv
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files\CMake\bin\cmake.exe" -E make_directory D:/FITD/FitdLib/shaders/generated/dx10
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files\CMake\bin\cmake.exe" -E make_directory D:/FITD/FitdLib/shaders/generated/dx11
+if %errorlevel% neq 0 goto :cmEnd
+..\ThirdParty\bgfx.cmake\cmake\bgfx\Debug\shaderc.exe -f D:/FITD/FitdLib/shaders/lantern_bloom_ps.sc -i D:/FITD/ThirdParty/bgfx.cmake/bgfx/src -o D:/FITD/FitdLib/shaders/generated/glsl/lantern_bloom_ps.sc.bin.h --bin2c lantern_bloom_ps_glsl --platform windows --type fragment --varyingdef D:/FITD/FitdLib/shaders/lantern_bloom.varying.def.sc --profile 120 -O 0 --Werror
+if %errorlevel% neq 0 goto :cmEnd
+..\ThirdParty\bgfx.cmake\cmake\bgfx\Debug\shaderc.exe -f D:/FITD/FitdLib/shaders/lantern_bloom_ps.sc -i D:/FITD/ThirdParty/bgfx.cmake/bgfx/src -o D:/FITD/FitdLib/shaders/generated/essl/lantern_bloom_ps.sc.bin.h --bin2c lantern_bloom_ps_essl --platform windows --type fragment --varyingdef D:/FITD/FitdLib/shaders/lantern_bloom.varying.def.sc --profile 300_es -O 0 --Werror
+if %errorlevel% neq 0 goto :cmEnd
+..\ThirdParty\bgfx.cmake\cmake\bgfx\Debug\shaderc.exe -f D:/FITD/FitdLib/shaders/lantern_bloom_ps.sc -i D:/FITD/ThirdParty/bgfx.cmake/bgfx/src -o D:/FITD/FitdLib/shaders/generated/spirv/lantern_bloom_ps.sc.bin.h --bin2c lantern_bloom_ps_spv --platform linux --type fragment --varyingdef D:/FITD/FitdLib/shaders/lantern_bloom.varying.def.sc --profile spirv -O 0 --Werror
+if %errorlevel% neq 0 goto :cmEnd
+..\ThirdParty\bgfx.cmake\cmake\bgfx\Debug\shaderc.exe -f D:/FITD/FitdLib/shaders/lantern_bloom_ps.sc -i D:/FITD/ThirdParty/bgfx.cmake/bgfx/src -o D:/FITD/FitdLib/shaders/generated/dx10/lantern_bloom_ps.sc.bin.h --bin2c lantern_bloom_ps_dx10 --platform windows --type fragment --varyingdef D:/FITD/FitdLib/shaders/lantern_bloom.varying.def.sc --profile s_4_0 -O 0 --Werror
+if %errorlevel% neq 0 goto :cmEnd
+..\ThirdParty\bgfx.cmake\cmake\bgfx\Debug\shaderc.exe -f D:/FITD/FitdLib/shaders/lantern_bloom_ps.sc -i D:/FITD/ThirdParty/bgfx.cmake/bgfx/src -o D:/FITD/FitdLib/shaders/generated/dx11/lantern_bloom_ps.sc.bin.h --bin2c lantern_bloom_ps_dx11 --platform windows --type fragment --varyingdef D:/FITD/FitdLib/shaders/lantern_bloom.varying.def.sc --profile s_5_0 -O 0 --Werror
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">D:\FITD\FitdLib\shaders\lantern_bloom.varying.def.sc;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">D:\FITD\FitdLib\shaders\generated\glsl\lantern_bloom_ps.sc.bin.h;D:\FITD\FitdLib\shaders\generated\essl\lantern_bloom_ps.sc.bin.h;D:\FITD\FitdLib\shaders\generated\spirv\lantern_bloom_ps.sc.bin.h;D:\FITD\FitdLib\shaders\generated\dx10\lantern_bloom_ps.sc.bin.h;D:\FITD\FitdLib\shaders\generated\dx11\lantern_bloom_ps.sc.bin.h</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Generating D:/FITD/FitdLib/shaders/generated/glsl/lantern_bloom_ps.sc.bin.h, D:/FITD/FitdLib/shaders/generated/essl/lantern_bloom_ps.sc.bin.h, D:/FITD/FitdLib/shaders/generated/spirv/lantern_bloom_ps.sc.bin.h, D:/FITD/FitdLib/shaders/generated/dx10/lantern_bloom_ps.sc.bin.h, D:/FITD/FitdLib/shaders/generated/dx11/lantern_bloom_ps.sc.bin.h</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -E make_directory D:/FITD/FitdLib/shaders/generated/glsl
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files\CMake\bin\cmake.exe" -E make_directory D:/FITD/FitdLib/shaders/generated/essl
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files\CMake\bin\cmake.exe" -E make_directory D:/FITD/FitdLib/shaders/generated/spirv
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files\CMake\bin\cmake.exe" -E make_directory D:/FITD/FitdLib/shaders/generated/dx10
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files\CMake\bin\cmake.exe" -E make_directory D:/FITD/FitdLib/shaders/generated/dx11
+if %errorlevel% neq 0 goto :cmEnd
+..\ThirdParty\bgfx.cmake\cmake\bgfx\Release\shaderc.exe -f D:/FITD/FitdLib/shaders/lantern_bloom_ps.sc -i D:/FITD/ThirdParty/bgfx.cmake/bgfx/src -o D:/FITD/FitdLib/shaders/generated/glsl/lantern_bloom_ps.sc.bin.h --bin2c lantern_bloom_ps_glsl --platform windows --type fragment --varyingdef D:/FITD/FitdLib/shaders/lantern_bloom.varying.def.sc --profile 120 -O 3 --Werror
+if %errorlevel% neq 0 goto :cmEnd
+..\ThirdParty\bgfx.cmake\cmake\bgfx\Release\shaderc.exe -f D:/FITD/FitdLib/shaders/lantern_bloom_ps.sc -i D:/FITD/ThirdParty/bgfx.cmake/bgfx/src -o D:/FITD/FitdLib/shaders/generated/essl/lantern_bloom_ps.sc.bin.h --bin2c lantern_bloom_ps_essl --platform windows --type fragment --varyingdef D:/FITD/FitdLib/shaders/lantern_bloom.varying.def.sc --profile 300_es -O 3 --Werror
+if %errorlevel% neq 0 goto :cmEnd
+..\ThirdParty\bgfx.cmake\cmake\bgfx\Release\shaderc.exe -f D:/FITD/FitdLib/shaders/lantern_bloom_ps.sc -i D:/FITD/ThirdParty/bgfx.cmake/bgfx/src -o D:/FITD/FitdLib/shaders/generated/spirv/lantern_bloom_ps.sc.bin.h --bin2c lantern_bloom_ps_spv --platform linux --type fragment --varyingdef D:/FITD/FitdLib/shaders/lantern_bloom.varying.def.sc --profile spirv -O 3 --Werror
+if %errorlevel% neq 0 goto :cmEnd
+..\ThirdParty\bgfx.cmake\cmake\bgfx\Release\shaderc.exe -f D:/FITD/FitdLib/shaders/lantern_bloom_ps.sc -i D:/FITD/ThirdParty/bgfx.cmake/bgfx/src -o D:/FITD/FitdLib/shaders/generated/dx10/lantern_bloom_ps.sc.bin.h --bin2c lantern_bloom_ps_dx10 --platform windows --type fragment --varyingdef D:/FITD/FitdLib/shaders/lantern_bloom.varying.def.sc --profile s_4_0 -O 3 --Werror
+if %errorlevel% neq 0 goto :cmEnd
+..\ThirdParty\bgfx.cmake\cmake\bgfx\Release\shaderc.exe -f D:/FITD/FitdLib/shaders/lantern_bloom_ps.sc -i D:/FITD/ThirdParty/bgfx.cmake/bgfx/src -o D:/FITD/FitdLib/shaders/generated/dx11/lantern_bloom_ps.sc.bin.h --bin2c lantern_bloom_ps_dx11 --platform windows --type fragment --varyingdef D:/FITD/FitdLib/shaders/lantern_bloom.varying.def.sc --profile s_5_0 -O 3 --Werror
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">D:\FITD\FitdLib\shaders\lantern_bloom.varying.def.sc;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">D:\FITD\FitdLib\shaders\generated\glsl\lantern_bloom_ps.sc.bin.h;D:\FITD\FitdLib\shaders\generated\essl\lantern_bloom_ps.sc.bin.h;D:\FITD\FitdLib\shaders\generated\spirv\lantern_bloom_ps.sc.bin.h;D:\FITD\FitdLib\shaders\generated\dx10\lantern_bloom_ps.sc.bin.h;D:\FITD\FitdLib\shaders\generated\dx11\lantern_bloom_ps.sc.bin.h</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">Generating D:/FITD/FitdLib/shaders/generated/glsl/lantern_bloom_ps.sc.bin.h, D:/FITD/FitdLib/shaders/generated/essl/lantern_bloom_ps.sc.bin.h, D:/FITD/FitdLib/shaders/generated/spirv/lantern_bloom_ps.sc.bin.h, D:/FITD/FitdLib/shaders/generated/dx10/lantern_bloom_ps.sc.bin.h, D:/FITD/FitdLib/shaders/generated/dx11/lantern_bloom_ps.sc.bin.h</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -E make_directory D:/FITD/FitdLib/shaders/generated/glsl
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files\CMake\bin\cmake.exe" -E make_directory D:/FITD/FitdLib/shaders/generated/essl
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files\CMake\bin\cmake.exe" -E make_directory D:/FITD/FitdLib/shaders/generated/spirv
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files\CMake\bin\cmake.exe" -E make_directory D:/FITD/FitdLib/shaders/generated/dx10
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files\CMake\bin\cmake.exe" -E make_directory D:/FITD/FitdLib/shaders/generated/dx11
+if %errorlevel% neq 0 goto :cmEnd
+..\ThirdParty\bgfx.cmake\cmake\bgfx\MinSizeRel\shaderc.exe -f D:/FITD/FitdLib/shaders/lantern_bloom_ps.sc -i D:/FITD/ThirdParty/bgfx.cmake/bgfx/src -o D:/FITD/FitdLib/shaders/generated/glsl/lantern_bloom_ps.sc.bin.h --bin2c lantern_bloom_ps_glsl --platform windows --type fragment --varyingdef D:/FITD/FitdLib/shaders/lantern_bloom.varying.def.sc --profile 120 -O 3 --Werror
+if %errorlevel% neq 0 goto :cmEnd
+..\ThirdParty\bgfx.cmake\cmake\bgfx\MinSizeRel\shaderc.exe -f D:/FITD/FitdLib/shaders/lantern_bloom_ps.sc -i D:/FITD/ThirdParty/bgfx.cmake/bgfx/src -o D:/FITD/FitdLib/shaders/generated/essl/lantern_bloom_ps.sc.bin.h --bin2c lantern_bloom_ps_essl --platform windows --type fragment --varyingdef D:/FITD/FitdLib/shaders/lantern_bloom.varying.def.sc --profile 300_es -O 3 --Werror
+if %errorlevel% neq 0 goto :cmEnd
+..\ThirdParty\bgfx.cmake\cmake\bgfx\MinSizeRel\shaderc.exe -f D:/FITD/FitdLib/shaders/lantern_bloom_ps.sc -i D:/FITD/ThirdParty/bgfx.cmake/bgfx/src -o D:/FITD/FitdLib/shaders/generated/spirv/lantern_bloom_ps.sc.bin.h --bin2c lantern_bloom_ps_spv --platform linux --type fragment --varyingdef D:/FITD/FitdLib/shaders/lantern_bloom.varying.def.sc --profile spirv -O 3 --Werror
+if %errorlevel% neq 0 goto :cmEnd
+..\ThirdParty\bgfx.cmake\cmake\bgfx\MinSizeRel\shaderc.exe -f D:/FITD/FitdLib/shaders/lantern_bloom_ps.sc -i D:/FITD/ThirdParty/bgfx.cmake/bgfx/src -o D:/FITD/FitdLib/shaders/generated/dx10/lantern_bloom_ps.sc.bin.h --bin2c lantern_bloom_ps_dx10 --platform windows --type fragment --varyingdef D:/FITD/FitdLib/shaders/lantern_bloom.varying.def.sc --profile s_4_0 -O 3 --Werror
+if %errorlevel% neq 0 goto :cmEnd
+..\ThirdParty\bgfx.cmake\cmake\bgfx\MinSizeRel\shaderc.exe -f D:/FITD/FitdLib/shaders/lantern_bloom_ps.sc -i D:/FITD/ThirdParty/bgfx.cmake/bgfx/src -o D:/FITD/FitdLib/shaders/generated/dx11/lantern_bloom_ps.sc.bin.h --bin2c lantern_bloom_ps_dx11 --platform windows --type fragment --varyingdef D:/FITD/FitdLib/shaders/lantern_bloom.varying.def.sc --profile s_5_0 -O 3 --Werror
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">D:\FITD\FitdLib\shaders\lantern_bloom.varying.def.sc;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">D:\FITD\FitdLib\shaders\generated\glsl\lantern_bloom_ps.sc.bin.h;D:\FITD\FitdLib\shaders\generated\essl\lantern_bloom_ps.sc.bin.h;D:\FITD\FitdLib\shaders\generated\spirv\lantern_bloom_ps.sc.bin.h;D:\FITD\FitdLib\shaders\generated\dx10\lantern_bloom_ps.sc.bin.h;D:\FITD\FitdLib\shaders\generated\dx11\lantern_bloom_ps.sc.bin.h</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">Generating D:/FITD/FitdLib/shaders/generated/glsl/lantern_bloom_ps.sc.bin.h, D:/FITD/FitdLib/shaders/generated/essl/lantern_bloom_ps.sc.bin.h, D:/FITD/FitdLib/shaders/generated/spirv/lantern_bloom_ps.sc.bin.h, D:/FITD/FitdLib/shaders/generated/dx10/lantern_bloom_ps.sc.bin.h, D:/FITD/FitdLib/shaders/generated/dx11/lantern_bloom_ps.sc.bin.h</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -E make_directory D:/FITD/FitdLib/shaders/generated/glsl
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files\CMake\bin\cmake.exe" -E make_directory D:/FITD/FitdLib/shaders/generated/essl
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files\CMake\bin\cmake.exe" -E make_directory D:/FITD/FitdLib/shaders/generated/spirv
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files\CMake\bin\cmake.exe" -E make_directory D:/FITD/FitdLib/shaders/generated/dx10
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files\CMake\bin\cmake.exe" -E make_directory D:/FITD/FitdLib/shaders/generated/dx11
+if %errorlevel% neq 0 goto :cmEnd
+..\ThirdParty\bgfx.cmake\cmake\bgfx\RelWithDebInfo\shaderc.exe -f D:/FITD/FitdLib/shaders/lantern_bloom_ps.sc -i D:/FITD/ThirdParty/bgfx.cmake/bgfx/src -o D:/FITD/FitdLib/shaders/generated/glsl/lantern_bloom_ps.sc.bin.h --bin2c lantern_bloom_ps_glsl --platform windows --type fragment --varyingdef D:/FITD/FitdLib/shaders/lantern_bloom.varying.def.sc --profile 120 -O 3 --Werror
+if %errorlevel% neq 0 goto :cmEnd
+..\ThirdParty\bgfx.cmake\cmake\bgfx\RelWithDebInfo\shaderc.exe -f D:/FITD/FitdLib/shaders/lantern_bloom_ps.sc -i D:/FITD/ThirdParty/bgfx.cmake/bgfx/src -o D:/FITD/FitdLib/shaders/generated/essl/lantern_bloom_ps.sc.bin.h --bin2c lantern_bloom_ps_essl --platform windows --type fragment --varyingdef D:/FITD/FitdLib/shaders/lantern_bloom.varying.def.sc --profile 300_es -O 3 --Werror
+if %errorlevel% neq 0 goto :cmEnd
+..\ThirdParty\bgfx.cmake\cmake\bgfx\RelWithDebInfo\shaderc.exe -f D:/FITD/FitdLib/shaders/lantern_bloom_ps.sc -i D:/FITD/ThirdParty/bgfx.cmake/bgfx/src -o D:/FITD/FitdLib/shaders/generated/spirv/lantern_bloom_ps.sc.bin.h --bin2c lantern_bloom_ps_spv --platform linux --type fragment --varyingdef D:/FITD/FitdLib/shaders/lantern_bloom.varying.def.sc --profile spirv -O 3 --Werror
+if %errorlevel% neq 0 goto :cmEnd
+..\ThirdParty\bgfx.cmake\cmake\bgfx\RelWithDebInfo\shaderc.exe -f D:/FITD/FitdLib/shaders/lantern_bloom_ps.sc -i D:/FITD/ThirdParty/bgfx.cmake/bgfx/src -o D:/FITD/FitdLib/shaders/generated/dx10/lantern_bloom_ps.sc.bin.h --bin2c lantern_bloom_ps_dx10 --platform windows --type fragment --varyingdef D:/FITD/FitdLib/shaders/lantern_bloom.varying.def.sc --profile s_4_0 -O 3 --Werror
+if %errorlevel% neq 0 goto :cmEnd
+..\ThirdParty\bgfx.cmake\cmake\bgfx\RelWithDebInfo\shaderc.exe -f D:/FITD/FitdLib/shaders/lantern_bloom_ps.sc -i D:/FITD/ThirdParty/bgfx.cmake/bgfx/src -o D:/FITD/FitdLib/shaders/generated/dx11/lantern_bloom_ps.sc.bin.h --bin2c lantern_bloom_ps_dx11 --platform windows --type fragment --varyingdef D:/FITD/FitdLib/shaders/lantern_bloom.varying.def.sc --profile s_5_0 -O 3 --Werror
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">D:\FITD\FitdLib\shaders\lantern_bloom.varying.def.sc;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">D:\FITD\FitdLib\shaders\generated\glsl\lantern_bloom_ps.sc.bin.h;D:\FITD\FitdLib\shaders\generated\essl\lantern_bloom_ps.sc.bin.h;D:\FITD\FitdLib\shaders\generated\spirv\lantern_bloom_ps.sc.bin.h;D:\FITD\FitdLib\shaders\generated\dx10\lantern_bloom_ps.sc.bin.h;D:\FITD\FitdLib\shaders\generated\dx11\lantern_bloom_ps.sc.bin.h</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">false</LinkObjects>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="D:\FITD\FitdLib\shaders\lantern_bloom_vs.sc">
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Generating D:/FITD/FitdLib/shaders/generated/glsl/lantern_bloom_vs.sc.bin.h, D:/FITD/FitdLib/shaders/generated/essl/lantern_bloom_vs.sc.bin.h, D:/FITD/FitdLib/shaders/generated/spirv/lantern_bloom_vs.sc.bin.h, D:/FITD/FitdLib/shaders/generated/dx10/lantern_bloom_vs.sc.bin.h, D:/FITD/FitdLib/shaders/generated/dx11/lantern_bloom_vs.sc.bin.h</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -E make_directory D:/FITD/FitdLib/shaders/generated/glsl
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files\CMake\bin\cmake.exe" -E make_directory D:/FITD/FitdLib/shaders/generated/essl
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files\CMake\bin\cmake.exe" -E make_directory D:/FITD/FitdLib/shaders/generated/spirv
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files\CMake\bin\cmake.exe" -E make_directory D:/FITD/FitdLib/shaders/generated/dx10
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files\CMake\bin\cmake.exe" -E make_directory D:/FITD/FitdLib/shaders/generated/dx11
+if %errorlevel% neq 0 goto :cmEnd
+..\ThirdParty\bgfx.cmake\cmake\bgfx\Debug\shaderc.exe -f D:/FITD/FitdLib/shaders/lantern_bloom_vs.sc -i D:/FITD/ThirdParty/bgfx.cmake/bgfx/src -o D:/FITD/FitdLib/shaders/generated/glsl/lantern_bloom_vs.sc.bin.h --bin2c lantern_bloom_vs_glsl --platform windows --type vertex --varyingdef D:/FITD/FitdLib/shaders/lantern_bloom.varying.def.sc --profile 120 -O 0 --Werror
+if %errorlevel% neq 0 goto :cmEnd
+..\ThirdParty\bgfx.cmake\cmake\bgfx\Debug\shaderc.exe -f D:/FITD/FitdLib/shaders/lantern_bloom_vs.sc -i D:/FITD/ThirdParty/bgfx.cmake/bgfx/src -o D:/FITD/FitdLib/shaders/generated/essl/lantern_bloom_vs.sc.bin.h --bin2c lantern_bloom_vs_essl --platform windows --type vertex --varyingdef D:/FITD/FitdLib/shaders/lantern_bloom.varying.def.sc --profile 300_es -O 0 --Werror
+if %errorlevel% neq 0 goto :cmEnd
+..\ThirdParty\bgfx.cmake\cmake\bgfx\Debug\shaderc.exe -f D:/FITD/FitdLib/shaders/lantern_bloom_vs.sc -i D:/FITD/ThirdParty/bgfx.cmake/bgfx/src -o D:/FITD/FitdLib/shaders/generated/spirv/lantern_bloom_vs.sc.bin.h --bin2c lantern_bloom_vs_spv --platform linux --type vertex --varyingdef D:/FITD/FitdLib/shaders/lantern_bloom.varying.def.sc --profile spirv -O 0 --Werror
+if %errorlevel% neq 0 goto :cmEnd
+..\ThirdParty\bgfx.cmake\cmake\bgfx\Debug\shaderc.exe -f D:/FITD/FitdLib/shaders/lantern_bloom_vs.sc -i D:/FITD/ThirdParty/bgfx.cmake/bgfx/src -o D:/FITD/FitdLib/shaders/generated/dx10/lantern_bloom_vs.sc.bin.h --bin2c lantern_bloom_vs_dx10 --platform windows --type vertex --varyingdef D:/FITD/FitdLib/shaders/lantern_bloom.varying.def.sc --profile s_4_0 -O 0 --Werror
+if %errorlevel% neq 0 goto :cmEnd
+..\ThirdParty\bgfx.cmake\cmake\bgfx\Debug\shaderc.exe -f D:/FITD/FitdLib/shaders/lantern_bloom_vs.sc -i D:/FITD/ThirdParty/bgfx.cmake/bgfx/src -o D:/FITD/FitdLib/shaders/generated/dx11/lantern_bloom_vs.sc.bin.h --bin2c lantern_bloom_vs_dx11 --platform windows --type vertex --varyingdef D:/FITD/FitdLib/shaders/lantern_bloom.varying.def.sc --profile s_5_0 -O 0 --Werror
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">D:\FITD\FitdLib\shaders\lantern_bloom.varying.def.sc;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">D:\FITD\FitdLib\shaders\generated\glsl\lantern_bloom_vs.sc.bin.h;D:\FITD\FitdLib\shaders\generated\essl\lantern_bloom_vs.sc.bin.h;D:\FITD\FitdLib\shaders\generated\spirv\lantern_bloom_vs.sc.bin.h;D:\FITD\FitdLib\shaders\generated\dx10\lantern_bloom_vs.sc.bin.h;D:\FITD\FitdLib\shaders\generated\dx11\lantern_bloom_vs.sc.bin.h</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Generating D:/FITD/FitdLib/shaders/generated/glsl/lantern_bloom_vs.sc.bin.h, D:/FITD/FitdLib/shaders/generated/essl/lantern_bloom_vs.sc.bin.h, D:/FITD/FitdLib/shaders/generated/spirv/lantern_bloom_vs.sc.bin.h, D:/FITD/FitdLib/shaders/generated/dx10/lantern_bloom_vs.sc.bin.h, D:/FITD/FitdLib/shaders/generated/dx11/lantern_bloom_vs.sc.bin.h</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -E make_directory D:/FITD/FitdLib/shaders/generated/glsl
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files\CMake\bin\cmake.exe" -E make_directory D:/FITD/FitdLib/shaders/generated/essl
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files\CMake\bin\cmake.exe" -E make_directory D:/FITD/FitdLib/shaders/generated/spirv
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files\CMake\bin\cmake.exe" -E make_directory D:/FITD/FitdLib/shaders/generated/dx10
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files\CMake\bin\cmake.exe" -E make_directory D:/FITD/FitdLib/shaders/generated/dx11
+if %errorlevel% neq 0 goto :cmEnd
+..\ThirdParty\bgfx.cmake\cmake\bgfx\Release\shaderc.exe -f D:/FITD/FitdLib/shaders/lantern_bloom_vs.sc -i D:/FITD/ThirdParty/bgfx.cmake/bgfx/src -o D:/FITD/FitdLib/shaders/generated/glsl/lantern_bloom_vs.sc.bin.h --bin2c lantern_bloom_vs_glsl --platform windows --type vertex --varyingdef D:/FITD/FitdLib/shaders/lantern_bloom.varying.def.sc --profile 120 -O 3 --Werror
+if %errorlevel% neq 0 goto :cmEnd
+..\ThirdParty\bgfx.cmake\cmake\bgfx\Release\shaderc.exe -f D:/FITD/FitdLib/shaders/lantern_bloom_vs.sc -i D:/FITD/ThirdParty/bgfx.cmake/bgfx/src -o D:/FITD/FitdLib/shaders/generated/essl/lantern_bloom_vs.sc.bin.h --bin2c lantern_bloom_vs_essl --platform windows --type vertex --varyingdef D:/FITD/FitdLib/shaders/lantern_bloom.varying.def.sc --profile 300_es -O 3 --Werror
+if %errorlevel% neq 0 goto :cmEnd
+..\ThirdParty\bgfx.cmake\cmake\bgfx\Release\shaderc.exe -f D:/FITD/FitdLib/shaders/lantern_bloom_vs.sc -i D:/FITD/ThirdParty/bgfx.cmake/bgfx/src -o D:/FITD/FitdLib/shaders/generated/spirv/lantern_bloom_vs.sc.bin.h --bin2c lantern_bloom_vs_spv --platform linux --type vertex --varyingdef D:/FITD/FitdLib/shaders/lantern_bloom.varying.def.sc --profile spirv -O 3 --Werror
+if %errorlevel% neq 0 goto :cmEnd
+..\ThirdParty\bgfx.cmake\cmake\bgfx\Release\shaderc.exe -f D:/FITD/FitdLib/shaders/lantern_bloom_vs.sc -i D:/FITD/ThirdParty/bgfx.cmake/bgfx/src -o D:/FITD/FitdLib/shaders/generated/dx10/lantern_bloom_vs.sc.bin.h --bin2c lantern_bloom_vs_dx10 --platform windows --type vertex --varyingdef D:/FITD/FitdLib/shaders/lantern_bloom.varying.def.sc --profile s_4_0 -O 3 --Werror
+if %errorlevel% neq 0 goto :cmEnd
+..\ThirdParty\bgfx.cmake\cmake\bgfx\Release\shaderc.exe -f D:/FITD/FitdLib/shaders/lantern_bloom_vs.sc -i D:/FITD/ThirdParty/bgfx.cmake/bgfx/src -o D:/FITD/FitdLib/shaders/generated/dx11/lantern_bloom_vs.sc.bin.h --bin2c lantern_bloom_vs_dx11 --platform windows --type vertex --varyingdef D:/FITD/FitdLib/shaders/lantern_bloom.varying.def.sc --profile s_5_0 -O 3 --Werror
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">D:\FITD\FitdLib\shaders\lantern_bloom.varying.def.sc;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">D:\FITD\FitdLib\shaders\generated\glsl\lantern_bloom_vs.sc.bin.h;D:\FITD\FitdLib\shaders\generated\essl\lantern_bloom_vs.sc.bin.h;D:\FITD\FitdLib\shaders\generated\spirv\lantern_bloom_vs.sc.bin.h;D:\FITD\FitdLib\shaders\generated\dx10\lantern_bloom_vs.sc.bin.h;D:\FITD\FitdLib\shaders\generated\dx11\lantern_bloom_vs.sc.bin.h</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">Generating D:/FITD/FitdLib/shaders/generated/glsl/lantern_bloom_vs.sc.bin.h, D:/FITD/FitdLib/shaders/generated/essl/lantern_bloom_vs.sc.bin.h, D:/FITD/FitdLib/shaders/generated/spirv/lantern_bloom_vs.sc.bin.h, D:/FITD/FitdLib/shaders/generated/dx10/lantern_bloom_vs.sc.bin.h, D:/FITD/FitdLib/shaders/generated/dx11/lantern_bloom_vs.sc.bin.h</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -E make_directory D:/FITD/FitdLib/shaders/generated/glsl
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files\CMake\bin\cmake.exe" -E make_directory D:/FITD/FitdLib/shaders/generated/essl
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files\CMake\bin\cmake.exe" -E make_directory D:/FITD/FitdLib/shaders/generated/spirv
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files\CMake\bin\cmake.exe" -E make_directory D:/FITD/FitdLib/shaders/generated/dx10
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files\CMake\bin\cmake.exe" -E make_directory D:/FITD/FitdLib/shaders/generated/dx11
+if %errorlevel% neq 0 goto :cmEnd
+..\ThirdParty\bgfx.cmake\cmake\bgfx\MinSizeRel\shaderc.exe -f D:/FITD/FitdLib/shaders/lantern_bloom_vs.sc -i D:/FITD/ThirdParty/bgfx.cmake/bgfx/src -o D:/FITD/FitdLib/shaders/generated/glsl/lantern_bloom_vs.sc.bin.h --bin2c lantern_bloom_vs_glsl --platform windows --type vertex --varyingdef D:/FITD/FitdLib/shaders/lantern_bloom.varying.def.sc --profile 120 -O 3 --Werror
+if %errorlevel% neq 0 goto :cmEnd
+..\ThirdParty\bgfx.cmake\cmake\bgfx\MinSizeRel\shaderc.exe -f D:/FITD/FitdLib/shaders/lantern_bloom_vs.sc -i D:/FITD/ThirdParty/bgfx.cmake/bgfx/src -o D:/FITD/FitdLib/shaders/generated/essl/lantern_bloom_vs.sc.bin.h --bin2c lantern_bloom_vs_essl --platform windows --type vertex --varyingdef D:/FITD/FitdLib/shaders/lantern_bloom.varying.def.sc --profile 300_es -O 3 --Werror
+if %errorlevel% neq 0 goto :cmEnd
+..\ThirdParty\bgfx.cmake\cmake\bgfx\MinSizeRel\shaderc.exe -f D:/FITD/FitdLib/shaders/lantern_bloom_vs.sc -i D:/FITD/ThirdParty/bgfx.cmake/bgfx/src -o D:/FITD/FitdLib/shaders/generated/spirv/lantern_bloom_vs.sc.bin.h --bin2c lantern_bloom_vs_spv --platform linux --type vertex --varyingdef D:/FITD/FitdLib/shaders/lantern_bloom.varying.def.sc --profile spirv -O 3 --Werror
+if %errorlevel% neq 0 goto :cmEnd
+..\ThirdParty\bgfx.cmake\cmake\bgfx\MinSizeRel\shaderc.exe -f D:/FITD/FitdLib/shaders/lantern_bloom_vs.sc -i D:/FITD/ThirdParty/bgfx.cmake/bgfx/src -o D:/FITD/FitdLib/shaders/generated/dx10/lantern_bloom_vs.sc.bin.h --bin2c lantern_bloom_vs_dx10 --platform windows --type vertex --varyingdef D:/FITD/FitdLib/shaders/lantern_bloom.varying.def.sc --profile s_4_0 -O 3 --Werror
+if %errorlevel% neq 0 goto :cmEnd
+..\ThirdParty\bgfx.cmake\cmake\bgfx\MinSizeRel\shaderc.exe -f D:/FITD/FitdLib/shaders/lantern_bloom_vs.sc -i D:/FITD/ThirdParty/bgfx.cmake/bgfx/src -o D:/FITD/FitdLib/shaders/generated/dx11/lantern_bloom_vs.sc.bin.h --bin2c lantern_bloom_vs_dx11 --platform windows --type vertex --varyingdef D:/FITD/FitdLib/shaders/lantern_bloom.varying.def.sc --profile s_5_0 -O 3 --Werror
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">D:\FITD\FitdLib\shaders\lantern_bloom.varying.def.sc;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">D:\FITD\FitdLib\shaders\generated\glsl\lantern_bloom_vs.sc.bin.h;D:\FITD\FitdLib\shaders\generated\essl\lantern_bloom_vs.sc.bin.h;D:\FITD\FitdLib\shaders\generated\spirv\lantern_bloom_vs.sc.bin.h;D:\FITD\FitdLib\shaders\generated\dx10\lantern_bloom_vs.sc.bin.h;D:\FITD\FitdLib\shaders\generated\dx11\lantern_bloom_vs.sc.bin.h</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">Generating D:/FITD/FitdLib/shaders/generated/glsl/lantern_bloom_vs.sc.bin.h, D:/FITD/FitdLib/shaders/generated/essl/lantern_bloom_vs.sc.bin.h, D:/FITD/FitdLib/shaders/generated/spirv/lantern_bloom_vs.sc.bin.h, D:/FITD/FitdLib/shaders/generated/dx10/lantern_bloom_vs.sc.bin.h, D:/FITD/FitdLib/shaders/generated/dx11/lantern_bloom_vs.sc.bin.h</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -E make_directory D:/FITD/FitdLib/shaders/generated/glsl
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files\CMake\bin\cmake.exe" -E make_directory D:/FITD/FitdLib/shaders/generated/essl
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files\CMake\bin\cmake.exe" -E make_directory D:/FITD/FitdLib/shaders/generated/spirv
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files\CMake\bin\cmake.exe" -E make_directory D:/FITD/FitdLib/shaders/generated/dx10
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files\CMake\bin\cmake.exe" -E make_directory D:/FITD/FitdLib/shaders/generated/dx11
+if %errorlevel% neq 0 goto :cmEnd
+..\ThirdParty\bgfx.cmake\cmake\bgfx\RelWithDebInfo\shaderc.exe -f D:/FITD/FitdLib/shaders/lantern_bloom_vs.sc -i D:/FITD/ThirdParty/bgfx.cmake/bgfx/src -o D:/FITD/FitdLib/shaders/generated/glsl/lantern_bloom_vs.sc.bin.h --bin2c lantern_bloom_vs_glsl --platform windows --type vertex --varyingdef D:/FITD/FitdLib/shaders/lantern_bloom.varying.def.sc --profile 120 -O 3 --Werror
+if %errorlevel% neq 0 goto :cmEnd
+..\ThirdParty\bgfx.cmake\cmake\bgfx\RelWithDebInfo\shaderc.exe -f D:/FITD/FitdLib/shaders/lantern_bloom_vs.sc -i D:/FITD/ThirdParty/bgfx.cmake/bgfx/src -o D:/FITD/FitdLib/shaders/generated/essl/lantern_bloom_vs.sc.bin.h --bin2c lantern_bloom_vs_essl --platform windows --type vertex --varyingdef D:/FITD/FitdLib/shaders/lantern_bloom.varying.def.sc --profile 300_es -O 3 --Werror
+if %errorlevel% neq 0 goto :cmEnd
+..\ThirdParty\bgfx.cmake\cmake\bgfx\RelWithDebInfo\shaderc.exe -f D:/FITD/FitdLib/shaders/lantern_bloom_vs.sc -i D:/FITD/ThirdParty/bgfx.cmake/bgfx/src -o D:/FITD/FitdLib/shaders/generated/spirv/lantern_bloom_vs.sc.bin.h --bin2c lantern_bloom_vs_spv --platform linux --type vertex --varyingdef D:/FITD/FitdLib/shaders/lantern_bloom.varying.def.sc --profile spirv -O 3 --Werror
+if %errorlevel% neq 0 goto :cmEnd
+..\ThirdParty\bgfx.cmake\cmake\bgfx\RelWithDebInfo\shaderc.exe -f D:/FITD/FitdLib/shaders/lantern_bloom_vs.sc -i D:/FITD/ThirdParty/bgfx.cmake/bgfx/src -o D:/FITD/FitdLib/shaders/generated/dx10/lantern_bloom_vs.sc.bin.h --bin2c lantern_bloom_vs_dx10 --platform windows --type vertex --varyingdef D:/FITD/FitdLib/shaders/lantern_bloom.varying.def.sc --profile s_4_0 -O 3 --Werror
+if %errorlevel% neq 0 goto :cmEnd
+..\ThirdParty\bgfx.cmake\cmake\bgfx\RelWithDebInfo\shaderc.exe -f D:/FITD/FitdLib/shaders/lantern_bloom_vs.sc -i D:/FITD/ThirdParty/bgfx.cmake/bgfx/src -o D:/FITD/FitdLib/shaders/generated/dx11/lantern_bloom_vs.sc.bin.h --bin2c lantern_bloom_vs_dx11 --platform windows --type vertex --varyingdef D:/FITD/FitdLib/shaders/lantern_bloom.varying.def.sc --profile s_5_0 -O 3 --Werror
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">D:\FITD\FitdLib\shaders\lantern_bloom.varying.def.sc;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">D:\FITD\FitdLib\shaders\generated\glsl\lantern_bloom_vs.sc.bin.h;D:\FITD\FitdLib\shaders\generated\essl\lantern_bloom_vs.sc.bin.h;D:\FITD\FitdLib\shaders\generated\spirv\lantern_bloom_vs.sc.bin.h;D:\FITD\FitdLib\shaders\generated\dx10\lantern_bloom_vs.sc.bin.h;D:\FITD\FitdLib\shaders\generated\dx11\lantern_bloom_vs.sc.bin.h</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">false</LinkObjects>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="D:\FITD\FitdLib\shaders\lantern_shadow_ps.sc">
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Generating D:/FITD/FitdLib/shaders/generated/glsl/lantern_shadow_ps.sc.bin.h, D:/FITD/FitdLib/shaders/generated/essl/lantern_shadow_ps.sc.bin.h, D:/FITD/FitdLib/shaders/generated/spirv/lantern_shadow_ps.sc.bin.h, D:/FITD/FitdLib/shaders/generated/dx10/lantern_shadow_ps.sc.bin.h, D:/FITD/FitdLib/shaders/generated/dx11/lantern_shadow_ps.sc.bin.h</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -E make_directory D:/FITD/FitdLib/shaders/generated/glsl
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files\CMake\bin\cmake.exe" -E make_directory D:/FITD/FitdLib/shaders/generated/essl
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files\CMake\bin\cmake.exe" -E make_directory D:/FITD/FitdLib/shaders/generated/spirv
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files\CMake\bin\cmake.exe" -E make_directory D:/FITD/FitdLib/shaders/generated/dx10
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files\CMake\bin\cmake.exe" -E make_directory D:/FITD/FitdLib/shaders/generated/dx11
+if %errorlevel% neq 0 goto :cmEnd
+..\ThirdParty\bgfx.cmake\cmake\bgfx\Debug\shaderc.exe -f D:/FITD/FitdLib/shaders/lantern_shadow_ps.sc -i D:/FITD/ThirdParty/bgfx.cmake/bgfx/src -o D:/FITD/FitdLib/shaders/generated/glsl/lantern_shadow_ps.sc.bin.h --bin2c lantern_shadow_ps_glsl --platform windows --type fragment --varyingdef D:/FITD/FitdLib/shaders/lantern_shadow.varying.def.sc --profile 120 -O 0 --Werror
+if %errorlevel% neq 0 goto :cmEnd
+..\ThirdParty\bgfx.cmake\cmake\bgfx\Debug\shaderc.exe -f D:/FITD/FitdLib/shaders/lantern_shadow_ps.sc -i D:/FITD/ThirdParty/bgfx.cmake/bgfx/src -o D:/FITD/FitdLib/shaders/generated/essl/lantern_shadow_ps.sc.bin.h --bin2c lantern_shadow_ps_essl --platform windows --type fragment --varyingdef D:/FITD/FitdLib/shaders/lantern_shadow.varying.def.sc --profile 300_es -O 0 --Werror
+if %errorlevel% neq 0 goto :cmEnd
+..\ThirdParty\bgfx.cmake\cmake\bgfx\Debug\shaderc.exe -f D:/FITD/FitdLib/shaders/lantern_shadow_ps.sc -i D:/FITD/ThirdParty/bgfx.cmake/bgfx/src -o D:/FITD/FitdLib/shaders/generated/spirv/lantern_shadow_ps.sc.bin.h --bin2c lantern_shadow_ps_spv --platform linux --type fragment --varyingdef D:/FITD/FitdLib/shaders/lantern_shadow.varying.def.sc --profile spirv -O 0 --Werror
+if %errorlevel% neq 0 goto :cmEnd
+..\ThirdParty\bgfx.cmake\cmake\bgfx\Debug\shaderc.exe -f D:/FITD/FitdLib/shaders/lantern_shadow_ps.sc -i D:/FITD/ThirdParty/bgfx.cmake/bgfx/src -o D:/FITD/FitdLib/shaders/generated/dx10/lantern_shadow_ps.sc.bin.h --bin2c lantern_shadow_ps_dx10 --platform windows --type fragment --varyingdef D:/FITD/FitdLib/shaders/lantern_shadow.varying.def.sc --profile s_4_0 -O 0 --Werror
+if %errorlevel% neq 0 goto :cmEnd
+..\ThirdParty\bgfx.cmake\cmake\bgfx\Debug\shaderc.exe -f D:/FITD/FitdLib/shaders/lantern_shadow_ps.sc -i D:/FITD/ThirdParty/bgfx.cmake/bgfx/src -o D:/FITD/FitdLib/shaders/generated/dx11/lantern_shadow_ps.sc.bin.h --bin2c lantern_shadow_ps_dx11 --platform windows --type fragment --varyingdef D:/FITD/FitdLib/shaders/lantern_shadow.varying.def.sc --profile s_5_0 -O 0 --Werror
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">D:\FITD\FitdLib\shaders\lantern_shadow.varying.def.sc;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">D:\FITD\FitdLib\shaders\generated\glsl\lantern_shadow_ps.sc.bin.h;D:\FITD\FitdLib\shaders\generated\essl\lantern_shadow_ps.sc.bin.h;D:\FITD\FitdLib\shaders\generated\spirv\lantern_shadow_ps.sc.bin.h;D:\FITD\FitdLib\shaders\generated\dx10\lantern_shadow_ps.sc.bin.h;D:\FITD\FitdLib\shaders\generated\dx11\lantern_shadow_ps.sc.bin.h</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Generating D:/FITD/FitdLib/shaders/generated/glsl/lantern_shadow_ps.sc.bin.h, D:/FITD/FitdLib/shaders/generated/essl/lantern_shadow_ps.sc.bin.h, D:/FITD/FitdLib/shaders/generated/spirv/lantern_shadow_ps.sc.bin.h, D:/FITD/FitdLib/shaders/generated/dx10/lantern_shadow_ps.sc.bin.h, D:/FITD/FitdLib/shaders/generated/dx11/lantern_shadow_ps.sc.bin.h</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -E make_directory D:/FITD/FitdLib/shaders/generated/glsl
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files\CMake\bin\cmake.exe" -E make_directory D:/FITD/FitdLib/shaders/generated/essl
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files\CMake\bin\cmake.exe" -E make_directory D:/FITD/FitdLib/shaders/generated/spirv
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files\CMake\bin\cmake.exe" -E make_directory D:/FITD/FitdLib/shaders/generated/dx10
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files\CMake\bin\cmake.exe" -E make_directory D:/FITD/FitdLib/shaders/generated/dx11
+if %errorlevel% neq 0 goto :cmEnd
+..\ThirdParty\bgfx.cmake\cmake\bgfx\Release\shaderc.exe -f D:/FITD/FitdLib/shaders/lantern_shadow_ps.sc -i D:/FITD/ThirdParty/bgfx.cmake/bgfx/src -o D:/FITD/FitdLib/shaders/generated/glsl/lantern_shadow_ps.sc.bin.h --bin2c lantern_shadow_ps_glsl --platform windows --type fragment --varyingdef D:/FITD/FitdLib/shaders/lantern_shadow.varying.def.sc --profile 120 -O 3 --Werror
+if %errorlevel% neq 0 goto :cmEnd
+..\ThirdParty\bgfx.cmake\cmake\bgfx\Release\shaderc.exe -f D:/FITD/FitdLib/shaders/lantern_shadow_ps.sc -i D:/FITD/ThirdParty/bgfx.cmake/bgfx/src -o D:/FITD/FitdLib/shaders/generated/essl/lantern_shadow_ps.sc.bin.h --bin2c lantern_shadow_ps_essl --platform windows --type fragment --varyingdef D:/FITD/FitdLib/shaders/lantern_shadow.varying.def.sc --profile 300_es -O 3 --Werror
+if %errorlevel% neq 0 goto :cmEnd
+..\ThirdParty\bgfx.cmake\cmake\bgfx\Release\shaderc.exe -f D:/FITD/FitdLib/shaders/lantern_shadow_ps.sc -i D:/FITD/ThirdParty/bgfx.cmake/bgfx/src -o D:/FITD/FitdLib/shaders/generated/spirv/lantern_shadow_ps.sc.bin.h --bin2c lantern_shadow_ps_spv --platform linux --type fragment --varyingdef D:/FITD/FitdLib/shaders/lantern_shadow.varying.def.sc --profile spirv -O 3 --Werror
+if %errorlevel% neq 0 goto :cmEnd
+..\ThirdParty\bgfx.cmake\cmake\bgfx\Release\shaderc.exe -f D:/FITD/FitdLib/shaders/lantern_shadow_ps.sc -i D:/FITD/ThirdParty/bgfx.cmake/bgfx/src -o D:/FITD/FitdLib/shaders/generated/dx10/lantern_shadow_ps.sc.bin.h --bin2c lantern_shadow_ps_dx10 --platform windows --type fragment --varyingdef D:/FITD/FitdLib/shaders/lantern_shadow.varying.def.sc --profile s_4_0 -O 3 --Werror
+if %errorlevel% neq 0 goto :cmEnd
+..\ThirdParty\bgfx.cmake\cmake\bgfx\Release\shaderc.exe -f D:/FITD/FitdLib/shaders/lantern_shadow_ps.sc -i D:/FITD/ThirdParty/bgfx.cmake/bgfx/src -o D:/FITD/FitdLib/shaders/generated/dx11/lantern_shadow_ps.sc.bin.h --bin2c lantern_shadow_ps_dx11 --platform windows --type fragment --varyingdef D:/FITD/FitdLib/shaders/lantern_shadow.varying.def.sc --profile s_5_0 -O 3 --Werror
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">D:\FITD\FitdLib\shaders\lantern_shadow.varying.def.sc;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">D:\FITD\FitdLib\shaders\generated\glsl\lantern_shadow_ps.sc.bin.h;D:\FITD\FitdLib\shaders\generated\essl\lantern_shadow_ps.sc.bin.h;D:\FITD\FitdLib\shaders\generated\spirv\lantern_shadow_ps.sc.bin.h;D:\FITD\FitdLib\shaders\generated\dx10\lantern_shadow_ps.sc.bin.h;D:\FITD\FitdLib\shaders\generated\dx11\lantern_shadow_ps.sc.bin.h</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">Generating D:/FITD/FitdLib/shaders/generated/glsl/lantern_shadow_ps.sc.bin.h, D:/FITD/FitdLib/shaders/generated/essl/lantern_shadow_ps.sc.bin.h, D:/FITD/FitdLib/shaders/generated/spirv/lantern_shadow_ps.sc.bin.h, D:/FITD/FitdLib/shaders/generated/dx10/lantern_shadow_ps.sc.bin.h, D:/FITD/FitdLib/shaders/generated/dx11/lantern_shadow_ps.sc.bin.h</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -E make_directory D:/FITD/FitdLib/shaders/generated/glsl
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files\CMake\bin\cmake.exe" -E make_directory D:/FITD/FitdLib/shaders/generated/essl
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files\CMake\bin\cmake.exe" -E make_directory D:/FITD/FitdLib/shaders/generated/spirv
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files\CMake\bin\cmake.exe" -E make_directory D:/FITD/FitdLib/shaders/generated/dx10
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files\CMake\bin\cmake.exe" -E make_directory D:/FITD/FitdLib/shaders/generated/dx11
+if %errorlevel% neq 0 goto :cmEnd
+..\ThirdParty\bgfx.cmake\cmake\bgfx\MinSizeRel\shaderc.exe -f D:/FITD/FitdLib/shaders/lantern_shadow_ps.sc -i D:/FITD/ThirdParty/bgfx.cmake/bgfx/src -o D:/FITD/FitdLib/shaders/generated/glsl/lantern_shadow_ps.sc.bin.h --bin2c lantern_shadow_ps_glsl --platform windows --type fragment --varyingdef D:/FITD/FitdLib/shaders/lantern_shadow.varying.def.sc --profile 120 -O 3 --Werror
+if %errorlevel% neq 0 goto :cmEnd
+..\ThirdParty\bgfx.cmake\cmake\bgfx\MinSizeRel\shaderc.exe -f D:/FITD/FitdLib/shaders/lantern_shadow_ps.sc -i D:/FITD/ThirdParty/bgfx.cmake/bgfx/src -o D:/FITD/FitdLib/shaders/generated/essl/lantern_shadow_ps.sc.bin.h --bin2c lantern_shadow_ps_essl --platform windows --type fragment --varyingdef D:/FITD/FitdLib/shaders/lantern_shadow.varying.def.sc --profile 300_es -O 3 --Werror
+if %errorlevel% neq 0 goto :cmEnd
+..\ThirdParty\bgfx.cmake\cmake\bgfx\MinSizeRel\shaderc.exe -f D:/FITD/FitdLib/shaders/lantern_shadow_ps.sc -i D:/FITD/ThirdParty/bgfx.cmake/bgfx/src -o D:/FITD/FitdLib/shaders/generated/spirv/lantern_shadow_ps.sc.bin.h --bin2c lantern_shadow_ps_spv --platform linux --type fragment --varyingdef D:/FITD/FitdLib/shaders/lantern_shadow.varying.def.sc --profile spirv -O 3 --Werror
+if %errorlevel% neq 0 goto :cmEnd
+..\ThirdParty\bgfx.cmake\cmake\bgfx\MinSizeRel\shaderc.exe -f D:/FITD/FitdLib/shaders/lantern_shadow_ps.sc -i D:/FITD/ThirdParty/bgfx.cmake/bgfx/src -o D:/FITD/FitdLib/shaders/generated/dx10/lantern_shadow_ps.sc.bin.h --bin2c lantern_shadow_ps_dx10 --platform windows --type fragment --varyingdef D:/FITD/FitdLib/shaders/lantern_shadow.varying.def.sc --profile s_4_0 -O 3 --Werror
+if %errorlevel% neq 0 goto :cmEnd
+..\ThirdParty\bgfx.cmake\cmake\bgfx\MinSizeRel\shaderc.exe -f D:/FITD/FitdLib/shaders/lantern_shadow_ps.sc -i D:/FITD/ThirdParty/bgfx.cmake/bgfx/src -o D:/FITD/FitdLib/shaders/generated/dx11/lantern_shadow_ps.sc.bin.h --bin2c lantern_shadow_ps_dx11 --platform windows --type fragment --varyingdef D:/FITD/FitdLib/shaders/lantern_shadow.varying.def.sc --profile s_5_0 -O 3 --Werror
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">D:\FITD\FitdLib\shaders\lantern_shadow.varying.def.sc;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">D:\FITD\FitdLib\shaders\generated\glsl\lantern_shadow_ps.sc.bin.h;D:\FITD\FitdLib\shaders\generated\essl\lantern_shadow_ps.sc.bin.h;D:\FITD\FitdLib\shaders\generated\spirv\lantern_shadow_ps.sc.bin.h;D:\FITD\FitdLib\shaders\generated\dx10\lantern_shadow_ps.sc.bin.h;D:\FITD\FitdLib\shaders\generated\dx11\lantern_shadow_ps.sc.bin.h</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">Generating D:/FITD/FitdLib/shaders/generated/glsl/lantern_shadow_ps.sc.bin.h, D:/FITD/FitdLib/shaders/generated/essl/lantern_shadow_ps.sc.bin.h, D:/FITD/FitdLib/shaders/generated/spirv/lantern_shadow_ps.sc.bin.h, D:/FITD/FitdLib/shaders/generated/dx10/lantern_shadow_ps.sc.bin.h, D:/FITD/FitdLib/shaders/generated/dx11/lantern_shadow_ps.sc.bin.h</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -E make_directory D:/FITD/FitdLib/shaders/generated/glsl
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files\CMake\bin\cmake.exe" -E make_directory D:/FITD/FitdLib/shaders/generated/essl
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files\CMake\bin\cmake.exe" -E make_directory D:/FITD/FitdLib/shaders/generated/spirv
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files\CMake\bin\cmake.exe" -E make_directory D:/FITD/FitdLib/shaders/generated/dx10
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files\CMake\bin\cmake.exe" -E make_directory D:/FITD/FitdLib/shaders/generated/dx11
+if %errorlevel% neq 0 goto :cmEnd
+..\ThirdParty\bgfx.cmake\cmake\bgfx\RelWithDebInfo\shaderc.exe -f D:/FITD/FitdLib/shaders/lantern_shadow_ps.sc -i D:/FITD/ThirdParty/bgfx.cmake/bgfx/src -o D:/FITD/FitdLib/shaders/generated/glsl/lantern_shadow_ps.sc.bin.h --bin2c lantern_shadow_ps_glsl --platform windows --type fragment --varyingdef D:/FITD/FitdLib/shaders/lantern_shadow.varying.def.sc --profile 120 -O 3 --Werror
+if %errorlevel% neq 0 goto :cmEnd
+..\ThirdParty\bgfx.cmake\cmake\bgfx\RelWithDebInfo\shaderc.exe -f D:/FITD/FitdLib/shaders/lantern_shadow_ps.sc -i D:/FITD/ThirdParty/bgfx.cmake/bgfx/src -o D:/FITD/FitdLib/shaders/generated/essl/lantern_shadow_ps.sc.bin.h --bin2c lantern_shadow_ps_essl --platform windows --type fragment --varyingdef D:/FITD/FitdLib/shaders/lantern_shadow.varying.def.sc --profile 300_es -O 3 --Werror
+if %errorlevel% neq 0 goto :cmEnd
+..\ThirdParty\bgfx.cmake\cmake\bgfx\RelWithDebInfo\shaderc.exe -f D:/FITD/FitdLib/shaders/lantern_shadow_ps.sc -i D:/FITD/ThirdParty/bgfx.cmake/bgfx/src -o D:/FITD/FitdLib/shaders/generated/spirv/lantern_shadow_ps.sc.bin.h --bin2c lantern_shadow_ps_spv --platform linux --type fragment --varyingdef D:/FITD/FitdLib/shaders/lantern_shadow.varying.def.sc --profile spirv -O 3 --Werror
+if %errorlevel% neq 0 goto :cmEnd
+..\ThirdParty\bgfx.cmake\cmake\bgfx\RelWithDebInfo\shaderc.exe -f D:/FITD/FitdLib/shaders/lantern_shadow_ps.sc -i D:/FITD/ThirdParty/bgfx.cmake/bgfx/src -o D:/FITD/FitdLib/shaders/generated/dx10/lantern_shadow_ps.sc.bin.h --bin2c lantern_shadow_ps_dx10 --platform windows --type fragment --varyingdef D:/FITD/FitdLib/shaders/lantern_shadow.varying.def.sc --profile s_4_0 -O 3 --Werror
+if %errorlevel% neq 0 goto :cmEnd
+..\ThirdParty\bgfx.cmake\cmake\bgfx\RelWithDebInfo\shaderc.exe -f D:/FITD/FitdLib/shaders/lantern_shadow_ps.sc -i D:/FITD/ThirdParty/bgfx.cmake/bgfx/src -o D:/FITD/FitdLib/shaders/generated/dx11/lantern_shadow_ps.sc.bin.h --bin2c lantern_shadow_ps_dx11 --platform windows --type fragment --varyingdef D:/FITD/FitdLib/shaders/lantern_shadow.varying.def.sc --profile s_5_0 -O 3 --Werror
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">D:\FITD\FitdLib\shaders\lantern_shadow.varying.def.sc;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">D:\FITD\FitdLib\shaders\generated\glsl\lantern_shadow_ps.sc.bin.h;D:\FITD\FitdLib\shaders\generated\essl\lantern_shadow_ps.sc.bin.h;D:\FITD\FitdLib\shaders\generated\spirv\lantern_shadow_ps.sc.bin.h;D:\FITD\FitdLib\shaders\generated\dx10\lantern_shadow_ps.sc.bin.h;D:\FITD\FitdLib\shaders\generated\dx11\lantern_shadow_ps.sc.bin.h</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">false</LinkObjects>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="D:\FITD\FitdLib\shaders\lantern_shadow_vs.sc">
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Generating D:/FITD/FitdLib/shaders/generated/glsl/lantern_shadow_vs.sc.bin.h, D:/FITD/FitdLib/shaders/generated/essl/lantern_shadow_vs.sc.bin.h, D:/FITD/FitdLib/shaders/generated/spirv/lantern_shadow_vs.sc.bin.h, D:/FITD/FitdLib/shaders/generated/dx10/lantern_shadow_vs.sc.bin.h, D:/FITD/FitdLib/shaders/generated/dx11/lantern_shadow_vs.sc.bin.h</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -E make_directory D:/FITD/FitdLib/shaders/generated/glsl
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files\CMake\bin\cmake.exe" -E make_directory D:/FITD/FitdLib/shaders/generated/essl
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files\CMake\bin\cmake.exe" -E make_directory D:/FITD/FitdLib/shaders/generated/spirv
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files\CMake\bin\cmake.exe" -E make_directory D:/FITD/FitdLib/shaders/generated/dx10
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files\CMake\bin\cmake.exe" -E make_directory D:/FITD/FitdLib/shaders/generated/dx11
+if %errorlevel% neq 0 goto :cmEnd
+..\ThirdParty\bgfx.cmake\cmake\bgfx\Debug\shaderc.exe -f D:/FITD/FitdLib/shaders/lantern_shadow_vs.sc -i D:/FITD/ThirdParty/bgfx.cmake/bgfx/src -o D:/FITD/FitdLib/shaders/generated/glsl/lantern_shadow_vs.sc.bin.h --bin2c lantern_shadow_vs_glsl --platform windows --type vertex --varyingdef D:/FITD/FitdLib/shaders/lantern_shadow.varying.def.sc --profile 120 -O 0 --Werror
+if %errorlevel% neq 0 goto :cmEnd
+..\ThirdParty\bgfx.cmake\cmake\bgfx\Debug\shaderc.exe -f D:/FITD/FitdLib/shaders/lantern_shadow_vs.sc -i D:/FITD/ThirdParty/bgfx.cmake/bgfx/src -o D:/FITD/FitdLib/shaders/generated/essl/lantern_shadow_vs.sc.bin.h --bin2c lantern_shadow_vs_essl --platform windows --type vertex --varyingdef D:/FITD/FitdLib/shaders/lantern_shadow.varying.def.sc --profile 300_es -O 0 --Werror
+if %errorlevel% neq 0 goto :cmEnd
+..\ThirdParty\bgfx.cmake\cmake\bgfx\Debug\shaderc.exe -f D:/FITD/FitdLib/shaders/lantern_shadow_vs.sc -i D:/FITD/ThirdParty/bgfx.cmake/bgfx/src -o D:/FITD/FitdLib/shaders/generated/spirv/lantern_shadow_vs.sc.bin.h --bin2c lantern_shadow_vs_spv --platform linux --type vertex --varyingdef D:/FITD/FitdLib/shaders/lantern_shadow.varying.def.sc --profile spirv -O 0 --Werror
+if %errorlevel% neq 0 goto :cmEnd
+..\ThirdParty\bgfx.cmake\cmake\bgfx\Debug\shaderc.exe -f D:/FITD/FitdLib/shaders/lantern_shadow_vs.sc -i D:/FITD/ThirdParty/bgfx.cmake/bgfx/src -o D:/FITD/FitdLib/shaders/generated/dx10/lantern_shadow_vs.sc.bin.h --bin2c lantern_shadow_vs_dx10 --platform windows --type vertex --varyingdef D:/FITD/FitdLib/shaders/lantern_shadow.varying.def.sc --profile s_4_0 -O 0 --Werror
+if %errorlevel% neq 0 goto :cmEnd
+..\ThirdParty\bgfx.cmake\cmake\bgfx\Debug\shaderc.exe -f D:/FITD/FitdLib/shaders/lantern_shadow_vs.sc -i D:/FITD/ThirdParty/bgfx.cmake/bgfx/src -o D:/FITD/FitdLib/shaders/generated/dx11/lantern_shadow_vs.sc.bin.h --bin2c lantern_shadow_vs_dx11 --platform windows --type vertex --varyingdef D:/FITD/FitdLib/shaders/lantern_shadow.varying.def.sc --profile s_5_0 -O 0 --Werror
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">D:\FITD\FitdLib\shaders\lantern_shadow.varying.def.sc;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">D:\FITD\FitdLib\shaders\generated\glsl\lantern_shadow_vs.sc.bin.h;D:\FITD\FitdLib\shaders\generated\essl\lantern_shadow_vs.sc.bin.h;D:\FITD\FitdLib\shaders\generated\spirv\lantern_shadow_vs.sc.bin.h;D:\FITD\FitdLib\shaders\generated\dx10\lantern_shadow_vs.sc.bin.h;D:\FITD\FitdLib\shaders\generated\dx11\lantern_shadow_vs.sc.bin.h</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Generating D:/FITD/FitdLib/shaders/generated/glsl/lantern_shadow_vs.sc.bin.h, D:/FITD/FitdLib/shaders/generated/essl/lantern_shadow_vs.sc.bin.h, D:/FITD/FitdLib/shaders/generated/spirv/lantern_shadow_vs.sc.bin.h, D:/FITD/FitdLib/shaders/generated/dx10/lantern_shadow_vs.sc.bin.h, D:/FITD/FitdLib/shaders/generated/dx11/lantern_shadow_vs.sc.bin.h</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -E make_directory D:/FITD/FitdLib/shaders/generated/glsl
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files\CMake\bin\cmake.exe" -E make_directory D:/FITD/FitdLib/shaders/generated/essl
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files\CMake\bin\cmake.exe" -E make_directory D:/FITD/FitdLib/shaders/generated/spirv
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files\CMake\bin\cmake.exe" -E make_directory D:/FITD/FitdLib/shaders/generated/dx10
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files\CMake\bin\cmake.exe" -E make_directory D:/FITD/FitdLib/shaders/generated/dx11
+if %errorlevel% neq 0 goto :cmEnd
+..\ThirdParty\bgfx.cmake\cmake\bgfx\Release\shaderc.exe -f D:/FITD/FitdLib/shaders/lantern_shadow_vs.sc -i D:/FITD/ThirdParty/bgfx.cmake/bgfx/src -o D:/FITD/FitdLib/shaders/generated/glsl/lantern_shadow_vs.sc.bin.h --bin2c lantern_shadow_vs_glsl --platform windows --type vertex --varyingdef D:/FITD/FitdLib/shaders/lantern_shadow.varying.def.sc --profile 120 -O 3 --Werror
+if %errorlevel% neq 0 goto :cmEnd
+..\ThirdParty\bgfx.cmake\cmake\bgfx\Release\shaderc.exe -f D:/FITD/FitdLib/shaders/lantern_shadow_vs.sc -i D:/FITD/ThirdParty/bgfx.cmake/bgfx/src -o D:/FITD/FitdLib/shaders/generated/essl/lantern_shadow_vs.sc.bin.h --bin2c lantern_shadow_vs_essl --platform windows --type vertex --varyingdef D:/FITD/FitdLib/shaders/lantern_shadow.varying.def.sc --profile 300_es -O 3 --Werror
+if %errorlevel% neq 0 goto :cmEnd
+..\ThirdParty\bgfx.cmake\cmake\bgfx\Release\shaderc.exe -f D:/FITD/FitdLib/shaders/lantern_shadow_vs.sc -i D:/FITD/ThirdParty/bgfx.cmake/bgfx/src -o D:/FITD/FitdLib/shaders/generated/spirv/lantern_shadow_vs.sc.bin.h --bin2c lantern_shadow_vs_spv --platform linux --type vertex --varyingdef D:/FITD/FitdLib/shaders/lantern_shadow.varying.def.sc --profile spirv -O 3 --Werror
+if %errorlevel% neq 0 goto :cmEnd
+..\ThirdParty\bgfx.cmake\cmake\bgfx\Release\shaderc.exe -f D:/FITD/FitdLib/shaders/lantern_shadow_vs.sc -i D:/FITD/ThirdParty/bgfx.cmake/bgfx/src -o D:/FITD/FitdLib/shaders/generated/dx10/lantern_shadow_vs.sc.bin.h --bin2c lantern_shadow_vs_dx10 --platform windows --type vertex --varyingdef D:/FITD/FitdLib/shaders/lantern_shadow.varying.def.sc --profile s_4_0 -O 3 --Werror
+if %errorlevel% neq 0 goto :cmEnd
+..\ThirdParty\bgfx.cmake\cmake\bgfx\Release\shaderc.exe -f D:/FITD/FitdLib/shaders/lantern_shadow_vs.sc -i D:/FITD/ThirdParty/bgfx.cmake/bgfx/src -o D:/FITD/FitdLib/shaders/generated/dx11/lantern_shadow_vs.sc.bin.h --bin2c lantern_shadow_vs_dx11 --platform windows --type vertex --varyingdef D:/FITD/FitdLib/shaders/lantern_shadow.varying.def.sc --profile s_5_0 -O 3 --Werror
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">D:\FITD\FitdLib\shaders\lantern_shadow.varying.def.sc;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">D:\FITD\FitdLib\shaders\generated\glsl\lantern_shadow_vs.sc.bin.h;D:\FITD\FitdLib\shaders\generated\essl\lantern_shadow_vs.sc.bin.h;D:\FITD\FitdLib\shaders\generated\spirv\lantern_shadow_vs.sc.bin.h;D:\FITD\FitdLib\shaders\generated\dx10\lantern_shadow_vs.sc.bin.h;D:\FITD\FitdLib\shaders\generated\dx11\lantern_shadow_vs.sc.bin.h</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">Generating D:/FITD/FitdLib/shaders/generated/glsl/lantern_shadow_vs.sc.bin.h, D:/FITD/FitdLib/shaders/generated/essl/lantern_shadow_vs.sc.bin.h, D:/FITD/FitdLib/shaders/generated/spirv/lantern_shadow_vs.sc.bin.h, D:/FITD/FitdLib/shaders/generated/dx10/lantern_shadow_vs.sc.bin.h, D:/FITD/FitdLib/shaders/generated/dx11/lantern_shadow_vs.sc.bin.h</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -E make_directory D:/FITD/FitdLib/shaders/generated/glsl
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files\CMake\bin\cmake.exe" -E make_directory D:/FITD/FitdLib/shaders/generated/essl
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files\CMake\bin\cmake.exe" -E make_directory D:/FITD/FitdLib/shaders/generated/spirv
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files\CMake\bin\cmake.exe" -E make_directory D:/FITD/FitdLib/shaders/generated/dx10
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files\CMake\bin\cmake.exe" -E make_directory D:/FITD/FitdLib/shaders/generated/dx11
+if %errorlevel% neq 0 goto :cmEnd
+..\ThirdParty\bgfx.cmake\cmake\bgfx\MinSizeRel\shaderc.exe -f D:/FITD/FitdLib/shaders/lantern_shadow_vs.sc -i D:/FITD/ThirdParty/bgfx.cmake/bgfx/src -o D:/FITD/FitdLib/shaders/generated/glsl/lantern_shadow_vs.sc.bin.h --bin2c lantern_shadow_vs_glsl --platform windows --type vertex --varyingdef D:/FITD/FitdLib/shaders/lantern_shadow.varying.def.sc --profile 120 -O 3 --Werror
+if %errorlevel% neq 0 goto :cmEnd
+..\ThirdParty\bgfx.cmake\cmake\bgfx\MinSizeRel\shaderc.exe -f D:/FITD/FitdLib/shaders/lantern_shadow_vs.sc -i D:/FITD/ThirdParty/bgfx.cmake/bgfx/src -o D:/FITD/FitdLib/shaders/generated/essl/lantern_shadow_vs.sc.bin.h --bin2c lantern_shadow_vs_essl --platform windows --type vertex --varyingdef D:/FITD/FitdLib/shaders/lantern_shadow.varying.def.sc --profile 300_es -O 3 --Werror
+if %errorlevel% neq 0 goto :cmEnd
+..\ThirdParty\bgfx.cmake\cmake\bgfx\MinSizeRel\shaderc.exe -f D:/FITD/FitdLib/shaders/lantern_shadow_vs.sc -i D:/FITD/ThirdParty/bgfx.cmake/bgfx/src -o D:/FITD/FitdLib/shaders/generated/spirv/lantern_shadow_vs.sc.bin.h --bin2c lantern_shadow_vs_spv --platform linux --type vertex --varyingdef D:/FITD/FitdLib/shaders/lantern_shadow.varying.def.sc --profile spirv -O 3 --Werror
+if %errorlevel% neq 0 goto :cmEnd
+..\ThirdParty\bgfx.cmake\cmake\bgfx\MinSizeRel\shaderc.exe -f D:/FITD/FitdLib/shaders/lantern_shadow_vs.sc -i D:/FITD/ThirdParty/bgfx.cmake/bgfx/src -o D:/FITD/FitdLib/shaders/generated/dx10/lantern_shadow_vs.sc.bin.h --bin2c lantern_shadow_vs_dx10 --platform windows --type vertex --varyingdef D:/FITD/FitdLib/shaders/lantern_shadow.varying.def.sc --profile s_4_0 -O 3 --Werror
+if %errorlevel% neq 0 goto :cmEnd
+..\ThirdParty\bgfx.cmake\cmake\bgfx\MinSizeRel\shaderc.exe -f D:/FITD/FitdLib/shaders/lantern_shadow_vs.sc -i D:/FITD/ThirdParty/bgfx.cmake/bgfx/src -o D:/FITD/FitdLib/shaders/generated/dx11/lantern_shadow_vs.sc.bin.h --bin2c lantern_shadow_vs_dx11 --platform windows --type vertex --varyingdef D:/FITD/FitdLib/shaders/lantern_shadow.varying.def.sc --profile s_5_0 -O 3 --Werror
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">D:\FITD\FitdLib\shaders\lantern_shadow.varying.def.sc;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">D:\FITD\FitdLib\shaders\generated\glsl\lantern_shadow_vs.sc.bin.h;D:\FITD\FitdLib\shaders\generated\essl\lantern_shadow_vs.sc.bin.h;D:\FITD\FitdLib\shaders\generated\spirv\lantern_shadow_vs.sc.bin.h;D:\FITD\FitdLib\shaders\generated\dx10\lantern_shadow_vs.sc.bin.h;D:\FITD\FitdLib\shaders\generated\dx11\lantern_shadow_vs.sc.bin.h</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">Generating D:/FITD/FitdLib/shaders/generated/glsl/lantern_shadow_vs.sc.bin.h, D:/FITD/FitdLib/shaders/generated/essl/lantern_shadow_vs.sc.bin.h, D:/FITD/FitdLib/shaders/generated/spirv/lantern_shadow_vs.sc.bin.h, D:/FITD/FitdLib/shaders/generated/dx10/lantern_shadow_vs.sc.bin.h, D:/FITD/FitdLib/shaders/generated/dx11/lantern_shadow_vs.sc.bin.h</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -E make_directory D:/FITD/FitdLib/shaders/generated/glsl
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files\CMake\bin\cmake.exe" -E make_directory D:/FITD/FitdLib/shaders/generated/essl
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files\CMake\bin\cmake.exe" -E make_directory D:/FITD/FitdLib/shaders/generated/spirv
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files\CMake\bin\cmake.exe" -E make_directory D:/FITD/FitdLib/shaders/generated/dx10
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files\CMake\bin\cmake.exe" -E make_directory D:/FITD/FitdLib/shaders/generated/dx11
+if %errorlevel% neq 0 goto :cmEnd
+..\ThirdParty\bgfx.cmake\cmake\bgfx\RelWithDebInfo\shaderc.exe -f D:/FITD/FitdLib/shaders/lantern_shadow_vs.sc -i D:/FITD/ThirdParty/bgfx.cmake/bgfx/src -o D:/FITD/FitdLib/shaders/generated/glsl/lantern_shadow_vs.sc.bin.h --bin2c lantern_shadow_vs_glsl --platform windows --type vertex --varyingdef D:/FITD/FitdLib/shaders/lantern_shadow.varying.def.sc --profile 120 -O 3 --Werror
+if %errorlevel% neq 0 goto :cmEnd
+..\ThirdParty\bgfx.cmake\cmake\bgfx\RelWithDebInfo\shaderc.exe -f D:/FITD/FitdLib/shaders/lantern_shadow_vs.sc -i D:/FITD/ThirdParty/bgfx.cmake/bgfx/src -o D:/FITD/FitdLib/shaders/generated/essl/lantern_shadow_vs.sc.bin.h --bin2c lantern_shadow_vs_essl --platform windows --type vertex --varyingdef D:/FITD/FitdLib/shaders/lantern_shadow.varying.def.sc --profile 300_es -O 3 --Werror
+if %errorlevel% neq 0 goto :cmEnd
+..\ThirdParty\bgfx.cmake\cmake\bgfx\RelWithDebInfo\shaderc.exe -f D:/FITD/FitdLib/shaders/lantern_shadow_vs.sc -i D:/FITD/ThirdParty/bgfx.cmake/bgfx/src -o D:/FITD/FitdLib/shaders/generated/spirv/lantern_shadow_vs.sc.bin.h --bin2c lantern_shadow_vs_spv --platform linux --type vertex --varyingdef D:/FITD/FitdLib/shaders/lantern_shadow.varying.def.sc --profile spirv -O 3 --Werror
+if %errorlevel% neq 0 goto :cmEnd
+..\ThirdParty\bgfx.cmake\cmake\bgfx\RelWithDebInfo\shaderc.exe -f D:/FITD/FitdLib/shaders/lantern_shadow_vs.sc -i D:/FITD/ThirdParty/bgfx.cmake/bgfx/src -o D:/FITD/FitdLib/shaders/generated/dx10/lantern_shadow_vs.sc.bin.h --bin2c lantern_shadow_vs_dx10 --platform windows --type vertex --varyingdef D:/FITD/FitdLib/shaders/lantern_shadow.varying.def.sc --profile s_4_0 -O 3 --Werror
+if %errorlevel% neq 0 goto :cmEnd
+..\ThirdParty\bgfx.cmake\cmake\bgfx\RelWithDebInfo\shaderc.exe -f D:/FITD/FitdLib/shaders/lantern_shadow_vs.sc -i D:/FITD/ThirdParty/bgfx.cmake/bgfx/src -o D:/FITD/FitdLib/shaders/generated/dx11/lantern_shadow_vs.sc.bin.h --bin2c lantern_shadow_vs_dx11 --platform windows --type vertex --varyingdef D:/FITD/FitdLib/shaders/lantern_shadow.varying.def.sc --profile s_5_0 -O 3 --Werror
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">D:\FITD\FitdLib\shaders\lantern_shadow.varying.def.sc;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">D:\FITD\FitdLib\shaders\generated\glsl\lantern_shadow_vs.sc.bin.h;D:\FITD\FitdLib\shaders\generated\essl\lantern_shadow_vs.sc.bin.h;D:\FITD\FitdLib\shaders\generated\spirv\lantern_shadow_vs.sc.bin.h;D:\FITD\FitdLib\shaders\generated\dx10\lantern_shadow_vs.sc.bin.h;D:\FITD\FitdLib\shaders\generated\dx11\lantern_shadow_vs.sc.bin.h</Outputs>
       <LinkObjects Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">false</LinkObjects>
     </CustomBuild>
   </ItemGroup>
@@ -3719,7 +4231,7 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
       <UseUtf8Encoding>Always</UseUtf8Encoding>
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Building Custom Rule D:/FITD/FitdLib/CMakeLists.txt</Message>
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">setlocal
-"C:\Program Files\CMake\bin\cmake.exe" -SD:/FITD -BD:/FITD/build/vs2026 --check-stamp-file D:/FITD/build/vs2026/FitdLib/CMakeFiles/generate.stamp
+"C:\Program Files\CMake\bin\cmake.exe" -SD:/FITD -BD:/FITD/build/vs2026-new --check-stamp-file D:/FITD/build/vs2026-new/FitdLib/CMakeFiles/generate.stamp
 if %errorlevel% neq 0 goto :cmEnd
 :cmEnd
 endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
@@ -3728,11 +4240,11 @@ exit /b %1
 :cmDone
 if %errorlevel% neq 0 goto :VCEnd</Command>
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(AdditionalInputs)</AdditionalInputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">D:\FITD\build\vs2026\FitdLib\CMakeFiles\generate.stamp</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">D:\FITD\build\vs2026-new\FitdLib\CMakeFiles\generate.stamp</Outputs>
       <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</LinkObjects>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Building Custom Rule D:/FITD/FitdLib/CMakeLists.txt</Message>
       <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">setlocal
-"C:\Program Files\CMake\bin\cmake.exe" -SD:/FITD -BD:/FITD/build/vs2026 --check-stamp-file D:/FITD/build/vs2026/FitdLib/CMakeFiles/generate.stamp
+"C:\Program Files\CMake\bin\cmake.exe" -SD:/FITD -BD:/FITD/build/vs2026-new --check-stamp-file D:/FITD/build/vs2026-new/FitdLib/CMakeFiles/generate.stamp
 if %errorlevel% neq 0 goto :cmEnd
 :cmEnd
 endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
@@ -3741,11 +4253,11 @@ exit /b %1
 :cmDone
 if %errorlevel% neq 0 goto :VCEnd</Command>
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(AdditionalInputs)</AdditionalInputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">D:\FITD\build\vs2026\FitdLib\CMakeFiles\generate.stamp</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">D:\FITD\build\vs2026-new\FitdLib\CMakeFiles\generate.stamp</Outputs>
       <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</LinkObjects>
       <Message Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">Building Custom Rule D:/FITD/FitdLib/CMakeLists.txt</Message>
       <Command Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">setlocal
-"C:\Program Files\CMake\bin\cmake.exe" -SD:/FITD -BD:/FITD/build/vs2026 --check-stamp-file D:/FITD/build/vs2026/FitdLib/CMakeFiles/generate.stamp
+"C:\Program Files\CMake\bin\cmake.exe" -SD:/FITD -BD:/FITD/build/vs2026-new --check-stamp-file D:/FITD/build/vs2026-new/FitdLib/CMakeFiles/generate.stamp
 if %errorlevel% neq 0 goto :cmEnd
 :cmEnd
 endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
@@ -3754,11 +4266,11 @@ exit /b %1
 :cmDone
 if %errorlevel% neq 0 goto :VCEnd</Command>
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">%(AdditionalInputs)</AdditionalInputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">D:\FITD\build\vs2026\FitdLib\CMakeFiles\generate.stamp</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">D:\FITD\build\vs2026-new\FitdLib\CMakeFiles\generate.stamp</Outputs>
       <LinkObjects Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">false</LinkObjects>
       <Message Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">Building Custom Rule D:/FITD/FitdLib/CMakeLists.txt</Message>
       <Command Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">setlocal
-"C:\Program Files\CMake\bin\cmake.exe" -SD:/FITD -BD:/FITD/build/vs2026 --check-stamp-file D:/FITD/build/vs2026/FitdLib/CMakeFiles/generate.stamp
+"C:\Program Files\CMake\bin\cmake.exe" -SD:/FITD -BD:/FITD/build/vs2026-new --check-stamp-file D:/FITD/build/vs2026-new/FitdLib/CMakeFiles/generate.stamp
 if %errorlevel% neq 0 goto :cmEnd
 :cmEnd
 endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
@@ -3767,7 +4279,7 @@ exit /b %1
 :cmDone
 if %errorlevel% neq 0 goto :VCEnd</Command>
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">%(AdditionalInputs)</AdditionalInputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">D:\FITD\build\vs2026\FitdLib\CMakeFiles\generate.stamp</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">D:\FITD\build\vs2026-new\FitdLib\CMakeFiles\generate.stamp</Outputs>
       <LinkObjects Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">false</LinkObjects>
     </CustomBuild>
   </ItemGroup>
@@ -3801,8 +4313,14 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
     <ClCompile Include="D:\FITD\FitdLib\asyncLoader.cpp" />
     <ClInclude Include="D:\FITD\FitdLib\asyncLoader.h" />
     <ClInclude Include="D:\FITD\FitdLib\baseTypes.h" />
+    <ClCompile Include="D:\FITD\FitdLib\bgAnimGrassMask.cpp" />
+    <ClInclude Include="D:\FITD\FitdLib\bgAnimGrassMask.h" />
     <ClCompile Include="D:\FITD\FitdLib\bgfxGlue.cpp" />
     <ClInclude Include="D:\FITD\FitdLib\bgfxGlue.h" />
+    <ClCompile Include="D:\FITD\FitdLib\bloodParticles.cpp" />
+    <ClInclude Include="D:\FITD\FitdLib\bloodParticles.h" />
+    <ClCompile Include="D:\FITD\FitdLib\bytecodePatches.cpp" />
+    <ClInclude Include="D:\FITD\FitdLib\bytecodePatches.h" />
     <ClInclude Include="D:\FITD\FitdLib\common.h" />
     <ClInclude Include="D:\FITD\FitdLib\config.h" />
     <ClCompile Include="D:\FITD\FitdLib\configRemaster.cpp" />
@@ -3874,6 +4392,8 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
     <ClInclude Include="D:\FITD\FitdLib\font.h" />
     <ClCompile Include="D:\FITD\FitdLib\fontTTF.cpp" />
     <ClInclude Include="D:\FITD\FitdLib\fontTTF.h" />
+    <ClCompile Include="D:\FITD\FitdLib\gameDataCopy.cpp" />
+    <ClInclude Include="D:\FITD\FitdLib\gameDataCopy.h" />
     <ClCompile Include="D:\FITD\FitdLib\gameTime.cpp" />
     <ClInclude Include="D:\FITD\FitdLib\gameTime.h" />
     <ClCompile Include="D:\FITD\FitdLib\hdArchive.cpp" />
@@ -3895,6 +4415,8 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
     <ClCompile Include="D:\FITD\FitdLib\jobSystem.cpp" />
     <ClInclude Include="D:\FITD\FitdLib\jobSystem.h" />
     <ClInclude Include="D:\FITD\FitdLib\jobSystemInit.h" />
+    <ClCompile Include="D:\FITD\FitdLib\lanternLighting.cpp" />
+    <ClInclude Include="D:\FITD\FitdLib\lanternLighting.h" />
     <ClCompile Include="D:\FITD\FitdLib\life.cpp" />
     <ClInclude Include="D:\FITD\FitdLib\life.h" />
     <ClCompile Include="D:\FITD\FitdLib\lifeMacroTable.cpp" />
@@ -3906,11 +4428,20 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
     <ClCompile Include="D:\FITD\FitdLib\mainLoop.cpp" />
     <ClInclude Include="D:\FITD\FitdLib\mainLoop.h" />
     <ClInclude Include="D:\FITD\FitdLib\memoryManager.h" />
+    <ClCompile Include="D:\FITD\FitdLib\menuFade.cpp" />
+    <ClInclude Include="D:\FITD\FitdLib\menuFade.h" />
+    <ClInclude Include="D:\FITD\FitdLib\menuMouse.h" />
     <ClCompile Include="D:\FITD\FitdLib\modelAtlas.cpp" />
     <ClInclude Include="D:\FITD\FitdLib\modelAtlas.h" />
     <ClCompile Include="D:\FITD\FitdLib\modelAtlas_fixed.cpp" />
     <ClCompile Include="D:\FITD\FitdLib\music.cpp" />
     <ClInclude Include="D:\FITD\FitdLib\music.h" />
+    <ClCompile Include="D:\FITD\FitdLib\nativeLife.cpp" />
+    <ClInclude Include="D:\FITD\FitdLib\nativeLife.h" />
+    <ClInclude Include="D:\FITD\FitdLib\nativeLifeHelpers.h" />
+    <ClCompile Include="D:\FITD\FitdLib\nativeLifeHelpersImpl.cpp" />
+    <ClCompile Include="D:\FITD\FitdLib\nativeLifeScripts_AITD1.cpp" />
+    <ClCompile Include="D:\FITD\FitdLib\nativeLifeScripts_generated.cpp" />
     <ClCompile Include="D:\FITD\FitdLib\object.cpp" />
     <ClInclude Include="D:\FITD\FitdLib\object.h" />
     <ClInclude Include="D:\FITD\FitdLib\osystem.h" />
@@ -3924,6 +4455,7 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
     <ClInclude Include="D:\FITD\FitdLib\pak.h" />
     <ClCompile Include="D:\FITD\FitdLib\palette.cpp" />
     <ClInclude Include="D:\FITD\FitdLib\palette.h" />
+    <ClInclude Include="D:\FITD\FitdLib\platform_compat.h" />
     <ClCompile Include="D:\FITD\FitdLib\polys.cpp" />
     <ClCompile Include="D:\FITD\FitdLib\postProcessing.cpp" />
     <ClInclude Include="D:\FITD\FitdLib\postProcessing.h" />
@@ -3953,6 +4485,10 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
     <ClInclude Include="D:\FITD\FitdLib\shaders\generated\dx10\flat_ps.sc.bin.h" />
     <ClInclude Include="D:\FITD\FitdLib\shaders\generated\dx10\flat_vs.sc.bin.h" />
     <ClInclude Include="D:\FITD\FitdLib\shaders\generated\dx10\hdBackground_ps.sc.bin.h" />
+    <ClInclude Include="D:\FITD\FitdLib\shaders\generated\dx10\lantern_bloom_ps.sc.bin.h" />
+    <ClInclude Include="D:\FITD\FitdLib\shaders\generated\dx10\lantern_bloom_vs.sc.bin.h" />
+    <ClInclude Include="D:\FITD\FitdLib\shaders\generated\dx10\lantern_shadow_ps.sc.bin.h" />
+    <ClInclude Include="D:\FITD\FitdLib\shaders\generated\dx10\lantern_shadow_vs.sc.bin.h" />
     <ClInclude Include="D:\FITD\FitdLib\shaders\generated\dx10\maskBackground_ps.sc.bin.h" />
     <ClInclude Include="D:\FITD\FitdLib\shaders\generated\dx10\maskBackground_vs.sc.bin.h" />
     <ClInclude Include="D:\FITD\FitdLib\shaders\generated\dx10\maskHDBackground_ps.sc.bin.h" />
@@ -3980,6 +4516,10 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
     <ClInclude Include="D:\FITD\FitdLib\shaders\generated\dx11\flat_ps.sc.bin.h" />
     <ClInclude Include="D:\FITD\FitdLib\shaders\generated\dx11\flat_vs.sc.bin.h" />
     <ClInclude Include="D:\FITD\FitdLib\shaders\generated\dx11\hdBackground_ps.sc.bin.h" />
+    <ClInclude Include="D:\FITD\FitdLib\shaders\generated\dx11\lantern_bloom_ps.sc.bin.h" />
+    <ClInclude Include="D:\FITD\FitdLib\shaders\generated\dx11\lantern_bloom_vs.sc.bin.h" />
+    <ClInclude Include="D:\FITD\FitdLib\shaders\generated\dx11\lantern_shadow_ps.sc.bin.h" />
+    <ClInclude Include="D:\FITD\FitdLib\shaders\generated\dx11\lantern_shadow_vs.sc.bin.h" />
     <ClInclude Include="D:\FITD\FitdLib\shaders\generated\dx11\maskBackground_ps.sc.bin.h" />
     <ClInclude Include="D:\FITD\FitdLib\shaders\generated\dx11\maskBackground_vs.sc.bin.h" />
     <ClInclude Include="D:\FITD\FitdLib\shaders\generated\dx11\maskHDBackground_ps.sc.bin.h" />
@@ -4007,6 +4547,10 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
     <ClInclude Include="D:\FITD\FitdLib\shaders\generated\essl\flat_ps.sc.bin.h" />
     <ClInclude Include="D:\FITD\FitdLib\shaders\generated\essl\flat_vs.sc.bin.h" />
     <ClInclude Include="D:\FITD\FitdLib\shaders\generated\essl\hdBackground_ps.sc.bin.h" />
+    <ClInclude Include="D:\FITD\FitdLib\shaders\generated\essl\lantern_bloom_ps.sc.bin.h" />
+    <ClInclude Include="D:\FITD\FitdLib\shaders\generated\essl\lantern_bloom_vs.sc.bin.h" />
+    <ClInclude Include="D:\FITD\FitdLib\shaders\generated\essl\lantern_shadow_ps.sc.bin.h" />
+    <ClInclude Include="D:\FITD\FitdLib\shaders\generated\essl\lantern_shadow_vs.sc.bin.h" />
     <ClInclude Include="D:\FITD\FitdLib\shaders\generated\essl\maskBackground_ps.sc.bin.h" />
     <ClInclude Include="D:\FITD\FitdLib\shaders\generated\essl\maskBackground_vs.sc.bin.h" />
     <ClInclude Include="D:\FITD\FitdLib\shaders\generated\essl\maskHDBackground_ps.sc.bin.h" />
@@ -4034,6 +4578,10 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
     <ClInclude Include="D:\FITD\FitdLib\shaders\generated\glsl\flat_ps.sc.bin.h" />
     <ClInclude Include="D:\FITD\FitdLib\shaders\generated\glsl\flat_vs.sc.bin.h" />
     <ClInclude Include="D:\FITD\FitdLib\shaders\generated\glsl\hdBackground_ps.sc.bin.h" />
+    <ClInclude Include="D:\FITD\FitdLib\shaders\generated\glsl\lantern_bloom_ps.sc.bin.h" />
+    <ClInclude Include="D:\FITD\FitdLib\shaders\generated\glsl\lantern_bloom_vs.sc.bin.h" />
+    <ClInclude Include="D:\FITD\FitdLib\shaders\generated\glsl\lantern_shadow_ps.sc.bin.h" />
+    <ClInclude Include="D:\FITD\FitdLib\shaders\generated\glsl\lantern_shadow_vs.sc.bin.h" />
     <ClInclude Include="D:\FITD\FitdLib\shaders\generated\glsl\maskBackground_ps.sc.bin.h" />
     <ClInclude Include="D:\FITD\FitdLib\shaders\generated\glsl\maskBackground_vs.sc.bin.h" />
     <ClInclude Include="D:\FITD\FitdLib\shaders\generated\glsl\maskHDBackground_ps.sc.bin.h" />
@@ -4053,7 +4601,6 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
     <ClInclude Include="D:\FITD\FitdLib\shaders\generated\glsl\textured_ps.sc.bin.h" />
     <ClInclude Include="D:\FITD\FitdLib\shaders\generated\glsl\ui_ps.sc.bin.h" />
     <ClInclude Include="D:\FITD\FitdLib\shaders\generated\glsl\ui_vs.sc.bin.h" />
-    <ClInclude Include="D:\FITD\FitdLib\shaders\generated\metal\textured_ps.sc.bin.h" />
     <ClInclude Include="D:\FITD\FitdLib\shaders\generated\spirv\background_ps.sc.bin.h" />
     <ClInclude Include="D:\FITD\FitdLib\shaders\generated\spirv\background_vs.sc.bin.h" />
     <ClInclude Include="D:\FITD\FitdLib\shaders\generated\spirv\blur_ps.sc.bin.h" />
@@ -4062,6 +4609,10 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
     <ClInclude Include="D:\FITD\FitdLib\shaders\generated\spirv\flat_ps.sc.bin.h" />
     <ClInclude Include="D:\FITD\FitdLib\shaders\generated\spirv\flat_vs.sc.bin.h" />
     <ClInclude Include="D:\FITD\FitdLib\shaders\generated\spirv\hdBackground_ps.sc.bin.h" />
+    <ClInclude Include="D:\FITD\FitdLib\shaders\generated\spirv\lantern_bloom_ps.sc.bin.h" />
+    <ClInclude Include="D:\FITD\FitdLib\shaders\generated\spirv\lantern_bloom_vs.sc.bin.h" />
+    <ClInclude Include="D:\FITD\FitdLib\shaders\generated\spirv\lantern_shadow_ps.sc.bin.h" />
+    <ClInclude Include="D:\FITD\FitdLib\shaders\generated\spirv\lantern_shadow_vs.sc.bin.h" />
     <ClInclude Include="D:\FITD\FitdLib\shaders\generated\spirv\maskBackground_ps.sc.bin.h" />
     <ClInclude Include="D:\FITD\FitdLib\shaders\generated\spirv\maskBackground_vs.sc.bin.h" />
     <ClInclude Include="D:\FITD\FitdLib\shaders\generated\spirv\maskHDBackground_ps.sc.bin.h" />
@@ -4085,6 +4636,8 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
     <ClInclude Include="D:\FITD\FitdLib\sprite.h" />
     <ClCompile Include="D:\FITD\FitdLib\startupMenu.cpp" />
     <ClInclude Include="D:\FITD\FitdLib\startupMenu.h" />
+    <ClCompile Include="D:\FITD\FitdLib\steamOverlay.cpp" />
+    <ClInclude Include="D:\FITD\FitdLib\steamOverlay.h" />
     <ClCompile Include="D:\FITD\FitdLib\systemMenu.cpp" />
     <ClInclude Include="D:\FITD\FitdLib\systemMenu.h" />
     <ClCompile Include="D:\FITD\FitdLib\tatou.cpp" />
@@ -4134,17 +4687,21 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
     </None>
     <None Include="D:\FITD\FitdLib\shaders\particle.varying.def.sc">
     </None>
+    <None Include="D:\FITD\FitdLib\shaders\lantern_bloom.varying.def.sc">
+    </None>
+    <None Include="D:\FITD\FitdLib\shaders\lantern_shadow.varying.def.sc">
+    </None>
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
-    <ProjectReference Include="D:\FITD\build\vs2026\ZERO_CHECK.vcxproj">
-      <Project>{A64E50DE-6981-3875-AD91-29157346A96C}</Project>
+    <ProjectReference Include="D:\FITD\build\vs2026-new\ZERO_CHECK.vcxproj">
+      <Project>{F785FCE9-6420-3C90-95E8-4A488BB8EE84}</Project>
       <Name>ZERO_CHECK</Name>
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </ProjectReference>
-    <ProjectReference Include="D:\FITD\build\vs2026\ThirdParty\bgfx.cmake\cmake\bgfx\shaderc.vcxproj">
-      <Project>{2DEB33EE-831E-3421-BCE1-88BACEDB1DEB}</Project>
+    <ProjectReference Include="D:\FITD\build\vs2026-new\ThirdParty\bgfx.cmake\cmake\bgfx\shaderc.vcxproj">
+      <Project>{D293AEEE-CC25-3410-BFB5-59A84185BFE4}</Project>
       <Name>shaderc</Name>
     </ProjectReference>
   </ItemGroup>

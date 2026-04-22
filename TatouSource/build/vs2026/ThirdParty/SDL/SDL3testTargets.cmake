@@ -59,28 +59,28 @@ set_target_properties(SDL3::SDL3_test PROPERTIES
 set_property(TARGET SDL3::SDL3_test APPEND PROPERTY IMPORTED_CONFIGURATIONS DEBUG)
 set_target_properties(SDL3::SDL3_test PROPERTIES
   IMPORTED_LINK_INTERFACE_LANGUAGES_DEBUG "C"
-  IMPORTED_LOCATION_DEBUG "D:/FITD/build/vs2026/ThirdParty/SDL/Debug/SDL3_test.lib"
+  IMPORTED_LOCATION_DEBUG "D:/FITD/build/vs2026-new/ThirdParty/SDL/Debug/SDL3_test.lib"
   )
 
 # Import target "SDL3::SDL3_test" for configuration "Release"
 set_property(TARGET SDL3::SDL3_test APPEND PROPERTY IMPORTED_CONFIGURATIONS RELEASE)
 set_target_properties(SDL3::SDL3_test PROPERTIES
   IMPORTED_LINK_INTERFACE_LANGUAGES_RELEASE "C"
-  IMPORTED_LOCATION_RELEASE "D:/FITD/build/vs2026/ThirdParty/SDL/Release/SDL3_test.lib"
+  IMPORTED_LOCATION_RELEASE "D:/FITD/build/vs2026-new/ThirdParty/SDL/Release/SDL3_test.lib"
   )
 
 # Import target "SDL3::SDL3_test" for configuration "MinSizeRel"
 set_property(TARGET SDL3::SDL3_test APPEND PROPERTY IMPORTED_CONFIGURATIONS MINSIZEREL)
 set_target_properties(SDL3::SDL3_test PROPERTIES
   IMPORTED_LINK_INTERFACE_LANGUAGES_MINSIZEREL "C"
-  IMPORTED_LOCATION_MINSIZEREL "D:/FITD/build/vs2026/ThirdParty/SDL/MinSizeRel/SDL3_test.lib"
+  IMPORTED_LOCATION_MINSIZEREL "D:/FITD/build/vs2026-new/ThirdParty/SDL/MinSizeRel/SDL3_test.lib"
   )
 
 # Import target "SDL3::SDL3_test" for configuration "RelWithDebInfo"
 set_property(TARGET SDL3::SDL3_test APPEND PROPERTY IMPORTED_CONFIGURATIONS RELWITHDEBINFO)
 set_target_properties(SDL3::SDL3_test PROPERTIES
   IMPORTED_LINK_INTERFACE_LANGUAGES_RELWITHDEBINFO "C"
-  IMPORTED_LOCATION_RELWITHDEBINFO "D:/FITD/build/vs2026/ThirdParty/SDL/RelWithDebInfo/SDL3_test.lib"
+  IMPORTED_LOCATION_RELWITHDEBINFO "D:/FITD/build/vs2026-new/ThirdParty/SDL/RelWithDebInfo/SDL3_test.lib"
   )
 
 # Make sure the targets which have been exported in some other

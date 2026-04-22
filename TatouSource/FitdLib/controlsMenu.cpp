@@ -12,6 +12,7 @@
 #include "configRemaster.h"
 #include "fontTTF.h"
 #include "input.h"
+#include "menuMouse.h"
 #include <cstring>
 
 // Helper function to play menu navigation sounds (defined in systemMenu.cpp)
@@ -539,6 +540,51 @@ void processControlsMenu(bool hdMode)
 		char lKey = key;
 		char lJoyD = JoyD;
 		char lClick = Click;
+
+		// Mouse: hover selects, click confirms (disabled while remapping)
+		if (!remapping)
+		{
+			static ImVec2 s_ctrlMouse = { -1.0f, -1.0f };
+			ImVec2 gm = menuGetGameMouse();
+			// topY = WindowY1 + 4(title) + 12 + 11(controller) + 10(headers) = WindowY1 + 37
+			int mouseTopY = WindowY1 + 37;
+			int mouseTotalH = totalEntries * 11;
+			if (menuMouseMoved(s_ctrlMouse, lKey || lJoyD))
+			{
+				int hov = menuMouseHitList(gm.x, gm.y, WindowX1, WindowX2, mouseTopY, 11, totalEntries);
+				if (hov >= 0 && hov != currentEntry)
+				{
+					currentEntry = hov;
+					notifyTTFMenuSelectionChanged();
+				}
+			}
+			if (menuMouseClicked())
+			{
+				int clicked = menuMouseHitList(gm.x, gm.y, WindowX1, WindowX2, mouseTopY, 11, totalEntries);
+				if (clicked >= 0)
+				{
+					currentEntry = clicked;
+					playMenuSound("Select.wav");
+					if (currentEntry == backEntry)
+					{
+						exitMenu = 1;
+					}
+					else if (currentEntry == defaultsEntry)
+					{
+						initDefaultKeyBindings();
+						notifyTTFMenuSelectionChanged();
+						AntiRebond = 1;
+					}
+					else if (currentEntry < ACTION_COUNT)
+					{
+						remapping = true;
+						remapGamepad = false;
+						waitingForRelease = true;
+						AntiRebond = 1;
+					}
+				}
+			}
+		}
 
 		if (!AntiRebond)
 		{

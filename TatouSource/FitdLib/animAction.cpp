@@ -9,6 +9,7 @@
 
 #include "common.h"
 #include "consoleLog.h"
+#include "bloodParticles.h"
 #include <stdio.h>
 
 #define		NO_FRAPPE			0
@@ -92,6 +93,9 @@ void GereFrappe(void)
                 actorPtr2->HIT_BY = currentProcessedActorIdx;
                 actorPtr2->hitForce = currentProcessedActorPtr->hitForce;
 
+                // Spawn blood particles on melee hit
+                spawnBloodAtActor(currentProcessedActorPtr->COL[i], static_cast<float>(currentProcessedActorPtr->hitForce));
+
                 if(actorPtr2->objectType & AF_ANIMATED)
                 {
                     currentProcessedActorPtr->animActionType = 0;
@@ -150,6 +154,9 @@ void GereFrappe(void)
                 hitActorPtr->HIT_BY = currentProcessedActorIdx;
                 hitActorPtr->hitForce = currentProcessedActorPtr->hitForce;
 
+                // Spawn blood particles on gun/raycast hit
+                spawnBloodAtActor(touchedActor, static_cast<float>(currentProcessedActorPtr->hitForce));
+
                 playSound(CVars[getCVarsIdx((enumCVars)SAMPLE_CHOC)]);
 
                 // Create impact effect at the hit position (returned in animMoveX/Y/Z)
@@ -170,6 +177,16 @@ void GereFrappe(void)
             {
                 int objIdx = currentProcessedActorPtr->animActionParam;
 
+                // Bounds-check objIdx against ListWorldObjets (crash fix for Pregzt fight
+                // where a stale/invalid animActionParam can index out of range).
+                if (objIdx < 0 || objIdx >= (int)ListWorldObjets.size())
+                {
+                    printf(AACT_WARN "WAIT_ANIM_THROW: invalid objIdx %d (size %d), aborting throw" CON_RESET "\n",
+                        objIdx, (int)ListWorldObjets.size());
+                    currentProcessedActorPtr->animActionType = 0;
+                    return;
+                }
+
                 tWorldObject* objPtr = &ListWorldObjets[objIdx];
 
                 int x = currentProcessedActorPtr->roomX + currentProcessedActorPtr->hotPoint.x + currentProcessedActorPtr->stepX;
@@ -178,7 +195,16 @@ void GereFrappe(void)
 
                 ZVStruct rangeZv;
 
-                GiveZVObjet(HQR_Get(HQ_Bodys, objPtr->body),&rangeZv);
+                // Null-check body resource before GiveZVObjet dereferences it.
+                sBody* throwBody = HQR_Get(HQ_Bodys, objPtr->body);
+                if (!throwBody)
+                {
+                    printf(AACT_WARN "WAIT_ANIM_THROW: body %d not loaded for world obj %d, aborting throw" CON_RESET "\n",
+                        objPtr->body, objIdx);
+                    currentProcessedActorPtr->animActionType = 0;
+                    return;
+                }
+                GiveZVObjet(throwBody,&rangeZv);
 
                 rangeZv.ZVX1 += x;
                 rangeZv.ZVX2 += x;
@@ -240,9 +266,17 @@ void GereFrappe(void)
 
             objIdx = currentProcessedActorPtr->animActionParam;
 
+            // Bounds-check objIdx against ListWorldObjets (crash fix for Pregzt fight).
+            if (objIdx < 0 || objIdx >= (int)ListWorldObjets.size())
+            {
+                printf(AACT_WARN "THROW: invalid objIdx %d (size %d), aborting" CON_RESET "\n",
+                    objIdx, (int)ListWorldObjets.size());
+                return;
+            }
+
             actorIdx = ListWorldObjets[objIdx].objIndex;
 
-            if(actorIdx == -1)
+            if(actorIdx < 0 || actorIdx >= (int)ListObjets.size())
                 return;
 
             actorPtr = &ListObjets[actorIdx];
@@ -251,7 +285,15 @@ void GereFrappe(void)
             actorPtr->roomY = y;
             actorPtr->roomZ = z;
 
-            GiveZVObjet(HQR_Get(HQ_Bodys,actorPtr->bodyNum),&actorPtr->zv);
+            // Null-check body resource before GiveZVObjet dereferences it.
+            sBody* thrownBody = HQR_Get(HQ_Bodys, actorPtr->bodyNum);
+            if (!thrownBody)
+            {
+                printf(AACT_WARN "THROW: body %d not loaded for actor %d, aborting" CON_RESET "\n",
+                    actorPtr->bodyNum, actorIdx);
+                return;
+            }
+            GiveZVObjet(thrownBody,&actorPtr->zv);
 
             actorPtr->zv.ZVX1 += x;
             actorPtr->zv.ZVX2 += x;
@@ -479,6 +521,9 @@ void GereFrappe(void)
                             actorPtr = &ListObjets[currentActorCol];
                             actorPtr->HIT_BY = isGunProjectile ? currentProcessedActorPtr->HIT_BY : currentProcessedActorIdx;
                             actorPtr->hitForce = currentProcessedActorPtr->hitForce;
+
+                            // Spawn blood particles on thrown/projectile hit
+                            spawnBloodAtActor(currentActorCol, static_cast<float>(currentProcessedActorPtr->hitForce));
 
                             // Gun projectiles stop on first hit (bullets don't continue)
                             if (isGunProjectile)

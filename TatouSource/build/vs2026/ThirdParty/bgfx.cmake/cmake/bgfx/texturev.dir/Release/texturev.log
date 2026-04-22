@@ -1,0 +1,4 @@
+﻿  Building Custom Rule D:/FITD/ThirdParty/bgfx.cmake/cmake/bgfx/CMakeLists.txt
+  texturev.cpp
+     Creating library D:/FITD/build/vs2026-new/ThirdParty/bgfx.cmake/cmake/bgfx/Release/texturev.lib and object D:/FITD/build/vs2026-new/ThirdParty/bgfx.cmake/cmake/bgfx/Release/texturev.exp
+  texturev.vcxproj -> D:\FITD\build\vs2026-new\ThirdParty\bgfx.cmake\cmake\bgfx\Release\texturev.exe

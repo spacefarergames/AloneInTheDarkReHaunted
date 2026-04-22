@@ -1,0 +1,10 @@
+^D:\FITD\BUILD\VS2026-NEW\CMAKEFILES\D2DA7790D06D97C2009092CA45AFC735\GENERATE.STAMP.RULE
+setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -SD:/FITD -BD:/FITD/build/vs2026-new --check-stamp-list CMakeFiles/generate.stamp.list --vs-solution-file D:/FITD/build/vs2026-new/FITD.slnx
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd

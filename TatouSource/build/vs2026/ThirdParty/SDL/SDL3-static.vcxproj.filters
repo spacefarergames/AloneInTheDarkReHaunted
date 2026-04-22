@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="18.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <ClCompile Include="D:\FITD\build\vs2026\ThirdParty\SDL\CMakeFiles\SDL3-static.dir\cmake_pch.c">
+    <ClCompile Include="D:\FITD\build\vs2026-new\ThirdParty\SDL\CMakeFiles\SDL3-static.dir\cmake_pch.c">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="D:\FITD\ThirdParty\SDL\src\SDL.c">
@@ -693,16 +693,16 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="D:\FITD\build\vs2026\ThirdParty\SDL\CMakeFiles\SDL3-static.dir\Debug\cmake_pch.h">
+    <ClInclude Include="D:\FITD\build\vs2026-new\ThirdParty\SDL\CMakeFiles\SDL3-static.dir\Debug\cmake_pch.h">
       <Filter>Precompile Header File</Filter>
     </ClInclude>
-    <ClInclude Include="D:\FITD\build\vs2026\ThirdParty\SDL\CMakeFiles\SDL3-static.dir\Release\cmake_pch.h">
+    <ClInclude Include="D:\FITD\build\vs2026-new\ThirdParty\SDL\CMakeFiles\SDL3-static.dir\Release\cmake_pch.h">
       <Filter>Precompile Header File</Filter>
     </ClInclude>
-    <ClInclude Include="D:\FITD\build\vs2026\ThirdParty\SDL\CMakeFiles\SDL3-static.dir\MinSizeRel\cmake_pch.h">
+    <ClInclude Include="D:\FITD\build\vs2026-new\ThirdParty\SDL\CMakeFiles\SDL3-static.dir\MinSizeRel\cmake_pch.h">
       <Filter>Precompile Header File</Filter>
     </ClInclude>
-    <ClInclude Include="D:\FITD\build\vs2026\ThirdParty\SDL\CMakeFiles\SDL3-static.dir\RelWithDebInfo\cmake_pch.h">
+    <ClInclude Include="D:\FITD\build\vs2026-new\ThirdParty\SDL\CMakeFiles\SDL3-static.dir\RelWithDebInfo\cmake_pch.h">
       <Filter>Precompile Header File</Filter>
     </ClInclude>
   </ItemGroup>
@@ -710,91 +710,91 @@
     <CustomBuild Include="D:\FITD\ThirdParty\SDL\CMakeLists.txt" />
   </ItemGroup>
   <ItemGroup>
-    <Object Include="D:\FITD\build\vs2026\ThirdParty\SDL\SDL_uclibc.dir\$(Configuration)\e_atan2.obj">
+    <Object Include="D:\FITD\build\vs2026-new\ThirdParty\SDL\SDL_uclibc.dir\$(Configuration)\e_atan2.obj">
       <Filter>Object Libraries</Filter>
     </Object>
-    <Object Include="D:\FITD\build\vs2026\ThirdParty\SDL\SDL_uclibc.dir\$(Configuration)\e_exp.obj">
+    <Object Include="D:\FITD\build\vs2026-new\ThirdParty\SDL\SDL_uclibc.dir\$(Configuration)\e_exp.obj">
       <Filter>Object Libraries</Filter>
     </Object>
-    <Object Include="D:\FITD\build\vs2026\ThirdParty\SDL\SDL_uclibc.dir\$(Configuration)\e_fmod.obj">
+    <Object Include="D:\FITD\build\vs2026-new\ThirdParty\SDL\SDL_uclibc.dir\$(Configuration)\e_fmod.obj">
       <Filter>Object Libraries</Filter>
     </Object>
-    <Object Include="D:\FITD\build\vs2026\ThirdParty\SDL\SDL_uclibc.dir\$(Configuration)\e_log.obj">
+    <Object Include="D:\FITD\build\vs2026-new\ThirdParty\SDL\SDL_uclibc.dir\$(Configuration)\e_log.obj">
       <Filter>Object Libraries</Filter>
     </Object>
-    <Object Include="D:\FITD\build\vs2026\ThirdParty\SDL\SDL_uclibc.dir\$(Configuration)\e_log10.obj">
+    <Object Include="D:\FITD\build\vs2026-new\ThirdParty\SDL\SDL_uclibc.dir\$(Configuration)\e_log10.obj">
       <Filter>Object Libraries</Filter>
     </Object>
-    <Object Include="D:\FITD\build\vs2026\ThirdParty\SDL\SDL_uclibc.dir\$(Configuration)\e_pow.obj">
+    <Object Include="D:\FITD\build\vs2026-new\ThirdParty\SDL\SDL_uclibc.dir\$(Configuration)\e_pow.obj">
       <Filter>Object Libraries</Filter>
     </Object>
-    <Object Include="D:\FITD\build\vs2026\ThirdParty\SDL\SDL_uclibc.dir\$(Configuration)\e_rem_pio2.obj">
+    <Object Include="D:\FITD\build\vs2026-new\ThirdParty\SDL\SDL_uclibc.dir\$(Configuration)\e_rem_pio2.obj">
       <Filter>Object Libraries</Filter>
     </Object>
-    <Object Include="D:\FITD\build\vs2026\ThirdParty\SDL\SDL_uclibc.dir\$(Configuration)\e_sqrt.obj">
+    <Object Include="D:\FITD\build\vs2026-new\ThirdParty\SDL\SDL_uclibc.dir\$(Configuration)\e_sqrt.obj">
       <Filter>Object Libraries</Filter>
     </Object>
-    <Object Include="D:\FITD\build\vs2026\ThirdParty\SDL\SDL_uclibc.dir\$(Configuration)\k_cos.obj">
+    <Object Include="D:\FITD\build\vs2026-new\ThirdParty\SDL\SDL_uclibc.dir\$(Configuration)\k_cos.obj">
       <Filter>Object Libraries</Filter>
     </Object>
-    <Object Include="D:\FITD\build\vs2026\ThirdParty\SDL\SDL_uclibc.dir\$(Configuration)\k_rem_pio2.obj">
+    <Object Include="D:\FITD\build\vs2026-new\ThirdParty\SDL\SDL_uclibc.dir\$(Configuration)\k_rem_pio2.obj">
       <Filter>Object Libraries</Filter>
     </Object>
-    <Object Include="D:\FITD\build\vs2026\ThirdParty\SDL\SDL_uclibc.dir\$(Configuration)\k_sin.obj">
+    <Object Include="D:\FITD\build\vs2026-new\ThirdParty\SDL\SDL_uclibc.dir\$(Configuration)\k_sin.obj">
       <Filter>Object Libraries</Filter>
     </Object>
-    <Object Include="D:\FITD\build\vs2026\ThirdParty\SDL\SDL_uclibc.dir\$(Configuration)\k_tan.obj">
+    <Object Include="D:\FITD\build\vs2026-new\ThirdParty\SDL\SDL_uclibc.dir\$(Configuration)\k_tan.obj">
       <Filter>Object Libraries</Filter>
     </Object>
-    <Object Include="D:\FITD\build\vs2026\ThirdParty\SDL\SDL_uclibc.dir\$(Configuration)\s_atan.obj">
+    <Object Include="D:\FITD\build\vs2026-new\ThirdParty\SDL\SDL_uclibc.dir\$(Configuration)\s_atan.obj">
       <Filter>Object Libraries</Filter>
     </Object>
-    <Object Include="D:\FITD\build\vs2026\ThirdParty\SDL\SDL_uclibc.dir\$(Configuration)\s_copysign.obj">
+    <Object Include="D:\FITD\build\vs2026-new\ThirdParty\SDL\SDL_uclibc.dir\$(Configuration)\s_copysign.obj">
       <Filter>Object Libraries</Filter>
     </Object>
-    <Object Include="D:\FITD\build\vs2026\ThirdParty\SDL\SDL_uclibc.dir\$(Configuration)\s_cos.obj">
+    <Object Include="D:\FITD\build\vs2026-new\ThirdParty\SDL\SDL_uclibc.dir\$(Configuration)\s_cos.obj">
       <Filter>Object Libraries</Filter>
     </Object>
-    <Object Include="D:\FITD\build\vs2026\ThirdParty\SDL\SDL_uclibc.dir\$(Configuration)\s_fabs.obj">
+    <Object Include="D:\FITD\build\vs2026-new\ThirdParty\SDL\SDL_uclibc.dir\$(Configuration)\s_fabs.obj">
       <Filter>Object Libraries</Filter>
     </Object>
-    <Object Include="D:\FITD\build\vs2026\ThirdParty\SDL\SDL_uclibc.dir\$(Configuration)\s_floor.obj">
+    <Object Include="D:\FITD\build\vs2026-new\ThirdParty\SDL\SDL_uclibc.dir\$(Configuration)\s_floor.obj">
       <Filter>Object Libraries</Filter>
     </Object>
-    <Object Include="D:\FITD\build\vs2026\ThirdParty\SDL\SDL_uclibc.dir\$(Configuration)\s_isinf.obj">
+    <Object Include="D:\FITD\build\vs2026-new\ThirdParty\SDL\SDL_uclibc.dir\$(Configuration)\s_isinf.obj">
       <Filter>Object Libraries</Filter>
     </Object>
-    <Object Include="D:\FITD\build\vs2026\ThirdParty\SDL\SDL_uclibc.dir\$(Configuration)\s_isinff.obj">
+    <Object Include="D:\FITD\build\vs2026-new\ThirdParty\SDL\SDL_uclibc.dir\$(Configuration)\s_isinff.obj">
       <Filter>Object Libraries</Filter>
     </Object>
-    <Object Include="D:\FITD\build\vs2026\ThirdParty\SDL\SDL_uclibc.dir\$(Configuration)\s_isnan.obj">
+    <Object Include="D:\FITD\build\vs2026-new\ThirdParty\SDL\SDL_uclibc.dir\$(Configuration)\s_isnan.obj">
       <Filter>Object Libraries</Filter>
     </Object>
-    <Object Include="D:\FITD\build\vs2026\ThirdParty\SDL\SDL_uclibc.dir\$(Configuration)\s_isnanf.obj">
+    <Object Include="D:\FITD\build\vs2026-new\ThirdParty\SDL\SDL_uclibc.dir\$(Configuration)\s_isnanf.obj">
       <Filter>Object Libraries</Filter>
     </Object>
-    <Object Include="D:\FITD\build\vs2026\ThirdParty\SDL\SDL_uclibc.dir\$(Configuration)\s_modf.obj">
+    <Object Include="D:\FITD\build\vs2026-new\ThirdParty\SDL\SDL_uclibc.dir\$(Configuration)\s_modf.obj">
       <Filter>Object Libraries</Filter>
     </Object>
-    <Object Include="D:\FITD\build\vs2026\ThirdParty\SDL\SDL_uclibc.dir\$(Configuration)\s_scalbn.obj">
+    <Object Include="D:\FITD\build\vs2026-new\ThirdParty\SDL\SDL_uclibc.dir\$(Configuration)\s_scalbn.obj">
       <Filter>Object Libraries</Filter>
     </Object>
-    <Object Include="D:\FITD\build\vs2026\ThirdParty\SDL\SDL_uclibc.dir\$(Configuration)\s_sin.obj">
+    <Object Include="D:\FITD\build\vs2026-new\ThirdParty\SDL\SDL_uclibc.dir\$(Configuration)\s_sin.obj">
       <Filter>Object Libraries</Filter>
     </Object>
-    <Object Include="D:\FITD\build\vs2026\ThirdParty\SDL\SDL_uclibc.dir\$(Configuration)\s_tan.obj">
+    <Object Include="D:\FITD\build\vs2026-new\ThirdParty\SDL\SDL_uclibc.dir\$(Configuration)\s_tan.obj">
       <Filter>Object Libraries</Filter>
     </Object>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Object Libraries">
-      <UniqueIdentifier>{436BD7C1-91F8-37AC-B4CB-5C6BDF4FF253}</UniqueIdentifier>
+      <UniqueIdentifier>{E91EA91E-3B3E-3959-8D9C-27151465410B}</UniqueIdentifier>
     </Filter>
     <Filter Include="Precompile Header File">
-      <UniqueIdentifier>{DC56E18E-6C52-3FC3-9A68-3A049D0A6F17}</UniqueIdentifier>
+      <UniqueIdentifier>{823ACB29-DE52-3D58-B22F-114131E0999D}</UniqueIdentifier>
     </Filter>
     <Filter Include="Source Files">
-      <UniqueIdentifier>{62594120-CEA6-3B91-91CB-064219E248BD}</UniqueIdentifier>
+      <UniqueIdentifier>{77332710-87DF-37E4-B838-A322A496A08B}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

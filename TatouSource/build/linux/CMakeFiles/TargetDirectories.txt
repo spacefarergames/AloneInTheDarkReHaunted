@@ -44,6 +44,7 @@
 /mnt/d/FITD/build/linux/zlib/zlib-build/CMakeFiles/edit_cache.dir
 /mnt/d/FITD/build/linux/zlib/zlib-build/CMakeFiles/rebuild_cache.dir
 /mnt/d/FITD/build/linux/tools/CMakeFiles/build_hda_archive.dir
+/mnt/d/FITD/build/linux/tools/CMakeFiles/unpack_hda_archive.dir
 /mnt/d/FITD/build/linux/tools/CMakeFiles/edit_cache.dir
 /mnt/d/FITD/build/linux/tools/CMakeFiles/rebuild_cache.dir
 /mnt/d/FITD/build/linux/FitdLib/CMakeFiles/FitdLib.dir

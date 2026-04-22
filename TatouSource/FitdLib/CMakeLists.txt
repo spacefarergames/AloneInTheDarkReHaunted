@@ -1,19 +1,40 @@
 cmake_minimum_required(VERSION 3.9)
 
+# Common include directories
 include_directories(
     "."
-    "${THIRD_PARTY}/SDL/include/SDL3"
-    "${THIRD_PARTY}/SDL/include"
     "${THIRD_PARTY}/imgui"
-    "${THIRD_PARTY}/soloud.cmake/soloud/include"
     "${THIRD_PARTY}/bgfx.cmake/bgfx/include"
     "${THIRD_PARTY}/bgfx.cmake/bx/include"
     "${THIRD_PARTY}/bgfx.cmake/bgfx/3rdparty"
     "${THIRD_PARTY}/bgfx.cmake/bimg/include"
 )
 
+# Platform-specific include directories
+if(NINTENDO_SWITCH)
+    # Nintendo Switch SDK paths
+    include_directories(
+        "${NINTENDO_SDK_ROOT}/Include"
+        "${NINTENDO_SDK_ROOT}/Common/Configs/Targets/NX64"
+    )
+else()
+    # SDL and SoLoud paths for non-Switch platforms
+    include_directories(
+        "${THIRD_PARTY}/SDL/include/SDL3"
+        "${THIRD_PARTY}/SDL/include"
+        "${THIRD_PARTY}/soloud.cmake/soloud/include"
+    )
+endif()
+
 IF(${MSVC})
     include_directories("${THIRD_PARTY}/bgfx.cmake/bx/include/compat/msvc")
+endif()
+
+if(NINTENDO_SWITCH)
+    # Nintendo Switch uses gcc-compatible headers
+    include_directories("${THIRD_PARTY}/bgfx.cmake/bx/include/compat/gcc")
+elseif(UNIX AND NOT APPLE)
+    include_directories("${THIRD_PARTY}/bgfx.cmake/bx/include/compat/linux")
 endif()
 
 set(CMAKE_CXX_STANDARD 17)
@@ -25,18 +46,31 @@ file(GLOB_RECURSE SRC_ROOT
     "*.h"
 )
 
+if(UNIX AND NOT APPLE)
+    list(REMOVE_ITEM SRC_ROOT "${CMAKE_CURRENT_SOURCE_DIR}/modelAtlas.cpp")
+endif()
+
+# Base source files
 set(SOURCES
  ${SOURCES}
  ${SRC_ROOT}
  "bytecodePatches.cpp"
  "bytecodePatches.h"
+ "lanternLighting.cpp"
+ "lanternLighting.h"
+ "bloodParticles.cpp"
+ "bloodParticles.h"
  "${THIRD_PARTY}/imgui/imgui.cpp"
  "${THIRD_PARTY}/imgui/imgui.h"
  "${THIRD_PARTY}/imgui/imgui_draw.cpp"
  "${THIRD_PARTY}/imgui/imgui_tables.cpp"
  "${THIRD_PARTY}/imgui/imgui_widgets.cpp"
- "${THIRD_PARTY}/imgui/backends/imgui_impl_sdl3.cpp"
 )
+
+# Platform-specific ImGui backend
+if(NOT NINTENDO_SWITCH)
+    list(APPEND SOURCES "${THIRD_PARTY}/imgui/backends/imgui_impl_sdl3.cpp")
+endif()
 
 function(assign_source_group)
     foreach(_source IN ITEMS ${ARGN})
@@ -52,8 +86,11 @@ function(assign_source_group)
 endfunction(assign_source_group)
 
 macro(addShaderProgramPermutation vsname psname varyingname)
-    bgfx_compile_shaders(SHADERS shaders/${vsname}.sc AS_HEADERS OUTPUT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/shaders/generated TYPE VERTEX VARYING_DEF ${CMAKE_CURRENT_SOURCE_DIR}/shaders/${varyingname}.sc INCLUDE_DIRS ${BGFX_DIR}/src AS_HEADERS)
-    bgfx_compile_shaders(SHADERS shaders/${psname}.sc AS_HEADERS OUTPUT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/shaders/generated TYPE FRAGMENT VARYING_DEF ${CMAKE_CURRENT_SOURCE_DIR}/shaders/${varyingname}.sc INCLUDE_DIRS ${BGFX_DIR}/src AS_HEADERS)
+    # Skip shader compilation for Nintendo Switch (use pre-compiled shaders)
+    if(NOT NINTENDO_SWITCH)
+        bgfx_compile_shaders(SHADERS shaders/${vsname}.sc AS_HEADERS OUTPUT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/shaders/generated TYPE VERTEX VARYING_DEF ${CMAKE_CURRENT_SOURCE_DIR}/shaders/${varyingname}.sc INCLUDE_DIRS ${BGFX_DIR}/src AS_HEADERS)
+        bgfx_compile_shaders(SHADERS shaders/${psname}.sc AS_HEADERS OUTPUT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/shaders/generated TYPE FRAGMENT VARYING_DEF ${CMAKE_CURRENT_SOURCE_DIR}/shaders/${varyingname}.sc INCLUDE_DIRS ${BGFX_DIR}/src AS_HEADERS)
+    endif()
     #shaderc(FILE shaders/${vsname}.sc BIN2C ${vsname}_${api} OUTPUT ${CMAKE_CURRENT_SOURCE_DIR}/shaders/generated/${vsname}_${api}.debug.h DEBUG VERTEX ${platform} VARYINGDEF shaders/${varyingname}.sc INCLUDES ${BGFX_DIR}/src PROFILE ${profileVS})
     #shaderc(FILE shaders/${psname}.sc BIN2C ${psname}_${api} OUTPUT ${CMAKE_CURRENT_SOURCE_DIR}/shaders/generated/${psname}_${api}.debug.h DEBUG FRAGMENT ${platform} VARYINGDEF shaders/${varyingname}.sc INCLUDES ${BGFX_DIR}/src PROFILE ${profilePS})
     #set(SOURCES
@@ -97,6 +134,8 @@ addShaderProgram(postprocess_vs ssao_blur_ps postprocess.varying.def)
 addShaderProgram(postprocess_vs ssgi_ps postprocess.varying.def)
 addShaderProgram(postprocess_vs ssgi_blur_ps postprocess.varying.def)
 addShaderProgram(particle_vs particle_ps particle.varying.def)
+addShaderProgram(lantern_bloom_vs lantern_bloom_ps lantern_bloom.varying.def)
+addShaderProgram(lantern_shadow_vs lantern_shadow_ps lantern_shadow.varying.def)
 
 assign_source_group(${SOURCES})
 
@@ -113,3 +152,30 @@ add_library (FitdLib ${SOURCES})
 #set( CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /DBX_CONFIG_DEBUG=1")
 
 set_property(TARGET FitdLib PROPERTY CXX_STANDARD 20)
+
+
+# Platform-specific compile options
+if(NINTENDO_SWITCH)
+    # Nintendo Switch specific compile options
+    target_compile_definitions(FitdLib PRIVATE
+        NN_SDK_BUILD_RELEASE
+        NINTENDO_SWITCH=1
+    )
+    target_compile_options(FitdLib PRIVATE
+        -fno-exceptions
+        -fno-rtti
+        -fPIC
+    )
+elseif(UWP)
+    # UWP specific compile options
+    target_compile_definitions(FitdLib PRIVATE
+        UWP=1
+        WINAPI_FAMILY=WINAPI_FAMILY_APP
+    )
+    target_compile_options(FitdLib PRIVATE
+        /ZW  # Enable Windows Runtime extensions
+        /EHsc  # Exception handling model
+    )
+elseif(UNIX AND NOT APPLE)
+    target_compile_options(FitdLib PRIVATE -fPIC)
+endif()

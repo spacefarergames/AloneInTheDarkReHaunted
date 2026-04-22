@@ -9,7 +9,9 @@
 
 #pragma once
 
+#ifdef _WIN32
 #include <windows.h>
+#endif
 
 // Safe deletion wrapper that catches heap corruption
 namespace SafeDelete {
@@ -30,6 +32,7 @@ namespace SafeDelete {
             return true; // Already null
         }
 
+#ifdef _WIN32
         __try {
             // Check if memory is accessible
             volatile char test = *((char*)ptr);
@@ -44,9 +47,9 @@ namespace SafeDelete {
         __except (GetExceptionCode() == STATUS_ACCESS_VIOLATION ||
                   GetExceptionCode() == STATUS_HEAP_CORRUPTION ? 
                   EXCEPTION_EXECUTE_HANDLER : EXCEPTION_CONTINUE_SEARCH) {
-            
+
             stats.caughtExceptions++;
-            
+
             #ifdef _DEBUG
             char msg[256];
             sprintf_s(msg, sizeof(msg), 
@@ -59,6 +62,12 @@ namespace SafeDelete {
             ptr = nullptr;
             return false;
         }
+#else
+        delete ptr;
+        ptr = nullptr;
+        stats.successfulDeletes++;
+        return true;
+#endif
     }
 
     // Safe delete for arrays (new[]) with heap corruption protection
@@ -68,6 +77,7 @@ namespace SafeDelete {
             return true; // Already null
         }
 
+#ifdef _WIN32
         __try {
             // Check if memory is accessible
             volatile char test = *((char*)ptr);
@@ -97,6 +107,12 @@ namespace SafeDelete {
             ptr = nullptr;
             return false;
         }
+#else
+        delete[] ptr;
+        ptr = nullptr;
+        stats.successfulDeletes++;
+        return true;
+#endif
     }
 
     // Get statistics

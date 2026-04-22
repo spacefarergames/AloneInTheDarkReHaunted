@@ -1,6 +1,6 @@
 # CMake generated Testfile for 
 # Source directory: D:/FITD/ThirdParty/zlib
-# Build directory: D:/FITD/build/vs2026/zlib/zlib-build
+# Build directory: D:/FITD/build/vs2026-new/zlib/zlib-build
 # 
 # This file includes the relevant testing commands required for 
 # testing this directory and lists subdirectories to be tested as well.

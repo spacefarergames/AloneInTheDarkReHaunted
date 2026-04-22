@@ -2,10 +2,10 @@
 <Project>
   <ProjectOutputs>
     <ProjectOutput>
-      <FullPath>D:\FITD\build\vs2026\x64\Release\ZERO_CHECK</FullPath>
+      <FullPath>D:\FITD\build\vs2026-new\x64\Release\ZERO_CHECK</FullPath>
     </ProjectOutput>
     <ProjectOutput>
-      <FullPath>D:\FITD\build\vs2026\zlib\zlib-build\Release\zlib.dll</FullPath>
+      <FullPath>D:\FITD\build\vs2026-new\zlib\zlib-build\Release\zlib.dll</FullPath>
     </ProjectOutput>
   </ProjectOutputs>
   <ContentFiles />

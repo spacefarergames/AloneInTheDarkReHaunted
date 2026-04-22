@@ -8,7 +8,7 @@
 		<Platform Name="x64"/>
 	</Configurations>
 	<Folder Name="/CMakePredefinedTargets/">
-		<Project Path="ALL_BUILD.vcxproj" Type="8bc9ceb8-8b4a-11d0-8d11-00a0c91bc942" Id="52499451-f137-3654-861f-b39f8e8e1693" DefaultStartup="true">
+		<Project Path="ALL_BUILD.vcxproj" Type="8bc9ceb8-8b4a-11d0-8d11-00a0c91bc942" Id="887d6561-4a10-375c-833a-3acc7d2cacf2" DefaultStartup="true">
 			<BuildDependency Project="../../ZERO_CHECK.vcxproj"/>
 			<BuildDependency Project="cmake/bgfx/bgfx.vcxproj"/>
 			<BuildDependency Project="cmake/bimg/bimg.vcxproj"/>
@@ -31,54 +31,54 @@
 			<Build Solution="MinSizeRel|*" Project="false"/>
 			<Build Solution="RelWithDebInfo|*" Project="false"/>
 		</Project>
-		<Project Path="../../ZERO_CHECK.vcxproj" Type="8bc9ceb8-8b4a-11d0-8d11-00a0c91bc942" Id="a64e50de-6981-3875-ad91-29157346a96c"/>
+		<Project Path="../../ZERO_CHECK.vcxproj" Type="8bc9ceb8-8b4a-11d0-8d11-00a0c91bc942" Id="f785fce9-6420-3c90-95e8-4a488bb8ee84"/>
 	</Folder>
 	<Folder Name="/bgfx/">
-		<Project Path="cmake/bgfx/bgfx.vcxproj" Type="8bc9ceb8-8b4a-11d0-8d11-00a0c91bc942" Id="e618a171-8433-3e45-acde-d96696917e03">
+		<Project Path="cmake/bgfx/bgfx.vcxproj" Type="8bc9ceb8-8b4a-11d0-8d11-00a0c91bc942" Id="a03ced8c-93de-3396-82d8-8e303414424a">
 			<BuildDependency Project="../../ZERO_CHECK.vcxproj"/>
 			<BuildDependency Project="cmake/bimg/bimg.vcxproj"/>
 			<BuildDependency Project="cmake/bx/bx.vcxproj"/>
 		</Project>
-		<Project Path="cmake/bimg/bimg.vcxproj" Type="8bc9ceb8-8b4a-11d0-8d11-00a0c91bc942" Id="0edeb0b0-2070-3c71-8c83-09caa73f06dc">
+		<Project Path="cmake/bimg/bimg.vcxproj" Type="8bc9ceb8-8b4a-11d0-8d11-00a0c91bc942" Id="7477abfe-e514-364a-9984-1abd94bae66e">
 			<BuildDependency Project="../../ZERO_CHECK.vcxproj"/>
 			<BuildDependency Project="cmake/bx/bx.vcxproj"/>
 		</Project>
-		<Project Path="cmake/bimg/bimg_decode.vcxproj" Type="8bc9ceb8-8b4a-11d0-8d11-00a0c91bc942" Id="893599d6-c987-316f-98f3-d91ec44b357f">
+		<Project Path="cmake/bimg/bimg_decode.vcxproj" Type="8bc9ceb8-8b4a-11d0-8d11-00a0c91bc942" Id="9f62d7f5-282e-363b-bed6-7e003978805d">
 			<BuildDependency Project="../../ZERO_CHECK.vcxproj"/>
 			<BuildDependency Project="cmake/bx/bx.vcxproj"/>
 		</Project>
-		<Project Path="cmake/bimg/bimg_encode.vcxproj" Type="8bc9ceb8-8b4a-11d0-8d11-00a0c91bc942" Id="440733c2-0728-3f76-b61d-5f844df5dd77">
+		<Project Path="cmake/bimg/bimg_encode.vcxproj" Type="8bc9ceb8-8b4a-11d0-8d11-00a0c91bc942" Id="b9ca6a56-86b9-3fae-98b0-60c204c7a398">
 			<BuildDependency Project="../../ZERO_CHECK.vcxproj"/>
 			<BuildDependency Project="cmake/bx/bx.vcxproj"/>
 		</Project>
-		<Project Path="cmake/bx/bx.vcxproj" Type="8bc9ceb8-8b4a-11d0-8d11-00a0c91bc942" Id="fa37e5b2-c200-3515-a4de-b51a9f737b67">
+		<Project Path="cmake/bx/bx.vcxproj" Type="8bc9ceb8-8b4a-11d0-8d11-00a0c91bc942" Id="050cc7a1-d02e-32ea-b014-4fb32222d75b">
 			<BuildDependency Project="../../ZERO_CHECK.vcxproj"/>
 		</Project>
-		<Project Path="cmake/bgfx/fcpp.vcxproj" Type="8bc9ceb8-8b4a-11d0-8d11-00a0c91bc942" Id="53cc4a35-97f2-3720-b7b6-8179314391a3">
+		<Project Path="cmake/bgfx/fcpp.vcxproj" Type="8bc9ceb8-8b4a-11d0-8d11-00a0c91bc942" Id="bbcd065a-ce67-31be-b4bd-191166012014">
 			<BuildDependency Project="../../ZERO_CHECK.vcxproj"/>
 		</Project>
-		<Project Path="cmake/bgfx/glsl-optimizer.vcxproj" Type="8bc9ceb8-8b4a-11d0-8d11-00a0c91bc942" Id="7f9b2add-92be-31c0-b843-e658f5b942f9">
+		<Project Path="cmake/bgfx/glsl-optimizer.vcxproj" Type="8bc9ceb8-8b4a-11d0-8d11-00a0c91bc942" Id="01175856-2d56-3373-a218-c8aa69b7937a">
 			<BuildDependency Project="../../ZERO_CHECK.vcxproj"/>
 		</Project>
-		<Project Path="cmake/bgfx/glslang.vcxproj" Type="8bc9ceb8-8b4a-11d0-8d11-00a0c91bc942" Id="7d89e23f-4e27-3ef3-b4b4-829da728488f">
+		<Project Path="cmake/bgfx/glslang.vcxproj" Type="8bc9ceb8-8b4a-11d0-8d11-00a0c91bc942" Id="52814f4f-453a-3203-8ad4-a1b0cf9e15a3">
 			<BuildDependency Project="../../ZERO_CHECK.vcxproj"/>
 		</Project>
-		<Project Path="cmake/bgfx/spirv-cross.vcxproj" Type="8bc9ceb8-8b4a-11d0-8d11-00a0c91bc942" Id="ad276e28-04b5-3ee3-ae44-f7719ce7366c">
+		<Project Path="cmake/bgfx/spirv-cross.vcxproj" Type="8bc9ceb8-8b4a-11d0-8d11-00a0c91bc942" Id="137eb0ee-1956-3423-b9e7-0152ed804c54">
 			<BuildDependency Project="../../ZERO_CHECK.vcxproj"/>
 		</Project>
-		<Project Path="cmake/bgfx/spirv-opt.vcxproj" Type="8bc9ceb8-8b4a-11d0-8d11-00a0c91bc942" Id="2869dbb1-6762-3b45-9955-bbb75bb20278">
+		<Project Path="cmake/bgfx/spirv-opt.vcxproj" Type="8bc9ceb8-8b4a-11d0-8d11-00a0c91bc942" Id="acac5ce0-69ba-305b-8dd2-1442c56df800">
 			<BuildDependency Project="../../ZERO_CHECK.vcxproj"/>
 		</Project>
 	</Folder>
 	<Folder Name="/bgfx/examples/">
-		<Project Path="cmake/bgfx/example-common.vcxproj" Type="8bc9ceb8-8b4a-11d0-8d11-00a0c91bc942" Id="f3fe2608-1b46-3ab3-9085-3a8f23d9e4b0">
+		<Project Path="cmake/bgfx/example-common.vcxproj" Type="8bc9ceb8-8b4a-11d0-8d11-00a0c91bc942" Id="e68abe54-c44b-3bac-88ba-2269a54de136">
 			<BuildDependency Project="../../ZERO_CHECK.vcxproj"/>
 			<BuildDependency Project="cmake/bgfx/bgfx.vcxproj"/>
 			<BuildDependency Project="cmake/bimg/bimg.vcxproj"/>
 			<BuildDependency Project="cmake/bimg/bimg_decode.vcxproj"/>
 			<BuildDependency Project="cmake/bx/bx.vcxproj"/>
 		</Project>
-		<Project Path="cmake/bgfx/examples.vcxproj" Type="8bc9ceb8-8b4a-11d0-8d11-00a0c91bc942" Id="c12f3d1f-c565-3bd5-adb2-af296168efec">
+		<Project Path="cmake/bgfx/examples.vcxproj" Type="8bc9ceb8-8b4a-11d0-8d11-00a0c91bc942" Id="5cd18cc3-5a04-3239-8331-97d530953b15">
 			<BuildDependency Project="../../ZERO_CHECK.vcxproj"/>
 			<Build Solution="Debug|*" Project="false"/>
 			<Build Solution="Release|*" Project="false"/>
@@ -87,15 +87,15 @@
 		</Project>
 	</Folder>
 	<Folder Name="/bgfx/tools/">
-		<Project Path="cmake/bx/bin2c.vcxproj" Type="8bc9ceb8-8b4a-11d0-8d11-00a0c91bc942" Id="a9bef6df-7be5-3163-ac84-7e406bad994f">
+		<Project Path="cmake/bx/bin2c.vcxproj" Type="8bc9ceb8-8b4a-11d0-8d11-00a0c91bc942" Id="e80dd41a-1321-39e7-9300-a9bdd0d933ec">
 			<BuildDependency Project="../../ZERO_CHECK.vcxproj"/>
 			<BuildDependency Project="cmake/bx/bx.vcxproj"/>
 		</Project>
-		<Project Path="cmake/bgfx/geometryc.vcxproj" Type="8bc9ceb8-8b4a-11d0-8d11-00a0c91bc942" Id="6b8d9f9a-0e2f-3ea7-bc6a-8b8cce63ad33">
+		<Project Path="cmake/bgfx/geometryc.vcxproj" Type="8bc9ceb8-8b4a-11d0-8d11-00a0c91bc942" Id="ddeed340-b6ea-38d7-b01b-c4286a83500d">
 			<BuildDependency Project="../../ZERO_CHECK.vcxproj"/>
 			<BuildDependency Project="cmake/bx/bx.vcxproj"/>
 		</Project>
-		<Project Path="cmake/bgfx/geometryv.vcxproj" Type="8bc9ceb8-8b4a-11d0-8d11-00a0c91bc942" Id="3c674456-7147-3768-83f5-c597ecb50edb">
+		<Project Path="cmake/bgfx/geometryv.vcxproj" Type="8bc9ceb8-8b4a-11d0-8d11-00a0c91bc942" Id="a30acb8e-5da1-3283-93f7-aa2fad073c6a">
 			<BuildDependency Project="../../ZERO_CHECK.vcxproj"/>
 			<BuildDependency Project="cmake/bgfx/bgfx.vcxproj"/>
 			<BuildDependency Project="cmake/bimg/bimg.vcxproj"/>
@@ -103,7 +103,7 @@
 			<BuildDependency Project="cmake/bx/bx.vcxproj"/>
 			<BuildDependency Project="cmake/bgfx/example-common.vcxproj"/>
 		</Project>
-		<Project Path="cmake/bgfx/shaderc.vcxproj" Type="8bc9ceb8-8b4a-11d0-8d11-00a0c91bc942" Id="2deb33ee-831e-3421-bce1-88bacedb1deb">
+		<Project Path="cmake/bgfx/shaderc.vcxproj" Type="8bc9ceb8-8b4a-11d0-8d11-00a0c91bc942" Id="d293aeee-cc25-3410-bfb5-59a84185bfe4">
 			<BuildDependency Project="../../ZERO_CHECK.vcxproj"/>
 			<BuildDependency Project="cmake/bimg/bimg.vcxproj"/>
 			<BuildDependency Project="cmake/bx/bx.vcxproj"/>
@@ -113,14 +113,14 @@
 			<BuildDependency Project="cmake/bgfx/spirv-cross.vcxproj"/>
 			<BuildDependency Project="cmake/bgfx/spirv-opt.vcxproj"/>
 		</Project>
-		<Project Path="cmake/bimg/texturec.vcxproj" Type="8bc9ceb8-8b4a-11d0-8d11-00a0c91bc942" Id="c3fa1f35-8366-32b7-ac7d-6b3e2113482e">
+		<Project Path="cmake/bimg/texturec.vcxproj" Type="8bc9ceb8-8b4a-11d0-8d11-00a0c91bc942" Id="ec7f44c6-e9f0-36dd-920e-fb886b832fb3">
 			<BuildDependency Project="../../ZERO_CHECK.vcxproj"/>
 			<BuildDependency Project="cmake/bimg/bimg.vcxproj"/>
 			<BuildDependency Project="cmake/bimg/bimg_decode.vcxproj"/>
 			<BuildDependency Project="cmake/bimg/bimg_encode.vcxproj"/>
 			<BuildDependency Project="cmake/bx/bx.vcxproj"/>
 		</Project>
-		<Project Path="cmake/bgfx/texturev.vcxproj" Type="8bc9ceb8-8b4a-11d0-8d11-00a0c91bc942" Id="34dc5f17-f4a2-367b-add9-bf29c51f87ad">
+		<Project Path="cmake/bgfx/texturev.vcxproj" Type="8bc9ceb8-8b4a-11d0-8d11-00a0c91bc942" Id="07db2101-fdf8-3b96-bea9-3ade981abae5">
 			<BuildDependency Project="../../ZERO_CHECK.vcxproj"/>
 			<BuildDependency Project="cmake/bgfx/bgfx.vcxproj"/>
 			<BuildDependency Project="cmake/bimg/bimg.vcxproj"/>
@@ -128,7 +128,7 @@
 			<BuildDependency Project="cmake/bx/bx.vcxproj"/>
 			<BuildDependency Project="cmake/bgfx/example-common.vcxproj"/>
 		</Project>
-		<Project Path="tools.vcxproj" Type="8bc9ceb8-8b4a-11d0-8d11-00a0c91bc942" Id="e507a133-19e8-36b7-8d97-2b0ab8d92bb9">
+		<Project Path="tools.vcxproj" Type="8bc9ceb8-8b4a-11d0-8d11-00a0c91bc942" Id="83452984-00ff-35c8-9a79-21bcdbe4535e">
 			<BuildDependency Project="../../ZERO_CHECK.vcxproj"/>
 			<BuildDependency Project="cmake/bx/bin2c.vcxproj"/>
 			<BuildDependency Project="cmake/bgfx/geometryc.vcxproj"/>

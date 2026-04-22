@@ -50,7 +50,7 @@ unset(_cmake_expected_targets)
 add_library(SDL3::Headers INTERFACE IMPORTED)
 
 set_target_properties(SDL3::Headers PROPERTIES
-  INTERFACE_INCLUDE_DIRECTORIES "D:/FITD/build/vs2026/ThirdParty/SDL/include-revision;D:/FITD/ThirdParty/SDL/include"
+  INTERFACE_INCLUDE_DIRECTORIES "D:/FITD/build/vs2026-new/ThirdParty/SDL/include-revision;D:/FITD/ThirdParty/SDL/include"
 )
 
 # This file does not depend on other imported targets which have

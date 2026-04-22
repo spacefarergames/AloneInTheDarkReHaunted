@@ -26,6 +26,9 @@ public:
     void setEnabled(bool enabled) { m_enabled = enabled; }
     bool isEnabled() const { return m_enabled; }
 
+    // Spawn brown dirt particles from a world position (for car effects)
+    void spawnDirtParticles(int worldX, int worldY, int worldZ, int count = 3);
+
 private:
     struct Particle
     {
@@ -35,6 +38,7 @@ private:
         float alpha;            // Transparency
         float life;             // Remaining lifetime
         float maxLife;          // Initial lifetime
+        bool isDirt;            // True for brown dirt, false for white dust
     };
 
     void createParticles();

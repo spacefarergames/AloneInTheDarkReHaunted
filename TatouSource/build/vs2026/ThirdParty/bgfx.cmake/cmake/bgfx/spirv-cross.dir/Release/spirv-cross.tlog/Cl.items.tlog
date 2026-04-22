@@ -1,0 +1,10 @@
+D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\spirv-cross\spirv_cfg.cpp;D:\FITD\build\vs2026-new\ThirdParty\bgfx.cmake\cmake\bgfx\spirv-cross.dir\Release\spirv_cfg.obj
+D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\spirv-cross\spirv_cpp.cpp;D:\FITD\build\vs2026-new\ThirdParty\bgfx.cmake\cmake\bgfx\spirv-cross.dir\Release\spirv_cpp.obj
+D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\spirv-cross\spirv_cross.cpp;D:\FITD\build\vs2026-new\ThirdParty\bgfx.cmake\cmake\bgfx\spirv-cross.dir\Release\spirv_cross.obj
+D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\spirv-cross\spirv_cross_parsed_ir.cpp;D:\FITD\build\vs2026-new\ThirdParty\bgfx.cmake\cmake\bgfx\spirv-cross.dir\Release\spirv_cross_parsed_ir.obj
+D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\spirv-cross\spirv_cross_util.cpp;D:\FITD\build\vs2026-new\ThirdParty\bgfx.cmake\cmake\bgfx\spirv-cross.dir\Release\spirv_cross_util.obj
+D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\spirv-cross\spirv_glsl.cpp;D:\FITD\build\vs2026-new\ThirdParty\bgfx.cmake\cmake\bgfx\spirv-cross.dir\Release\spirv_glsl.obj
+D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\spirv-cross\spirv_hlsl.cpp;D:\FITD\build\vs2026-new\ThirdParty\bgfx.cmake\cmake\bgfx\spirv-cross.dir\Release\spirv_hlsl.obj
+D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\spirv-cross\spirv_msl.cpp;D:\FITD\build\vs2026-new\ThirdParty\bgfx.cmake\cmake\bgfx\spirv-cross.dir\Release\spirv_msl.obj
+D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\spirv-cross\spirv_parser.cpp;D:\FITD\build\vs2026-new\ThirdParty\bgfx.cmake\cmake\bgfx\spirv-cross.dir\Release\spirv_parser.obj
+D:\FITD\ThirdParty\bgfx.cmake\bgfx\3rdparty\spirv-cross\spirv_reflect.cpp;D:\FITD\build\vs2026-new\ThirdParty\bgfx.cmake\cmake\bgfx\spirv-cross.dir\Release\spirv_reflect.obj

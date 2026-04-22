@@ -2,7 +2,7 @@
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
-  set(CMAKE_INSTALL_PREFIX "C:/Program Files (x86)/FITD")
+  set(CMAKE_INSTALL_PREFIX "C:/Program Files/FITD")
 endif()
 string(REGEX REPLACE "/$" "" CMAKE_INSTALL_PREFIX "${CMAKE_INSTALL_PREFIX}")
 
@@ -34,21 +34,21 @@ endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for each subdirectory.
-  include("D:/FITD/build/vs2026/ThirdParty/bgfx.cmake/cmake_install.cmake")
-  include("D:/FITD/build/vs2026/ThirdParty/soloud.cmake/cmake_install.cmake")
-  include("D:/FITD/build/vs2026/ThirdParty/SDL/cmake_install.cmake")
-  include("D:/FITD/build/vs2026/zlib/zlib-build/cmake_install.cmake")
-  include("D:/FITD/build/vs2026/tools/cmake_install.cmake")
-  include("D:/FITD/build/vs2026/FitdLib/cmake_install.cmake")
-  include("D:/FITD/build/vs2026/Fitd/cmake_install.cmake")
-  include("D:/FITD/build/vs2026/DOSBoxStub/cmake_install.cmake")
+  include("D:/FITD/build/vs2026-new/ThirdParty/bgfx.cmake/cmake_install.cmake")
+  include("D:/FITD/build/vs2026-new/ThirdParty/soloud.cmake/cmake_install.cmake")
+  include("D:/FITD/build/vs2026-new/ThirdParty/SDL/cmake_install.cmake")
+  include("D:/FITD/build/vs2026-new/zlib/zlib-build/cmake_install.cmake")
+  include("D:/FITD/build/vs2026-new/tools/cmake_install.cmake")
+  include("D:/FITD/build/vs2026-new/FitdLib/cmake_install.cmake")
+  include("D:/FITD/build/vs2026-new/Fitd/cmake_install.cmake")
+  include("D:/FITD/build/vs2026-new/DOSBoxStub/cmake_install.cmake")
 
 endif()
 
 string(REPLACE ";" "\n" CMAKE_INSTALL_MANIFEST_CONTENT
        "${CMAKE_INSTALL_MANIFEST_FILES}")
 if(CMAKE_INSTALL_LOCAL_ONLY)
-  file(WRITE "D:/FITD/build/vs2026/install_local_manifest.txt"
+  file(WRITE "D:/FITD/build/vs2026-new/install_local_manifest.txt"
      "${CMAKE_INSTALL_MANIFEST_CONTENT}")
 endif()
 if(CMAKE_INSTALL_COMPONENT)
@@ -64,6 +64,6 @@ else()
 endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
-  file(WRITE "D:/FITD/build/vs2026/${CMAKE_INSTALL_MANIFEST}"
+  file(WRITE "D:/FITD/build/vs2026-new/${CMAKE_INSTALL_MANIFEST}"
      "${CMAKE_INSTALL_MANIFEST_CONTENT}")
 endif()

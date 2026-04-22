@@ -1,3 +1,4 @@
-﻿  miniz.c
+﻿  Building Custom Rule D:/FITD/ThirdParty/bgfx.cmake/cmake/bimg/CMakeLists.txt
+  miniz.c
   image_decode.cpp
-  bimg_decode.vcxproj -> D:\FITD\build\vs2026\ThirdParty\bgfx.cmake\cmake\bimg\Release\bimg_decode.lib
+  bimg_decode.vcxproj -> D:\FITD\build\vs2026-new\ThirdParty\bgfx.cmake\cmake\bimg\Release\bimg_decode.lib

@@ -65,10 +65,16 @@ primEntryStruct primTable[NUM_MAX_PRIM_ENTRY];
 
 u32 positionInPrimEntry = 0;
 
+// Track which body's primitives are currently in primTable[]
+// This allows external code (like lantern glow detection) to verify they're
+// scanning the correct body's primitives, not some other body rendered later
+int g_currentPrimTableBodyNum = -1;
+
 // Current model atlas data for textured rendering (set per AffObjet call)
 static ModelAtlasData* s_currentAtlas = nullptr;
 static int s_currentPrimIndex = 0;
 static bool s_modelHasTexturedPrims = false;  // Track if model has textured primitives (type 9/10)
+static int s_currentBodyNum = -1;  // Track current rendering body number for special handling
 
 // Near-camera floating polygon clipping thresholds.
 // When a model is close to the camera, small detail polygons (eyes, nostrils)
@@ -93,6 +99,13 @@ ModelAtlasData* getCurrentAtlas()
 void clearCurrentAtlas()
 {
     s_currentAtlas = nullptr;
+}
+
+// Stub: Hard collision depth pass rendering (not yet implemented)
+void renderHardColDepthPass()
+{
+    // TODO: Implement hard collision depth pass if needed for advanced collision detection
+    // This function is currently a stub to satisfy linker requirements
 }
 
 int BBox3D1=0;
@@ -727,7 +740,11 @@ void processPrim_Line(int primType, sPrimitive* ptr, char** out)
     }
 
 #if !defined(AITD_UE4)
-    if (depth > 100)
+    // Exception: Lamp body (body 11) must never be depth-culled
+    const int LAMP_BODY_NUM = 11;
+    bool isLampBody = (s_currentBodyNum == LAMP_BODY_NUM);
+
+    if (depth > 100 || isLampBody)
 #endif
     {
         positionInPrimEntry++;
@@ -773,7 +790,11 @@ void processPrim_Poly(int primType, sPrimitive* ptr, char** out, int originalPri
     }
 
 #if !defined(AITD_UE4)
-    if (depth > 100)
+    // Exception: Lamp body (body 11) must never be depth-culled or clipped
+    const int LAMP_BODY_NUM = 11;
+    bool isLampBody = (s_currentBodyNum == LAMP_BODY_NUM);
+
+    if (depth > 100 || isLampBody)
 #endif
     {
         bool clipPoly = false;
@@ -781,7 +802,10 @@ void processPrim_Poly(int primType, sPrimitive* ptr, char** out, int originalPri
         // Enhanced near-camera polygon clipping:
         // Detect polygons close to the camera that are severely distorted
         // by perspective or span the near-plane region.
-        if (depth < NEAR_POLY_CLIP_Z)
+        // Exception: Lamp body (body 11) needs relaxed clipping so glow detection works
+        bool isLampBody = (s_currentBodyNum == LAMP_BODY_NUM);
+
+        if (depth < NEAR_POLY_CLIP_Z && !isLampBody)
         {
             float maxZ = depth;
             float minSX = 1e30f, maxSX = -1e30f;
@@ -862,7 +886,11 @@ void processPrim_Point(primTypeEnum primType, sPrimitive* ptr, char** out)
     }
 
 #if !defined(AITD_UE4)
-    if (depth > 100)
+    // Exception: Lamp body (body 11) must never be depth-culled
+    const int LAMP_BODY_NUM = 11;
+    bool isLampBody = (s_currentBodyNum == LAMP_BODY_NUM);
+
+    if (depth > 100 || isLampBody)
 #endif
     {
         positionInPrimEntry++;
@@ -897,6 +925,9 @@ void processPrim_Sphere(int primType, sPrimitive* ptr, char** out)
     }
 
 #if !defined(AITD_UE4)
+    // Sphere primitives (e.g. character eyes) are always depth-culled normally.
+    // The lamp-body exception does NOT apply here — sphere prims in body 11 are
+    // character eye spheres, not the lamp itself (which is polygon-based).
     if (depth > 100)
 #endif
     {
@@ -1134,7 +1165,11 @@ void renderSphere(primEntryStruct* pEntry) // sphere
 
     transformedSize = (((float)pEntry->size * (float)cameraFovX) / (float)(pEntry->vertices[0].Z+cameraPerspective));
 
-    numSpheresPrimitives++;  // Track sphere index for atlas grid lookup
+    // NOTE: The atlas cell index counter (numSpheresPrimitives) is advanced
+    // inside osystem_drawPoint (the backend for osystem_drawSphere), so we
+    // must NOT increment it here too - that double-increment was causing
+    // every sphere to sample the wrong (usually empty) atlas cell, making
+    // spheres invisible.
 
     osystem_drawSphere(pEntry->vertices[0].X,pEntry->vertices[0].Y,pEntry->vertices[0].Z,pEntry->color, pEntry->material, transformedSize);
 }
@@ -1163,6 +1198,8 @@ renderFunction renderFunctions[]={
 
 void setCurrentBodyNum(int bodyNum, sBody* pBody, const std::string& hqrName)
 {
+    s_currentBodyNum = bodyNum;  // Track current body for special rendering rules
+
     // Only load texture atlases when HD backgrounds are enabled
     if (isHDBackgroundEnabled())
     {
@@ -1193,6 +1230,8 @@ int AffObjet(int x,int y,int z,int alpha,int beta,int gamma, sBody* pBody)
     s_modelHasTexturedPrims = false;
     // Clear primitive table to ensure fields are initialized
     memset(primTable, 0, sizeof(primTable));
+    // Reset tracking variable when clearing table - the old body's primitives are gone
+    g_currentPrimTableBodyNum = -1;
     //
 
     BBox3D1 = 0x7FFF;
@@ -1217,6 +1256,8 @@ int AffObjet(int x,int y,int z,int alpha,int beta,int gamma, sBody* pBody)
             BBox3D4 = -32000;
             BBox3D1 = 32000;
             BBox3D2 = 32000;
+            g_currentPrimTableBodyNum = -1;  // Reset primTable body tracking
+            s_currentBodyNum = -1;  // Reset body tracking before returning
             return(2);
         }
     }
@@ -1229,6 +1270,8 @@ int AffObjet(int x,int y,int z,int alpha,int beta,int gamma, sBody* pBody)
                 BBox3D4 = -32000;
                 BBox3D1 = 32000;
                 BBox3D2 = 32000;
+                g_currentPrimTableBodyNum = -1;  // Reset primTable body tracking
+                s_currentBodyNum = -1;  // Reset body tracking before returning
                 return(2);
             }
         }
@@ -1240,6 +1283,8 @@ int AffObjet(int x,int y,int z,int alpha,int beta,int gamma, sBody* pBody)
             BBox3D4 = -32000;
             BBox3D1 = 32000;
             BBox3D2 = 32000;
+            g_currentPrimTableBodyNum = -1;  // Reset primTable body tracking
+            s_currentBodyNum = -1;  // Reset body tracking before returning
             return(2);
         }
 
@@ -1251,6 +1296,8 @@ int AffObjet(int x,int y,int z,int alpha,int beta,int gamma, sBody* pBody)
             BBox3D4 = -32000;
             BBox3D1 = 32000;
             BBox3D2 = 32000;
+            g_currentPrimTableBodyNum = -1;  // Reset primTable body tracking
+            s_currentBodyNum = -1;  // Reset body tracking before returning
             return(2);
         }
 
@@ -1296,6 +1343,8 @@ int AffObjet(int x,int y,int z,int alpha,int beta,int gamma, sBody* pBody)
 				processPrim_Poly(primType, pPrimitive, &out, i);
 				break;
 			default:
+				g_currentPrimTableBodyNum = -1;  // Reset primTable body tracking
+				s_currentBodyNum = -1;  // Reset body tracking before returning
 				return 0;
 				assert(0);
 			}
@@ -1317,6 +1366,8 @@ int AffObjet(int x,int y,int z,int alpha,int beta,int gamma, sBody* pBody)
 			BBox3D4 = -32000;
 			BBox3D1 = 32000;
 			BBox3D2 = 32000;
+			g_currentPrimTableBodyNum = -1;  // Reset primTable body tracking
+			s_currentBodyNum = -1;  // Reset body tracking before returning
 			return(1); // model ok, but out of screen
 		}
 
@@ -1332,7 +1383,12 @@ int AffObjet(int x,int y,int z,int alpha,int beta,int gamma, sBody* pBody)
 		//
 		// Only apply in HD mode; in non-HD mode keep the original model
 		// intact so eyes remain visible.
-		if (g_remasterConfig.graphics.enableHDBackgrounds)
+		//
+		// Exception: NEVER clip lamp body (body 11) - glow detection needs all primitives!
+		const int LAMP_BODY_NUM = 11;
+		bool isLampBody = (s_currentBodyNum == LAMP_BODY_NUM);
+
+		if (g_remasterConfig.graphics.enableHDBackgrounds && !isLampBody)
 		{
 			// Build per-vertex reference count across ALL model primitives.
 			// Connected mesh vertices are referenced by multiple polygons (refcount >= 2).
@@ -1495,6 +1551,9 @@ int AffObjet(int x,int y,int z,int alpha,int beta,int gamma, sBody* pBody)
 			}
 		}
 
+		// Track which body's primitives are now in primTable[] (for external code like lantern glow detection)
+		g_currentPrimTableBodyNum = s_currentBodyNum;
+
 				// Render primitives in order
 		for(i=0;i<numOfPrimitiveToRender;i++)
 		{
@@ -1507,8 +1566,12 @@ int AffObjet(int x,int y,int z,int alpha,int beta,int gamma, sBody* pBody)
 			}
 		}
 
-        osystem_flushPendingPrimitives();
-        return(0);
+		osystem_flushPendingPrimitives();
+		// DON'T reset g_currentPrimTableBodyNum here! It needs to stay set so external
+		// code (like lantern glow) can check which body's primitives are in primTable[].
+		// We reset it when clearing primTable[] at the start of the next AffObjet() call.
+		s_currentBodyNum = -1;  // Reset body tracking after successful render
+		return(0);
 }
 
 void computeScreenBox(int x, int y, int z, int alpha, int beta, int gamma, sBody* bodyPtr)
@@ -1705,19 +1768,13 @@ void drawPlanarShadow(int x, int y, int z, int alpha, int beta, int gamma, sBody
             Z += (float)cameraPerspective;
 
             if (Z <= 50.0f)
-            {
-                valid = false;
-                break;
-            }
+                return;
 
             float screenX = ((X * (float)cameraFovX) / Z) + (float)cameraCenterX;
             float screenY = ((Y * (float)cameraFovY) / Z) + (float)cameraCenterY;
 
             if (screenX < -320.f || screenX > 640.f || screenY < -200.f || screenY > 400.f)
-            {
-                valid = false;
-                break;
-            }
+                return;
 
             shadowVerts[vi * 3 + 0] = screenX;
             shadowVerts[vi * 3 + 1] = screenY;

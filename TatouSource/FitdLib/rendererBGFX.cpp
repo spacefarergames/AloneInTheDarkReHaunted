@@ -1,4 +1,4 @@
-///////////////////////////////////////////////////////////////////////////////
+﻿///////////////////////////////////////////////////////////////////////////////
 // Alone In The Dark Re-Haunted
 // Copyright (C) 2026 Infogrames / Spacefarer Retro Remasters LLC
 // Based on FITD by yaz0r, Re-haunted is released under GPL
@@ -67,6 +67,10 @@ email                : yaz0r@yaz0r.net
 extern ModelAtlasData* getCurrentAtlas();
 
 unsigned int gameViewId = 1;
+
+bool g_playWorldActive = false;
+bool g_3dFlushedThisFrame = false;
+bool g_menuActive = false;
 bgfx::TextureHandle g_backgroundTexture = BGFX_INVALID_HANDLE;
 bgfx::TextureHandle g_uiLayerTexture = BGFX_INVALID_HANDLE;
 bgfx::TextureHandle g_paletteTexture = BGFX_INVALID_HANDLE;
@@ -352,6 +356,72 @@ bgfx::ProgramHandle getHDBackgroundShader()
     }
 
     return programHandle;
+}
+
+// -----------------------------------------------------------------------
+// HD Background Luminance-Guided Lantern Lighting
+// Call setHDBackgroundLanternUniforms() once per frame from lanternLighting.
+// All HD background draw calls use submitHDBackground() to bind the params.
+// -----------------------------------------------------------------------
+struct HDBackgroundLanternParams
+{
+    float screenX       = 0.5f;
+    float screenY       = 0.5f;
+    float intensity     = 0.0f;
+    float invRadiusSq   = 1.0f / (0.4f * 0.4f);
+    float colorR        = 1.0f;
+    float colorG        = 0.75f;
+    float colorB        = 0.25f;
+    float influence     = 0.0f;
+    float ambientDarken = 1.0f;  // safe default: full brightness until lamp is active
+};
+static HDBackgroundLanternParams s_hdBgLantern;
+
+void setHDBackgroundLanternUniforms(float screenX, float screenY, float intensity,
+                                    float lightR, float lightG, float lightB,
+                                    float influence, float lightRadius, float ambientDarken)
+{
+    s_hdBgLantern.screenX       = screenX;
+    s_hdBgLantern.screenY       = screenY;
+    s_hdBgLantern.intensity     = intensity;
+    s_hdBgLantern.invRadiusSq   = (lightRadius > 0.001f) ? (1.0f / (lightRadius * lightRadius)) : 1.0f;
+    s_hdBgLantern.colorR        = lightR;
+    s_hdBgLantern.colorG        = lightG;
+    s_hdBgLantern.colorB        = lightB;
+    s_hdBgLantern.influence     = influence;
+    s_hdBgLantern.ambientDarken = ambientDarken;
+}
+
+static void applyHDBackgroundLightingUniforms()
+{
+    static bgfx::UniformHandle u_lanternLight      = BGFX_INVALID_HANDLE;
+    static bgfx::UniformHandle u_lanternLightColor = BGFX_INVALID_HANDLE;
+    static bgfx::UniformHandle u_lanternAmbient    = BGFX_INVALID_HANDLE;
+    if (!bgfx::isValid(u_lanternLight))
+        u_lanternLight      = bgfx::createUniform("u_lanternLight",      bgfx::UniformType::Vec4);
+    if (!bgfx::isValid(u_lanternLightColor))
+        u_lanternLightColor = bgfx::createUniform("u_lanternLightColor", bgfx::UniformType::Vec4);
+    if (!bgfx::isValid(u_lanternAmbient))
+        u_lanternAmbient    = bgfx::createUniform("u_lanternAmbient",    bgfx::UniformType::Vec4);
+
+    float light[4]   = { s_hdBgLantern.screenX,  s_hdBgLantern.screenY,
+                         s_hdBgLantern.intensity, s_hdBgLantern.invRadiusSq };
+    float color[4]   = { s_hdBgLantern.colorR,   s_hdBgLantern.colorG,
+                         s_hdBgLantern.colorB,    s_hdBgLantern.influence };
+    float ambient[4] = { s_hdBgLantern.ambientDarken, 0.0f, 0.0f, 0.0f };
+
+    bgfx::setUniform(u_lanternLight,      light);
+    bgfx::setUniform(u_lanternLightColor, color);
+    bgfx::setUniform(u_lanternAmbient,    ambient);
+}
+
+static void submitHDBackground(bgfx::ViewId viewId)
+{
+    // Always apply uniforms — s_hdBgLantern is kept mode-correct by updateLanternLighting
+    // every frame (ambientDarken=1.0 when no lamp or SD mode). BGFX uniforms persist
+    // across draws within a frame, so we must set them before every submit.
+    applyHDBackgroundLightingUniforms();
+    bgfx::submit(viewId, getHDBackgroundShader());
 }
 
 bgfx::ProgramHandle getMaskBackgroundShader()
@@ -662,10 +732,10 @@ void osystem_drawPortraitOverlay(int choice)
     float fadeParams[4] = { g_fadeLevel, 0.0f, 0.0f, 0.0f };
     bgfx::setUniform(fadeLevelUniform, fadeParams);
 
-    bgfx::submit(gameViewId, getHDBackgroundShader());
+    submitHDBackground(gameViewId);
 }
 
-// Render the frozen scene snapshot into a specific screen rectangle (e.g. pause menu preview box).
+// Render the frozen scene snapshot into a specific screen rectangle
 // Coordinates are in game-space (320x200). Rendered at Z=999 (in front of background, behind overlays).
 void osystem_drawFrozenScenePreview(float x1, float y1, float x2, float y2)
 {
@@ -739,7 +809,7 @@ void osystem_drawFrozenScenePreview(float x1, float y1, float x2, float y2)
     float fadeParams[4] = { g_fadeLevel, 0.0f, 0.0f, 0.0f };
     bgfx::setUniform(previewFadeUniform, fadeParams);
 
-    bgfx::submit(gameViewId, getHDBackgroundShader());
+    submitHDBackground(gameViewId);
 }
 
 // System menu HD background overlay
@@ -868,7 +938,7 @@ void osystem_drawSystemMenuBackground()
     float fadeParams[4] = { g_fadeLevel, 0.0f, 0.0f, 0.0f };
     bgfx::setUniform(sysMenuFadeUniform, fadeParams);
 
-    bgfx::submit(gameViewId, getHDBackgroundShader());
+    submitHDBackground(gameViewId);
 }
 
 // Save/Restore screen HD background overlay
@@ -995,10 +1065,10 @@ void osystem_drawSaveRestoreBackground()
     float fadeParams[4] = { g_fadeLevel, 0.0f, 0.0f, 0.0f };
     bgfx::setUniform(saveRestoreFadeUniform, fadeParams);
 
-    bgfx::submit(gameViewId, getHDBackgroundShader());
+    submitHDBackground(gameViewId);
 }
 
-// Save slot preview HD texture - renders loaded PNG preview data as an HD quad
+// Save slot preview HD texture
 static bgfx::TextureHandle g_saveSlotPreviewTex = BGFX_INVALID_HANDLE;
 static int g_saveSlotPreviewW = 0;
 static int g_saveSlotPreviewH = 0;
@@ -1106,7 +1176,7 @@ void osystem_drawSaveSlotPreviewHD(float x1, float y1, float x2, float y2)
     float fadeParams[4] = { g_fadeLevel, 0.0f, 0.0f, 0.0f };
     bgfx::setUniform(slotPreviewFadeUniform, fadeParams);
 
-    bgfx::submit(gameViewId, getHDBackgroundShader());
+    submitHDBackground(gameViewId);
 }
 
 void osystem_destroySaveSlotPreviewTexture()
@@ -1245,7 +1315,7 @@ void osystem_drawHotspotOverlay(float opacity)
     float fadeParams[4] = { g_fadeLevel * opacity, 0.0f, 0.0f, 0.0f };
     bgfx::setUniform(hotspotFadeUniform, fadeParams);
 
-    bgfx::submit(gameViewId, getHDBackgroundShader());
+    submitHDBackground(gameViewId);
 }
 
 // Startup menu HD background overlay
@@ -1438,7 +1508,7 @@ void osystem_drawStartupMenuBackground()
     float fadeParams[4] = { g_fadeLevel, 0.0f, 0.0f, 0.0f };
     bgfx::setUniform(startupMenuFadeUniform, fadeParams);
 
-    bgfx::submit(gameViewId, getHDBackgroundShader());
+    submitHDBackground(gameViewId);
 }
 
 // Language selection HD background overlay
@@ -1567,10 +1637,10 @@ void osystem_drawLanguageSelectionBackground()
     float fadeParams[4] = { g_fadeLevel, 0.0f, 0.0f, 0.0f };
     bgfx::setUniform(langSelectFadeUniform, fadeParams);
 
-    bgfx::submit(gameViewId, getHDBackgroundShader());
+    submitHDBackground(gameViewId);
 }
 
-// Full-screen frame HD overlay (used by controls menu, etc.)
+// Full-screen frame HD overlay
 static bgfx::TextureHandle g_fullScreenFrameTexture = BGFX_INVALID_HANDLE;
 static bool g_fullScreenFrameLoaded = false;
 
@@ -1694,7 +1764,7 @@ void osystem_drawFullScreenFrame()
     float fadeParams[4] = { g_fadeLevel, 0.0f, 0.0f, 0.0f };
     bgfx::setUniform(fsFrameFadeUniform, fadeParams);
 
-    bgfx::submit(gameViewId, getHDBackgroundShader());
+    submitHDBackground(gameViewId);
 }
 
 // Inventory HD background overlay
@@ -1823,7 +1893,7 @@ void osystem_drawInventoryBackground()
     float fadeParams[4] = { g_fadeLevel, 0.0f, 0.0f, 0.0f };
     bgfx::setUniform(invFadeLevelUniform, fadeParams);
 
-    bgfx::submit(gameViewId, getHDBackgroundShader());
+    submitHDBackground(gameViewId);
 }
 
 // Found object HD background overlay
@@ -1952,7 +2022,7 @@ void osystem_drawFoundObjectBackground()
     float fadeParams[4] = { g_fadeLevel, 0.0f, 0.0f, 0.0f };
     bgfx::setUniform(foundObjFadeLevelUniform, fadeParams);
 
-    bgfx::submit(gameViewId, getHDBackgroundShader());
+    submitHDBackground(gameViewId);
 }
 void osystem_drawBlackScreen()
 {
@@ -2129,7 +2199,8 @@ void osystem_drawBackground()
         float fadeParams[4] = { g_fadeLevel, 0.0f, 0.0f, 0.0f };
         bgfx::setUniform(fadeLevelUniform, fadeParams);
 
-        bgfx::submit(gameViewId, useHDShader ? getHDBackgroundShader() : getBackgroundShader());
+        if (useHDShader) { applyHDBackgroundLightingUniforms(); bgfx::submit(gameViewId, getHDBackgroundShader()); }
+        else { bgfx::submit(gameViewId, getBackgroundShader()); }
 
 
     }
@@ -2367,6 +2438,8 @@ void osystem_startFrame()
         g_bgfxMainResourcesInitialized = true;
     }
 
+    g_3dFlushedThisFrame = false;
+
     // Process deferred resource frees
     ResourceGC::tick();
 
@@ -2465,19 +2538,22 @@ void osystem_CopyBlockPhys(unsigned char* videoBuffer, int left, int top, int ri
 {
     unsigned char* in = (unsigned char*)&videoBuffer[0] + left + top * 320;
 
+    // Clamp BEFORE 4-pixel alignment so the while loops can't push past the
+    // 320/200 bounds and re-upload stale edge pixels.
+    if (right > 320) right = 320;
+    if (bottom > 200) bottom = 200;
+
     while ((right - left) % 4)
     {
+        if (right >= 320) break;
         right++;
     }
 
     while ((bottom - top) % 4)
     {
+        if (bottom >= 200) break;
         bottom++;
     }
-
-    // Clamp to screen bounds after alignment rounding
-    if (right > 320) right = 320;
-    if (bottom > 200) bottom = 200;
 
     for (int i = top; i < bottom; i++)
     {
@@ -2571,6 +2647,11 @@ void osystem_stopFrame()
 
 void osystem_flushPendingPrimitives()
 {
+    if (numUsedFlatVertices || numUsedNoiseVertices || numUsedRampVertices ||
+        numUsedSpheres || numUsedTransparentVertices || numUsedTexturedVertices ||
+        !g_lineVertices.empty())
+        g_3dFlushedThisFrame = true;
+
     // Helper lambda to apply shake offset to polyVertex arrays in transient buffers
     auto applyShakeToVertices = [](uint8_t* data, int numVertices, int stride) {
         if (g_shakeOffsetX == 0.f && g_shakeOffsetY == 0.f) return;
@@ -2702,13 +2783,42 @@ void osystem_flushPendingPrimitives()
             | BGFX_STATE_CULL_CCW
         );
 
-        static bgfx::UniformHandle paletteTextureUniform = BGFX_INVALID_HANDLE;
-        if (!bgfx::isValid(paletteTextureUniform))
+        // Ramp vertices encode palette indices (colorIdx/15, bank/15) in their
+        // UVs, not atlas texture coordinates. Sampling a polygon atlas at those
+        // UVs produces garbage, so we always take the palette path here by
+        // leaving u_rampAtlasInfo at (0,0) and binding the palette texture.
+        // If/when ramps get real atlas UVs emitted from the vertex generator,
+        // re-enable the atlas branch.
+        bgfx::TextureHandle rampTexToUse = g_paletteTexture;  // Palette fallback (always)
+        float atlasWidth = 0.f;
+        float atlasHeight = 0.f;
+
+        // Use s_modelTexture uniform for ramp atlas (sampler slot 0)
+        static bgfx::UniformHandle modelTextureUniform = BGFX_INVALID_HANDLE;
+        if (!bgfx::isValid(modelTextureUniform))
         {
-            paletteTextureUniform = bgfx::createUniform("s_paletteTexture", bgfx::UniformType::Sampler);
+            modelTextureUniform = bgfx::createUniform("s_modelTexture", bgfx::UniformType::Sampler);
         }
 
-        bgfx::setTexture(1, paletteTextureUniform, g_paletteTexture);
+        static bgfx::UniformHandle rampAtlasInfoUniform = BGFX_INVALID_HANDLE;
+        if (!bgfx::isValid(rampAtlasInfoUniform))
+        {
+            rampAtlasInfoUniform = bgfx::createUniform("u_rampAtlasInfo", bgfx::UniformType::Vec4);
+        }
+
+        // Set ramp atlas dimensions uniform (shader uses this to decide palette vs atlas mode)
+        float atlasInfo[] = { atlasWidth, atlasHeight, 0.f, 0.f };
+        bgfx::setUniform(rampAtlasInfoUniform, atlasInfo);
+
+        // Bind palette texture at slot 1 for getColor() fallback in palette.sh
+        static bgfx::UniformHandle rampPaletteUniform = BGFX_INVALID_HANDLE;
+        if (!bgfx::isValid(rampPaletteUniform))
+        {
+            rampPaletteUniform = bgfx::createUniform("s_paletteTexture", bgfx::UniformType::Sampler);
+        }
+        bgfx::setTexture(1, rampPaletteUniform, g_paletteTexture);
+
+        bgfx::setTexture(0, modelTextureUniform, rampTexToUse);
         bgfx::setVertexBuffer(0, &transientBuffer);
         bgfx::submit(gameViewId, getRampShader());
     }
@@ -2729,6 +2839,20 @@ void osystem_flushPendingPrimitives()
         memcpy(transientBuffer.data, &sphereVertices[0], sizeof(sphereVertex) * numUsedSpheres);
         applyShakeToVertices(transientBuffer.data, numUsedSpheres, sizeof(sphereVertex));
 
+        // applyShakeToVertices only shifts position.xy; sphereVertex also
+        // carries centerX/centerY used by sphere_ps.sc to compute the normal
+        // (screenSpacePos - sphereCenter). Shift those too so the normal
+        // stays consistent during screen shake, otherwise lighting skews.
+        if (g_shakeOffsetX != 0.f || g_shakeOffsetY != 0.f)
+        {
+            for (int i = 0; i < numUsedSpheres; i++)
+            {
+                sphereVertex* pV = (sphereVertex*)(transientBuffer.data + i * sizeof(sphereVertex));
+                pV->centerX += g_shakeOffsetX;
+                pV->centerY += g_shakeOffsetY;
+            }
+        }
+
         bgfx::setState(0 | BGFX_STATE_WRITE_RGB
             | BGFX_STATE_WRITE_A
             | BGFX_STATE_WRITE_Z
@@ -2737,15 +2861,18 @@ void osystem_flushPendingPrimitives()
             | BGFX_STATE_BLEND_FUNC(BGFX_STATE_BLEND_SRC_ALPHA, BGFX_STATE_BLEND_INV_SRC_ALPHA)
         );
 
-        // Check if we have a sphere atlas texture for the current model
+        // Check if we have a sphere atlas texture for the current model.
+        // Correctness relies on osystem_drawPoint flushing the pending sphere
+        // batch whenever getCurrentAtlas() changes, so every submit here has
+        // spheres from exactly one model and numSpheresPrimitives indexes
+        // that model's atlas cells from 0.
         ModelAtlasData* currentAtlas = getCurrentAtlas();
-        bgfx::TextureHandle sphereTexToUse = g_paletteTexture;  // Default fallback
+        bgfx::TextureHandle sphereTexToUse = g_paletteTexture;  // fallback
         float atlasWidth = 0.f;
         float atlasHeight = 0.f;
 
         if (currentAtlas && bgfx::isValid(currentAtlas->sphereTexture))
         {
-            // Use the sphere atlas texture instead of palette
             sphereTexToUse = currentAtlas->sphereTexture;
             atlasWidth = (float)currentAtlas->sphereAtlasWidth;
             atlasHeight = (float)currentAtlas->sphereAtlasHeight;
@@ -3228,6 +3355,32 @@ void osystem_drawSphere(float X, float Y, float Z, u8 color, u8 material, float 
 
 void osystem_drawPoint(float X, float Y, float Z, u8 color, u8 material, float size)
 {
+    // Guard against zero/negative radius: the UV normalization below divides
+    // by (size * 1.2f), so size <= 0 produces NaN/Inf UVs and garbage samples.
+    if (size <= 0.f)
+        return;
+
+    // Sphere atlases are per-model, and atlas cell UVs are indexed by
+    // (numSpheresPrimitives - 1). The flush submit only binds ONE atlas
+    // texture, so if the current model's atlas changes while we still have
+    // spheres queued for the previous model, both the bound texture AND the
+    // cell indices would be wrong -> spheres go missing / sample wrong cells.
+    // Flush the current batch whenever the atlas pointer changes so each
+    // submit contains spheres from exactly one model, and the per-flush
+    // counter restarts cleanly at 0 for the new model.
+    static ModelAtlasData* s_lastSphereAtlas = nullptr;
+    ModelAtlasData* currentAtlasForSphere = getCurrentAtlas();
+    if (currentAtlasForSphere != s_lastSphereAtlas && numUsedSpheres > 0)
+    {
+        osystem_flushPendingPrimitives();
+    }
+    s_lastSphereAtlas = currentAtlasForSphere;
+
+    // Advance the per-frame sphere primitive counter so each sphere samples its
+    // own cell of the sphere atlas. The cell index used below is
+    // (numSpheresPrimitives - 1), so we must increment BEFORE emitting vertices.
+    numSpheresPrimitives++;
+
     float fScaleRatio = 6.f / 5.f;
     std::array<sphereVertex, 4> corners;
     corners[0].X = X + size * fScaleRatio;
@@ -3266,32 +3419,30 @@ void osystem_drawPoint(float X, float Y, float Z, u8 color, u8 material, float s
         pVertex->Y = corners[mapping[i]].Y;
         pVertex->Z = corners[mapping[i]].Z;
 
-        // Compute UV from sphere atlas grid cell position
-        // Sphere atlas layout: 8 columns, 128x128 pixel cells per sphere
+        // Sphere atlas UV encoding. Correctness requires that every sphere
+        // queued in the current batch belongs to the same model (same
+        // getCurrentAtlas() pointer). osystem_drawPoint flushes the batch
+        // at the top of the function whenever the atlas pointer changes,
+        // so numSpheresPrimitives indexes cells of a single model's atlas
+        // starting from 0.
         ModelAtlasData* atlasData = getCurrentAtlas();
         if (atlasData && atlasData->sphereAtlasWidth > 0 && atlasData->sphereAtlasHeight > 0)
         {
             const int CELLS_PER_ROW = 8;
             const int CELL_SIZE_PIXELS = 128;
-
-            int cellX = (numSpheresPrimitives - 1) % CELLS_PER_ROW;
-            int cellY = (numSpheresPrimitives - 1) / CELLS_PER_ROW;
-
+            int cellIdx = numSpheresPrimitives - 1;
+            int cellX = cellIdx % CELLS_PER_ROW;
+            int cellY = cellIdx / CELLS_PER_ROW;
             float cellPixelX = (float)(cellX * CELL_SIZE_PIXELS);
             float cellPixelY = (float)(cellY * CELL_SIZE_PIXELS);
-
-            // Convert corner local UV (0-1) to atlas cell space
-            // Get corner local coords (normalized in -1 to 1 range from sphere center)
-            float cornerLocalU = (corners[mapping[i]].X - X) / (size * 1.2f) * 0.5f + 0.5f; // Normalize to 0-1
+            float cornerLocalU = (corners[mapping[i]].X - X) / (size * 1.2f) * 0.5f + 0.5f;
             float cornerLocalV = (corners[mapping[i]].Y - Y) / (size * 1.2f) * 0.5f + 0.5f;
-
-            // Map to cell space
-            pVertex->U = (cellPixelX + cornerLocalU * CELL_SIZE_PIXELS) / atlasData->sphereAtlasWidth;
-            pVertex->V = (cellPixelY + cornerLocalV * CELL_SIZE_PIXELS) / atlasData->sphereAtlasHeight;
+            pVertex->U = (cellPixelX + cornerLocalU * CELL_SIZE_PIXELS) / (float)atlasData->sphereAtlasWidth;
+            pVertex->V = (cellPixelY + cornerLocalV * CELL_SIZE_PIXELS) / (float)atlasData->sphereAtlasHeight;
         }
         else
         {
-            // Encode palette color into UV for the shader's palette lookup
+            // Palette fallback when no atlas exists for this model.
             int bank = (color >> 4) & 0xF;
             int startColor = color & 0xF;
             pVertex->U = (float)startColor / 15.f;
@@ -3679,8 +3830,34 @@ void osystem_drawMask(int roomId, int maskId)
     bgfx::TransientVertexBuffer maskTransientBuffer;
     bgfx::allocTransientVertexBuffer(&maskTransientBuffer, 4, maskLayout);
 
-    float mX1 = maskTextures[roomId][maskId].maskX1 + g_shakeOffsetX;
-    float mX2 = maskTextures[roomId][maskId].maskX2 + g_shakeOffsetX;
+    // Calculate horizontal offset for aspect ratio correction
+    // Game viewport is 320x200 (16:10 = 1.6), HD backgrounds are often 16:9 (1.778)
+    // If the HD background is wider than 16:10, we need to pillarbox (center horizontally)
+    float horizontalOffset = 0.f;
+    if (g_currentBackgroundIsHD && g_currentBackgroundWidth > 0 && g_currentBackgroundHeight > 0)
+    {
+        float bgAspect = (float)g_currentBackgroundWidth / (float)g_currentBackgroundHeight;
+        float gameAspect = 320.f / 200.f;  // 1.6
+
+        if (bgAspect > gameAspect)
+        {
+            // Background is wider - need to pillarbox (center horizontally)
+            // Calculate how much of the 320-wide space the background actually occupies
+            float effectiveWidth = 320.f * (gameAspect / bgAspect);
+            horizontalOffset = (320.f - effectiveWidth) / 2.f;
+
+            static bool s_logged = false;
+            if (!s_logged)
+            {
+                printf(LIFE_TAG "Regular-mask: aspect correction - bg=%.3f game=%.3f offset=%.1f" CON_RESET "\n",
+                       bgAspect, gameAspect, horizontalOffset);
+                s_logged = true;
+            }
+        }
+    }
+
+    float mX1 = maskTextures[roomId][maskId].maskX1 + horizontalOffset + g_shakeOffsetX;
+    float mX2 = maskTextures[roomId][maskId].maskX2 + horizontalOffset + g_shakeOffsetX;
     float mY1 = maskTextures[roomId][maskId].maskY1 + g_shakeOffsetY;
     float mY2 = maskTextures[roomId][maskId].maskY2 + g_shakeOffsetY;
     float mZ = 0.f;
@@ -3709,7 +3886,161 @@ void osystem_drawMask(int roomId, int maskId)
         | BGFX_STENCIL_OP_FAIL_Z_KEEP
         | BGFX_STENCIL_OP_PASS_Z_REPLACE);
 
+    applyHDBackgroundLightingUniforms();
     bgfx::submit(gameViewId, g_currentBackgroundIsHD ? getHDMaskBackgroundShader() : getMaskBackgroundShader());
+}
+
+// ============================================================================
+// Animated grass-mask overlay
+// Drawn AFTER 3D actors so the grass occludes them.
+// ============================================================================
+#include "bgAnimGrassMask.h"
+
+void osystem_drawAnimatedGrassMask()
+{
+    if (g_gameId == TIMEGATE)
+        return;
+
+    if (!bgAnimGrassMask_isActive())
+        return;
+
+#ifdef FITD_DEBUGGER
+    if (backgroundMode != backgroundModeEnum_2D)
+        return;
+#endif
+
+    // CRITICAL: 3D actors are batched into flatVertices/rampVertices/etc and
+    // only submitted when osystem_flushPendingPrimitives() runs. Since bgfx
+    // view mode is Sequential, our mask submit must come AFTER the actor
+    // submits or the actors paint over the grass. Flush here so the actor
+    // geometry hits the GPU first.
+    osystem_flushPendingPrimitives();
+
+    int maskW = 0, maskH = 0, version = 0, frameId = -1;
+    const unsigned char* maskPixels = bgAnimGrassMask_getCurrentFrameMask(
+        &maskW, &maskH, &version, &frameId);
+    if (!maskPixels || maskW <= 0 || maskH <= 0)
+        return;
+
+    static bgfx::TextureHandle s_grassMaskTex = BGFX_INVALID_HANDLE;
+    static int s_lastVersion = -1;
+    static int s_lastFrameId = -1;
+    static int s_lastW = 0;
+    static int s_lastH = 0;
+
+    bool needRecreate = !bgfx::isValid(s_grassMaskTex) ||
+                        version != s_lastVersion ||
+                        maskW != s_lastW || maskH != s_lastH;
+
+    if (needRecreate)
+    {
+        if (bgfx::isValid(s_grassMaskTex))
+        {
+            bgfx::destroy(s_grassMaskTex);
+            s_grassMaskTex = BGFX_INVALID_HANDLE;
+        }
+        s_grassMaskTex = bgfx::createTexture2D(
+            (uint16_t)maskW, (uint16_t)maskH, false, 1,
+            bgfx::TextureFormat::R8,
+            BGFX_SAMPLER_U_CLAMP | BGFX_SAMPLER_V_CLAMP);
+        s_lastVersion = version;
+        s_lastW = maskW;
+        s_lastH = maskH;
+        s_lastFrameId = -1; // force re-upload
+    }
+
+    if (!bgfx::isValid(s_grassMaskTex))
+        return;
+
+    if (frameId != s_lastFrameId)
+    {
+        bgfx::updateTexture2D(s_grassMaskTex, 0, 0, 0, 0,
+                              (uint16_t)maskW, (uint16_t)maskH,
+                              bgfx::copy(maskPixels, (uint32_t)maskW * (uint32_t)maskH));
+        s_lastFrameId = frameId;
+    }
+
+    static bgfx::UniformHandle backgroundTextureUniform = BGFX_INVALID_HANDLE;
+    if (!bgfx::isValid(backgroundTextureUniform))
+        backgroundTextureUniform = bgfx::createUniform("s_backgroundTexture", bgfx::UniformType::Sampler);
+    static bgfx::UniformHandle paletteTextureUniform = BGFX_INVALID_HANDLE;
+    if (!bgfx::isValid(paletteTextureUniform))
+        paletteTextureUniform = bgfx::createUniform("s_paletteTexture", bgfx::UniformType::Sampler);
+    static bgfx::UniformHandle maskTextureUniform = BGFX_INVALID_HANDLE;
+    if (!bgfx::isValid(maskTextureUniform))
+        maskTextureUniform = bgfx::createUniform("s_maskTexture", bgfx::UniformType::Sampler);
+    static bgfx::UniformHandle fadeLevelUniform = BGFX_INVALID_HANDLE;
+    if (!bgfx::isValid(fadeLevelUniform))
+        fadeLevelUniform = bgfx::createUniform("u_fadeLevel", bgfx::UniformType::Vec4);
+
+    bgfx::setState(0 | BGFX_STATE_WRITE_RGB
+        | BGFX_STATE_WRITE_A
+        | BGFX_STATE_DEPTH_TEST_ALWAYS
+        | BGFX_STATE_MSAA
+        | BGFX_STATE_PT_TRISTRIP
+        | BGFX_STATE_BLEND_FUNC(BGFX_STATE_BLEND_SRC_ALPHA, BGFX_STATE_BLEND_INV_SRC_ALPHA)
+    );
+
+    bgfx::VertexLayout maskLayout;
+    maskLayout
+        .begin()
+        .add(bgfx::Attrib::Position,  3, bgfx::AttribType::Float)
+        .add(bgfx::Attrib::TexCoord0, 2, bgfx::AttribType::Float)
+        .end();
+
+    bgfx::TransientVertexBuffer maskTransientBuffer;
+    bgfx::allocTransientVertexBuffer(&maskTransientBuffer, 4, maskLayout);
+
+    // Calculate horizontal offset for aspect ratio correction
+    // Game viewport is 320x200 (16:10 = 1.6), HD backgrounds are often 16:9 (1.778)
+    // If the HD background is wider than 16:10, we need to letterbox (center horizontally)
+    float horizontalOffset = 0.f;
+    if (maskW > 0 && maskH > 0)
+    {
+        float bgAspect = (float)maskW / (float)maskH;      // e.g., 1.778 for 1920x1080
+        float gameAspect = 320.f / 200.f;                   // 1.6 for game viewport
+
+        if (bgAspect > gameAspect)
+        {
+            // Background is wider - need to pillarbox (center horizontally)
+            // Calculate how much of the 320-wide space the background actually occupies
+            float effectiveWidth = 320.f * (gameAspect / bgAspect);
+            horizontalOffset = (320.f - effectiveWidth) / 2.f;
+
+            static bool s_logged = false;
+            if (!s_logged)
+            {
+                printf(LIFE_TAG "Grass-mask: aspect correction - bg=%.3f game=%.3f offset=%.1f" CON_RESET "\n",
+                       bgAspect, gameAspect, horizontalOffset);
+                s_logged = true;
+            }
+        }
+    }
+
+    const float mX1 = horizontalOffset + g_shakeOffsetX;
+    const float mX2 = 320.f - horizontalOffset + g_shakeOffsetX;
+    const float mY1 = 0.f   + g_shakeOffsetY;
+    const float mY2 = 200.f + g_shakeOffsetY;
+    const float mZ  = 0.f;
+
+    struct sMaskVertice { float position[3]; float texcoord[2]; };
+    sMaskVertice* pMV = (sMaskVertice*)maskTransientBuffer.data;
+    pMV[0] = { {mX1, mY2, mZ}, {0.f, 1.f} };
+    pMV[1] = { {mX1, mY1, mZ}, {0.f, 0.f} };
+    pMV[2] = { {mX2, mY2, mZ}, {1.f, 1.f} };
+    pMV[3] = { {mX2, mY1, mZ}, {1.f, 0.f} };
+
+    bgfx::setVertexBuffer(0, &maskTransientBuffer);
+
+    bgfx::setTexture(2, backgroundTextureUniform, getActiveBackgroundTexture());
+    bgfx::setTexture(1, paletteTextureUniform, g_paletteTexture);
+    bgfx::setTexture(0, maskTextureUniform, s_grassMaskTex);
+
+    float fadeParams[4] = { g_fadeLevel, 0.0f, 0.0f, 0.0f };
+    bgfx::setUniform(fadeLevelUniform, fadeParams);
+
+    applyHDBackgroundLightingUniforms();
+    bgfx::submit(gameViewId, getHDMaskBackgroundShader());
 }
 
 void osystem_drawMaskStencilPrepass(int roomId, int maskId)
@@ -3800,11 +4131,12 @@ void osystem_drawMaskStencilPrepass(int roomId, int maskId)
         | BGFX_STENCIL_OP_FAIL_Z_KEEP
         | BGFX_STENCIL_OP_PASS_Z_REPLACE);
 
+    applyHDBackgroundLightingUniforms();
     bgfx::submit(gameViewId, g_currentBackgroundIsHD ? getHDMaskBackgroundShader() : getMaskBackgroundShader());
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-// Scene preview capture for pause menu
+// Scene preview capture
 // A persistent GPU snapshot texture is blitted every game frame (inside
 // EndFrame, after endScene, before bgfx::frame).  When the pause menu opens
 // we stop updating the snapshot, request a CPU readback of the last game
@@ -4017,7 +4349,7 @@ void osystem_drawFrozenSceneBackground()
     float fadeParams[4] = { g_fadeLevel, 0.0f, 0.0f, 0.0f };
     bgfx::setUniform(frozenSceneFadeUniform, fadeParams);
 
-    bgfx::submit(gameViewId, getHDBackgroundShader());
+    submitHDBackground(gameViewId);
 }
 
 // Page turn animation support
@@ -4224,7 +4556,7 @@ void osystem_drawMapImage()
     float fadeParams[4] = { g_fadeLevel, 0.0f, 0.0f, 0.0f };
     bgfx::setUniform(mapFadeUniform, fadeParams);
 
-    bgfx::submit(gameViewId, getHDBackgroundShader());
+    submitHDBackground(gameViewId);
 }
 
 void osystem_destroyMapTexture()

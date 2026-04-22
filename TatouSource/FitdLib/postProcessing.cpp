@@ -255,15 +255,21 @@ static void renderFullscreenQuad(bgfx::ViewId viewId, bgfx::ProgramHandle progra
 
     Vertex* v = (Vertex*)tvb.data;
 
+    // On OpenGL, render-target textures have origin at bottom-left, so we
+    // need to flip V when sampling them for a fullscreen composite.
+    const bool flipV = bgfx::getCaps()->originBottomLeft;
+    const float v0 = flipV ? 1.0f : 0.0f;
+    const float v1 = flipV ? 0.0f : 1.0f;
+
     // Triangle 1
-    v[0] = { {-1.0f,  1.0f, 0.0f}, {0.0f, 0.0f} };
-    v[1] = { { 1.0f, -1.0f, 0.0f}, {1.0f, 1.0f} };
-    v[2] = { { 1.0f,  1.0f, 0.0f}, {1.0f, 0.0f} };
+    v[0] = { {-1.0f,  1.0f, 0.0f}, {0.0f, v0} };
+    v[1] = { { 1.0f, -1.0f, 0.0f}, {1.0f, v1} };
+    v[2] = { { 1.0f,  1.0f, 0.0f}, {1.0f, v0} };
 
     // Triangle 2
-    v[3] = { {-1.0f,  1.0f, 0.0f}, {0.0f, 0.0f} };
-    v[4] = { {-1.0f, -1.0f, 0.0f}, {0.0f, 1.0f} };
-    v[5] = { { 1.0f, -1.0f, 0.0f}, {1.0f, 1.0f} };
+    v[3] = { {-1.0f,  1.0f, 0.0f}, {0.0f, v0} };
+    v[4] = { {-1.0f, -1.0f, 0.0f}, {0.0f, v1} };
+    v[5] = { { 1.0f, -1.0f, 0.0f}, {1.0f, v1} };
 
     bgfx::setState(BGFX_STATE_WRITE_RGB | BGFX_STATE_WRITE_A);
     bgfx::setVertexBuffer(0, &tvb);

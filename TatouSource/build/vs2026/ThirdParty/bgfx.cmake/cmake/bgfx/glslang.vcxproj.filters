@@ -369,10 +369,10 @@
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Header Files">
-      <UniqueIdentifier>{9DFC67D7-0CF7-3A7D-801D-BF3DA2631FB3}</UniqueIdentifier>
+      <UniqueIdentifier>{49DE40D4-269F-3242-844A-A305A58F8045}</UniqueIdentifier>
     </Filter>
     <Filter Include="Source Files">
-      <UniqueIdentifier>{62594120-CEA6-3B91-91CB-064219E248BD}</UniqueIdentifier>
+      <UniqueIdentifier>{77332710-87DF-37E4-B838-A322A496A08B}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>
