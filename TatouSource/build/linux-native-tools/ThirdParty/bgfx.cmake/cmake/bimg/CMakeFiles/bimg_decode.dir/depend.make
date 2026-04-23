@@ -1,0 +1,2 @@
+# Empty dependencies file for bimg_decode.
+# This may be replaced when dependencies are built.

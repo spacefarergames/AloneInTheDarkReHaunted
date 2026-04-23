@@ -1,0 +1,1 @@
+/usr/bin/c++  -DBX_CONFIG_DEBUG=0 -O3 -DNDEBUG CMakeFiles/unpack_hda_archive.dir/unpack_hda_archive.cpp.o -o unpack_hda_archive  ../zlib/zlib-build/libz.a 
