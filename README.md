@@ -23,9 +23,10 @@ AITD-R (also known as *Alone In The Dark Re-Haunted*) lets you play the original
 ## Video (YouTube)
 https://www.youtube.com/watch?v=fzi_xK2Jifw
 
-## Graphics Target
+## Lamp Dynamic Lighting
+https://www.youtube.com/watch?v=0yaWv7vF3bA
 
-<img width="1536" height="1024" alt="image" src="https://github.com/user-attachments/assets/45771c9c-349a-41ab-8c73-643221c001c7" />
+<img width="1920" height="1080" alt="vlcsnap-2026-04-22-13h52m48s765" src="https://github.com/user-attachments/assets/9f25879b-5c99-4313-b427-b17670c19a83" />
 
 ## Supported Games
 
@@ -33,7 +34,9 @@ https://www.youtube.com/watch?v=fzi_xK2Jifw
 |------|-------|-----|--------|
 | Alone in the Dark 1 | [Store page](https://store.steampowered.com/app/548090/Alone_in_the_Dark_1/) | [Trilogy](https://www.gog.com/en/game/alone_in_the_dark_the_trilogy_123) | ✅ Completable
 
-Future Rehaunted projects. AKA Jack Is Back (Again!) and AITD3 are coming soon.
+## Future Forks (And Project Names)
+| Alone in the Dark 2 - Jack Is Back Again |✅ In Progress (https://github.com/spacefarergames/AloneInTheDarkJackIsBackAgain/)
+| Alone in the Dark 3 - Rhinestone Cowboy | ✅ Planned
 
 ---
 
@@ -126,10 +129,10 @@ Beginning with Version 2.0, Rehaunted will automatically find and copy over the 
 
 | Action | Key | Description |
 |--------|-----|-------------|
-| Move Forward | **↑** (Up Arrow) | Walk forward |
-| Move Backward | **↓** (Down Arrow) | Walk backward |
-| Turn Left | **←** (Left Arrow) | Turn left |
-| Turn Right | **→** (Right Arrow) | Turn right |
+| Move Forward | **↑** (Up Arrow) | Walk forward | W
+| Move Backward | **↓** (Down Arrow) | Walk backward | S
+| Turn Left | **←** (Left Arrow) | Turn left | A
+| Turn Right | **→** (Right Arrow) | Turn right | D
 | Action / Fight | **Space** | Interact with objects, attack in combat |
 | Confirm / Enter | **Enter** | Confirm menu selections |
 | Cancel / Menu | **Escape** | Open system menu, cancel dialogs |
@@ -181,6 +184,7 @@ The *Re-Haunted* fork adds several enhancements on top of the original FITD engi
 | Feature | Status | Details |
 |---------|--------|---------|
 | **Dynamic Recomp of Life System** | ✅ Available | All native code, LISTLIFE Life System converted to C |
+| **Dynamic Lamp Lighting** | ✅ Available | Now features illumination of HD BGS and AO inspired by AITD4 |
 | **HD backgrounds** | ✅ Available | Upscaled camera views (2×–8×) with PNG/TGA support, including animated backgrounds |
 | **Textured 3D models** | ✅ Available | High-quality textured replacements for core 3D models via texture atlas |
 | **TTF font rendering** | ✅ Available | Smooth anti-aliased overlay fonts via ImGui (configurable font, size, and style) |
