@@ -9,6 +9,8 @@
 
 **A cross-platform engine reimplementation for the classic *Alone in the Dark* trilogy (1992–1995), with modern remaster enhancements.**
 
+OS supported with binaries - Windows (64bit) Linux (64bit) macOS 11.3 (64bit)
+
 AITD-R (also known as *Alone In The Dark Re-Haunted*) lets you play the original *Alone in the Dark* games on modern hardware. It is a from-scratch C++ reimplementation of the Infogrames engine, built with modern rendering (bgfx), audio (SoLoud), and input (SDL3) backends. The project is released under the **GNU General Public License v2**.
 
 > **You must own the original game data** — purchase *Alone in the Dark* on [Steam](https://store.steampowered.com/app/548090/Alone_in_the_Dark_1/) or [GOG](https://www.gog.com/en/game/alone_in_the_dark_the_trilogy_123). The game data files are **not** included.
