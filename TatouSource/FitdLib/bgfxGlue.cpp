@@ -40,6 +40,8 @@ extern "C" {
 
 SDL_Window* gWindowBGFX = nullptr;
 
+static int s_windowedRect[4] = { 0, 0, 1410, 890 };
+
 int gFrameLimit = 60;
 bool gCloseApp = false;
 
@@ -58,14 +60,45 @@ void toggleFullscreen()
 
     gIsFullscreen = !gIsFullscreen;
 
+#if BX_PLATFORM_LINUX
+    // On Linux (X11/Wayland) exclusive fullscreen via SDL_SetWindowFullscreen
+    // does not trigger bgfx::reset() reliably. Use a borderless window
+    // positioned at (0,0) at the display's native resolution instead, which
+    // goes through the same resize path as a normal window resize (known working).
     if (gIsFullscreen)
     {
-        SDL_SetWindowFullscreen(gWindowBGFX, true);
+        SDL_GetWindowPosition(gWindowBGFX, &s_windowedRect[0], &s_windowedRect[1]);
+        SDL_GetWindowSize(gWindowBGFX, &s_windowedRect[2], &s_windowedRect[3]);
+
+        SDL_SetWindowBordered(gWindowBGFX, false);
+        SDL_SetWindowAlwaysOnTop(gWindowBGFX, true);
+
+        SDL_DisplayID display = SDL_GetDisplayForWindow(gWindowBGFX);
+        const SDL_DisplayMode* mode = SDL_GetCurrentDisplayMode(display);
+        if (mode)
+        {
+            SDL_Rect bounds;
+            SDL_GetDisplayBounds(display, &bounds);
+            SDL_SetWindowPosition(gWindowBGFX, bounds.x, bounds.y);
+            SDL_SetWindowSize(gWindowBGFX, mode->w, mode->h);
+        }
     }
     else
     {
-        SDL_SetWindowFullscreen(gWindowBGFX, false);
+        SDL_SetWindowBordered(gWindowBGFX, true);
+        SDL_SetWindowAlwaysOnTop(gWindowBGFX, false);
+        SDL_SetWindowSize(gWindowBGFX, s_windowedRect[2], s_windowedRect[3]);
+        SDL_SetWindowPosition(gWindowBGFX, s_windowedRect[0], s_windowedRect[1]);
     }
+
+    SDL_PumpEvents();
+
+    // Force StartFrame() to detect a resolution change and call bgfx::reset()
+    outputResolution[0] = -1;
+    outputResolution[1] = -1;
+#else
+    SDL_SetWindowFullscreen(gWindowBGFX, gIsFullscreen);
+#endif
 }
 
 // Because SDL is not well defined when using cmake (it's using the old style config.h and is somewhat broken)
