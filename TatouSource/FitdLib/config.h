@@ -12,7 +12,9 @@
 #if __cplusplus
 #include <vector>
 #include <string>
+#if __has_include(<format>)
 #include <format>
+#endif
 #include <optional>
 #endif
 

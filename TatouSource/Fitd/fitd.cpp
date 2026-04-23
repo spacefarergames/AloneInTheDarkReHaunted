@@ -8,6 +8,24 @@
 
 #include <cstdio>
 
+#if defined(__APPLE__)
+#include <CoreFoundation/CoreFoundation.h>
+#include <unistd.h>
+// Change working directory to the bundle's Resources folder so that
+// relative asset paths (HDA files, cfg, TTF, etc.) resolve correctly.
+static void macOSSetBundleWorkingDir()
+{
+    CFBundleRef bundle = CFBundleGetMainBundle();
+    if (!bundle) return;
+    CFURLRef resURL = CFBundleCopyResourcesDirectoryURL(bundle);
+    if (!resURL) return;
+    char path[4096];
+    if (CFURLGetFileSystemRepresentation(resURL, TRUE, (UInt8*)path, sizeof(path)))
+        chdir(path);
+    CFRelease(resURL);
+}
+#endif
+
 extern "C" {
     int FitdMain(int argc, char* argv[]);
 }
@@ -74,6 +92,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 // Console subsystem entry point (for debug builds)
 int main(int argc, char* argv[])
 {
+#if defined(__APPLE__)
+    macOSSetBundleWorkingDir();
+#endif
 #ifdef _WIN32
     // Hide the console window at startup; it will be shown after the main window is created
     HWND hConsole = GetConsoleWindow();

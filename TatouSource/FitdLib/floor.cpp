@@ -48,7 +48,7 @@ void LoadEtage(int floorNumber)
 
     if(g_gameId <= AITD3)
     {
-        std::string floorFileName = std::format("ETAGE{:02d}", floorNumber);
+        char _floorBuf[32]; snprintf(_floorBuf, sizeof(_floorBuf), "ETAGE%02d", floorNumber); std::string floorFileName = _floorBuf;
         if (fileExists((floorFileName+".PAK").c_str()))
         {
             g_currentFloorRoomRawDataSize = getPakSize(floorFileName.c_str(), 0);
@@ -80,13 +80,21 @@ void LoadEtage(int floorNumber)
         u8* sceZoneData;
 
         if (g_currentFloorRoomRawDataSize == 0) {
-            if (fileExists(std::format("ETAGE{:02d}.PAK", floorNumber).c_str()))
+            char pakName[32];
+            char baseName[32];
+            snprintf(pakName, sizeof(pakName), "ETAGE%02d.PAK", floorNumber);
+            snprintf(baseName, sizeof(baseName), "ETAGE%02d", floorNumber);
+            if (fileExists(pakName))
             {
-                roomData = (u8*)CheckLoadMallocPak(std::format("ETAGE{:02d}", floorNumber).c_str(), i);
+                roomData = (u8*)CheckLoadMallocPak(baseName, i);
             }
-            else if (fileExists(std::format("SAL{:02d}.PAK", floorNumber).c_str()))
+            else {
+                snprintf(pakName, sizeof(pakName), "SAL%02d.PAK", floorNumber);
+                snprintf(baseName, sizeof(baseName), "SAL%02d", floorNumber);
+            }
+            if (!roomData && fileExists(pakName))
             {
-                roomData = (u8*)CheckLoadMallocPak(std::format("SAL{:02d}", floorNumber).c_str(), i);
+                roomData = (u8*)CheckLoadMallocPak(baseName, i);
             }
             else {
                 assert(0);
@@ -230,11 +238,19 @@ void LoadEtage(int floorNumber)
 
         if (g_currentFloorCameraRawData == nullptr)
         {
-            if (fileExists(std::format("CAM{:02d}.PAK", g_currentFloor).c_str())) {
-                currentCameraData = (unsigned char*)CheckLoadMallocPak(std::format("CAM{:02d}", g_currentFloor).c_str(), i);
+            char camPak[32];
+            char camBase[32];
+            snprintf(camPak, sizeof(camPak), "CAM%02d.PAK", g_currentFloor);
+            snprintf(camBase, sizeof(camBase), "CAM%02d", g_currentFloor);
+            if (fileExists(camPak)) {
+                currentCameraData = (unsigned char*)CheckLoadMallocPak(camBase, i);
             }
-            else if (fileExists(std::format("CAMSAL{:02d}.PAK", g_currentFloor).c_str())) {
-                currentCameraData = (unsigned char*)CheckLoadMallocPak(std::format("CAMSAL{:02d}", g_currentFloor).c_str(), i);
+            else {
+                snprintf(camPak, sizeof(camPak), "CAMSAL%02d.PAK", g_currentFloor);
+                snprintf(camBase, sizeof(camBase), "CAMSAL%02d", g_currentFloor);
+            }
+            if (!currentCameraData && fileExists(camPak)) {
+                currentCameraData = (unsigned char*)CheckLoadMallocPak(camBase, i);
             }
             else {
                 assert(0);

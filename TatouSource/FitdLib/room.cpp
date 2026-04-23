@@ -53,11 +53,16 @@ int getNumberOfRoom()
         return j;
     }
     else {
-        if (fileExists(std::format("ETAGE{:02d}.PAK", g_currentFloor).c_str())) {
-            return PAK_getNumFiles(std::format("ETAGE{:02d}", g_currentFloor).c_str());
+        char _pak[32], _base[32];
+        snprintf(_pak, sizeof(_pak), "ETAGE%02d.PAK", g_currentFloor);
+        snprintf(_base, sizeof(_base), "ETAGE%02d", g_currentFloor);
+        if (fileExists(_pak)) {
+            return PAK_getNumFiles(_base);
         }
-        else if (fileExists(std::format("SAL{:02d}.PAK", g_currentFloor).c_str())) {
-            return PAK_getNumFiles(std::format("SAL{:02d}", g_currentFloor).c_str());
+        snprintf(_pak, sizeof(_pak), "SAL%02d.PAK", g_currentFloor);
+        snprintf(_base, sizeof(_base), "SAL%02d", g_currentFloor);
+        if (fileExists(_pak)) {
+            return PAK_getNumFiles(_base);
         }
         else {
             assert(0);

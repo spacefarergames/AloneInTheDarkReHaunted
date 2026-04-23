@@ -35,6 +35,8 @@ if(NINTENDO_SWITCH)
     include_directories("${THIRD_PARTY}/bgfx.cmake/bx/include/compat/gcc")
 elseif(UNIX AND NOT APPLE)
     include_directories("${THIRD_PARTY}/bgfx.cmake/bx/include/compat/linux")
+elseif(APPLE)
+    include_directories("${THIRD_PARTY}/bgfx.cmake/bx/include/compat/osx")
 endif()
 
 set(CMAKE_CXX_STANDARD 17)
@@ -47,6 +49,10 @@ file(GLOB_RECURSE SRC_ROOT
 )
 
 if(UNIX AND NOT APPLE)
+    list(REMOVE_ITEM SRC_ROOT "${CMAKE_CURRENT_SOURCE_DIR}/modelAtlas.cpp")
+endif()
+
+if(APPLE)
     list(REMOVE_ITEM SRC_ROOT "${CMAKE_CURRENT_SOURCE_DIR}/modelAtlas.cpp")
 endif()
 
@@ -177,5 +183,7 @@ elseif(UWP)
         /EHsc  # Exception handling model
     )
 elseif(UNIX AND NOT APPLE)
+    target_compile_options(FitdLib PRIVATE -fPIC)
+elseif(APPLE)
     target_compile_options(FitdLib PRIVATE -fPIC)
 endif()

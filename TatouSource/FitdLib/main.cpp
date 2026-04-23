@@ -677,14 +677,18 @@ void freeAll(void)
 textEntryStruct* getTextFromIdx(int index)
 {
 #ifndef _WIN32
-    // Platform-specific text overrides for Linux
-    // String 13 = "Return to Windows" -> "Return to Linux"
+    // Platform-specific text overrides
+    // String 13 = "Return to Windows" -> platform name
     if (index == 13)
     {
-        static textEntryStruct linuxReturnEntry = { 13, (u8*)"Return to Linux", 0 };
-        if (linuxReturnEntry.width == 0)
-            linuxReturnEntry.width = ExtGetSizeFont(linuxReturnEntry.textPtr);
-        return &linuxReturnEntry;
+#if defined(__APPLE__)
+        static textEntryStruct platformReturnEntry = { 13, (u8*)"Return to macOS", 0 };
+#else
+        static textEntryStruct platformReturnEntry = { 13, (u8*)"Return to Linux", 0 };
+#endif
+        if (platformReturnEntry.width == 0)
+            platformReturnEntry.width = ExtGetSizeFont(platformReturnEntry.textPtr);
+        return &platformReturnEntry;
     }
 #endif
 

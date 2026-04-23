@@ -561,6 +561,7 @@ void configureHqrHero(hqrEntryStruct<char>* hqrPtr, const char* name);
 template hqrEntryStruct<sBody>* HQR_InitRessource(const char* name, int size, int numEntries);
 template sBody* HQR_Get(hqrEntryStruct<sBody>* hqrPtr, int index);
 template void HQR_Free(hqrEntryStruct<sBody>* hqrPtr);
+template void HQR_Reset(hqrEntryStruct<sBody>* hqrPtr);
 template void configureHqrHero(hqrEntryStruct<sBody>* hqrPtr, const char* name);
 
 /// anim
