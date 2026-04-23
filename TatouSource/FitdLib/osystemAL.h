@@ -13,6 +13,7 @@ extern "C" {
   
 void osystemAL_init();
 void osystemAL_udpate();
+int  osystemAL_getSampleRate();
 
 void checkALError();
 

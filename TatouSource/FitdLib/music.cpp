@@ -9,6 +9,7 @@
 
 #include "common.h"
 #include "consoleLog.h"
+#include "osystemAL.h"
 
 bool g_gameUseCDA = false;
 
@@ -691,7 +692,8 @@ int initialialize(void* dummy)
 
     //OPLBuildTables(FMOPL_ENV_BITS_HQ, FMOPL_EG_ENT_HQ);
 
-    YM3812Init(1,OPL_INTERNAL_FREQ,44100);
+    int oplSampleRate = osystemAL_getSampleRate();
+    YM3812Init(1,OPL_INTERNAL_FREQ,oplSampleRate);
     /*  virtualOpl = OPLCreate(OPL_TYPE_YM3812, OPL_INTERNAL_FREQ, 44100);
 
     if(!virtualOpl)

@@ -774,6 +774,13 @@ void osystemAL_udpate()
         gSoloud->setGlobalVolume(gVolume);
 }
 
+int osystemAL_getSampleRate()
+{
+    if (gSoloud)
+        return (int)gSoloud->getBackendSamplerate();
+    return 44100;
+}
+
 
 int osystem_playTrack(int trackId)
 {
