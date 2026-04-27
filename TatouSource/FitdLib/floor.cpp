@@ -195,11 +195,11 @@ void LoadEtage(int floorNumber)
 
         if(g_gameId == AITD3)
         {
-            sprintf(buffer,"CAMERA%02d",floorNumber);
+            sprintf_s(buffer, sizeof(buffer), "CAMERA%02d",floorNumber);
         }
         else
         {
-            sprintf(buffer,"CAMSAL%02d",floorNumber);
+            sprintf_s(buffer, sizeof(buffer), "CAMSAL%02d",floorNumber);
         }
 
         expectedNumberOfCamera = PAK_getNumFiles(buffer);
@@ -430,7 +430,7 @@ void LoadEtage(int floorNumber)
     if (expectedNumberOfCamera > 0)
     {
         char cameraName[16];
-        sprintf(cameraName, "CAMERA%02d", floorNumber);
+        sprintf_s(cameraName, sizeof(cameraName), "CAMERA%02d", floorNumber);
         preloadFloorHDBackgrounds(floorNumber, expectedNumberOfCamera, cameraName);
     }
 

@@ -44,7 +44,8 @@ static void writePNGChunk(FILE* f, const char* type, const unsigned char* data, 
 
 static bool writePNG(const char* filename, const unsigned char* rgba, int width, int height)
 {
-    FILE* f = fopen(filename, "wb");
+    FILE* f = nullptr;
+    fopen_s(&f, filename, "wb");
     if (!f) return false;
 
     static const unsigned char sig[8] = { 137, 80, 78, 71, 13, 10, 26, 10 };
@@ -142,12 +143,12 @@ int loadSave(int saveNumber)
         std::filesystem::path savePath = std::filesystem::path(homePath) / ("SAVE" + std::to_string(saveNumber) + ".ITD");
         std::string pathStr = savePath.string();
         if (pathStr.size() < sizeof(buffer))
-            strcpy(buffer, pathStr.c_str());
+            strcpy_s(buffer, sizeof(buffer), pathStr.c_str());
         else
-            sprintf(buffer, "SAVE%d.ITD", saveNumber);
+            sprintf_s(buffer, sizeof(buffer), "SAVE%d.ITD", saveNumber);
     }
 
-    fHandle = fopen(buffer,"rb");
+    fopen_s(&fHandle, buffer,"rb");
 
     if(!fHandle)
     {
@@ -671,12 +672,12 @@ int makeSaveFile(int entry)
         std::filesystem::path savePath = std::filesystem::path(homePath) / ("SAVE" + std::to_string(entry) + ".ITD");
         std::string pathStr = savePath.string();
         if (pathStr.size() < sizeof(buffer))
-            strcpy(buffer, pathStr.c_str());
+            strcpy_s(buffer, sizeof(buffer), pathStr.c_str());
         else
-            sprintf(buffer, "SAVE%d.ITD", entry);
+            sprintf_s(buffer, sizeof(buffer), "SAVE%d.ITD", entry);
     }
 
-    fHandle = fopen(buffer,"wb+");
+    fopen_s(&fHandle, buffer,"wb+");
 
     if(!fHandle)
         return 0;

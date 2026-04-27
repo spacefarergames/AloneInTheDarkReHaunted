@@ -1583,8 +1583,7 @@ void loadCamera(int cameraIdx)
     char name[16];
     int useSpecial = -1;
 
-    sprintf(name, "CAMERA%02d", g_currentFloor);
-    //strcat(name,".PAK");
+    sprintf_s(name, sizeof(name), "CAMERA%02d", g_currentFloor);
 
     if (g_gameId == AITD1)
     {
@@ -1757,7 +1756,7 @@ void loadMask(int cameraIdx)
 
     char name[16];
 
-    sprintf(name, "MASK%02d", g_currentFloor);
+    sprintf_s(name, sizeof(name), "MASK%02d", g_currentFloor);
 
     if (g_MaskPtr)
     {
@@ -5165,7 +5164,7 @@ int parseAllSaves(int arg)
     {
         strcpy(buffer, homePath);
         char saveFile[32];
-        sprintf(saveFile, "SAVE%d.ITD", i);
+        sprintf_s(saveFile, sizeof(saveFile), "SAVE%d.ITD", i);
         strcat(buffer, saveFile);
         saveExists[i] = fileExists(buffer);
     }
@@ -5195,7 +5194,7 @@ int parseAllSaves(int arg)
                 char pngPath[512];
                 strcpy(pngPath, homePath);
                 char pngFile[32];
-                sprintf(pngFile, "SAVE%d.png", currentSelectedSlot);
+                sprintf_s(pngFile, sizeof(pngFile), "SAVE%d.png", currentSelectedSlot);
                 strcat(pngPath, pngFile);
                 int channels = 0;
                 previewImageData = stbi_load(pngPath, &previewImageW, &previewImageH, &channels, 4);
@@ -5239,11 +5238,11 @@ int parseAllSaves(int arg)
             // Format slot text
             if (saveExists[i])
             {
-                sprintf(buffer, "Slot %d", i);
+                sprintf_s(buffer, sizeof(buffer), "Slot %d", i);
             }
             else
             {
-                sprintf(buffer, "Slot %d - Empty", i);
+                sprintf_s(buffer, sizeof(buffer), "Slot %d - Empty", i);
             }
 
             // Highlight selected slot with pulsing effect

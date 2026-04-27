@@ -165,7 +165,7 @@ void renderInventoryObject(int arg)
     {
         u8 buffer[256];
         SetFont(PtrFont,4);
-        sprintf((char*)buffer,"%d",vars[arg]);
+        sprintf_s((char*)buffer, sizeof(buffer), "%d",vars[arg]);
         PrintFont(statusLeft+4,statusTop+4,logicalScreen,buffer);
     }
 

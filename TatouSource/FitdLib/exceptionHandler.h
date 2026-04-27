@@ -115,7 +115,7 @@ private:
     {
         if (!crashLogFile)
         {
-            crashLogFile = fopen("crash_log.txt", "a");
+            fopen_s(&crashLogFile, "crash_log.txt", "a");
         }
         if (!crashLogFile) return;
 
@@ -140,7 +140,8 @@ private:
             return 0; // Let CRT handle it normally
 
         // Log the CRT message but don't break/abort
-        if (crashLogFile || (crashLogFile = fopen("crash_log.txt", "a")) != nullptr)
+        if (!crashLogFile) fopen_s(&crashLogFile, "crash_log.txt", "a");
+        if (crashLogFile)
         {
             fprintf(crashLogFile, "[CRT_REPORT type=%d] %s\n", reportType, message ? message : "(null)");
             fflush(crashLogFile);
@@ -164,7 +165,7 @@ private:
     {
         if (!crashLogFile)
         {
-            crashLogFile = fopen("crash_log.txt", "a");
+            fopen_s(&crashLogFile, "crash_log.txt", "a");
         }
 
         if (!crashLogFile) return;
@@ -327,7 +328,7 @@ public:
 #endif
 
         // Create or clear crash log
-        crashLogFile = fopen("crash_log.txt", "w");
+        fopen_s(&crashLogFile, "crash_log.txt", "w");
         if (crashLogFile)
         {
             fprintf(crashLogFile, "=== Application Started - Exception Handler Active ===\n");
@@ -358,7 +359,8 @@ public:
             vehHandle = nullptr;
         }
 
-        if (crashLogFile || (crashLogFile = fopen("crash_log.txt", "a")) != nullptr)
+        if (!crashLogFile) fopen_s(&crashLogFile, "crash_log.txt", "a");
+        if (crashLogFile)
         {
             fprintf(crashLogFile, "\n=== Shutdown ===\n");
             fprintf(crashLogFile, "Breakpoints skipped: %ld\n", breakpointSkipCount);

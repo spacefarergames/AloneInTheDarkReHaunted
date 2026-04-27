@@ -383,6 +383,31 @@ static void deployRemasterToInstall(const char* sourceDataDir, const char* gameD
         return;
     }
 
+    // Prevent copying if one directory is inside the other to avoid infinite
+    // recursion (e.g. GOG installs where Tatou.exe runs from inside INDARK).
+    char fullSource[MAX_PATH] = "";
+    char fullGame[MAX_PATH]   = "";
+    GetFullPathNameA(sourceDataDir, MAX_PATH, fullSource, nullptr);
+    GetFullPathNameA(gameDir,       MAX_PATH, fullGame,   nullptr);
+
+    // Normalize: ensure trailing backslash for prefix comparison
+    size_t slen = strlen(fullSource);
+    if (slen > 0 && fullSource[slen - 1] != '\\')
+        strcat_s(fullSource, sizeof(fullSource), "\\");
+
+    size_t glen = strlen(fullGame);
+    if (glen > 0 && fullGame[glen - 1] != '\\')
+        strcat_s(fullGame, sizeof(fullGame), "\\");
+
+    bool sourceInsideGame = _strnicmp(fullSource, fullGame,   strlen(fullGame))   == 0;
+    bool gameInsideSource = _strnicmp(fullGame,   fullSource, strlen(fullSource)) == 0;
+
+    if (sourceInsideGame || gameInsideSource)
+    {
+        printf(DATA_TAG "Source is nested inside destination (or vice-versa) - skipping deployment to avoid infinite recursion\n");
+        return;
+    }
+
     printf(DATA_TAG "Deploying Re-Haunted to %s ...\n", sourceDataDir);
 
     // Count files first, then copy with progress

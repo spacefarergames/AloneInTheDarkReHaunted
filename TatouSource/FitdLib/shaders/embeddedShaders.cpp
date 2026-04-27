@@ -40,8 +40,10 @@
 #include "shaders/generated/metal/ui_ps.sc.bin.h"
 #include "shaders/generated/metal/background_vs.sc.bin.h"
 #include "shaders/generated/metal/background_ps.sc.bin.h"
+#include "shaders/generated/metal/hdBackground_ps.sc.bin.h"
 #include "shaders/generated/metal/maskBackground_vs.sc.bin.h"
 #include "shaders/generated/metal/maskBackground_ps.sc.bin.h"
+#include "shaders/generated/metal/maskHDBackground_ps.sc.bin.h"
 #include "shaders/generated/metal/ramp_vs.sc.bin.h"
 #include "shaders/generated/metal/ramp_ps.sc.bin.h"
 #include "shaders/generated/metal/noise_vs.sc.bin.h"
@@ -61,6 +63,10 @@
 #include "shaders/generated/metal/ssgi_blur_ps.sc.bin.h"
 #include "shaders/generated/metal/particle_vs.sc.bin.h"
 #include "shaders/generated/metal/particle_ps.sc.bin.h"
+#include "shaders/generated/metal/lantern_bloom_vs.sc.bin.h"
+#include "shaders/generated/metal/lantern_bloom_ps.sc.bin.h"
+#include "shaders/generated/metal/lantern_shadow_vs.sc.bin.h"
+#include "shaders/generated/metal/lantern_shadow_ps.sc.bin.h"
 #endif
 
 #if BGFX_PLATFORM_SUPPORTS_GLSL

@@ -115,9 +115,10 @@ int osystem_playTrack(int trackId)
 	osystem_mp3_stop();
 
 	char musicFileName[256];
-	sprintf(musicFileName, "%d.mp3", trackId);
+	sprintf_s(musicFileName, sizeof(musicFileName), "%d.mp3", trackId);
 
-	FILE* fHandle = fopen(musicFileName, "rb");
+	FILE* fHandle = nullptr;
+	fopen_s(&fHandle, musicFileName, "rb");
 	if(fHandle == NULL)
 		return false;
 

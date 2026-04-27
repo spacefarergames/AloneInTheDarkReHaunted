@@ -309,7 +309,8 @@ s_vertexData gVertexArray[1024 * 1024];
 bgfx::ShaderHandle loadBgfxShader(const std::string& filename)
 {
     std::vector<u8> memBlob;
-    FILE* fHandle = fopen(filename.c_str(), "rb");
+    FILE* fHandle = nullptr;
+    fopen_s(&fHandle, filename.c_str(), "rb");
     if (fHandle == nullptr)
         return BGFX_INVALID_HANDLE;
     fseek(fHandle, 0, SEEK_END);
@@ -524,9 +525,6 @@ void osystem_drawUILayer()
         };
 
         sVertice* pVertices = (sVertice*)transientBuffer.data;
-
-        float quadVertices[6 * 3];
-        float quadUV[6 * 2];
 
         // 0
         pVertices->position[0] = 0.f;
@@ -2104,9 +2102,6 @@ void osystem_drawBackground()
 
         sVertice* pVertices = (sVertice*)transientBuffer.data;
 
-        float quadVertices[6 * 3];
-        float quadUV[6 * 2];
-
         float shakeX = g_shakeOffsetX;
         float shakeY = g_shakeOffsetY;
 
@@ -2445,7 +2440,7 @@ void osystem_startFrame()
 
     // Update animated HD background
     static u32 lastUpdateTime = 0;
-    u32 currentTime = SDL_GetTicks();
+    u32 currentTime = static_cast<u32>(SDL_GetTicks());
     if (lastUpdateTime == 0)
     {
         lastUpdateTime = currentTime;
@@ -2466,8 +2461,8 @@ void osystem_startFrame()
         {
             ImVec2 currentWindowSize = ImGui::GetContentRegionAvail();
 
-            currentWindowSize[0] = std::max<int>(currentWindowSize[0], 1);
-            currentWindowSize[1] = std::max<int>(currentWindowSize[1], 1);
+            currentWindowSize[0] = std::max<float>(currentWindowSize[0], 1.f);
+            currentWindowSize[1] = std::max<float>(currentWindowSize[1], 1.f);
 
             gameResolution = currentWindowSize;
         }
@@ -2494,21 +2489,21 @@ void osystem_startFrame()
                 | BGFX_SAMPLER_V_CLAMP
                 ;
 
-            fieldModelInspector_Texture = bgfx::createTexture2D(gameResolution[0], gameResolution[1], false, 0, bgfx::TextureFormat::BGRA8, BGFX_TEXTURE_RT | tsFlags);
-            fieldModelInspector_Depth = bgfx::createTexture2D(gameResolution[0], gameResolution[1], false, 0, bgfx::TextureFormat::D24S8, BGFX_TEXTURE_RT | tsFlags);
+            fieldModelInspector_Texture = bgfx::createTexture2D(static_cast<uint16_t>(gameResolution[0]), static_cast<uint16_t>(gameResolution[1]), false, 0, bgfx::TextureFormat::BGRA8, BGFX_TEXTURE_RT | tsFlags);
+            fieldModelInspector_Depth = bgfx::createTexture2D(static_cast<uint16_t>(gameResolution[0]), static_cast<uint16_t>(gameResolution[1]), false, 0, bgfx::TextureFormat::D24S8, BGFX_TEXTURE_RT | tsFlags);
             std::array<bgfx::Attachment, 2> attachements;
             attachements[0].init(fieldModelInspector_Texture);
             attachements[1].init(fieldModelInspector_Depth);
             fieldModelInspector_FB = bgfx::createFrameBuffer(2, &attachements[0], true);
         }
         bgfx::setViewFrameBuffer(gameViewId, fieldModelInspector_FB);
-        bgfx::setViewRect(gameViewId, 0, 0, gameResolution[0], gameResolution[1]);
+        bgfx::setViewRect(gameViewId, 0, 0, static_cast<uint16_t>(gameResolution[0]), static_cast<uint16_t>(gameResolution[1]));
     }
     else
     {
         gameViewId = 0;
-        gameResolution[0] = outputResolution[0];
-        gameResolution[1] = outputResolution[1];
+        gameResolution[0] = static_cast<float>(outputResolution[0]);
+        gameResolution[1] = static_cast<float>(outputResolution[1]);
         // beginScene() always binds the offscreen FB to view 0 now
         // (no backbuffer fallback needed; PP pipeline is always active for scene capture)
     }
@@ -2634,12 +2629,16 @@ void osystem_setClip(float left, float top, float right, float bottom)
     currentScissor[0] = std::max<float>(currentScissor[0], 0);
     currentScissor[1] = std::max<float>(currentScissor[1], 0);
 
-    bgfx::setScissor(currentScissor[0], currentScissor[1], currentScissor[2], currentScissor[3]);
+    bgfx::setScissor(
+        static_cast<uint16_t>(currentScissor[0]),
+        static_cast<uint16_t>(currentScissor[1]),
+        static_cast<uint16_t>(currentScissor[2]),
+        static_cast<uint16_t>(currentScissor[3]));
 }
 
 void osystem_clearClip()
 {
-    bgfx::setScissor(0, 0, gameResolution[0], gameResolution[1]);
+    bgfx::setScissor(0, 0, static_cast<uint16_t>(gameResolution[0]), static_cast<uint16_t>(gameResolution[1]));
 }
 
 void osystem_stopFrame()
@@ -2917,10 +2916,10 @@ void osystem_flushPendingPrimitives()
             .end();
 
         bgfx::TransientVertexBuffer transientBuffer;
-        bgfx::allocTransientVertexBuffer(&transientBuffer, g_lineVertices.size(), layout);
+        bgfx::allocTransientVertexBuffer(&transientBuffer, static_cast<uint32_t>(g_lineVertices.size()), layout);
 
         memcpy(transientBuffer.data, g_lineVertices.data(), sizeof(polyVertex) * g_lineVertices.size());
-        applyShakeToVertices(transientBuffer.data, g_lineVertices.size(), sizeof(polyVertex));
+        applyShakeToVertices(transientBuffer.data, static_cast<int>(g_lineVertices.size()), sizeof(polyVertex));
 
         bgfx::setState(0 | BGFX_STATE_PT_LINES
             | BGFX_STATE_WRITE_RGB
@@ -3036,7 +3035,6 @@ void osystem_flushPendingPrimitives()
 void osystem_fillPoly(float* buffer, int numPoint, unsigned char color, u8 polyType)
 {
 #define MAX_POINTS_PER_POLY 50
-    float UVArray[MAX_POINTS_PER_POLY];
 
     if (numPoint >= MAX_POINTS_PER_POLY || numPoint < 3)
         return;
@@ -3098,7 +3096,7 @@ void osystem_fillPoly(float* buffer, int numPoint, unsigned char color, u8 polyT
 
             int bank = (color & 0xF0) >> 4;
             int startColor = color & 0xF;
-            float colorf = startColor;
+            float colorf = static_cast<float>(startColor);
             pVertex->U = colorf / 15.f;
             pVertex->V = bank / 15.f;
             pVertex++;
@@ -3129,7 +3127,7 @@ void osystem_fillPoly(float* buffer, int numPoint, unsigned char color, u8 polyT
 
             int bank = (color & 0xF0) >> 4;
             int startColor = color & 0xF;
-            float colorf = startColor;
+            float colorf = static_cast<float>(startColor);
             pVertex->U = colorf / 15.f;
             pVertex->V = bank / 15.f;
             pVertex++;
@@ -3160,7 +3158,7 @@ void osystem_fillPoly(float* buffer, int numPoint, unsigned char color, u8 polyT
 
             int bank = (color & 0xF0) >> 4;
             int startColor = color & 0xF;
-            float colorf = startColor;
+            float colorf = static_cast<float>(startColor);
             pVertex->U = colorf / 15.f;
             pVertex->V = bank / 15.f;
             pVertex++;
@@ -3332,7 +3330,7 @@ void osystem_draw3dLine(float x1, float y1, float z1, float x2, float y2, float 
 
     int bank = (color & 0xF0) >> 4;
     int startColor = color & 0xF;
-    float colorf = startColor;
+    float colorf = static_cast<float>(startColor);
     vertex1.U = vertex2.U = colorf / 15.f;
     vertex1.V = vertex2.V = bank / 15.f;
 
@@ -3717,10 +3715,10 @@ void osystem_createMask(const std::array<u8, 320 * 200>& mask, int roomId, int m
         .add(bgfx::Attrib::TexCoord0, 2, bgfx::AttribType::Float)
         .end();
 
-    float X1 = maskTextures[roomId][maskId].maskX1;
-    float X2 = maskTextures[roomId][maskId].maskX2;
-    float Y1 = maskTextures[roomId][maskId].maskY1;
-    float Y2 = maskTextures[roomId][maskId].maskY2;
+    float X1 = static_cast<float>(maskTextures[roomId][maskId].maskX1);
+    float X2 = static_cast<float>(maskTextures[roomId][maskId].maskX2);
+    float Y1 = static_cast<float>(maskTextures[roomId][maskId].maskY1);
+    float Y2 = static_cast<float>(maskTextures[roomId][maskId].maskY2);
 
     float maskZ = 0.f;
 

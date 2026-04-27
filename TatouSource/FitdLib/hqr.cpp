@@ -375,10 +375,12 @@ T* HQR_Get(hqrEntryStruct<T>* hqrPtr, int index)
 
         unsigned int time = timer;
 
+        int foundIdx = -1;
         for(int i=0;i<hqrPtr->numMaxEntry;i++)
         {
             if(hqrPtr->entries[i].ptr == NULL)
             {
+                foundIdx = i;
                 foundEntry = &hqrPtr->entries[i];
                 break;
             }
@@ -392,13 +394,10 @@ T* HQR_Get(hqrEntryStruct<T>* hqrPtr, int index)
             return NULL;
         }
 
-        //    foundEntry = hqrSubPtr;
-
         HQ_Load = 1;
 
         foundEntry->key = index;
         foundEntry->lastTimeUsed = timer;
-        //foundEntry[hqrPtr->numUsedEntry].offset = hqrPtr->maxFreeData - hqrPtr->sizeFreeData;
         foundEntry->size = size;
 
         char* buffer = new char[size];
@@ -423,7 +422,12 @@ T* HQR_Get(hqrEntryStruct<T>* hqrPtr, int index)
             assert(0);
         }
 
-        hqrPtr->numUsedEntry++;
+        // Only extend the used range when filling a new slot beyond the current end.
+        // Reusing a freed slot (foundIdx < numUsedEntry) must not bump the counter,
+        // otherwise quickFindEntry will eventually walk past the end of the vector.
+        if (foundIdx >= hqrPtr->numUsedEntry)
+            hqrPtr->numUsedEntry = foundIdx + 1;
+
         hqrPtr->sizeFreeData -= size;
 
         RestoreTimerAnim();

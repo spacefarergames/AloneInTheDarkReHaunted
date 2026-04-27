@@ -120,8 +120,10 @@ void GereFrappe(void)
         {
             printf("Case 5: DO_TIR - Gun firing!\n");
 
-            int touchedActor;
-            int specialObjIdx;
+            int touchedActor = -1;
+            (void)touchedActor;
+            int specialObjIdx = -1;
+            (void)specialObjIdx;
 
             // Create muzzle flash special effect
             printf("  -> Creating muzzle flash (type 3)...\n");

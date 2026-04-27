@@ -505,9 +505,7 @@ int ChoosePerso(void)
 
                 FastCopyScreen(logicalScreen, aux);
                 g_portraitOverlayChoice = 0;
-                g_voPitchMultiplier = 1.15f;
                 Lire(CVars[getCVarsIdx(INTRO_HERITIERE)] + 1, 165, 5, 314, 194, 2, 15, 0, 1);
-                g_voPitchMultiplier = 1.0f;
                 CVars[getCVarsIdx(CHOOSE_PERSO)] = 1;
                 break;
             }
@@ -547,9 +545,7 @@ int ChoosePerso(void)
 
                 FastCopyScreen(logicalScreen, aux);
                 g_portraitOverlayChoice = 1;
-                g_voPitchMultiplier = 1.05f;
                 Lire(CVars[getCVarsIdx(INTRO_DETECTIVE)] + 1, 5, 5, 154, 194, 2, 15, 0, 0);
-                g_voPitchMultiplier = 1.0f;
                 CVars[getCVarsIdx(CHOOSE_PERSO)] = 0;
                 break;
             }

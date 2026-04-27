@@ -19,7 +19,8 @@
 // Simple crash handler to help diagnose ReShade conflicts
 LONG WINAPI ReShadeCrashHandler(EXCEPTION_POINTERS* ExceptionInfo)
 {
-    FILE* f = fopen("crash_log.txt", "w");
+    FILE* f = nullptr;
+    fopen_s(&f, "crash_log.txt", "w");
     if (f)
     {
         fprintf(f, "=== ALONE IN THE DARK Crash Report ===\n");

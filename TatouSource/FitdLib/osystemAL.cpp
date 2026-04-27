@@ -73,11 +73,11 @@ static void ensureAudioArchiveOpen()
     const char* archiveName = "audio.hda";
     if (languageNameString == "FRANCAIS")
     {
-        f = fopen("audio_fre.hda", "rb");
+        fopen_s(&f, "audio_fre.hda", "rb");
         if (f) archiveName = "audio_fre.hda";
     }
     if (!f)
-        f = fopen("audio.hda", "rb");
+        fopen_s(&f, "audio.hda", "rb");
     if (!f) return;
 
     uint32_t magic = 0, version = 0, entryCount = 0;
@@ -380,7 +380,7 @@ static bool playCDAudioTrack(int trackId)
     // Open the CD-ROM drive
     char cmd[256];
     char ret[128];
-    sprintf(cmd, "open %c: type cdaudio alias cdaudio", s_cdDriveLetter);
+    sprintf_s(cmd, sizeof(cmd), "open %c: type cdaudio alias cdaudio", s_cdDriveLetter);
     if (mciSendStringA(cmd, NULL, 0, NULL) != 0)
         return false;
 
@@ -406,9 +406,9 @@ static bool playCDAudioTrack(int trackId)
 
     // Play the requested track (to the start of the next track)
     if (trackId < numTracks)
-        sprintf(cmd, "play cdaudio from %d to %d", trackId, trackId + 1);
+        sprintf_s(cmd, sizeof(cmd), "play cdaudio from %d to %d", trackId, trackId + 1);
     else
-        sprintf(cmd, "play cdaudio from %d", trackId);
+        sprintf_s(cmd, sizeof(cmd), "play cdaudio from %d", trackId);
 
     if (mciSendStringA(cmd, NULL, 0, NULL) != 0)
     {
@@ -556,7 +556,7 @@ ITD_AudioSource::ITD_AudioSource(char* samplePtr, int size) : SoLoud::AudioSourc
     m_samples = m_ownedBuf;
     m_size = sampleSize-1;
 
-    mBaseSamplerate = sampleRate;
+    mBaseSamplerate = static_cast<float>(sampleRate);
 }
 
 ITD_AudioSource::~ITD_AudioSource()
@@ -835,7 +835,7 @@ int osystem_playTrack(int trackId)
         for (int i = 0; i < 3; i++)
         {
             char entryName[64];
-            sprintf(entryName, "%02d%s", fileTrackId, extensions[i]);
+            sprintf_s(entryName, sizeof(entryName), "%02d%s", fileTrackId, extensions[i]);
             const HDArchiveEntry* entry = findAudioEntry(entryName);
             if (entry)
             {
@@ -868,21 +868,21 @@ int osystem_playTrack(int trackId)
     FILE* fHandle = NULL;
 
     // Try OGG first  
-    sprintf(filename, "%02d.ogg", fileTrackId);
-    fHandle = fopen(filename, "rb");
+    sprintf_s(filename, sizeof(filename), "%02d.ogg", fileTrackId);
+    fopen_s(&fHandle, filename, "rb");
 
     // Fall back to WAV if OGG not found
     if (fHandle == NULL)
     {
-        sprintf(filename, "%02d.wav", fileTrackId);
-        fHandle = fopen(filename, "rb");
+        sprintf_s(filename, sizeof(filename), "%02d.wav", fileTrackId);
+        fopen_s(&fHandle, filename, "rb");
     }
 
     // Fall back to MP3 if WAV not found
     if (fHandle == NULL)
     {
-        sprintf(filename, "%02d.mp3", fileTrackId);
-        fHandle = fopen(filename, "rb");
+        sprintf_s(filename, sizeof(filename), "%02d.mp3", fileTrackId);
+        fopen_s(&fHandle, filename, "rb");
     }
     
     if (fHandle == NULL)
@@ -960,7 +960,8 @@ static bool hasExtCI(const char* path, const char* ext)
 // Returns true on success.
 static bool tryPlayVoFile(const char* path, const char* label)
 {
-    FILE* fh = fopen(path, "rb");
+    FILE* fh = nullptr;
+    fopen_s(&fh, path, "rb");
     if (!fh) return false;
 
     // VOC files need special decoding ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â read fully into memory first
@@ -1008,7 +1009,7 @@ void osystem_playVocByIndex(int vocIndex)
         return;
 
     char vocName[64];
-    sprintf(vocName, "%06d.VOC", vocIndex);
+    sprintf_s(vocName, sizeof(vocName), "%06d.VOC", vocIndex);
     printf(VO_TAG "Playing VOC by index: %d -> %s\n", vocIndex, vocName);
     osystem_playVO(vocName);
 }
@@ -1027,7 +1028,7 @@ static unsigned char* loadVocFileData(const char* vocName, size_t* outSize)
         for (int i = 0; i < 2; i++)
         {
             char entryName[512];
-            sprintf(entryName, "%s%s", vocName, arcExts[i]);
+            sprintf_s(entryName, sizeof(entryName), "%s%s", vocName, arcExts[i]);
             const HDArchiveEntry* entry = findAudioEntry(entryName);
             if (!entry) continue;
 
@@ -1050,8 +1051,9 @@ static unsigned char* loadVocFileData(const char* vocName, size_t* outSize)
         for (int i = 0; i < 2; i++)
         {
             char cdPath[512];
-            sprintf(cdPath, "%c:\\INDARK\\%s%s", s_cdDriveLetter, vocName, exts[i]);
-            FILE* fh = fopen(cdPath, "rb");
+            sprintf_s(cdPath, sizeof(cdPath), "%c:\\INDARK\\%s%s", s_cdDriveLetter, vocName, exts[i]);
+            FILE* fh = nullptr;
+            fopen_s(&fh, cdPath, "rb");
             if (!fh) continue;
 
             fseek(fh, 0, SEEK_END);
@@ -1080,8 +1082,9 @@ static unsigned char* loadVocFileData(const char* vocName, size_t* outSize)
         for (int i = 0; i < 2; i++)
         {
             char path[512];
-            sprintf(path, "%s%s", vocName, exts[i]);
-            FILE* fh = fopen(path, "rb");
+            sprintf_s(path, sizeof(path), "%s%s", vocName, exts[i]);
+            FILE* fh = nullptr;
+            fopen_s(&fh, path, "rb");
             if (!fh) continue;
 
             fseek(fh, 0, SEEK_END);
@@ -1121,7 +1124,7 @@ void osystem_playVocPageLines(int vocIndex, int page, int numLines)
     if (cachedWav && cachedWavSize > 0)
     {
         s_voStream = new SoLoud::WavStream();
-        SoLoud::result res = s_voStream->loadMem(cachedWav, cachedWavSize, false, false);
+        SoLoud::result res = s_voStream->loadMem(cachedWav, static_cast<unsigned int>(cachedWavSize), false, false);
         if (res == SoLoud::SO_NO_ERROR)
         {
             s_voHandle = gSoloud->play(*s_voStream);
@@ -1150,7 +1153,7 @@ void osystem_playVocPageLines(int vocIndex, int page, int numLines)
     {
         int vocNum = vocIndex * 10000 + page * 100 + line;
         char vocName[64];
-        sprintf(vocName, "%06d.VOC", vocNum);
+        sprintf_s(vocName, sizeof(vocName), "%06d.VOC", vocNum);
 
         size_t rawSize = 0;
         unsigned char* rawData = loadVocFileData(vocName, &rawSize);
@@ -1274,7 +1277,7 @@ void osystem_playVO(const char* voFileName)
         for (int i = 0; i < 5; i++)
         {
             char entryName[512];
-            sprintf(entryName, "%s%s", voFileName, arcExts[i]);
+            sprintf_s(entryName, sizeof(entryName), "%s%s", voFileName, arcExts[i]);
             const HDArchiveEntry* entry = findAudioEntry(entryName);
             if (!entry) continue;
 
@@ -1324,7 +1327,7 @@ void osystem_playVO(const char* voFileName)
         for (int i = 0; i < 5; i++)
         {
             char cdPath[512];
-            sprintf(cdPath, "%c:\\INDARK\\%s%s", s_cdDriveLetter, voFileName, exts[i]);
+            sprintf_s(cdPath, sizeof(cdPath), "%c:\\INDARK\\%s%s", s_cdDriveLetter, voFileName, exts[i]);
             if (tryPlayVoFile(cdPath, cdPath))
                 return;
         }
@@ -1335,7 +1338,7 @@ void osystem_playVO(const char* voFileName)
     for (int i = 0; i < 5; i++)
     {
         char path[512];
-        sprintf(path, "%s%s", voFileName, exts[i]);
+        sprintf_s(path, sizeof(path), "%s%s", voFileName, exts[i]);
         if (tryPlayVoFile(path, path))
             return;
     }
@@ -1480,12 +1483,12 @@ void osystem_preDecodeVocPage(int vocIndex, int page)
             {
                 int vocNum = vocIndex * 10000 + page * 100 + line;
                 char vocName[64];
-                sprintf(vocName, "%06d.VOC", vocNum);
+                sprintf_s(vocName, sizeof(vocName), "%06d.VOC", vocNum);
 
-                size_t rawSize = 0;
-                unsigned char* rawData = loadVocFileData(vocName, &rawSize);
-                if (!rawData)
-                    break;
+                        size_t rawSize = 0;
+                        unsigned char* rawData = loadVocFileData(vocName, &rawSize);
+                        if (!rawData)
+                            break;
 
                 unsigned char* wavBuf = nullptr;
                 size_t wavSz = 0;

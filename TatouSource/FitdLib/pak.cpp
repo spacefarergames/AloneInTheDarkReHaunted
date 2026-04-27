@@ -73,8 +73,8 @@ static void buildPakFilename(char* out, const char* name)
             base = p + 1;
         p++;
     }
-    strcpy(out, base);
-    strcat(out, ".PAK");
+    strcpy_s(out, 512, base);
+    strcat_s(out, 512, ".PAK");
 }
 
 unsigned int PAK_getNumFiles(const char* name)
@@ -85,11 +85,11 @@ unsigned int PAK_getNumFiles(const char* name)
         FILE* fileHandle;
         u32 fileOffset;
 
-        strcpy(bufferName, homePath);
-        strcat(bufferName, name);
-        strcat(bufferName,".PAK");
+        strcpy_s(bufferName, sizeof(bufferName), homePath);
+        strcat_s(bufferName, sizeof(bufferName), name);
+        strcat_s(bufferName, sizeof(bufferName), ".PAK");
 
-        fileHandle = fopen(bufferName,"rb");
+        fopen_s(&fileHandle, bufferName,"rb");
 
         if (fileHandle)
         {
@@ -128,9 +128,9 @@ int LoadPak(const char* name, int index, char* ptr)
     FILE* fHandle;
     int size;
 
-    sprintf(buffer,"%s/%04X.OUT",name,index);
+    sprintf_s(buffer, sizeof(buffer), "%s/%04X.OUT",name,index);
 
-    fHandle = fopen(buffer,"rb");
+    fopen_s(&fHandle, buffer,"rb");
 
     if(!fHandle)
         return(0);
@@ -173,9 +173,9 @@ int getPakSize(const char* name, int index)
     FILE* fHandle;
     int size;
 
-    sprintf(buffer,"%s/%04X.OUT",name,index);
+    sprintf_s(buffer, sizeof(buffer), "%s/%04X.OUT",name,index);
 
-    fHandle = fopen(buffer,"rb");
+    fopen_s(&fHandle, buffer,"rb");
 
     if(!fHandle)
         return(0);
@@ -197,11 +197,11 @@ int getPakSize(const char* name, int index)
         pakInfoStruct pakInfo;
         s32 size=0;
 
-        strcpy(bufferName, homePath);
-        strcat(bufferName, name);
-        strcat(bufferName,".PAK");
+        strcpy_s(bufferName, sizeof(bufferName), homePath);
+        strcat_s(bufferName, sizeof(bufferName), name);
+        strcat_s(bufferName, sizeof(bufferName), ".PAK");
 
-        fileHandle = fopen(bufferName,"rb");
+        fopen_s(&fileHandle, bufferName,"rb");
 
         if(fileHandle)
         {
@@ -309,9 +309,9 @@ char* loadPak(const char* name, int index)
 	int size;
 	char* ptr;
 
-	sprintf(buffer,"%s/%04X.OUT",name,index);
+	sprintf_s(buffer, sizeof(buffer), "%s/%04X.OUT",name,index);
 
-	fHandle = fopen(buffer,"rb");
+	fopen_s(&fHandle, buffer,"rb");
 
 	if(!fHandle)
 		return NULL;
@@ -336,11 +336,11 @@ char* loadPak(const char* name, int index)
 		pakInfoStruct pakInfo;
 		char* ptr=0;
 
-		strcpy(bufferName, homePath);
-		strcat(bufferName, name);
-		strcat(bufferName,".PAK");
+		strcpy_s(bufferName, sizeof(bufferName), homePath);
+		strcat_s(bufferName, sizeof(bufferName), name);
+		strcat_s(bufferName, sizeof(bufferName), ".PAK");
 
-		fileHandle = fopen(bufferName,"rb");
+		fopen_s(&fileHandle, bufferName,"rb");
 
 		if(fileHandle)
 		{
@@ -531,11 +531,11 @@ void dumpPak(const char* name)
 
 
         //makeExtention(bufferName, name, ".PAK");
-        strcpy(bufferName, homePath);
-        strcat(bufferName, name); // temporary until makeExtention is coded
-        strcat(bufferName, ".PAK");
+        strcpy_s(bufferName, sizeof(bufferName), homePath);
+        strcat_s(bufferName, sizeof(bufferName), name); // temporary until makeExtention is coded
+        strcat_s(bufferName, sizeof(bufferName), ".PAK");
 
-        fileHandle = fopen(bufferName, "rb");
+        fopen_s(&fileHandle, bufferName, "rb");
 
         if (fileHandle) // a bit stupid, should return NULL right away
         {
@@ -617,10 +617,11 @@ void dumpPak(const char* name)
             fclose(fileHandle);
 
             {
-                mkdir(name);
+                _mkdir(name);
                 char outputName[256];
-                sprintf(outputName, "%s/%02d_%s", name, index, nameBuffer + 2);
-                FILE* foutputHandle = fopen(outputName, "wb+");
+                sprintf_s(outputName, sizeof(outputName), "%s/%02d_%s", name, index, nameBuffer + 2);
+                FILE* foutputHandle = nullptr;
+                        fopen_s(&foutputHandle, outputName, "wb+");
                 if (foutputHandle)
                 {
                     fwrite(ptr, pakInfo.uncompressedSize, 1, foutputHandle);

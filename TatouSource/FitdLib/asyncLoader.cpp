@@ -119,7 +119,7 @@ JobHandle asyncLoadVocFile(const char* vocName, JobSystem::Priority priority, As
 JobHandle asyncLoadFloorData(int floorNumber, JobSystem::Priority priority,
     AssetLoadCallback roomCallback, AssetLoadCallback cameraCallback, void* userData) {
     char floorNameBuf[32];
-    sprintf_s(floorNameBuf, "ETAGE%02d", floorNumber);
+    sprintf_s(floorNameBuf, sizeof(floorNameBuf), "ETAGE%02d", floorNumber);
     std::string floorName = floorNameBuf;
     JobHandle roomHandle = asyncLoadPakFile(floorName.c_str(), 0, priority, roomCallback, userData);
     auto cameraPakData = std::make_shared<PakLoadData>();
@@ -156,7 +156,7 @@ namespace {
     static std::mutex s_cacheMutex;
     std::string makeCacheKey(const char* name, int index) {
         char keyBuf[512];
-        sprintf_s(keyBuf, "%s:%d", name, index);
+        sprintf_s(keyBuf, sizeof(keyBuf), "%s:%d", name, index);
         return std::string(keyBuf);
     }
 }

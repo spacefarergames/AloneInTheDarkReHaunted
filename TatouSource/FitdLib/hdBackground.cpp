@@ -234,7 +234,8 @@ unsigned char* loadHDImageFile(const char* filename, int* width, int* height, in
     char filePath[512];
     snprintf(filePath, sizeof(filePath), "%s/%s", getHDBackgroundFolder(), filename);
 
-    FILE* testFile = fopen(filePath, "rb");
+    FILE* testFile = nullptr;
+    fopen_s(&testFile, filePath, "rb");
     if (!testFile)
         return nullptr;
     fclose(testFile);
@@ -486,15 +487,15 @@ HDBackgroundInfo* loadHDBackground(const char* backgroundName, int cameraIdx, co
             bgInfo->channels = channels;
             bgInfo->isIndexed = false;
             bgInfo->isAnimated = true;
-            bgInfo->frameCount = totalFrames;
+            bgInfo->frameCount = static_cast<int>(totalFrames);
             bgInfo->frames = frames;
             bgInfo->currentFrame = 0;
             bgInfo->frameTimer = 0.0f;
             bgInfo->frameTime = 0.08f;
             bgInfo->isPaused = false;
-            bgInfo->minFramesForPlayback = minFramesToLoad;
+            bgInfo->minFramesForPlayback = static_cast<int>(minFramesToLoad);
             bgInfo->loadedFrameCount = loadedFrames;
-            bgInfo->allFramesLoaded = (loadedFrames >= (int)totalFrames);
+            bgInfo->allFramesLoaded = (loadedFrames >= static_cast<int>(totalFrames));
 
             if (bgInfo->allFramesLoaded)
             {
@@ -599,7 +600,8 @@ HDBackgroundInfo* loadHDBackground(const char* backgroundName, int cameraIdx, co
                      getHDBackgroundFolder(), backgroundName, cameraIdx, extensions[i]);
         }
 
-        FILE* testFile = fopen(filePath, "rb");
+        FILE* testFile = nullptr;
+        fopen_s(&testFile, filePath, "rb");
         if (!testFile)
         {
             continue;
@@ -810,12 +812,13 @@ bool loadHDFrameBorders()
         snprintf(filePath, sizeof(filePath), "%s", g_frameBorderFileNames[i]);
         
         // Check if file exists
-        FILE* testFile = fopen(filePath, "rb");
+        FILE* testFile = nullptr;
+        fopen_s(&testFile, filePath, "rb");
         if (!testFile)
         {
             // Try in backgrounds_hd folder
             snprintf(filePath, sizeof(filePath), "%s/%s", getHDBackgroundFolder(), g_frameBorderFileNames[i]);
-            testFile = fopen(filePath, "rb");
+            fopen_s(&testFile, filePath, "rb");
             if (!testFile)
             {
                 continue;
@@ -943,8 +946,7 @@ void preloadFloorHDBackgrounds(int floorNumber, int cameraCount, const char* bac
     printf(HDBG_TAG "Preloading HD backgrounds for floor %d (%d cameras)...\n", floorNumber, cameraCount);
 
     g_hdBackgroundCache.floorNumber = floorNumber;
-    strncpy(g_hdBackgroundCache.backgroundName, backgroundName, sizeof(g_hdBackgroundCache.backgroundName) - 1);
-    g_hdBackgroundCache.backgroundName[sizeof(g_hdBackgroundCache.backgroundName) - 1] = '\0';
+    strncpy_s(g_hdBackgroundCache.backgroundName, sizeof(g_hdBackgroundCache.backgroundName), backgroundName, sizeof(g_hdBackgroundCache.backgroundName) - 1);
     g_hdBackgroundCache.backgrounds.resize(cameraCount, nullptr);
     g_hdBackgroundCache.darkBackgrounds.resize(cameraCount, nullptr);
     g_hdBackgroundCache.initialized = true;

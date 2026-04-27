@@ -46,7 +46,7 @@ private:
 
     MemoryManager() : enableLogging(true), logFile(nullptr)
     {
-        logFile = fopen("memory_debug.log", "w");
+        fopen_s(&logFile, "memory_debug.log", "w");
         if (logFile)
         {
             fprintf(logFile, "=== Memory Manager Initialized ===\n");

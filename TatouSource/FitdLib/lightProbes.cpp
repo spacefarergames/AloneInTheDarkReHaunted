@@ -48,9 +48,9 @@ bool LightProbeManager::loadProbes(int floor, int camera)
 {
     char filename[256];
     if (camera >= 0)
-        sprintf(filename, "probes_floor%02d_cam%02d.dat", floor, camera);
+        sprintf_s(filename, sizeof(filename), "probes_floor%02d_cam%02d.dat", floor, camera);
     else
-        sprintf(filename, "probes_floor%02d.dat", floor);
+        sprintf_s(filename, sizeof(filename), "probes_floor%02d.dat", floor);
 
     FILE* file = fopen(filename, "rb");
     if (!file)
@@ -125,9 +125,9 @@ bool LightProbeManager::saveProbes(int floor, int camera)
 {
     char filename[256];
     if (camera >= 0)
-        sprintf(filename, "probes_floor%02d_cam%02d.dat", floor, camera);
+        sprintf_s(filename, sizeof(filename), "probes_floor%02d_cam%02d.dat", floor, camera);
     else
-        sprintf(filename, "probes_floor%02d.dat", floor);
+        sprintf_s(filename, sizeof(filename), "probes_floor%02d.dat", floor);
 
     FILE* file = fopen(filename, "wb");
     if (!file)

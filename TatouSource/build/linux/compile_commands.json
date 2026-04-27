@@ -6247,6 +6247,12 @@
 },
 {
   "directory": "/mnt/d/FITD/build/linux",
+  "command": "/usr/bin/c++ -I/mnt/d/FITD/FitdLib/. -I/mnt/d/FITD/ThirdParty/imgui -I/mnt/d/FITD/ThirdParty/bgfx.cmake/bgfx/include -I/mnt/d/FITD/ThirdParty/bgfx.cmake/bx/include -I/mnt/d/FITD/ThirdParty/bgfx.cmake/bgfx/3rdparty -I/mnt/d/FITD/ThirdParty/bgfx.cmake/bimg/include -I/mnt/d/FITD/ThirdParty/SDL/include/SDL3 -I/mnt/d/FITD/ThirdParty/SDL/include -I/mnt/d/FITD/ThirdParty/soloud.cmake/soloud/include -I/mnt/d/FITD/ThirdParty/bgfx.cmake/bx/include/compat/linux  -DBX_CONFIG_DEBUG=0 -O3 -DNDEBUG -std=c++20 -fPIC -o FitdLib/CMakeFiles/FitdLib.dir/menuFade.cpp.o -c /mnt/d/FITD/FitdLib/menuFade.cpp",
+  "file": "/mnt/d/FITD/FitdLib/menuFade.cpp",
+  "output": "FitdLib/CMakeFiles/FitdLib.dir/menuFade.cpp.o"
+},
+{
+  "directory": "/mnt/d/FITD/build/linux",
   "command": "/usr/bin/c++ -I/mnt/d/FITD/FitdLib/. -I/mnt/d/FITD/ThirdParty/imgui -I/mnt/d/FITD/ThirdParty/bgfx.cmake/bgfx/include -I/mnt/d/FITD/ThirdParty/bgfx.cmake/bx/include -I/mnt/d/FITD/ThirdParty/bgfx.cmake/bgfx/3rdparty -I/mnt/d/FITD/ThirdParty/bgfx.cmake/bimg/include -I/mnt/d/FITD/ThirdParty/SDL/include/SDL3 -I/mnt/d/FITD/ThirdParty/SDL/include -I/mnt/d/FITD/ThirdParty/soloud.cmake/soloud/include -I/mnt/d/FITD/ThirdParty/bgfx.cmake/bx/include/compat/linux  -DBX_CONFIG_DEBUG=0 -O3 -DNDEBUG -std=c++20 -fPIC -o FitdLib/CMakeFiles/FitdLib.dir/modelAtlas_fixed.cpp.o -c /mnt/d/FITD/FitdLib/modelAtlas_fixed.cpp",
   "file": "/mnt/d/FITD/FitdLib/modelAtlas_fixed.cpp",
   "output": "FitdLib/CMakeFiles/FitdLib.dir/modelAtlas_fixed.cpp.o"

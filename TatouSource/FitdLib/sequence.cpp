@@ -235,7 +235,7 @@ void playSequence(int sequenceIdx, int fadeStart, int fadeOutVar)
     }
     else if (g_gameId == AITD3)
     {
-        sprintf(buffer, "AN%d", sequenceIdx);
+        sprintf_s(buffer, sizeof(buffer), "AN%d", sequenceIdx);
     }
 
     printf(SEQ_TAG "Playing sequence: %s" CON_RESET "\n", buffer);

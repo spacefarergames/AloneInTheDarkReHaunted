@@ -1117,7 +1117,7 @@ void dumpLifeScript(int lifeNum)
 void dumpAllLifeScripts()
 {
     // Open output file for the dump
-    s_dumpFile = fopen("LISTLIFE_dump.txt", "w");
+    fopen_s(&s_dumpFile, "LISTLIFE_dump.txt", "w");
     if (!s_dumpFile)
         printf(LIFE_WARN "Could not open LISTLIFE_dump.txt for writing" CON_RESET "\n");
 
@@ -1159,7 +1159,8 @@ static std::string captureLifeScriptDump(int lifeNum)
 
 void validateNativeLifeScriptsAgainstDump(const char* dumpFilePath)
 {
-    FILE* f = fopen(dumpFilePath, "r");
+    FILE* f = nullptr;
+    fopen_s(&f, dumpFilePath, "r");
     if (!f)
     {
         printf(LIFE_WARN "Cannot open '%s' - native scripts not validated against bytecode" CON_RESET "\n", dumpFilePath);
@@ -1177,7 +1178,7 @@ void validateNativeLifeScriptsAgainstDump(const char* dumpFilePath)
     while (fgets(line, sizeof(line), f))
     {
         int scriptNum;
-        if (sscanf(line, "[LIFE] ========== LIFE SCRIPT %d", &scriptNum) == 1)
+        if (sscanf_s(line, "[LIFE] ========== LIFE SCRIPT %d", &scriptNum) == 1)
         {
             currentScript = scriptNum;
             currentText = line;
@@ -1185,7 +1186,7 @@ void validateNativeLifeScriptsAgainstDump(const char* dumpFilePath)
         else if (currentScript >= 0)
         {
             currentText += line;
-            if (sscanf(line, "[LIFE] ========== END LIFE SCRIPT %d", &scriptNum) == 1
+            if (sscanf_s(line, "[LIFE] ========== END LIFE SCRIPT %d", &scriptNum) == 1
                 && scriptNum == currentScript)
             {
                 refDump[currentScript] = currentText;
@@ -2454,7 +2455,7 @@ void generateNativeLifeScriptC(int lifeNum)
 
 void generateAllNativeLifeScripts()
 {
-    s_genFile = fopen("nativeLifeScripts_generated.cpp", "w");
+    fopen_s(&s_genFile, "nativeLifeScripts_generated.cpp", "w");
     if (!s_genFile) {
         printf(LIFE_WARN "Could not open nativeLifeScripts_generated.cpp" CON_RESET "\n");
         return;

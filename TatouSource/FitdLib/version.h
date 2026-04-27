@@ -7,5 +7,5 @@
 // Version information macro
 ///////////////////////////////////////////////////////////////////////////////
 
-#define getVersion(string) sprintf(string,"Compiled the %s at %s\n",__DATE__,__TIME__);
+#define getVersion(string) sprintf_s(string, sizeof(string), "Compiled the %s at %s\n",__DATE__,__TIME__);
 

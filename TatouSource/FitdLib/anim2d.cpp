@@ -18,7 +18,7 @@ sHybrid* PtrAnim2D = nullptr;
 void load2dAnims(int cameraIdx) {
     char name[16];
 
-    sprintf(name, "ANIM%02d", g_currentFloor);
+    sprintf_s(name, sizeof(name), "ANIM%02d", g_currentFloor);
 
     if (PtrAnim2D)
     {

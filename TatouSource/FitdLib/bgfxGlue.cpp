@@ -53,6 +53,9 @@ bool g_pendingFullscreenToggle = false;
 // For dust particle system - we need the current floor
 extern s16 g_currentFloor;
 
+// Forward declaration — defined below at file scope
+extern int outputResolution[2];
+
 void toggleFullscreen()
 {
     if (gWindowBGFX == nullptr)

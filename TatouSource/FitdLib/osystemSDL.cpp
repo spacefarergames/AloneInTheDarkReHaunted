@@ -259,30 +259,30 @@ int FitdInit(int argc, char* argv[])
         steamOverlay_NotifyGraphicsReady();
     }
 
-    unsigned long int t_start = SDL_GetTicks();
+    unsigned long int t_start = static_cast<unsigned long>(SDL_GetTicks());
     unsigned long int t_lastUpdate = t_start;
 
     int FRAMES_PER_SECOND = 25;
 
-    u32 startOfPreviousFrame = SDL_GetTicks();
+    u32 startOfPreviousFrame = static_cast<u32>(SDL_GetTicks());
     bool bFirstFrame = true;
 
     while (1)
     {
-        u32 startOfFrame = SDL_GetTicks();
+        u32 startOfFrame = static_cast<u32>(SDL_GetTicks());
 
         assert(startOfPreviousFrame <= startOfFrame);
 
         u32 tickDifference = startOfFrame - startOfPreviousFrame;
 
-        if (tickDifference < 1000 / FRAMES_PER_SECOND)
+        if (tickDifference < static_cast<u32>(1000 / FRAMES_PER_SECOND))
         {
            // SDL_Delay((1000 / FRAMES_PER_SECOND) - tickDifference);
         }
 
         startOfPreviousFrame = startOfFrame;
 
-        unsigned long int t_sinceStart = SDL_GetTicks();
+        unsigned long int t_sinceStart = static_cast<unsigned long>(SDL_GetTicks());
 
         int delta = 0;
 
@@ -351,17 +351,17 @@ u32 osystem_startOfFrame()
 #ifdef USE_IMGUI
         //ImGui_ImplSdlGL3_Init(sdl_window);
 #endif
-        lastFrameTime = SDL_GetTicks();
+        lastFrameTime = static_cast<u32>(SDL_GetTicks());
 
         firstFrame = false;
     }
 
-    u32 numFramesToAdvance = (SDL_GetTicks() - lastFrameTime) / (1000 / FRAMES_PER_SECOND);
+    u32 numFramesToAdvance = (static_cast<u32>(SDL_GetTicks()) - lastFrameTime) / (1000 / FRAMES_PER_SECOND);
 
     if (numFramesToAdvance == 0)
         numFramesToAdvance = 1;
 
-    lastFrameTime = SDL_GetTicks();
+    lastFrameTime = static_cast<u32>(SDL_GetTicks());
 
 #ifdef USE_IMGUI
     //ImGui_ImplSdlGL3_NewFrame(sdl_window);
@@ -406,7 +406,7 @@ bool fileExists(const char* name)
 
     FILE* fHandle;
 
-    fHandle = fopen(name, "rb");
+    fopen_s(&fHandle, name, "rb");
 
     if (fHandle)
     {

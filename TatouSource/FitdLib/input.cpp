@@ -171,13 +171,13 @@ void readKeyboard(void)
                 break;
             default:
                 // Check configurable key bindings
-                if (j == (int)getKeyBinding(ACTION_UP).keyboard)
+                if (j == (int)getKeyBinding(ACTION_UP).keyboard || j == SDL_SCANCODE_W)
                     JoyD |= 1;
-                if (j == (int)getKeyBinding(ACTION_DOWN).keyboard)
+                if (j == (int)getKeyBinding(ACTION_DOWN).keyboard || j == SDL_SCANCODE_S)
                     JoyD |= 2;
-                if (j == (int)getKeyBinding(ACTION_LEFT).keyboard)
+                if (j == (int)getKeyBinding(ACTION_LEFT).keyboard || j == SDL_SCANCODE_A)
                     JoyD |= 4;
-                if (j == (int)getKeyBinding(ACTION_RIGHT).keyboard)
+                if (j == (int)getKeyBinding(ACTION_RIGHT).keyboard || j == SDL_SCANCODE_D)
                     JoyD |= 8;
                 if (j == (int)getKeyBinding(ACTION_QUICK_TURN_LEFT).keyboard)
                     JoyD |= 0x10;
