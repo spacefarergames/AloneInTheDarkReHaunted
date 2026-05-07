@@ -22,6 +22,10 @@ AITD-R (also known as *Alone In The Dark Re-Haunted*) lets you play the original
 
 ![573228488-b0206b5f-8026-46d0-89a6-b5dc6b7ba73e](https://github.com/user-attachments/assets/e7fa702a-6d17-4ce2-afc4-573c3be5340e)
 
+## Now Supports Jack in The Dark Promo Game (HD)
+<img width="1400" height="876" alt="image" src="https://github.com/user-attachments/assets/9aa0dba7-30ee-4671-b2e5-9c40caa48872" />
+
+
 ## Video (YouTube)
 https://www.youtube.com/watch?v=fzi_xK2Jifw
 
@@ -35,6 +39,7 @@ https://www.youtube.com/watch?v=0yaWv7vF3bA
 | Game | Steam | GOG | Status |
 |------|-------|-----|--------|
 | Alone in the Dark 1 | [Store page](https://store.steampowered.com/app/548090/Alone_in_the_Dark_1/) | [Trilogy](https://www.gog.com/en/game/alone_in_the_dark_the_trilogy_123) | ✅ Completable
+| Jack in The Dark Promo Game | [Store page](https://store.steampowered.com/app/548090/Alone_in_the_Dark_1/) | [Trilogy](https://www.gog.com/en/game/alone_in_the_dark_the_trilogy_123) | ✅ Completable
 
 ## Future Forks (And Project Names)
 | Alone in the Dark 2 - Jack Is Back Again |✅ In Progress (https://github.com/spacefarergames/AloneInTheDarkJackIsBackAgain/)
@@ -86,6 +91,8 @@ For full multi-platform build instructions see **[BUILDING.md](BUILDING.md)**.
 ---
 
 ## How to Play
+
+Note: For Jack in The Dark, download the seperate JackInTheDark release from the Releases. Keep both AITD1 and Jack in the Dark seperate to avoid conflicts. By default, it will install automatically when Steamless = false in the remaster cfg.
 
 ### Starting a New Game
 
