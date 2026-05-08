@@ -1,10 +1,26 @@
 # generate_embedded.ps1
 # Converts binary PAK/ITD files to C++ byte array source files
 # Usage: powershell -File generate_embedded.ps1 -DataDir <path_to_data_files>
+#
+# Parameters:
+#   -DataDir         folder containing the source PAK/ITD files
+#   -OutputDir       output folder for the generated .cpp files
+#   -Prefix          optional name prefix for emitted filenames and variable
+#                    names (e.g. "jack_") so multiple game data sets can be
+#                    embedded side-by-side without colliding
+#   -RegistryFile    filename (in OutputDir) for the generated registry .cpp
+#   -FunctionName    name of the C++ lookup function to emit
+#   -SkipExtras      skip embedding the ControllerHint.png helper asset
+#                    (only the AITD1 registry should include it)
 
 param(
-    [string]$DataDir = "C:\Users\patte\FITD\build\vs2026\Fitd\Release",
-    [string]$OutputDir = "C:\Users\patte\FITD\FitdLib\embedded"
+    [string]$DataDir       = "C:\Users\patte\FITD\build\vs2026\Fitd\Release",
+    [string]$OutputDir     = "D:\FITD\FitdLib\embedded",
+    [string]$ExtrasDir     = "",
+    [string]$Prefix        = "",
+    [string]$RegistryFile  = "embeddedData.cpp",
+    [string]$FunctionName  = "getEmbeddedFile",
+    [switch]$SkipExtras
 )
 
 $copyright = @"
@@ -22,6 +38,18 @@ $files = @()
 $files += Get-ChildItem $DataDir -Filter "*.PAK" -File
 $files += Get-ChildItem $DataDir -Filter "*.ITD" -File | Where-Object { $_.Name -notlike "SAVE*" }
 
+# Optional extras (e.g. ControllerHint.png) only for the primary AITD1 set
+if (-not $SkipExtras) {
+    $extrasSearchDir = if ($ExtrasDir) { $ExtrasDir } else { $DataDir }
+    $extras = @("ControllerHint.png")
+    foreach ($extra in $extras) {
+        $extraPath = Join-Path $extrasSearchDir $extra
+        if (Test-Path $extraPath) {
+            $files += Get-Item $extraPath
+        }
+    }
+}
+
 Write-Host "Found $($files.Count) files to embed"
 
 # Ensure output directory exists
@@ -29,8 +57,8 @@ New-Item -ItemType Directory -Path $OutputDir -Force | Out-Null
 
 foreach ($file in $files) {
     $safeName = $file.Name -replace '\.', '_'
-    $varName = "embdata_$safeName"
-    $outFile = Join-Path $OutputDir "embedded_$safeName.cpp"
+    $varName = "embdata_${Prefix}$safeName"
+    $outFile = Join-Path $OutputDir "embedded_${Prefix}$safeName.cpp"
 
     Write-Host "  Generating $($file.Name) ($([math]::Round($file.Length/1024,1)) KB)..."
 
@@ -83,9 +111,9 @@ $registrySb = [System.Text.StringBuilder]::new()
 # Extern declarations
 foreach ($file in $files) {
     $safeName = $file.Name -replace '\.', '_'
-    $varName = "embdata_$safeName"
-    [void]$registrySb.AppendLine("extern extern const unsigned char ${varName}[];")
-    [void]$registrySb.AppendLine("extern extern const unsigned long long ${varName}_size;")
+    $varName = "embdata_${Prefix}$safeName"
+    [void]$registrySb.AppendLine("extern const unsigned char ${varName}[];")
+    [void]$registrySb.AppendLine("extern const unsigned long long ${varName}_size;")
 }
 
 [void]$registrySb.AppendLine("")
@@ -99,7 +127,7 @@ foreach ($file in $files) {
 
 foreach ($file in $files) {
     $safeName = $file.Name -replace '\.', '_'
-    $varName = "embdata_$safeName"
+    $varName = "embdata_${Prefix}$safeName"
     [void]$registrySb.AppendLine("    { `"$($file.Name)`", ${varName}, ${varName}_size },")
 }
 
@@ -135,7 +163,8 @@ foreach ($file in $files) {
 [void]$registrySb.AppendLine("")
 
 # Lookup function
-[void]$registrySb.AppendLine("bool getEmbeddedFile(const char* filename, const unsigned char** outData, size_t* outSize)")
+# Lookup function
+[void]$registrySb.AppendLine("bool ${FunctionName}(const char* filename, const unsigned char** outData, size_t* outSize)")
 [void]$registrySb.AppendLine("{")
 [void]$registrySb.AppendLine("    const char* name = extractFilename(filename);")
 [void]$registrySb.AppendLine("    for (int i = 0; i < s_numEmbeddedFiles; i++)")
@@ -150,8 +179,8 @@ foreach ($file in $files) {
 [void]$registrySb.AppendLine("    return false;")
 [void]$registrySb.AppendLine("}")
 
-$registryPath = Join-Path $OutputDir "embeddedData.cpp"
+$registryPath = Join-Path $OutputDir $RegistryFile
 [System.IO.File]::WriteAllText($registryPath, $registrySb.ToString())
 
-Write-Host "Generated embeddedData.cpp"
+Write-Host "Generated $RegistryFile"
 Write-Host "All done!"

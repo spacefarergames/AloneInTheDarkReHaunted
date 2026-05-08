@@ -9,6 +9,9 @@
 
 #include "common.h"
 
+#include "hdBackground.h"
+#include "hdBackgroundRenderer.h"
+
 // ITD_RESS mapping
 #define JACK_CADRE_SPF					0
 #define JACK_ITDFONT					1
@@ -29,14 +32,32 @@ void JACK_ReadBook(int index, int type)
 		{
 			unsigned char* pImage = (unsigned char*)loadPak("ITD_RESS", JACK_LIVRE);
 			memcpy(aux, pImage, 320*200);
-            palette_t lpalette;
-            copyPalette(pImage + 320*200, lpalette);
+			palette_t lpalette;
+			copyPalette(pImage + 320*200, lpalette);
 			convertPaletteIfRequired(lpalette);
 			copyPalette(lpalette,currentGamePalette);
 			setPalette(lpalette);
 			free(pImage);
+
+			// Try HD replacement: JACKBOOK_000.png
+			HDBackgroundInfo* hdBg = loadHDBackground("JACKBOOK", 0);
+			if (hdBg)
+			{
+				updateBackgroundTextureHD(hdBg->data, hdBg->width, hdBg->height, hdBg->channels);
+				if (hdBg->isAnimated)
+					setCurrentAnimatedHDBackground(hdBg);
+				else
+					freeHDBackground(hdBg);
+			}
+			else if (g_currentBackgroundIsHD)
+			{
+				recreateBackgroundTexture(320, 200);
+			}
+
 			turnPageFlag = 1;
 			Lire(index, 60, 10, 245, 190, 0, 124, 124);
+
+			setCurrentAnimatedHDBackground(nullptr);
 			break;
 		}
 	default:

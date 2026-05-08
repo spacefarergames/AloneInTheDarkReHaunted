@@ -1492,9 +1492,8 @@ void LoadWorld(void)
         HQ_Hybrides = HQR_InitRessource<sHybrid>("LISTHYB", 20000, 10); // TODO: recheck size for other games
     }
 
-    // Native life scripts have been DISABLED in favor of bytecode patch system
-    // This provides better maintainability and keeps all script logic in one place
-    // initNativeLifeScripts();
+    // Initialize native life scripts (safe-filter: only scripts with no risky opcodes are registered)
+    initNativeLifeScripts();
 
     // Initialize bytecode patch system (runtime bug fixes for bytecode execution)
     initBytecodePatches();
@@ -3776,7 +3775,7 @@ void drawSceneObjects()
         setCurrentBodyNum(actorPtr->bodyNum, bodyPtr, HQ_Bodys->string);
         AffObjet(actorPtr->worldX + actorPtr->stepX, actorPtr->worldY + actorPtr->stepY, actorPtr->worldZ + actorPtr->stepZ, actorPtr->alpha, actorPtr->beta, actorPtr->gamma, bodyPtr);
 
-        if (shouldDrawShadows)
+        if (shouldDrawShadows && !actorPtr->hidePlanarShadow)
         {
             drawPlanarShadow(actorPtr->worldX + actorPtr->stepX, actorPtr->worldY + actorPtr->stepY, actorPtr->worldZ + actorPtr->stepZ, actorPtr->alpha, actorPtr->beta, actorPtr->gamma, bodyPtr);
             drawWallPlanarShadow(actorPtr->worldX + actorPtr->stepX, actorPtr->worldY + actorPtr->stepY, actorPtr->worldZ + actorPtr->stepZ, actorPtr->alpha, actorPtr->beta, actorPtr->gamma, bodyPtr, actorPtr->room);
@@ -3927,7 +3926,7 @@ void AllRedraw(int flagFlip)
                             populateLampPrimitiveCache();
                         }
 
-                        if (shouldDrawShadows)
+                        if (shouldDrawShadows && !actorPtr->hidePlanarShadow)
                         {
                             drawPlanarShadow(actorPtr->worldX + actorPtr->stepX, actorPtr->worldY + actorPtr->stepY, actorPtr->worldZ + actorPtr->stepZ, actorPtr->alpha, actorPtr->beta, actorPtr->gamma, bodyPtr);
                             drawWallPlanarShadow(actorPtr->worldX + actorPtr->stepX, actorPtr->worldY + actorPtr->stepY, actorPtr->worldZ + actorPtr->stepZ, actorPtr->alpha, actorPtr->beta, actorPtr->gamma, bodyPtr, actorPtr->room);
@@ -5434,7 +5433,16 @@ void detectGame(void)
 {
     const char* gameName = NULL;
 
-    if (fileExists("AITD2.flag"))
+    // JACK mode forces Jack in the Dark, even if AITD1 sentinel files
+    // are also present in the working directory.
+    if (g_remasterConfig.gameData.jackMode && fileExists("PERE.PAK"))
+    {
+        g_gameId = JACK;
+        CVars.resize(70);
+        currentCVarTable = AITD2KnownCVars;
+        gameName = "Jack in the Dark";
+    }
+    else if (fileExists("AITD2.flag"))
     {
         g_gameId = AITD2;
         CVars.resize(70);
@@ -5523,6 +5531,13 @@ int FitdMain(int argc, char* argv[])
 
     // Apply the loaded palette to the renderer
     osystem_setPalette(&currentGamePalette);
+
+    // Optionally dump every original PAK background to PNG on launch.
+    if (g_remasterConfig.backgrounds.dumpEnabled)
+    {
+        extern void dumpAllBackgrounds();
+        dumpAllBackgrounds();
+    }
 
     switch (g_gameId)
     {

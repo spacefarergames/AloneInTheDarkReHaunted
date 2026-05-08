@@ -100,13 +100,18 @@ void initDefaultRemasterConfig()
     g_remasterConfig.sequences.dumpEnabled = false;  // Don't auto-dump sequence frames during normal gameplay
     g_remasterConfig.sequences.loadEnabled = true;   // Load HD replacement sequence frames if available
 
+    // Background dumping defaults
+    g_remasterConfig.backgrounds.dumpEnabled = true;  // Auto-dump every original PAK background to PNG once on launch
+
     // Game data defaults
     g_remasterConfig.gameData.steamless = false;   // Allow automatic file copying/installation by default
+    g_remasterConfig.gameData.jackMode = false;    // Default to AITD1 (INDARK); enable to run Jack in the Dark from JACK folder
 
     // Debug / diagnostics defaults
     g_remasterConfig.debug.logLifeScripts = false;  // Don't log life scripts by default (very verbose)
     g_remasterConfig.debug.dumpLifeScripts = false;   // Don't dump life scripts by default
     g_remasterConfig.debug.generateNativeLifeScripts = false; // Don't generate native C code by default
+    g_remasterConfig.debug.enableNativeLifeScripts = false;    // Don't use native life scripts by default
 }
 
 void loadRemasterConfig()
@@ -299,9 +304,15 @@ void loadRemasterConfig()
             else if (strcmp(key, "sequences.load") == 0)
                 g_remasterConfig.sequences.loadEnabled = (strcmp(value, "true") == 0 || strcmp(value, "1") == 0);
 
+            // Background dumping settings
+            else if (strcmp(key, "backgrounds.dump") == 0)
+                g_remasterConfig.backgrounds.dumpEnabled = (strcmp(value, "true") == 0 || strcmp(value, "1") == 0);
+
             // Game data settings
             else if (strcmp(key, "gamedata.steamless") == 0)
                 g_remasterConfig.gameData.steamless = (strcmp(value, "true") == 0 || strcmp(value, "1") == 0);
+            else if (strcmp(key, "gamedata.jackmode") == 0)
+                g_remasterConfig.gameData.jackMode = (strcmp(value, "true") == 0 || strcmp(value, "1") == 0);
 
             // Debug / diagnostics settings
             else if (strcmp(key, "debug.logLifeScripts") == 0)
@@ -310,6 +321,8 @@ void loadRemasterConfig()
                 g_remasterConfig.debug.dumpLifeScripts = (strcmp(value, "true") == 0 || strcmp(value, "1") == 0);
             else if (strcmp(key, "debug.generateNativeLifeScripts") == 0)
                 g_remasterConfig.debug.generateNativeLifeScripts = (strcmp(value, "true") == 0 || strcmp(value, "1") == 0);
+            else if (strcmp(key, "debug.enableNativeLifeScripts") == 0)
+                g_remasterConfig.debug.enableNativeLifeScripts = (strcmp(value, "true") == 0 || strcmp(value, "1") == 0);
         }
     }
 
@@ -454,13 +467,18 @@ void saveRemasterConfig()
     fprintf(file, "sequences.dump = %s\n", g_remasterConfig.sequences.dumpEnabled ? "true" : "false");
     fprintf(file, "sequences.load = %s\n", g_remasterConfig.sequences.loadEnabled ? "true" : "false");
 
+    fprintf(file, "\n# Background Dumping Settings\n");
+    fprintf(file, "backgrounds.dump = %s\n", g_remasterConfig.backgrounds.dumpEnabled ? "true" : "false");
+
     fprintf(file, "\n# Game Data Settings\n");
     fprintf(file, "gamedata.steamless = %s\n", g_remasterConfig.gameData.steamless ? "true" : "false");
+    fprintf(file, "gamedata.jackmode = %s\n", g_remasterConfig.gameData.jackMode ? "true" : "false");
 
     fprintf(file, "\n# Debug / Diagnostics Settings\n");
     fprintf(file, "debug.logLifeScripts = %s\n", g_remasterConfig.debug.logLifeScripts ? "true" : "false");
     fprintf(file, "debug.dumpLifeScripts = %s\n", g_remasterConfig.debug.dumpLifeScripts ? "true" : "false");
     fprintf(file, "debug.generateNativeLifeScripts = %s\n", g_remasterConfig.debug.generateNativeLifeScripts ? "true" : "false");
+    fprintf(file, "debug.enableNativeLifeScripts = %s\n", g_remasterConfig.debug.enableNativeLifeScripts ? "true" : "false");
 
     fclose(file);
     printf(CFG_OK "Remaster config saved\n");

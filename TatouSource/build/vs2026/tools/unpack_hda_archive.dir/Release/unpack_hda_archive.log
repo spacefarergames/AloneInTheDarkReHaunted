@@ -1,0 +1,4 @@
+﻿  unpack_hda_archive.cpp
+D:\FITD\tools\unpack_hda_archive.cpp(93,15): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+D:\FITD\tools\unpack_hda_archive.cpp(244,21): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  unpack_hda_archive.vcxproj -> D:\FITD\build\vs2026-new\tools\Release\unpack_hda_archive.exe

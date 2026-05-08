@@ -61,7 +61,7 @@ static int getGroupForPrimitive(sBody* pBody, sPrimitive* pPrim)
     return 0;
 }
 
-// Shared atlas layout data — computed identically by both dump and load
+// Shared atlas layout data â€” computed identically by both dump and load
 struct AtlasCellInfo
 {
     int primIdx;   // original primitive index
@@ -198,7 +198,7 @@ static ProjectionParams computeProjectionParams(const std::vector<point3dStruct>
     auto nextPow2 = [](int v) -> int {
         v--; v |= v >> 1; v |= v >> 2; v |= v >> 4; v |= v >> 8; v |= v >> 16;
         return v + 1;
-        };
+    };
     int halfW = 512;
     int baseH = (int)ceilf((float)halfW * (p.rangeY / p.rangeX));
     p.atlasW = nextPow2((std::max)(halfW * 2, 128));
@@ -334,7 +334,7 @@ static AtlasLayout computeAtlasLayout(sBody* pBody)
         v--;
         v |= v >> 1; v |= v >> 2; v |= v >> 4; v |= v >> 8; v |= v >> 16;
         return v + 1;
-        };
+    };
     layout.atlasW = nextPow2((std::max)(atlasW, 64));
     layout.atlasH = nextPow2((std::max)(atlasH, 64));
 
@@ -403,6 +403,64 @@ static void ensureAtlasDir()
 #endif
 }
 
+// Generic helper to load atlas PNG data from atlases.hda archive or fall back to filesystem
+// Attempts to load from archive using just the filename as entry name, with fallback to direct file loading
+// Returns decompressed RGBA8 pixel data (caller must free with stbi_image_free)
+// Sets w, h, channels on success; returns nullptr on failure
+static unsigned char* loadAtlasDataFromArchiveOrFile(const std::string& filePath, int& w, int& h, int& channels)
+{
+    // Extract just the filename from the full path for archive entry lookup
+    // (Archive entries use simple names like "body_hqrname_001.png", not full paths)
+    size_t lastSlash = filePath.find_last_of("/\\");
+    std::string fileName = (lastSlash != std::string::npos) ? filePath.substr(lastSlash + 1) : filePath;
+
+    // First, try to load from atlases.hda archive
+    if (HDArchive::open("atlases.hda"))
+    {
+        const HDArchiveEntry* entry = HDArchive::findEntry(fileName.c_str());
+        if (entry)
+        {
+            size_t dataSize = 0;
+            unsigned char* archiveData = HDArchive::readEntryAlloc(entry, &dataSize);
+            HDArchive::close();
+
+            if (archiveData && dataSize > 0)
+            {
+                // Use stbi_load_from_memory to decode the PNG from buffer
+                unsigned char* pixels = stbi_load_from_memory(
+                    archiveData, (int)dataSize, &w, &h, &channels, 4);
+
+                free(archiveData);  // Free the compressed archive data
+
+                if (pixels)
+                {
+                    // Note: uncomment for debug logging
+                    // printf(RNDR_INFO "Loaded atlas from archive: %s (%dx%d)" CON_RESET "\n",
+                    //     fileName.c_str(), w, h);
+                    return pixels;
+                }
+            }
+        }
+        else
+        {
+            HDArchive::close();
+        }
+    }
+
+    // Fallback: load from individual file on filesystem
+    unsigned char* data = stbi_load(filePath.c_str(), &w, &h, &channels, 4);
+
+    // Note: uncomment for debug logging if loaded from file
+    // if (data)
+    // {
+    //     printf(RNDR_INFO "Loaded atlas from file: %s (%dx%d)" CON_RESET "\n",
+    //         fileName.c_str(), w, h);
+    // }
+
+    return data;
+}
+
+
 // Compute a simple 2D bounding box size for a polygon face.
 // Uses the first two edges to build a local 2D basis (flattening the 3D polygon).
 // Returns estimated width and height in model-space units.
@@ -414,7 +472,7 @@ static void computePolyFlatSize(sBody* pBody, sPrimitive* pPrim, float& outW, fl
     // Get 3D positions of first 3 vertices
     auto getVert = [&](int idx) -> point3dStruct& {
         return pBody->m_vertices[pPrim->m_points[idx]];
-        };
+    };
 
     point3dStruct& v0 = getVert(0);
     point3dStruct& v1 = getVert(1);
@@ -479,7 +537,7 @@ static void projectPolyToUV(sBody* pBody, sPrimitive* pPrim, std::vector<float>&
 
     auto getVert = [&](int idx) -> point3dStruct& {
         return pBody->m_vertices[pPrim->m_points[idx]];
-        };
+    };
 
     point3dStruct& v0 = getVert(0);
     point3dStruct& v1 = getVert(1);
@@ -620,11 +678,11 @@ ModelAtlasData* loadModelAtlas(int bodyNum, sBody* pBody, const std::string& hqr
     // Try to load the atlas PNG; auto-dump if it doesn't exist yet
     std::string path = getAtlasPath(hqrName, bodyNum);
     int w, h, channels;
-    unsigned char* data = stbi_load(path.c_str(), &w, &h, &channels, 4);
+    unsigned char* data = loadAtlasDataFromArchiveOrFile(path, w, h, channels);
     if (!data)
     {
         dumpModelAtlas(bodyNum, pBody, hqrName);
-        data = stbi_load(path.c_str(), &w, &h, &channels, 4);
+        data = loadAtlasDataFromArchiveOrFile(path, w, h, channels);
         if (!data)
             return nullptr;
     }
@@ -683,12 +741,12 @@ ModelAtlasData* loadModelAtlas(int bodyNum, sBody* pBody, const std::string& hqr
 
     // Also try to load sphere atlas if it exists
     std::string spherePath = getSphereAtlasPath(hqrName, bodyNum);
-    unsigned char* sphereData = stbi_load(spherePath.c_str(), &w, &h, &channels, 4);
+    unsigned char* sphereData = loadAtlasDataFromArchiveOrFile(spherePath, w, h, channels);
     if (!sphereData)
     {
         // Auto-dump sphere atlas if it doesn't exist
         dumpSphereAtlas(bodyNum, pBody, hqrName);
-        sphereData = stbi_load(spherePath.c_str(), &w, &h, &channels, 4);
+        sphereData = loadAtlasDataFromArchiveOrFile(spherePath, w, h, channels);
     }
 
     if (sphereData)
@@ -709,12 +767,12 @@ ModelAtlasData* loadModelAtlas(int bodyNum, sBody* pBody, const std::string& hqr
 
     // Also try to load flat poly atlas for mixed models (textured + flat-shaded)
     std::string flatPath = getFlatPolyAtlasPath(hqrName, bodyNum);
-    unsigned char* flatData = stbi_load(flatPath.c_str(), &w, &h, &channels, 4);
+    unsigned char* flatData = loadAtlasDataFromArchiveOrFile(flatPath, w, h, channels);
     if (!flatData)
     {
         // Auto-dump flat poly atlas if it doesn't exist
         dumpFlatPolyAtlas(bodyNum, pBody, hqrName);
-        flatData = stbi_load(flatPath.c_str(), &w, &h, &channels, 4);
+        flatData = loadAtlasDataFromArchiveOrFile(flatPath, w, h, channels);
     }
 
     if (flatData)
@@ -766,12 +824,12 @@ ModelAtlasData* loadModelAtlas(int bodyNum, sBody* pBody, const std::string& hqr
 
     // Also try to load ramp poly atlas for ramp-shaded polygons (material 3-6)
     std::string rampPath = getRampAtlasPath(hqrName, bodyNum);
-    unsigned char* rampData = stbi_load(rampPath.c_str(), &w, &h, &channels, 4);
+    unsigned char* rampData = loadAtlasDataFromArchiveOrFile(rampPath, w, h, channels);
     if (!rampData)
     {
         // Auto-dump ramp poly atlas if it doesn't exist
         dumpRampAtlas(bodyNum, pBody, hqrName);
-        rampData = stbi_load(rampPath.c_str(), &w, &h, &channels, 4);
+        rampData = loadAtlasDataFromArchiveOrFile(rampPath, w, h, channels);
     }
 
     if (rampData)
@@ -825,12 +883,12 @@ ModelAtlasData* loadModelAtlas(int bodyNum, sBody* pBody, const std::string& hqr
 
     // Also try to load other poly atlas for dither/transparent polygons (material 1-2)
     std::string otherPath = getOtherAtlasPath(hqrName, bodyNum);
-    unsigned char* otherData = stbi_load(otherPath.c_str(), &w, &h, &channels, 4);
+    unsigned char* otherData = loadAtlasDataFromArchiveOrFile(otherPath, w, h, channels);
     if (!otherData)
     {
         // Auto-dump other poly atlas if it doesn't exist
         dumpOtherAtlas(bodyNum, pBody, hqrName);
-        otherData = stbi_load(otherPath.c_str(), &w, &h, &channels, 4);
+        otherData = loadAtlasDataFromArchiveOrFile(otherPath, w, h, channels);
     }
 
     if (otherData)
@@ -916,7 +974,7 @@ bool dumpSphereAtlas(int bodyNum, sBody* pBody, const std::string& hqrName)
         v--;
         v |= v >> 1; v |= v >> 2; v |= v >> 4; v |= v >> 8; v |= v >> 16;
         return v + 1;
-        };
+    };
     atlasW = nextPow2((std::max)(atlasW, 64));
     atlasH = nextPow2((std::max)(atlasH, 64));
 
@@ -1001,7 +1059,11 @@ bool dumpFlatPolyAtlas(int bodyNum, sBody* pBody, const std::string& hqrName)
     int numPrims = (int)pBody->m_primitives.size();
     if (numPrims == 0) return false;
 
-    // Check if this is a mixed model (has both textured and flat-shaded primitives)
+    // Check if this is a mixed model (has both textured and flat-shaded primitives).
+    // JACK note: Grace and most JACK bodies have NO textured prims at all (only
+    // flat material 0 and ramp materials 3-6). Because JACK now routes ramp polys
+    // through the textured/flat atlas path (renderer.cpp::renderPoly), we must
+    // still emit the flat atlas for JACK so those polys have a texture to overlay.
     bool hasTextured = false;
     bool hasFlat = false;
     for (int i = 0; i < numPrims; i++)
@@ -1013,8 +1075,11 @@ bool dumpFlatPolyAtlas(int bodyNum, sBody* pBody, const std::string& hqrName)
             hasFlat = true;
     }
 
-    if (!hasTextured || !hasFlat)
-        return false; // Not a mixed model, nothing to dump
+    const bool jackMode = (g_gameId == JACK);
+    if (!hasFlat)
+        return false; // No flat/ramp polys at all
+    if (!jackMode && !hasTextured)
+        return false; // Non-JACK: only emit for mixed (textured + flat) models
 
     // Use same projection system as main atlas
     std::vector<point3dStruct> globalVerts;
@@ -1291,4 +1356,298 @@ void clearModelAtlases()
             bgfx::destroy(pair.second.otherTexture);
     }
     s_atlasCache.clear();
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// Tatou (armadillo) 4-way atlas: front / back / left / right quadrants
+///////////////////////////////////////////////////////////////////////////////
+
+// Get Tatou atlas file path
+static std::string getTatouAtlasPath(const std::string& hqrName, int bodyNum)
+{
+    char buf[128];
+    snprintf(buf, sizeof(buf), "tatou_%s_%03d.png", hqrName.c_str(), bodyNum);
+    return getAtlasFolder() + buf;
+}
+
+// 4-way projection parameters for the Tatou atlas
+struct TatouProjectionParams
+{
+    // Front/back view (X,Y) ranges
+    float padMinX, padMinY;
+    float rangeX, rangeY;
+    // Left/right view (Z,Y) ranges (Y shared with front/back)
+    float padMinZ;
+    float rangeZ;
+    int atlasW, atlasH;
+};
+
+static TatouProjectionParams computeTatouProjectionParams(const std::vector<point3dStruct>& verts)
+{
+    TatouProjectionParams p = {};
+    float minX = 1e30f, maxX = -1e30f;
+    float minY = 1e30f, maxY = -1e30f;
+    float minZ = 1e30f, maxZ = -1e30f;
+    for (auto& v : verts)
+    {
+        float fx = (float)v.x, fy = (float)v.y, fz = (float)v.z;
+        if (fx < minX) minX = fx; if (fx > maxX) maxX = fx;
+        if (fy < minY) minY = fy; if (fy > maxY) maxY = fy;
+        if (fz < minZ) minZ = fz; if (fz > maxZ) maxZ = fz;
+    }
+
+    float rawRangeX = maxX - minX; if (rawRangeX < 1.f) rawRangeX = 1.f;
+    float rawRangeY = maxY - minY; if (rawRangeY < 1.f) rawRangeY = 1.f;
+    float rawRangeZ = maxZ - minZ; if (rawRangeZ < 1.f) rawRangeZ = 1.f;
+
+    float padX = rawRangeX * 0.05f;
+    float padY = rawRangeY * 0.05f;
+    float padZ = rawRangeZ * 0.05f;
+
+    p.padMinX = minX - padX;  p.rangeX = rawRangeX + 2.f * padX;
+    p.padMinY = minY - padY;  p.rangeY = rawRangeY + 2.f * padY;
+    p.padMinZ = minZ - padZ;  p.rangeZ = rawRangeZ + 2.f * padZ;
+
+    // Atlas is 2x2 quadrants. Each quadrant gets halfW x halfH.
+    auto nextPow2 = [](int v) -> int {
+        v--; v |= v >> 1; v |= v >> 2; v |= v >> 4; v |= v >> 8; v |= v >> 16;
+        return v + 1;
+    };
+    int halfW = 512;
+    // Use the largest horizontal range (X or Z) to determine aspect
+    float maxHorizRange = (std::max)(p.rangeX, p.rangeZ);
+    int baseH = (int)ceilf((float)halfW * (p.rangeY / maxHorizRange));
+    p.atlasW = nextPow2((std::max)(halfW * 2, 128));
+    p.atlasH = nextPow2((std::max)(baseH * 2, 128));  // Double height for 4 quadrants
+    return p;
+}
+
+// Classify polygon into one of 4 directions based on dominant normal component
+// 0 = front (nz < 0, |nz| >= |nx|)
+// 1 = back  (nz >= 0, |nz| >= |nx|)
+// 2 = left  (nx < 0, |nx| > |nz|)
+// 3 = right (nx >= 0, |nx| > |nz|)
+static int classifyPolyDirection4Way(const std::vector<point3dStruct>& globalVerts, sPrimitive* pPrim)
+{
+    int nv = (int)pPrim->m_points.size();
+    if (nv < 3) return 0;
+    const point3dStruct& v0 = globalVerts[pPrim->m_points[0]];
+    const point3dStruct& v1 = globalVerts[pPrim->m_points[1]];
+    const point3dStruct& v2 = globalVerts[pPrim->m_points[2]];
+    float e1x = (float)(v1.x - v0.x), e1y = (float)(v1.y - v0.y), e1z = (float)(v1.z - v0.z);
+    float e2x = (float)(v2.x - v0.x), e2y = (float)(v2.y - v0.y), e2z = (float)(v2.z - v0.z);
+    float nx = e1y * e2z - e1z * e2y;
+    float nz = e1x * e2y - e1y * e2x;
+
+    float absNx = fabsf(nx);
+    float absNz = fabsf(nz);
+
+    if (absNz >= absNx)
+        return (nz < 0) ? 0 : 1; // front or back
+    else
+        return (nx < 0) ? 2 : 3; // left or right
+}
+
+bool dumpTatouAtlas(int bodyNum, sBody* pBody, const std::string& hqrName)
+{
+    if (!pBody) return false;
+
+    int numPrims = (int)pBody->m_primitives.size();
+    if (numPrims == 0) return false;
+
+    std::vector<point3dStruct> globalVerts;
+    computeRestPoseVertices(pBody, globalVerts);
+    TatouProjectionParams proj = computeTatouProjectionParams(globalVerts);
+    int atlasW = proj.atlasW;
+    int atlasH = proj.atlasH;
+    int halfW = atlasW / 2;
+    int halfH = atlasH / 2;
+
+    // Create the atlas image (RGBA)
+    std::vector<unsigned char> image(atlasW * atlasH * 4, 0);
+
+    // Rasterize each polygon into one of 4 quadrants:
+    //   [Front (top-left)]  [Back (top-right)]
+    //   [Left (bot-left)]   [Right (bot-right)]
+    for (int i = 0; i < numPrims; i++)
+    {
+        sPrimitive* pPrim = &pBody->m_primitives[i];
+        if (!isPrimPoly(pPrim)) continue;
+        int nv = (int)pPrim->m_points.size();
+        if (nv < 3) continue;
+
+        unsigned char r = 128, g = 128, b = 128;
+        int palIdx = pPrim->m_color;
+        r = (unsigned char)RGB_Pal[palIdx * 3 + 0];
+        g = (unsigned char)RGB_Pal[palIdx * 3 + 1];
+        b = (unsigned char)RGB_Pal[palIdx * 3 + 2];
+
+        int dir = classifyPolyDirection4Way(globalVerts, pPrim);
+
+        std::vector<float> px(nv), py(nv);
+        for (int v = 0; v < nv; v++)
+        {
+            point3dStruct& vert = globalVerts[pPrim->m_points[v]];
+            float yNorm = ((float)vert.y - proj.padMinY) / proj.rangeY;
+
+            switch (dir)
+            {
+            case 0: // Front (top-left): project X,Y
+            {
+                float xNorm = ((float)vert.x - proj.padMinX) / proj.rangeX;
+                px[v] = xNorm * (float)halfW;
+                py[v] = (1.0f - yNorm) * (float)halfH;
+                break;
+            }
+            case 1: // Back (top-right): project X,Y mirrored
+            {
+                float xNorm = ((float)vert.x - proj.padMinX) / proj.rangeX;
+                px[v] = (float)halfW + (1.0f - xNorm) * (float)halfW;
+                py[v] = (1.0f - yNorm) * (float)halfH;
+                break;
+            }
+            case 2: // Left (bottom-left): project Z,Y
+            {
+                float zNorm = ((float)vert.z - proj.padMinZ) / proj.rangeZ;
+                px[v] = zNorm * (float)halfW;
+                py[v] = (float)halfH + (1.0f - yNorm) * (float)halfH;
+                break;
+            }
+            case 3: // Right (bottom-right): project Z,Y mirrored
+            {
+                float zNorm = ((float)vert.z - proj.padMinZ) / proj.rangeZ;
+                px[v] = (float)halfW + (1.0f - zNorm) * (float)halfW;
+                py[v] = (float)halfH + (1.0f - yNorm) * (float)halfH;
+                break;
+            }
+            }
+        }
+
+        // Fan-triangulate and fill
+        for (int t = 1; t < nv - 1; t++)
+        {
+            fillTriangleInImage(image, atlasW, atlasH,
+                px[0], py[0], px[t], py[t], px[t + 1], py[t + 1],
+                r, g, b);
+        }
+    }
+
+    // Write the PNG
+    ensureAtlasDir();
+    std::string path = getTatouAtlasPath(hqrName, bodyNum);
+    int result = stbi_write_png(path.c_str(), atlasW, atlasH, 4, image.data(), atlasW * 4);
+
+    if (result)
+    {
+        printf(RNDR_TAG "Tatou 4-way atlas dumped: %s (%dx%d, %d polys)\n", path.c_str(), atlasW, atlasH, numPrims);
+    }
+    else
+    {
+        printf(RNDR_ERR "Failed to write Tatou atlas: %s" CON_RESET "\n", path.c_str());
+    }
+
+    return result != 0;
+}
+
+ModelAtlasData* loadTatouAtlas(int bodyNum, sBody* pBody, const std::string& hqrName)
+{
+    if (!pBody) return nullptr;
+
+    // Use a distinct cache key so it doesn't collide with normal atlases
+    std::string cacheKey = "tatou_" + makeAtlasKey(hqrName, bodyNum);
+    auto it = s_atlasCache.find(cacheKey);
+    if (it != s_atlasCache.end())
+        return &it->second;
+
+    // Try to load the Tatou atlas PNG; auto-dump if it doesn't exist yet
+    std::string path = getTatouAtlasPath(hqrName, bodyNum);
+    int w, h, channels;
+    unsigned char* data = loadAtlasDataFromArchiveOrFile(path, w, h, channels);
+    if (!data)
+    {
+        dumpTatouAtlas(bodyNum, pBody, hqrName);
+        data = loadAtlasDataFromArchiveOrFile(path, w, h, channels);
+        if (!data)
+            return nullptr;
+    }
+
+    printf(RNDR_TAG "Loading Tatou 4-way atlas: %s (%dx%d)\n", path.c_str(), w, h);
+
+    // Create bgfx texture
+    ModelAtlasData atlas;
+    atlas.atlasWidth = w;
+    atlas.atlasHeight = h;
+
+    atlas.pixels.assign(data, data + w * h * 4);
+
+    const bgfx::Memory* mem = bgfx::copy(data, w * h * 4);
+    atlas.texture = bgfx::createTexture2D(w, h, false, 1, bgfx::TextureFormat::RGBA8, 0, mem);
+    stbi_image_free(data);
+
+    if (!bgfx::isValid(atlas.texture))
+    {
+        printf(RNDR_ERR "Failed to create Tatou atlas texture for body %d" CON_RESET "\n", bodyNum);
+        return nullptr;
+    }
+
+    // Compute 4-way projection UVs matching the dump layout
+    std::vector<point3dStruct> globalVerts;
+    computeRestPoseVertices(pBody, globalVerts);
+    TatouProjectionParams proj = computeTatouProjectionParams(globalVerts);
+
+    int numPrims = (int)pBody->m_primitives.size();
+    atlas.polyUVs.resize(numPrims);
+
+    for (int i = 0; i < numPrims; i++)
+    {
+        sPrimitive* pPrim = &pBody->m_primitives[i];
+        if (!isPrimPoly(pPrim)) continue;
+
+        int nv = (int)pPrim->m_points.size();
+        atlas.polyUVs[i].u.resize(nv);
+        atlas.polyUVs[i].v.resize(nv);
+
+        int dir = classifyPolyDirection4Way(globalVerts, pPrim);
+
+        for (int v = 0; v < nv; v++)
+        {
+            point3dStruct& vert = globalVerts[pPrim->m_points[v]];
+            float yNorm = ((float)vert.y - proj.padMinY) / proj.rangeY;
+
+            switch (dir)
+            {
+            case 0: // Front (top-left): U=[0,0.5], V=[0,0.5]
+            {
+                float xNorm = ((float)vert.x - proj.padMinX) / proj.rangeX;
+                atlas.polyUVs[i].u[v] = xNorm * 0.5f;
+                atlas.polyUVs[i].v[v] = (1.0f - yNorm) * 0.5f;
+                break;
+            }
+            case 1: // Back (top-right): U=[0.5,1], V=[0,0.5]
+            {
+                float xNorm = ((float)vert.x - proj.padMinX) / proj.rangeX;
+                atlas.polyUVs[i].u[v] = 0.5f + (1.0f - xNorm) * 0.5f;
+                atlas.polyUVs[i].v[v] = (1.0f - yNorm) * 0.5f;
+                break;
+            }
+            case 2: // Left (bottom-left): U=[0,0.5], V=[0.5,1]
+            {
+                float zNorm = ((float)vert.z - proj.padMinZ) / proj.rangeZ;
+                atlas.polyUVs[i].u[v] = zNorm * 0.5f;
+                atlas.polyUVs[i].v[v] = 0.5f + (1.0f - yNorm) * 0.5f;
+                break;
+            }
+            case 3: // Right (bottom-right): U=[0.5,1], V=[0.5,1]
+            {
+                float zNorm = ((float)vert.z - proj.padMinZ) / proj.rangeZ;
+                atlas.polyUVs[i].u[v] = 0.5f + (1.0f - zNorm) * 0.5f;
+                atlas.polyUVs[i].v[v] = 0.5f + (1.0f - yNorm) * 0.5f;
+                break;
+            }
+            }
+        }
+    }
+
+    auto result = s_atlasCache.emplace(cacheKey, std::move(atlas));
+    return &result.first->second;
 }

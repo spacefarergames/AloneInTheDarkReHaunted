@@ -45,9 +45,12 @@ void initNativeLifeScripts()
 {
     s_nativeLifeScripts.clear();
 
-    if (g_gameId == AITD1)
+    if (g_remasterConfig.debug.enableNativeLifeScripts)
     {
-        registerAITD1NativeLifeScripts();
+        if (g_gameId == AITD1)
+        {
+            registerAITD1NativeLifeScripts();
+        }
     }
 
     printf(LIFE_OK "Native life scripts initialized: %d overrides registered" CON_RESET "\n", (int)s_nativeLifeScripts.size());
@@ -65,6 +68,157 @@ void initNativeLifeScripts()
     }
 }
 
+
+//////////////////////////////////////////////////////////////////////////////
+// Safe-Script Filter
+// Scans a life script's bytecode and returns false if it contains any opcode
+// that could change animations, rotations, movement, combat state, or anything
+// else that is risky to mis-decompile.
+//////////////////////////////////////////////////////////////////////////////
+
+static void skipEvalVar(const char*& ptr); // forward declaration
+
+static bool isOpcodeRisky(int op)
+{
+    switch (op)
+    {
+    case LM_ANIM_ONCE:
+    case LM_ANIM_REPEAT:
+    case LM_ANIM_ALL_ONCE:
+    case LM_ANIM_RESET:
+    case LM_ANIM_MOVE:
+    case LM_ANIM_SAMPLE:
+    case LM_ANIM_HYBRIDE_ONCE:
+    case LM_ANIM_HYBRIDE_REPEAT:
+    case LM_2D_ANIM_SAMPLE:
+    case LM_BODY:
+    case LM_BODY_RESET:
+    case LM_SET_BETA:
+    case LM_SET_ALPHA:
+    case LM_STOP_BETA:
+    case LM_MANUAL_ROT:
+    case LM_ANGLE:
+    case LM_COPY_ANGLE:
+    case LM_DO_ROT_ZV:
+    case LM_MOVE:
+    case LM_DO_MOVE:
+    case LM_CONTINUE_TRACK:
+    case LM_RESET_MOVE_MANUAL:
+    case LM_UP_COOR_Y:
+    case LM_SPEED:
+    case LM_HIT:
+    case LM_FIRE:
+    case LM_HIT_OBJECT:
+    case LM_STOP_HIT_OBJECT:
+    case LM_THROW:
+    case LM_FIRE_UP_DOWN:
+    case LM_DO_REAL_ZV:
+    case LM_DO_MAX_ZV:
+    case LM_DO_NORMAL_ZV:
+    case LM_DO_CARRE_ZV:
+    case LM_DEF_ZV:
+    case LM_DEF_ABS_ZV:
+    case LM_GET_HARD_CLIP:
+    case LM_STAGE:
+    case LM_SPECIAL:
+    case LM_PLAY_SEQUENCE:
+    case LM_END_SEQUENCE:
+    case LM_PICTURE:
+    case LM_DEF_SEQUENCE_SAMPLE:
+    case LM_PLUIE:
+    case LM_WATER:
+    case LM_SET_GROUND:
+    case LM_PROTECT:
+    case LM_PUT:
+    case LM_PUT_AT:
+        return true;
+    default:
+        return false;
+    }
+}
+
+static bool isLifeScriptSafe(int lifeNum)
+{
+    char* basePtr = HQR_Get(listLife, lifeNum);
+    if (!basePtr) return false;
+
+    int scriptSize = getPakSize("LISTLIFE", lifeNum);
+    if (scriptSize <= 0) return false;
+
+    const char* ptr = basePtr;
+    const char* endPtr = basePtr + scriptSize;
+
+    while (ptr < endPtr)
+    {
+        if (ptr + 2 > endPtr) break;
+        s16 rawOpcode = *(s16*)ptr;
+        ptr += 2;
+
+        if (rawOpcode == 0 && ptr >= endPtr) break;
+
+        if (rawOpcode & 0x8000)
+        {
+            if (ptr + 2 > endPtr) break;
+            ptr += 2;
+        }
+
+        int opcodeIdx = rawOpcode & 0x7FFF;
+        int op = (g_gameId == AITD1)
+            ? AITD1LifeMacroTable[opcodeIdx]
+            : AITD2LifeMacroTable[opcodeIdx];
+
+        if (isOpcodeRisky(op))
+            return false;
+
+        switch (op)
+        {
+        case LM_IF_EGAL: case LM_IF_DIFFERENT: case LM_IF_SUP_EGAL:
+        case LM_IF_SUP: case LM_IF_INF_EGAL: case LM_IF_INF:
+            skipEvalVar(ptr); skipEvalVar(ptr); ptr += 2; break;
+        case LM_GOTO:   ptr += 2; break;
+        case LM_SWITCH: skipEvalVar(ptr); break;
+        case LM_CASE:   ptr += 4; break;
+        case LM_MULTI_CASE:
+            { s16 n = *(s16*)ptr; ptr += 2 + n * 2 + 2; } break;
+        case LM_RETURN: case LM_END: break;
+        case LM_SAMPLE: skipEvalVar(ptr); break;
+        case LM_VAR: case LM_ADD: case LM_SUB: case LM_C_VAR: case LM_MODIF_C_VAR:
+            ptr += 2; skipEvalVar(ptr); break;
+        case LM_DROP: case LM_REP_SAMPLE:
+            skipEvalVar(ptr); ptr += 2; break;
+        case LM_SAMPLE_THEN: case LM_SAMPLE_THEN_REPEAT:
+            skipEvalVar(ptr); skipEvalVar(ptr); break;
+        case LM_ANIM_REPEAT: case LM_MUSIC: case LM_NEXT_MUSIC: case LM_FADE_MUSIC:
+        case LM_TYPE: case LM_LIFE: case LM_LIFE_MODE: case LM_DELETE:
+        case LM_CAMERA_TARGET: case LM_FOUND: case LM_TAKE: case LM_IN_HAND:
+        case LM_FOUND_NAME: case LM_FOUND_BODY: case LM_FOUND_FLAG: case LM_FOUND_WEIGHT:
+        case LM_FOUND_LIFE: case LM_STAGE_LIFE: case LM_TEST_COL:
+        case LM_MESSAGE: case LM_RND_FREQ: case LM_LIGHT: case LM_SHAKING:
+        case LM_INVENTORY: case LM_SET_INVENTORY: case LM_DEL_INVENTORY:
+        case LM_INC: case LM_DEC: case LM_GET_MATRICE:
+            ptr += 2; break;
+        case LM_MESSAGE_VALUE:
+            ptr += 4; break;
+        case LM_READ:
+            ptr += (g_gameId == AITD1) ? 6 : 4; break;
+        case LM_READ_ON_PICTURE:
+            ptr += (g_gameId == AITD1) ? 18 : 16; break;
+        case LM_START_CHRONO: case LM_CAMERA: case LM_GAME_OVER:
+        case LM_WAIT_GAME_OVER: case LM_CALL_INVENTORY: case LM_STOP_SAMPLE:
+            break;
+        default:
+            break;
+        }
+    }
+    return true;
+}
+
+void registerNativeLifeScriptIfSafe(int lifeNum, NativeLifeFunc func)
+{
+    if (!isLifeScriptSafe(lifeNum))
+        return;
+    s_nativeLifeScripts[lifeNum] = func;
+}
 //////////////////////////////////////////////////////////////////////////////
 // Life Script Bytecode Decompiler / Dumper
 //////////////////////////////////////////////////////////////////////////////
@@ -2494,7 +2648,7 @@ void generateAllNativeLifeScripts()
     genPrintf("void registerGeneratedNativeLifeScripts()\n{\n");
     for (int lifeNum : generatedScripts)
     {
-        genPrintf("    registerNativeLifeScript(%d, nativeLife_%d);\n", lifeNum, lifeNum);
+        genPrintf("    registerNativeLifeScriptIfSafe(%d, nativeLife_%d);\n", lifeNum, lifeNum);
     }
     genPrintf("}\n");
 

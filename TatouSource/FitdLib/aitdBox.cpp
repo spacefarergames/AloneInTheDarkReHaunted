@@ -58,18 +58,14 @@ void AffSpf(int left, int top, int index, char* gfxData)
         return;
 
     outPtr = logicalScreen + top*320 + left;
-    offset = 320 - width;
 
-    for(i=0;i<height;i++)
+    // Per-row memcpy is significantly faster than the original byte-at-a-time loop.
+    // The source rows still advance by the unclamped width.
+    for (i = 0; i < height; i++)
     {
-        for(j=0;j<width;j++)
-        {
-            *(outPtr++) = *(inPtr++);
-        }
-
-        // Skip remaining source pixels if width was clamped
-        inPtr += (originalWidth - width);
-        outPtr+=offset;
+        memcpy(outPtr, inPtr, width);
+        inPtr += originalWidth;
+        outPtr += 320;
     }
 }
 
@@ -115,21 +111,19 @@ void AffSpfI(int left, int top, int index, char* gfxData)
 
 	offset = 320 - width;
 
-	for(i=0;i<height;i++)
+	for (i = 0; i < height; i++)
 	{
-		for(j=0;j<width;j++)
+		// Per-row scan, but only branch once per pixel and avoid double-increment.
+		char* dst = outPtr;
+		const char* src = inPtr;
+		for (j = 0; j < width; j++)
 		{
-			char color = *(inPtr++);
-			if(color)
-			{
-				*(outPtr) = color;
-			}
-			outPtr++;
+			char color = src[j];
+			if (color)
+				dst[j] = color;
 		}
-
-		// Skip remaining source pixels if width was clamped
-		inPtr += (originalWidth - width);
-		outPtr+=offset;
+		inPtr += originalWidth;
+		outPtr += 320;
 	}
 }
 

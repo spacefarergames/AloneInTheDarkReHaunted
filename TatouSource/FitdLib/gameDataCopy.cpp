@@ -10,6 +10,7 @@
 
 #include "gameDataCopy.h"
 #include "consoleLog.h"
+#include "configRemaster.h"
 
 #include <stdio.h>
 #include <string.h>
@@ -125,9 +126,24 @@ static const char* GOG_GAME_ID        = "1207660923";
 // Sentinel file — if this exists in the target directory, we assume all
 // game data is present and skip the copy step.
 static const char* SENTINEL_FILE      = "ITD_RESS.PAK";
+static const char* JACK_SENTINEL_FILE = "PERE.PAK";
 
 // The original DOS game stores data in an INDARK subdirectory.
+// Jack in the Dark assets live in a sibling JACK subdirectory.
 static const char* INDARK_SUBDIR      = "INDARK";
+static const char* JACK_SUBDIR        = "JACK";
+
+// Returns the data subdirectory name to use based on the active remaster mode.
+static const char* getDataSubdir()
+{
+    return g_remasterConfig.gameData.jackMode ? JACK_SUBDIR : INDARK_SUBDIR;
+}
+
+// Returns the sentinel filename to look for based on the active remaster mode.
+static const char* getSentinelFile()
+{
+    return g_remasterConfig.gameData.jackMode ? JACK_SENTINEL_FILE : SENTINEL_FILE;
+}
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -162,7 +178,7 @@ static bool dirExists(const char* path)
 static bool hasSentinel(const char* dir)
 {
     char path[MAX_PATH];
-    buildPath(path, sizeof(path), dir, SENTINEL_FILE);
+    buildPath(path, sizeof(path), dir, getSentinelFile());
     return fileExists(path);
 }
 
@@ -632,7 +648,7 @@ static bool findSteamDataDir(char* outDir, size_t outSize)
         // Build the full path: <library>/steamapps/common/<installdir>/INDARK
         char candidate[MAX_PATH];
         _snprintf(candidate, sizeof(candidate), "%s\\steamapps\\common\\%s\\%s",
-                  libraryPaths[i], installDir, INDARK_SUBDIR);
+                  libraryPaths[i], installDir, getDataSubdir());
         candidate[sizeof(candidate) - 1] = '\0';
 
         if (hasSentinel(candidate))
@@ -694,7 +710,7 @@ static bool findGogDataDir(char* outDir, size_t outSize)
 
                 // Check INDARK subfolder
                 char candidate[MAX_PATH];
-                _snprintf(candidate, sizeof(candidate), "%s\\%s", gogPath, INDARK_SUBDIR);
+                _snprintf(candidate, sizeof(candidate), "%s\\%s", gogPath, getDataSubdir());
                 candidate[sizeof(candidate) - 1] = '\0';
 
                 if (hasSentinel(candidate))
@@ -731,7 +747,7 @@ static bool findGogDataDir(char* outDir, size_t outSize)
             continue;
 
         char candidate[MAX_PATH];
-        _snprintf(candidate, sizeof(candidate), "%s\\%s", commonPaths[i], INDARK_SUBDIR);
+        _snprintf(candidate, sizeof(candidate), "%s\\%s", commonPaths[i], getDataSubdir());
         candidate[sizeof(candidate) - 1] = '\0';
 
         if (hasSentinel(candidate))
@@ -774,7 +790,7 @@ static bool findCdDataDir(char* outDir, size_t outSize)
 
         // Check INDARK subfolder on the disc
         char candidate[MAX_PATH];
-        _snprintf(candidate, sizeof(candidate), "%c:\\%s", letter, INDARK_SUBDIR);
+        _snprintf(candidate, sizeof(candidate), "%c:\\%s", letter, getDataSubdir());
         candidate[sizeof(candidate) - 1] = '\0';
 
         if (hasSentinel(candidate))

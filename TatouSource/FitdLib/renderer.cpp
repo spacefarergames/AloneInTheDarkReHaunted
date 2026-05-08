@@ -740,9 +740,11 @@ void processPrim_Line(int primType, sPrimitive* ptr, char** out)
     }
 
 #if !defined(AITD_UE4)
-    // Exception: Lamp body (body 11) must never be depth-culled
+    // Exception: Lamp body (body 11) must never be depth-culled.
+    // JACK mode uses body 11 for Grace (the player), not a lamp, so the
+    // exception must not apply there.
     const int LAMP_BODY_NUM = 11;
-    bool isLampBody = (s_currentBodyNum == LAMP_BODY_NUM);
+    bool isLampBody = (g_gameId != JACK && s_currentBodyNum == LAMP_BODY_NUM);
 
     if (depth > 100 || isLampBody)
 #endif
@@ -790,9 +792,11 @@ void processPrim_Poly(int primType, sPrimitive* ptr, char** out, int originalPri
     }
 
 #if !defined(AITD_UE4)
-    // Exception: Lamp body (body 11) must never be depth-culled or clipped
+    // Exception: Lamp body (body 11) must never be depth-culled or clipped.
+    // JACK mode uses body 11 for Grace (the player), not a lamp, so the
+    // exception must not apply there.
     const int LAMP_BODY_NUM = 11;
-    bool isLampBody = (s_currentBodyNum == LAMP_BODY_NUM);
+    bool isLampBody = (g_gameId != JACK && s_currentBodyNum == LAMP_BODY_NUM);
 
     if (depth > 100 || isLampBody)
 #endif
@@ -802,8 +806,10 @@ void processPrim_Poly(int primType, sPrimitive* ptr, char** out, int originalPri
         // Enhanced near-camera polygon clipping:
         // Detect polygons close to the camera that are severely distorted
         // by perspective or span the near-plane region.
-        // Exception: Lamp body (body 11) needs relaxed clipping so glow detection works
-        bool isLampBody = (s_currentBodyNum == LAMP_BODY_NUM);
+        // Exception: Lamp body (body 11) needs relaxed clipping so glow detection works.
+        // JACK mode uses body 11 for Grace (the player), not a lamp, so the
+        // exception must not apply there.
+        bool isLampBody = (g_gameId != JACK && s_currentBodyNum == LAMP_BODY_NUM);
 
         if (depth < NEAR_POLY_CLIP_Z && !isLampBody)
         {
@@ -1095,10 +1101,50 @@ void renderPoly(primEntryStruct* pEntry) // poly
         return;
     }
 
-    // Ramp-shaded polygons (material 3-6) - ramp atlas overlay with mirrored UVs
+    // Ramp-shaded polygons (material 3-6) - ramp atlas overlay with mirrored UVs.
+    // JACK mode: force textured body rendering instead of ramp shading by routing
+    // ramp polys through the flat/main textured atlases like a regular textured body.
     if (pEntry->type == primTypeEnum_Poly && pEntry->isRampPrim
         && pEntry->material >= 3 && pEntry->material <= 6)
     {
+        if (g_gameId == JACK)
+        {
+            if (bgfx::isValid(s_currentAtlas->flatTexture)
+                && pEntry->originalPrimIndex < (int)s_currentAtlas->flatPolyUVs.size())
+            {
+                AtlasPolyUVs& uvs = s_currentAtlas->flatPolyUVs[pEntry->originalPrimIndex];
+                if (!uvs.u.empty() && (int)uvs.u.size() >= pEntry->numOfVertices)
+                {
+                    float uvArray[NUM_MAX_VERTEX_IN_PRIM * 2];
+                    for (int i = 0; i < pEntry->numOfVertices; i++)
+                    {
+                        uvArray[i * 2 + 0] = uvs.u[i];
+                        uvArray[i * 2 + 1] = uvs.v[i];
+                    }
+                    osystem_fillPolyTextured((float*)pEntry->vertices, pEntry->numOfVertices, uvArray, s_currentAtlas->flatTexture);
+                    return;
+                }
+            }
+
+            if (bgfx::isValid(s_currentAtlas->texture)
+                && pEntry->originalPrimIndex < (int)s_currentAtlas->polyUVs.size())
+            {
+                AtlasPolyUVs& uvs = s_currentAtlas->polyUVs[pEntry->originalPrimIndex];
+                if (!uvs.u.empty() && (int)uvs.u.size() >= pEntry->numOfVertices)
+                {
+                    float uvArray[NUM_MAX_VERTEX_IN_PRIM * 2];
+                    for (int i = 0; i < pEntry->numOfVertices; i++)
+                    {
+                        uvArray[i * 2 + 0] = uvs.u[i];
+                        uvArray[i * 2 + 1] = uvs.v[i];
+                    }
+                    osystem_fillPolyTextured((float*)pEntry->vertices, pEntry->numOfVertices, uvArray, s_currentAtlas->texture);
+                    return;
+                }
+            }
+            return;
+        }
+
         if (bgfx::isValid(s_currentAtlas->rampTexture)
             && pEntry->originalPrimIndex < (int)s_currentAtlas->rampPolyUVs.size())
         {
@@ -1203,7 +1249,13 @@ void setCurrentBodyNum(int bodyNum, sBody* pBody, const std::string& hqrName)
     // Only load texture atlases when HD backgrounds are enabled
     if (isHDBackgroundEnabled())
     {
-        s_currentAtlas = loadModelAtlas(bodyNum, pBody, hqrName);
+        // Namespace atlases per game so JACK and AITD1 (which both use
+        // "LISTBODY" as the HQR name) don't collide on disk or in cache.
+        std::string scopedHqrName = hqrName;
+        if (g_gameId == JACK)
+            scopedHqrName = std::string("JACK_") + hqrName;
+
+        s_currentAtlas = loadModelAtlas(bodyNum, pBody, scopedHqrName);
     }
     else
     {
@@ -1385,8 +1437,10 @@ int AffObjet(int x,int y,int z,int alpha,int beta,int gamma, sBody* pBody)
 		// intact so eyes remain visible.
 		//
 		// Exception: NEVER clip lamp body (body 11) - glow detection needs all primitives!
+		// JACK mode uses body 11 for Grace (the player), not a lamp, so the
+		// exception must not apply there.
 		const int LAMP_BODY_NUM = 11;
-		bool isLampBody = (s_currentBodyNum == LAMP_BODY_NUM);
+		bool isLampBody = (g_gameId != JACK && s_currentBodyNum == LAMP_BODY_NUM);
 
 		if (g_remasterConfig.graphics.enableHDBackgrounds && !isLampBody)
 		{

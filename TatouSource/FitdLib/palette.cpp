@@ -41,12 +41,8 @@ void copyPalette(palette_t& source, palette_t& dest)
 
 void copyPalette(void* source, palette_t& dest)
 {
-    for (int i = 0; i < 256; i++)
-    {
-        for (int j = 0; j < 3; j++) {
-            dest[i][j] = ((uint8*)source)[i * 3 + j];
-        }
-    }
+    // palette_t is std::array<std::array<unsigned char, 3>, 256> -> 768 contiguous bytes.
+    memcpy(dest.data(), source, 256 * 3);
 }
 
 void convertPaletteIfRequired(palette_t& lpalette)

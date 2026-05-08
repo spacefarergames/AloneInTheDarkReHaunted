@@ -761,12 +761,6 @@ void appendFormated(const char* format, ...)
 
 void processLife(int lifeNum, bool callFoundLife)
 {
-    // DISABLED: Native life scripts replaced with bytecode patch system
-    // Native scripts are kept in repository for reference/documentation only
-    // The bytecode interpreter now runs with runtime patches for bug fixes
-    // NativeLifeFunc nativeFunc = getNativeLifeScript(lifeNum);
-    // if (nativeFunc) { ... }
-
     int exitLife = 0;
     //int switchVal = 0;
     int var_6;
@@ -778,6 +772,20 @@ void processLife(int lifeNum, bool callFoundLife)
 
     currentLifePtr = HQR_Get(listLife, lifeNum);
     assert(currentLifePtr);
+
+    // Run native C replacement if one is registered (safe-filter mode).
+    // Scripts not registered fall through to the bytecode interpreter + patch system.
+    if (g_remasterConfig.debug.enableNativeLifeScripts)
+    {
+        NativeLifeFunc nativeFunc = getNativeLifeScript(lifeNum);
+        if (nativeFunc)
+        {
+            if (g_remasterConfig.debug.logLifeScripts)
+                printf(LIFE_TAG "[NATIVE] Actor %d | Life %d" CON_RESET "\n", currentProcessedActorIdx, lifeNum);
+            nativeFunc(lifeNum, callFoundLife);
+            return;
+        }
+    }
 
     while (!exitLife)
     {

@@ -1267,8 +1267,14 @@ void playMusic(int musicNumber)
 		trackNumber = AITD2MusicToTrackMapping[musicNumber];
 	}
 
-	if(osystem_playTrack(trackNumber))
-		return;
+	// JACK mode: skip MP3/CD audio path and play MIDI/AdLib music from
+	// LISTMUS.PAK directly so JACK uses its own MIDI tracks instead of
+	// falling back to AITD1's mp3 audio that may be in the working dir.
+	if(g_gameId != JACK)
+	{
+		if(osystem_playTrack(trackNumber))
+			return;
+	}
 
 	//  if(musicEnabled)
 	{

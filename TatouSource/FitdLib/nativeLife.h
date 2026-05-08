@@ -48,3 +48,9 @@ void generateAllNativeLifeScripts();
 // Any script whose live decompilation differs from the reference is removed from
 // the registry so the bytecode interpreter runs instead.
 void validateNativeLifeScriptsAgainstDump(const char* dumpFilePath);
+
+// Register a native C function only if the script contains no risky opcodes
+// (animations, rotations, movement, combat, spatial changes, etc.).
+// Safe scripts are pure logic/branch/variable/flag/message/audio scripts.
+// Use this instead of registerNativeLifeScript in auto-generated code.
+void registerNativeLifeScriptIfSafe(int lifeNum, NativeLifeFunc func);

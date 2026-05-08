@@ -577,6 +577,15 @@ void processSystemMenu(void)
                         g_remasterConfig.graphics.enableHints = !g_remasterConfig.graphics.enableHints;
                         break;
                     case 9: // quit to main menu
+                        // Jack in the Dark has no main menu to return to (startJACK
+                        // calls startGame() once and then FitdMain returns), which
+                        // causes the app to hang on quit. Exit straight to desktop
+                        // in JACK mode, matching the AITD2/AITD3 "exit" path.
+                        if (g_gameId == JACK)
+                        {
+                            freeAll();
+                            exit(0);
+                        }
                         FlagGameOver = 1;
                         exitMenu = 1;
                         break;

@@ -1,4 +1,4 @@
-﻿///////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////
 // Alone In The Dark Re-Haunted
 // Copyright (C) 2026 Infogrames / Spacefarer Retro Remasters LLC
 // Based on FITD by yaz0r, Re-haunted is released under GPL
@@ -96,9 +96,15 @@ struct RemasterConfig
         bool loadEnabled;       // Load HD replacement frames from sequences_hd/ (default: true)
     } sequences;
 
+    // Background (original PAK) dumping settings
+    struct {
+        bool dumpEnabled;       // Dump every original PAK background to PNG in backgrounds_dump/ on launch (default: false)
+    } backgrounds;
+
     // Game data settings
     struct {
         bool steamless;         // Disable automatic file copying/installation when true (default: false)
+        bool jackMode;          // Run "Jack in the Dark" instead of AITD1; uses JACK\ folder rather than INDARK\ (default: false)
     } gameData;
 
     // Debug / diagnostics settings
@@ -106,6 +112,7 @@ struct RemasterConfig
         bool logLifeScripts;    // Log every LIFE macro dispatch to console (default: false)
         bool dumpLifeScripts;   // Dump all LISTLIFE scripts to file on startup (default: false)
         bool generateNativeLifeScripts; // Generate native C code for all life scripts (default: false)
+        bool enableNativeLifeScripts;   // Use compiled native C replacements for safe life scripts (default: false)
     } debug;
 };
 

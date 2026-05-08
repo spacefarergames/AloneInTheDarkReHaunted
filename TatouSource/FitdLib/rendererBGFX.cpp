@@ -2550,17 +2550,42 @@ void osystem_CopyBlockPhys(unsigned char* videoBuffer, int left, int top, int ri
         bottom++;
     }
 
+    const int rowWidth = right - left;
+    if (rowWidth <= 0 || bottom <= top)
+        return;
+
     for (int i = top; i < bottom; i++)
     {
-        in = (unsigned char*)&videoBuffer[0] + left + i * 320;
-        unsigned char* out2 = physicalScreen + left + i * 320;
-        for (int j = left; j < right; j++)
-        {
-            *(out2++) = *(in++);
-        }
+        unsigned char* src = videoBuffer + left + i * 320;
+        unsigned char* dst = physicalScreen + left + i * 320;
+        memcpy(dst, src, rowWidth);
     }
 
-    bgfx::updateTexture2D(g_backgroundTexture, 0, 0, 0, 0, 320, 200, bgfx::copy(physicalScreen, 320 * 200));
+    // Upload only the dirty region instead of the full 320x200 every call.
+    // bgfx::makeRef on a contiguous staging copy keeps the per-row stride correct
+    // by using bgfx::copy on a tightly packed temp buffer.
+    if (rowWidth == 320)
+    {
+        // Whole-row range: upload as a single contiguous block.
+        const int rows = bottom - top;
+        bgfx::updateTexture2D(g_backgroundTexture, 0, 0, 0, (uint16_t)top,
+            320, (uint16_t)rows,
+            bgfx::copy(physicalScreen + top * 320, 320 * rows));
+    }
+    else
+    {
+        const int rows = bottom - top;
+        const bgfx::Memory* mem = bgfx::alloc(rowWidth * rows);
+        for (int i = 0; i < rows; i++)
+        {
+            memcpy(mem->data + i * rowWidth,
+                   physicalScreen + (top + i) * 320 + left,
+                   rowWidth);
+        }
+        bgfx::updateTexture2D(g_backgroundTexture, 0, 0,
+            (uint16_t)left, (uint16_t)top,
+            (uint16_t)rowWidth, (uint16_t)rows, mem);
+    }
 }
 
 void osystem_refreshFrontTextureBuffer()

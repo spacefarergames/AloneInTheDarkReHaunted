@@ -82,22 +82,30 @@
       <AdditionalOptions>%(AdditionalOptions) /Zc:__cplusplus</AdditionalOptions>
       <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
-      <BufferSecurityCheck></BufferSecurityCheck>
-      <CallingConvention></CallingConvention>
+      <BufferSecurityCheck>
+      </BufferSecurityCheck>
+      <CallingConvention>
+      </CallingConvention>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <ExceptionHandling>Sync</ExceptionHandling>
-      <FloatingPointModel></FloatingPointModel>
-      <ForceConformanceInForLoopScope></ForceConformanceInForLoopScope>
+      <FloatingPointModel>
+      </FloatingPointModel>
+      <ForceConformanceInForLoopScope>
+      </ForceConformanceInForLoopScope>
       <InlineFunctionExpansion>Disabled</InlineFunctionExpansion>
       <LanguageStandard>stdcpp20</LanguageStandard>
-      <MinimalRebuild></MinimalRebuild>
+      <MinimalRebuild>
+      </MinimalRebuild>
       <Optimization>Disabled</Optimization>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
-      <RemoveUnreferencedCodeData></RemoveUnreferencedCodeData>
+      <RemoveUnreferencedCodeData>
+      </RemoveUnreferencedCodeData>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
-      <SupportJustMyCode></SupportJustMyCode>
-      <TreatWChar_tAsBuiltInType></TreatWChar_tAsBuiltInType>
+      <SupportJustMyCode>
+      </SupportJustMyCode>
+      <TreatWChar_tAsBuiltInType>
+      </TreatWChar_tAsBuiltInType>
       <UseFullPaths>false</UseFullPaths>
       <UseStandardPreprocessor>true</UseStandardPreprocessor>
       <WarningLevel>Level3</WarningLevel>
@@ -127,21 +135,29 @@
       <AdditionalOptions>%(AdditionalOptions) /Zc:__cplusplus</AdditionalOptions>
       <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
       <BasicRuntimeChecks>Default</BasicRuntimeChecks>
-      <BufferSecurityCheck></BufferSecurityCheck>
-      <CallingConvention></CallingConvention>
+      <BufferSecurityCheck>
+      </BufferSecurityCheck>
+      <CallingConvention>
+      </CallingConvention>
       <ExceptionHandling>Sync</ExceptionHandling>
-      <FloatingPointModel></FloatingPointModel>
-      <ForceConformanceInForLoopScope></ForceConformanceInForLoopScope>
+      <FloatingPointModel>
+      </FloatingPointModel>
+      <ForceConformanceInForLoopScope>
+      </ForceConformanceInForLoopScope>
       <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
       <LanguageStandard>stdcpp20</LanguageStandard>
-      <MinimalRebuild></MinimalRebuild>
+      <MinimalRebuild>
+      </MinimalRebuild>
       <Optimization>MaxSpeed</Optimization>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
-      <RemoveUnreferencedCodeData></RemoveUnreferencedCodeData>
+      <RemoveUnreferencedCodeData>
+      </RemoveUnreferencedCodeData>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
-      <SupportJustMyCode></SupportJustMyCode>
-      <TreatWChar_tAsBuiltInType></TreatWChar_tAsBuiltInType>
+      <SupportJustMyCode>
+      </SupportJustMyCode>
+      <TreatWChar_tAsBuiltInType>
+      </TreatWChar_tAsBuiltInType>
       <UseFullPaths>false</UseFullPaths>
       <UseStandardPreprocessor>true</UseStandardPreprocessor>
       <WarningLevel>Level3</WarningLevel>
@@ -173,21 +189,29 @@
       <AdditionalOptions>%(AdditionalOptions) /Zc:__cplusplus</AdditionalOptions>
       <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
       <BasicRuntimeChecks>Default</BasicRuntimeChecks>
-      <BufferSecurityCheck></BufferSecurityCheck>
-      <CallingConvention></CallingConvention>
+      <BufferSecurityCheck>
+      </BufferSecurityCheck>
+      <CallingConvention>
+      </CallingConvention>
       <ExceptionHandling>Sync</ExceptionHandling>
-      <FloatingPointModel></FloatingPointModel>
-      <ForceConformanceInForLoopScope></ForceConformanceInForLoopScope>
+      <FloatingPointModel>
+      </FloatingPointModel>
+      <ForceConformanceInForLoopScope>
+      </ForceConformanceInForLoopScope>
       <InlineFunctionExpansion>OnlyExplicitInline</InlineFunctionExpansion>
       <LanguageStandard>stdcpp20</LanguageStandard>
-      <MinimalRebuild></MinimalRebuild>
+      <MinimalRebuild>
+      </MinimalRebuild>
       <Optimization>MinSpace</Optimization>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
-      <RemoveUnreferencedCodeData></RemoveUnreferencedCodeData>
+      <RemoveUnreferencedCodeData>
+      </RemoveUnreferencedCodeData>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
-      <SupportJustMyCode></SupportJustMyCode>
-      <TreatWChar_tAsBuiltInType></TreatWChar_tAsBuiltInType>
+      <SupportJustMyCode>
+      </SupportJustMyCode>
+      <TreatWChar_tAsBuiltInType>
+      </TreatWChar_tAsBuiltInType>
       <UseFullPaths>false</UseFullPaths>
       <UseStandardPreprocessor>true</UseStandardPreprocessor>
       <WarningLevel>Level3</WarningLevel>
@@ -219,22 +243,30 @@
       <AdditionalOptions>%(AdditionalOptions) /Zc:__cplusplus</AdditionalOptions>
       <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
       <BasicRuntimeChecks>Default</BasicRuntimeChecks>
-      <BufferSecurityCheck></BufferSecurityCheck>
-      <CallingConvention></CallingConvention>
+      <BufferSecurityCheck>
+      </BufferSecurityCheck>
+      <CallingConvention>
+      </CallingConvention>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <ExceptionHandling>Sync</ExceptionHandling>
-      <FloatingPointModel></FloatingPointModel>
-      <ForceConformanceInForLoopScope></ForceConformanceInForLoopScope>
+      <FloatingPointModel>
+      </FloatingPointModel>
+      <ForceConformanceInForLoopScope>
+      </ForceConformanceInForLoopScope>
       <InlineFunctionExpansion>OnlyExplicitInline</InlineFunctionExpansion>
       <LanguageStandard>stdcpp20</LanguageStandard>
-      <MinimalRebuild></MinimalRebuild>
+      <MinimalRebuild>
+      </MinimalRebuild>
       <Optimization>MaxSpeed</Optimization>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
-      <RemoveUnreferencedCodeData></RemoveUnreferencedCodeData>
+      <RemoveUnreferencedCodeData>
+      </RemoveUnreferencedCodeData>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
-      <SupportJustMyCode></SupportJustMyCode>
-      <TreatWChar_tAsBuiltInType></TreatWChar_tAsBuiltInType>
+      <SupportJustMyCode>
+      </SupportJustMyCode>
+      <TreatWChar_tAsBuiltInType>
+      </TreatWChar_tAsBuiltInType>
       <UseFullPaths>false</UseFullPaths>
       <UseStandardPreprocessor>true</UseStandardPreprocessor>
       <WarningLevel>Level3</WarningLevel>
@@ -4285,6 +4317,7 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="D:\FITD\FitdLib\AITD1.cpp" />
+    <ClCompile Include="renderer.cpp" />
     <ClInclude Include="D:\FITD\FitdLib\AITD1.h" />
     <ClCompile Include="D:\FITD\FitdLib\AITD1_Tatou.cpp" />
     <ClCompile Include="D:\FITD\FitdLib\AITD2.cpp" />
@@ -4312,6 +4345,8 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
     <ClInclude Include="D:\FITD\FitdLib\appArchive.h" />
     <ClCompile Include="D:\FITD\FitdLib\asyncLoader.cpp" />
     <ClInclude Include="D:\FITD\FitdLib\asyncLoader.h" />
+    <ClCompile Include="D:\FITD\FitdLib\backgroundDump.cpp" />
+    <ClInclude Include="D:\FITD\FitdLib\backgroundDump.h" />
     <ClInclude Include="D:\FITD\FitdLib\baseTypes.h" />
     <ClCompile Include="D:\FITD\FitdLib\bgAnimGrassMask.cpp" />
     <ClInclude Include="D:\FITD\FitdLib\bgAnimGrassMask.h" />
@@ -4338,7 +4373,28 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
     <ClInclude Include="D:\FITD\FitdLib\dustParticles.h" />
     <ClCompile Include="D:\FITD\FitdLib\embedded\embeddedData.cpp" />
     <ClInclude Include="D:\FITD\FitdLib\embedded\embeddedData.h" />
+    <ClCompile Include="D:\FITD\FitdLib\embedded\embeddedDataDispatch.cpp" />
+    <ClCompile Include="D:\FITD\FitdLib\embedded\embeddedJackData.cpp" />
     <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_AITD2_flag.cpp" />
+    <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_ANIM00_PAK.cpp" />
+    <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_ANIM01_PAK.cpp" />
+    <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_ANIM02_PAK.cpp" />
+    <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_ANIM03_PAK.cpp" />
+    <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_ANIM04_PAK.cpp" />
+    <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_ANIM05_PAK.cpp" />
+    <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_ANIM06_PAK.cpp" />
+    <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_ANIM07_PAK.cpp" />
+    <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_ANIM08_PAK.cpp" />
+    <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_ANIM09_PAK.cpp" />
+    <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_ANIM10_PAK.cpp" />
+    <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_ANIM11_PAK.cpp" />
+    <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_ANIM12_PAK.cpp" />
+    <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_ANIM13_PAK.cpp" />
+    <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_ANIM14_PAK.cpp" />
+    <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_ANIM15_PAK.cpp" />
+    <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_ANIM16_PAK.cpp" />
+    <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_BATL_PAK.cpp" />
+    <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_BILL_PAK.cpp" />
     <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_CAMERA00_PAK.cpp" />
     <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_CAMERA01_PAK.cpp" />
     <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_CAMERA02_PAK.cpp" />
@@ -4347,6 +4403,18 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
     <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_CAMERA05_PAK.cpp" />
     <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_CAMERA06_PAK.cpp" />
     <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_CAMERA07_PAK.cpp" />
+    <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_CAMERA08_PAK.cpp" />
+    <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_CAMERA09_PAK.cpp" />
+    <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_CAMERA10_PAK.cpp" />
+    <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_CAMERA11_PAK.cpp" />
+    <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_CAMERA12_PAK.cpp" />
+    <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_CAMERA13_PAK.cpp" />
+    <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_CAMERA14_PAK.cpp" />
+    <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_CAMERA15_PAK.cpp" />
+    <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_CAMERA16_PAK.cpp" />
+    <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_CLE1_PAK.cpp" />
+    <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_CLE2_PAK.cpp" />
+    <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_COOK_PAK.cpp" />
     <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_ControllerHint_png.cpp" />
     <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_DEFINES_ITD.cpp" />
     <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_DEUTSCH_PAK.cpp" />
@@ -4361,22 +4429,92 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
     <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_ETAGE05_PAK.cpp" />
     <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_ETAGE06_PAK.cpp" />
     <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_ETAGE07_PAK.cpp" />
+    <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_ETAGE08_PAK.cpp" />
+    <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_ETAGE09_PAK.cpp" />
+    <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_ETAGE10_PAK.cpp" />
+    <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_ETAGE11_PAK.cpp" />
+    <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_ETAGE12_PAK.cpp" />
+    <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_ETAGE13_PAK.cpp" />
+    <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_ETAGE14_PAK.cpp" />
+    <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_ETAGE15_PAK.cpp" />
+    <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_ETAGE16_PAK.cpp" />
+    <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_EXPL_PAK.cpp" />
+    <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_FAL2_PAK.cpp" />
+    <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_FALA_PAK.cpp" />
+    <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_FIN_PAK.cpp" />
     <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_FRANCAIS_PAK.cpp" />
+    <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_GLIS_PAK.cpp" />
+    <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_GRAP_PAK.cpp" />
+    <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_GRAS_PAK.cpp" />
     <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_ITALIANO_PAK.cpp" />
     <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_ITD_RESS_PAK.cpp" />
+    <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_ITRO_PAK.cpp" />
+    <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_JEND_PAK.cpp" />
+    <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_LAST_PAK.cpp" />
     <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_LISTANI2_PAK.cpp" />
     <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_LISTANIM_PAK.cpp" />
     <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_LISTBOD2_PAK.cpp" />
     <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_LISTBODY_PAK.cpp" />
+    <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_LISTHYB_PAK.cpp" />
     <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_LISTLIFE_PAK.cpp" />
+    <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_LISTMAT_PAK.cpp" />
     <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_LISTMUS_PAK.cpp" />
     <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_LISTSAMP_PAK.cpp" />
     <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_LISTTRAK_PAK.cpp" />
+    <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_MANI_PAK.cpp" />
+    <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_MASK00_PAK.cpp" />
+    <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_MASK01_PAK.cpp" />
+    <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_MASK02_PAK.cpp" />
+    <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_MASK03_PAK.cpp" />
+    <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_MASK04_PAK.cpp" />
+    <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_MASK05_PAK.cpp" />
+    <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_MASK06_PAK.cpp" />
+    <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_MASK07_PAK.cpp" />
+    <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_MASK08_PAK.cpp" />
+    <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_MASK09_PAK.cpp" />
+    <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_MASK10_PAK.cpp" />
+    <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_MASK11_PAK.cpp" />
+    <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_MASK12_PAK.cpp" />
+    <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_MASK13_PAK.cpp" />
+    <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_MASK14_PAK.cpp" />
+    <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_MASK15_PAK.cpp" />
+    <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_MASK16_PAK.cpp" />
+    <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_MER_PAK.cpp" />
+    <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_NASK11_PAK.cpp" />
     <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_OBJETS_ITD.cpp" />
+    <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_PANT_PAK.cpp" />
+    <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_PERE_PAK.cpp" />
+    <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_PL21_PAK.cpp" />
     <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_PRESENT_PAK.cpp" />
     <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_PRIORITY_ITD.cpp" />
+    <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_PROL_PAK.cpp" />
+    <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_STRI_PAK.cpp" />
     <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_USA_PAK.cpp" />
     <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_VARS_ITD.cpp" />
+    <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_VERE_PAK.cpp" />
+    <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_jack_ANIM16_PAK.cpp" />
+    <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_jack_CAMERA16_PAK.cpp" />
+    <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_jack_DEFINES_ITD.cpp" />
+    <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_jack_DEUTSCH_PAK.cpp" />
+    <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_jack_ENGLISH_PAK.cpp" />
+    <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_jack_ESPAGNOL_PAK.cpp" />
+    <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_jack_ETAGE16_PAK.cpp" />
+    <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_jack_FRANCAIS_PAK.cpp" />
+    <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_jack_ITALIANO_PAK.cpp" />
+    <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_jack_ITD_RESS_PAK.cpp" />
+    <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_jack_LISTANIM_PAK.cpp" />
+    <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_jack_LISTBODY_PAK.cpp" />
+    <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_jack_LISTHYB_PAK.cpp" />
+    <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_jack_LISTLIFE_PAK.cpp" />
+    <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_jack_LISTMAT_PAK.cpp" />
+    <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_jack_LISTMUS_PAK.cpp" />
+    <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_jack_LISTSAMP_PAK.cpp" />
+    <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_jack_LISTTRAK_PAK.cpp" />
+    <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_jack_MASK16_PAK.cpp" />
+    <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_jack_OBJETS_ITD.cpp" />
+    <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_jack_PERE_PAK.cpp" />
+    <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_jack_PRIORITY_ITD.cpp" />
+    <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_jack_VARS_ITD.cpp" />
     <ClInclude Include="D:\FITD\FitdLib\endianess.h" />
     <ClCompile Include="D:\FITD\FitdLib\evalVar.cpp" />
     <ClInclude Include="D:\FITD\FitdLib\evalVar.h" />
@@ -4433,7 +4571,6 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
     <ClInclude Include="D:\FITD\FitdLib\menuMouse.h" />
     <ClCompile Include="D:\FITD\FitdLib\modelAtlas.cpp" />
     <ClInclude Include="D:\FITD\FitdLib\modelAtlas.h" />
-    <ClCompile Include="D:\FITD\FitdLib\modelAtlas_fixed.cpp" />
     <ClCompile Include="D:\FITD\FitdLib\music.cpp" />
     <ClInclude Include="D:\FITD\FitdLib\music.h" />
     <ClCompile Include="D:\FITD\FitdLib\nativeLife.cpp" />
@@ -4601,6 +4738,37 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
     <ClInclude Include="D:\FITD\FitdLib\shaders\generated\glsl\textured_ps.sc.bin.h" />
     <ClInclude Include="D:\FITD\FitdLib\shaders\generated\glsl\ui_ps.sc.bin.h" />
     <ClInclude Include="D:\FITD\FitdLib\shaders\generated\glsl\ui_vs.sc.bin.h" />
+    <ClInclude Include="D:\FITD\FitdLib\shaders\generated\metal\background_ps.sc.bin.h" />
+    <ClInclude Include="D:\FITD\FitdLib\shaders\generated\metal\background_vs.sc.bin.h" />
+    <ClInclude Include="D:\FITD\FitdLib\shaders\generated\metal\blur_ps.sc.bin.h" />
+    <ClInclude Include="D:\FITD\FitdLib\shaders\generated\metal\brightpass_ps.sc.bin.h" />
+    <ClInclude Include="D:\FITD\FitdLib\shaders\generated\metal\composite_ps.sc.bin.h" />
+    <ClInclude Include="D:\FITD\FitdLib\shaders\generated\metal\flat_ps.sc.bin.h" />
+    <ClInclude Include="D:\FITD\FitdLib\shaders\generated\metal\flat_vs.sc.bin.h" />
+    <ClInclude Include="D:\FITD\FitdLib\shaders\generated\metal\hdBackground_ps.sc.bin.h" />
+    <ClInclude Include="D:\FITD\FitdLib\shaders\generated\metal\lantern_bloom_ps.sc.bin.h" />
+    <ClInclude Include="D:\FITD\FitdLib\shaders\generated\metal\lantern_bloom_vs.sc.bin.h" />
+    <ClInclude Include="D:\FITD\FitdLib\shaders\generated\metal\lantern_shadow_ps.sc.bin.h" />
+    <ClInclude Include="D:\FITD\FitdLib\shaders\generated\metal\lantern_shadow_vs.sc.bin.h" />
+    <ClInclude Include="D:\FITD\FitdLib\shaders\generated\metal\maskBackground_ps.sc.bin.h" />
+    <ClInclude Include="D:\FITD\FitdLib\shaders\generated\metal\maskBackground_vs.sc.bin.h" />
+    <ClInclude Include="D:\FITD\FitdLib\shaders\generated\metal\maskHDBackground_ps.sc.bin.h" />
+    <ClInclude Include="D:\FITD\FitdLib\shaders\generated\metal\noise_ps.sc.bin.h" />
+    <ClInclude Include="D:\FITD\FitdLib\shaders\generated\metal\noise_vs.sc.bin.h" />
+    <ClInclude Include="D:\FITD\FitdLib\shaders\generated\metal\particle_ps.sc.bin.h" />
+    <ClInclude Include="D:\FITD\FitdLib\shaders\generated\metal\particle_vs.sc.bin.h" />
+    <ClInclude Include="D:\FITD\FitdLib\shaders\generated\metal\postprocess_vs.sc.bin.h" />
+    <ClInclude Include="D:\FITD\FitdLib\shaders\generated\metal\ramp_ps.sc.bin.h" />
+    <ClInclude Include="D:\FITD\FitdLib\shaders\generated\metal\ramp_vs.sc.bin.h" />
+    <ClInclude Include="D:\FITD\FitdLib\shaders\generated\metal\sphere_ps.sc.bin.h" />
+    <ClInclude Include="D:\FITD\FitdLib\shaders\generated\metal\sphere_vs.sc.bin.h" />
+    <ClInclude Include="D:\FITD\FitdLib\shaders\generated\metal\ssao_blur_ps.sc.bin.h" />
+    <ClInclude Include="D:\FITD\FitdLib\shaders\generated\metal\ssao_ps.sc.bin.h" />
+    <ClInclude Include="D:\FITD\FitdLib\shaders\generated\metal\ssgi_blur_ps.sc.bin.h" />
+    <ClInclude Include="D:\FITD\FitdLib\shaders\generated\metal\ssgi_ps.sc.bin.h" />
+    <ClInclude Include="D:\FITD\FitdLib\shaders\generated\metal\textured_ps.sc.bin.h" />
+    <ClInclude Include="D:\FITD\FitdLib\shaders\generated\metal\ui_ps.sc.bin.h" />
+    <ClInclude Include="D:\FITD\FitdLib\shaders\generated\metal\ui_vs.sc.bin.h" />
     <ClInclude Include="D:\FITD\FitdLib\shaders\generated\spirv\background_ps.sc.bin.h" />
     <ClInclude Include="D:\FITD\FitdLib\shaders\generated\spirv\background_vs.sc.bin.h" />
     <ClInclude Include="D:\FITD\FitdLib\shaders\generated\spirv\blur_ps.sc.bin.h" />

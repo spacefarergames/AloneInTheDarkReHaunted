@@ -396,6 +396,7 @@ void GereAnim(void)
 			currentProcessedActorPtr->YHandler.numSteps = 0;
 			currentProcessedActorPtr->YHandler.endValue = 0;
 			currentProcessedActorPtr->YHandler.startValue = 0;
+			currentProcessedActorPtr->hidePlanarShadow = false;
 		}
 	}
 	else

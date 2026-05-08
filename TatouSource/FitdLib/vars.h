@@ -187,6 +187,9 @@ struct tObject // used to read data from file too
 
     // aitd2
     s16 hardMat;
+
+    // Remaster: set when actor is on stairs (YHandler active), cleared when stair interpolation ends
+    bool hidePlanarShadow = false;
 };
 
 typedef struct tObject tObject;

@@ -16,6 +16,7 @@
     <ClCompile Include="D:\FITD\FitdLib\animAction.cpp" />
     <ClCompile Include="D:\FITD\FitdLib\animAction_temp.cpp" />
     <ClCompile Include="D:\FITD\FitdLib\asyncLoader.cpp" />
+    <ClCompile Include="D:\FITD\FitdLib\backgroundDump.cpp" />
     <ClCompile Include="D:\FITD\FitdLib\bgAnimGrassMask.cpp" />
     <ClCompile Include="D:\FITD\FitdLib\bgfxGlue.cpp" />
     <ClCompile Include="D:\FITD\FitdLib\bloodParticles.cpp" />
@@ -29,7 +30,70 @@
     <ClCompile Include="D:\FITD\FitdLib\embedded\embeddedData.cpp">
       <Filter>embedded</Filter>
     </ClCompile>
+    <ClCompile Include="D:\FITD\FitdLib\embedded\embeddedDataDispatch.cpp">
+      <Filter>embedded</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\FitdLib\embedded\embeddedJackData.cpp">
+      <Filter>embedded</Filter>
+    </ClCompile>
     <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_AITD2_flag.cpp">
+      <Filter>embedded</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_ANIM00_PAK.cpp">
+      <Filter>embedded</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_ANIM01_PAK.cpp">
+      <Filter>embedded</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_ANIM02_PAK.cpp">
+      <Filter>embedded</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_ANIM03_PAK.cpp">
+      <Filter>embedded</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_ANIM04_PAK.cpp">
+      <Filter>embedded</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_ANIM05_PAK.cpp">
+      <Filter>embedded</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_ANIM06_PAK.cpp">
+      <Filter>embedded</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_ANIM07_PAK.cpp">
+      <Filter>embedded</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_ANIM08_PAK.cpp">
+      <Filter>embedded</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_ANIM09_PAK.cpp">
+      <Filter>embedded</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_ANIM10_PAK.cpp">
+      <Filter>embedded</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_ANIM11_PAK.cpp">
+      <Filter>embedded</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_ANIM12_PAK.cpp">
+      <Filter>embedded</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_ANIM13_PAK.cpp">
+      <Filter>embedded</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_ANIM14_PAK.cpp">
+      <Filter>embedded</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_ANIM15_PAK.cpp">
+      <Filter>embedded</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_ANIM16_PAK.cpp">
+      <Filter>embedded</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_BATL_PAK.cpp">
+      <Filter>embedded</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_BILL_PAK.cpp">
       <Filter>embedded</Filter>
     </ClCompile>
     <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_CAMERA00_PAK.cpp">
@@ -54,6 +118,42 @@
       <Filter>embedded</Filter>
     </ClCompile>
     <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_CAMERA07_PAK.cpp">
+      <Filter>embedded</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_CAMERA08_PAK.cpp">
+      <Filter>embedded</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_CAMERA09_PAK.cpp">
+      <Filter>embedded</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_CAMERA10_PAK.cpp">
+      <Filter>embedded</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_CAMERA11_PAK.cpp">
+      <Filter>embedded</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_CAMERA12_PAK.cpp">
+      <Filter>embedded</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_CAMERA13_PAK.cpp">
+      <Filter>embedded</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_CAMERA14_PAK.cpp">
+      <Filter>embedded</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_CAMERA15_PAK.cpp">
+      <Filter>embedded</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_CAMERA16_PAK.cpp">
+      <Filter>embedded</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_CLE1_PAK.cpp">
+      <Filter>embedded</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_CLE2_PAK.cpp">
+      <Filter>embedded</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_COOK_PAK.cpp">
       <Filter>embedded</Filter>
     </ClCompile>
     <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_ControllerHint_png.cpp">
@@ -98,13 +198,70 @@
     <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_ETAGE07_PAK.cpp">
       <Filter>embedded</Filter>
     </ClCompile>
+    <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_ETAGE08_PAK.cpp">
+      <Filter>embedded</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_ETAGE09_PAK.cpp">
+      <Filter>embedded</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_ETAGE10_PAK.cpp">
+      <Filter>embedded</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_ETAGE11_PAK.cpp">
+      <Filter>embedded</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_ETAGE12_PAK.cpp">
+      <Filter>embedded</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_ETAGE13_PAK.cpp">
+      <Filter>embedded</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_ETAGE14_PAK.cpp">
+      <Filter>embedded</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_ETAGE15_PAK.cpp">
+      <Filter>embedded</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_ETAGE16_PAK.cpp">
+      <Filter>embedded</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_EXPL_PAK.cpp">
+      <Filter>embedded</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_FAL2_PAK.cpp">
+      <Filter>embedded</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_FALA_PAK.cpp">
+      <Filter>embedded</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_FIN_PAK.cpp">
+      <Filter>embedded</Filter>
+    </ClCompile>
     <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_FRANCAIS_PAK.cpp">
+      <Filter>embedded</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_GLIS_PAK.cpp">
+      <Filter>embedded</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_GRAP_PAK.cpp">
+      <Filter>embedded</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_GRAS_PAK.cpp">
       <Filter>embedded</Filter>
     </ClCompile>
     <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_ITALIANO_PAK.cpp">
       <Filter>embedded</Filter>
     </ClCompile>
     <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_ITD_RESS_PAK.cpp">
+      <Filter>embedded</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_ITRO_PAK.cpp">
+      <Filter>embedded</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_JEND_PAK.cpp">
+      <Filter>embedded</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_LAST_PAK.cpp">
       <Filter>embedded</Filter>
     </ClCompile>
     <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_LISTANI2_PAK.cpp">
@@ -119,7 +276,13 @@
     <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_LISTBODY_PAK.cpp">
       <Filter>embedded</Filter>
     </ClCompile>
+    <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_LISTHYB_PAK.cpp">
+      <Filter>embedded</Filter>
+    </ClCompile>
     <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_LISTLIFE_PAK.cpp">
+      <Filter>embedded</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_LISTMAT_PAK.cpp">
       <Filter>embedded</Filter>
     </ClCompile>
     <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_LISTMUS_PAK.cpp">
@@ -131,7 +294,76 @@
     <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_LISTTRAK_PAK.cpp">
       <Filter>embedded</Filter>
     </ClCompile>
+    <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_MANI_PAK.cpp">
+      <Filter>embedded</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_MASK00_PAK.cpp">
+      <Filter>embedded</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_MASK01_PAK.cpp">
+      <Filter>embedded</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_MASK02_PAK.cpp">
+      <Filter>embedded</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_MASK03_PAK.cpp">
+      <Filter>embedded</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_MASK04_PAK.cpp">
+      <Filter>embedded</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_MASK05_PAK.cpp">
+      <Filter>embedded</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_MASK06_PAK.cpp">
+      <Filter>embedded</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_MASK07_PAK.cpp">
+      <Filter>embedded</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_MASK08_PAK.cpp">
+      <Filter>embedded</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_MASK09_PAK.cpp">
+      <Filter>embedded</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_MASK10_PAK.cpp">
+      <Filter>embedded</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_MASK11_PAK.cpp">
+      <Filter>embedded</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_MASK12_PAK.cpp">
+      <Filter>embedded</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_MASK13_PAK.cpp">
+      <Filter>embedded</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_MASK14_PAK.cpp">
+      <Filter>embedded</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_MASK15_PAK.cpp">
+      <Filter>embedded</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_MASK16_PAK.cpp">
+      <Filter>embedded</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_MER_PAK.cpp">
+      <Filter>embedded</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_NASK11_PAK.cpp">
+      <Filter>embedded</Filter>
+    </ClCompile>
     <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_OBJETS_ITD.cpp">
+      <Filter>embedded</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_PANT_PAK.cpp">
+      <Filter>embedded</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_PERE_PAK.cpp">
+      <Filter>embedded</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_PL21_PAK.cpp">
       <Filter>embedded</Filter>
     </ClCompile>
     <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_PRESENT_PAK.cpp">
@@ -140,10 +372,88 @@
     <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_PRIORITY_ITD.cpp">
       <Filter>embedded</Filter>
     </ClCompile>
+    <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_PROL_PAK.cpp">
+      <Filter>embedded</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_STRI_PAK.cpp">
+      <Filter>embedded</Filter>
+    </ClCompile>
     <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_USA_PAK.cpp">
       <Filter>embedded</Filter>
     </ClCompile>
     <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_VARS_ITD.cpp">
+      <Filter>embedded</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_VERE_PAK.cpp">
+      <Filter>embedded</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_jack_ANIM16_PAK.cpp">
+      <Filter>embedded</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_jack_CAMERA16_PAK.cpp">
+      <Filter>embedded</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_jack_DEFINES_ITD.cpp">
+      <Filter>embedded</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_jack_DEUTSCH_PAK.cpp">
+      <Filter>embedded</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_jack_ENGLISH_PAK.cpp">
+      <Filter>embedded</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_jack_ESPAGNOL_PAK.cpp">
+      <Filter>embedded</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_jack_ETAGE16_PAK.cpp">
+      <Filter>embedded</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_jack_FRANCAIS_PAK.cpp">
+      <Filter>embedded</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_jack_ITALIANO_PAK.cpp">
+      <Filter>embedded</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_jack_ITD_RESS_PAK.cpp">
+      <Filter>embedded</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_jack_LISTANIM_PAK.cpp">
+      <Filter>embedded</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_jack_LISTBODY_PAK.cpp">
+      <Filter>embedded</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_jack_LISTHYB_PAK.cpp">
+      <Filter>embedded</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_jack_LISTLIFE_PAK.cpp">
+      <Filter>embedded</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_jack_LISTMAT_PAK.cpp">
+      <Filter>embedded</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_jack_LISTMUS_PAK.cpp">
+      <Filter>embedded</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_jack_LISTSAMP_PAK.cpp">
+      <Filter>embedded</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_jack_LISTTRAK_PAK.cpp">
+      <Filter>embedded</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_jack_MASK16_PAK.cpp">
+      <Filter>embedded</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_jack_OBJETS_ITD.cpp">
+      <Filter>embedded</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_jack_PERE_PAK.cpp">
+      <Filter>embedded</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_jack_PRIORITY_ITD.cpp">
+      <Filter>embedded</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\FITD\FitdLib\embedded\embedded_jack_VARS_ITD.cpp">
       <Filter>embedded</Filter>
     </ClCompile>
     <ClCompile Include="D:\FITD\FitdLib\evalVar.cpp" />
@@ -173,7 +483,6 @@
     <ClCompile Include="D:\FITD\FitdLib\mainLoop.cpp" />
     <ClCompile Include="D:\FITD\FitdLib\menuFade.cpp" />
     <ClCompile Include="D:\FITD\FitdLib\modelAtlas.cpp" />
-    <ClCompile Include="D:\FITD\FitdLib\modelAtlas_fixed.cpp" />
     <ClCompile Include="D:\FITD\FitdLib\music.cpp" />
     <ClCompile Include="D:\FITD\FitdLib\nativeLife.cpp" />
     <ClCompile Include="D:\FITD\FitdLib\nativeLifeHelpersImpl.cpp" />
@@ -227,6 +536,7 @@
     <ClCompile Include="D:\FITD\ThirdParty\imgui\backends\imgui_impl_sdl3.cpp">
       <Filter>..\ThirdParty\imgui\backends</Filter>
     </ClCompile>
+    <ClCompile Include="renderer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="D:\FITD\FitdLib\AITD1.h" />
@@ -240,6 +550,7 @@
     <ClInclude Include="D:\FITD\FitdLib\animAction.h" />
     <ClInclude Include="D:\FITD\FitdLib\appArchive.h" />
     <ClInclude Include="D:\FITD\FitdLib\asyncLoader.h" />
+    <ClInclude Include="D:\FITD\FitdLib\backgroundDump.h" />
     <ClInclude Include="D:\FITD\FitdLib\baseTypes.h" />
     <ClInclude Include="D:\FITD\FitdLib\bgAnimGrassMask.h" />
     <ClInclude Include="D:\FITD\FitdLib\bgfxGlue.h" />
@@ -683,6 +994,99 @@
     <ClInclude Include="D:\FITD\FitdLib\shaders\generated\glsl\ui_vs.sc.bin.h">
       <Filter>shaders\generated\glsl</Filter>
     </ClInclude>
+    <ClInclude Include="D:\FITD\FitdLib\shaders\generated\metal\background_ps.sc.bin.h">
+      <Filter>shaders\generated\metal</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\FitdLib\shaders\generated\metal\background_vs.sc.bin.h">
+      <Filter>shaders\generated\metal</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\FitdLib\shaders\generated\metal\blur_ps.sc.bin.h">
+      <Filter>shaders\generated\metal</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\FitdLib\shaders\generated\metal\brightpass_ps.sc.bin.h">
+      <Filter>shaders\generated\metal</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\FitdLib\shaders\generated\metal\composite_ps.sc.bin.h">
+      <Filter>shaders\generated\metal</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\FitdLib\shaders\generated\metal\flat_ps.sc.bin.h">
+      <Filter>shaders\generated\metal</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\FitdLib\shaders\generated\metal\flat_vs.sc.bin.h">
+      <Filter>shaders\generated\metal</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\FitdLib\shaders\generated\metal\hdBackground_ps.sc.bin.h">
+      <Filter>shaders\generated\metal</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\FitdLib\shaders\generated\metal\lantern_bloom_ps.sc.bin.h">
+      <Filter>shaders\generated\metal</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\FitdLib\shaders\generated\metal\lantern_bloom_vs.sc.bin.h">
+      <Filter>shaders\generated\metal</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\FitdLib\shaders\generated\metal\lantern_shadow_ps.sc.bin.h">
+      <Filter>shaders\generated\metal</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\FitdLib\shaders\generated\metal\lantern_shadow_vs.sc.bin.h">
+      <Filter>shaders\generated\metal</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\FitdLib\shaders\generated\metal\maskBackground_ps.sc.bin.h">
+      <Filter>shaders\generated\metal</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\FitdLib\shaders\generated\metal\maskBackground_vs.sc.bin.h">
+      <Filter>shaders\generated\metal</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\FitdLib\shaders\generated\metal\maskHDBackground_ps.sc.bin.h">
+      <Filter>shaders\generated\metal</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\FitdLib\shaders\generated\metal\noise_ps.sc.bin.h">
+      <Filter>shaders\generated\metal</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\FitdLib\shaders\generated\metal\noise_vs.sc.bin.h">
+      <Filter>shaders\generated\metal</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\FitdLib\shaders\generated\metal\particle_ps.sc.bin.h">
+      <Filter>shaders\generated\metal</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\FitdLib\shaders\generated\metal\particle_vs.sc.bin.h">
+      <Filter>shaders\generated\metal</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\FitdLib\shaders\generated\metal\postprocess_vs.sc.bin.h">
+      <Filter>shaders\generated\metal</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\FitdLib\shaders\generated\metal\ramp_ps.sc.bin.h">
+      <Filter>shaders\generated\metal</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\FitdLib\shaders\generated\metal\ramp_vs.sc.bin.h">
+      <Filter>shaders\generated\metal</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\FitdLib\shaders\generated\metal\sphere_ps.sc.bin.h">
+      <Filter>shaders\generated\metal</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\FitdLib\shaders\generated\metal\sphere_vs.sc.bin.h">
+      <Filter>shaders\generated\metal</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\FitdLib\shaders\generated\metal\ssao_blur_ps.sc.bin.h">
+      <Filter>shaders\generated\metal</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\FitdLib\shaders\generated\metal\ssao_ps.sc.bin.h">
+      <Filter>shaders\generated\metal</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\FitdLib\shaders\generated\metal\ssgi_blur_ps.sc.bin.h">
+      <Filter>shaders\generated\metal</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\FitdLib\shaders\generated\metal\ssgi_ps.sc.bin.h">
+      <Filter>shaders\generated\metal</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\FitdLib\shaders\generated\metal\textured_ps.sc.bin.h">
+      <Filter>shaders\generated\metal</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\FitdLib\shaders\generated\metal\ui_ps.sc.bin.h">
+      <Filter>shaders\generated\metal</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\FITD\FitdLib\shaders\generated\metal\ui_vs.sc.bin.h">
+      <Filter>shaders\generated\metal</Filter>
+    </ClInclude>
     <ClInclude Include="D:\FITD\FitdLib\shaders\generated\spirv\background_ps.sc.bin.h">
       <Filter>shaders\generated\spirv</Filter>
     </ClInclude>
@@ -964,6 +1368,9 @@
     </Filter>
     <Filter Include="shaders\generated\glsl">
       <UniqueIdentifier>{39F32B2D-963C-31D9-8394-170FFA0803C3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="shaders\generated\metal">
+      <UniqueIdentifier>{A03EB90F-8F2F-3649-8BC1-A829D2DF576B}</UniqueIdentifier>
     </Filter>
     <Filter Include="shaders\generated\spirv">
       <UniqueIdentifier>{A8FA937E-89B4-3D6B-93C8-579BE2D4CD33}</UniqueIdentifier>

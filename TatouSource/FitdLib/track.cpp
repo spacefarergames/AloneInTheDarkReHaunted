@@ -577,6 +577,7 @@ void processTrack(void)
                     if (currentProcessedActorPtr->YHandler.numSteps == 0)
                     {
                         InitRealValue(0, y - (currentProcessedActorPtr->roomY + currentProcessedActorPtr->stepY), time, &currentProcessedActorPtr->YHandler);
+                        currentProcessedActorPtr->hidePlanarShadow = true;
                     }
 
                     if ((currentProcessedActorPtr->rotate.numSteps == 0) || (currentProcessedActorPtr->direction != direction))

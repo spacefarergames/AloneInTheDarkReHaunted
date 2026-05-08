@@ -60,6 +60,22 @@ struct ModelAtlasData
     int otherAtlasHeight = 0;
     std::vector<AtlasPolyUVs> otherPolyUVs; // indexed by primitive index, only for material 1-2 polys
     std::vector<unsigned char> otherPixels; // CPU-side RGBA copy for transparency sampling
+
+    // Separate texture for line primitives (primTypeEnum_Line).
+    bgfx::TextureHandle lineTexture = BGFX_INVALID_HANDLE;
+    int lineAtlasWidth = 0;
+    int lineAtlasHeight = 0;
+    int lineCellsPerRow = 0;
+    int lineCellSize = 0;
+    std::vector<int> linePrimToCell;
+
+    // Separate texture for point-style primitives (Point / BigPoint / Zixel).
+    bgfx::TextureHandle pointTexture = BGFX_INVALID_HANDLE;
+    int pointAtlasWidth = 0;
+    int pointAtlasHeight = 0;
+    int pointCellsPerRow = 0;
+    int pointCellSize = 0;
+    std::vector<int> pointPrimToCell;
 };
 
 // Dump a flat-shaded texture atlas PNG for the given body.
@@ -87,6 +103,16 @@ bool dumpRampAtlas(int bodyNum, sBody* pBody, const std::string& hqrName);
 // The output file is written to <homePath>/atlases/other_<hqrName>_<bodyNum>.png
 // Returns true on success.
 bool dumpOtherAtlas(int bodyNum, sBody* pBody, const std::string& hqrName);
+
+// Dump line primitives (primTypeEnum_Line) to a separate atlas.
+// The output file is written to <homePath>/atlases/line_<hqrName>_<bodyNum>.png
+// Returns true on success (file written) or false when there are no lines.
+bool dumpLineAtlas(int bodyNum, sBody* pBody, const std::string& hqrName);
+
+// Dump point-style primitives (Point / BigPoint / Zixel) to a separate atlas.
+// The output file is written to <homePath>/atlases/point_<hqrName>_<bodyNum>.png
+// Returns true on success (file written) or false when there are no points.
+bool dumpPointAtlas(int bodyNum, sBody* pBody, const std::string& hqrName);
 
 // Try to load a texture atlas for the given body.
 // Looks for <homePath>/atlases/body_<hqrName>_<bodyNum>.png

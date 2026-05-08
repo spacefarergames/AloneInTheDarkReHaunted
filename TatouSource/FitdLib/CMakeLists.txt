@@ -48,13 +48,7 @@ file(GLOB_RECURSE SRC_ROOT
     "*.h"
 )
 
-if(UNIX AND NOT APPLE)
-    list(REMOVE_ITEM SRC_ROOT "${CMAKE_CURRENT_SOURCE_DIR}/modelAtlas.cpp")
-endif()
 
-if(APPLE)
-    list(REMOVE_ITEM SRC_ROOT "${CMAKE_CURRENT_SOURCE_DIR}/modelAtlas.cpp")
-endif()
 
 # Base source files
 set(SOURCES

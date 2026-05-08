@@ -155,10 +155,6 @@ int makeIntroScreens(void)
     FastCopyScreen(data + 770, frontBuffer);
     osystem_CopyBlockPhys(frontBuffer, 0, 0, 320, 200);
 
-    // Ensure proper rendering before fade-in
-    osystem_startFrame();
-    osystem_flip(NULL);
-
     FadeInPhys(8, 0);
     memcpy(logicalScreen, frontBuffer, 320 * 200);
     osystem_flip(NULL);
@@ -192,10 +188,6 @@ int makeIntroScreens(void)
 
     LoadPak("ITD_RESS", AITD1_LIVRE, aux);
     startChrono(&chrono);
-
-    // Draw the background and ensure it's rendered
-    osystem_startFrame();
-    osystem_flip(NULL);
 
     do
     {
@@ -237,43 +229,47 @@ void CopyBox_Aux_Log(int x1, int y1, int x2, int y2)
     if (x1 >= x2 || y1 >= y2)
         return;
 
+    const int width = x2 - x1;
     for (int i = y1; i < y2; i++)
     {
-        for (int j = x1; j < x2; j++)
-        {
-            *(screenSm3 + i * 320 + j) = *(screenSm1 + i * 320 + j);
-        }
+        memcpy(screenSm3 + i * 320 + x1, screenSm1 + i * 320 + x1, width);
     }
 }
 
 // Helper function to copy frame border (excluding portrait regions) to UI layer for HD backgrounds
 static void CopyFrameBorderToUILayer()
 {
-    // Define both character portrait regions to always exclude
-    const int leftPortraitX1 = 10, leftPortraitY1 = 10;
-    const int leftPortraitX2 = 149, leftPortraitY2 = 190;
-    const int rightPortraitX1 = 170, rightPortraitY1 = 10;
-    const int rightPortraitX2 = 309, rightPortraitY2 = 190;
-
-    for (int i = 0; i < 200; i++)
+    // Both character portrait regions are excluded so HD background shows through.
+    // Left portrait:  x [10..149),  y [10..190)
+    // Right portrait: x [170..309), y [10..190)
+    // We split the scan into three vertical bands to avoid per-pixel branching.
+    auto copyRowSpan = [](int y, int x1, int x2)
     {
-        for (int j = 0; j < 320; j++)
+        const unsigned char* src = (const unsigned char*)&logicalScreen[y * 320 + x1];
+        unsigned char* dst = &uiLayer[y * 320 + x1];
+        for (int j = x1; j < x2; ++j, ++src, ++dst)
         {
-            // Skip both character portrait regions - let HD background show through
-            bool inLeftPortrait = (i >= leftPortraitY1 && i < leftPortraitY2 && j >= leftPortraitX1 && j < leftPortraitX2);
-            bool inRightPortrait = (i >= rightPortraitY1 && i < rightPortraitY2 && j >= rightPortraitX1 && j < rightPortraitX2);
-
-            if (inLeftPortrait || inRightPortrait)
-                continue;
-
-            unsigned char pixel = logicalScreen[i * 320 + j];
-            // Copy non-zero pixels (frame border only) to UI layer
+            unsigned char pixel = *src;
             if (pixel != 0)
-            {
-                uiLayer[i * 320 + j] = pixel;
-            }
+                *dst = pixel;
         }
+    };
+
+    // Top band: full width, rows [0..10)
+    for (int i = 0; i < 10; ++i)
+        copyRowSpan(i, 0, 320);
+
+    // Middle band: rows [10..190) - skip the two portrait interiors
+    for (int i = 10; i < 190; ++i)
+    {
+        copyRowSpan(i, 0, 10);     // left of left portrait
+        copyRowSpan(i, 149, 170);  // gap between portraits
+        copyRowSpan(i, 309, 320);  // right of right portrait
     }
+
+    // Bottom band: full width, rows [190..200)
+    for (int i = 190; i < 200; ++i)
+        copyRowSpan(i, 0, 320);
 }
 
 int ChoosePerso(void)
@@ -304,6 +300,11 @@ int ChoosePerso(void)
 
     g_portraitOverlayChoice = choice;
 
+    // Load the character-select PAK once and snapshot a clean copy in aux2.
+    // Both are used many times by the inner loop without changing.
+    LoadPak("ITD_RESS", 10, aux);
+    FastCopyScreen(aux, aux2);
+
     while (choiceMade == 0)
     {
         process_events();
@@ -313,9 +314,8 @@ int ChoosePerso(void)
         fadeMusic(0, 0, 0x40);
         currentMusic = -1;
 
-        LoadPak("ITD_RESS", 10, aux);
-        FastCopyScreen(aux, logicalScreen);
-        FastCopyScreen(logicalScreen, aux2);
+        // Restore clean background from the cached snapshot instead of re-reading the PAK.
+        FastCopyScreen(aux2, logicalScreen);
 
         if (choice == 0)
         {
@@ -576,9 +576,6 @@ int ChoosePerso(void)
     memset(frontBuffer, 0, 320 * 200);
     clearTTFTextQueue();
 
-    // Update the foreground texture to black
-    osystem_CopyBlockPhys((unsigned char*)frontBuffer, 0, 0, 320, 200);
-
     // Draw loading text centered on screen, translated per language
     const char* loadingText = "Please Wait...";
     if (languageNameString == "FRANCAIS")
@@ -596,7 +593,9 @@ int ChoosePerso(void)
     int textY = 92;
     PrintFont(textX, textY, logicalScreen, (u8*)loadingText);
 
-    // Redraw background (now black) and present the loading screen
+    // Single upload of the (now text-bearing) framebuffer, then present.
+    FastCopyScreen(logicalScreen, frontBuffer);
+    osystem_CopyBlockPhys((unsigned char*)frontBuffer, 0, 0, 320, 200);
     osystem_drawBackground();
     process_events();
 
