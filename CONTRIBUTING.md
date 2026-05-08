@@ -1,7 +1,7 @@
 # Contributing to AITDR
 
 Thank you for your interest in contributing to ALONE IN THE DARK REHAUNTED! This guide covers everything you need to get started.
-
+> This is a Free, Non-profit passion project but takes us a lot of coffee to get it done! Donate to us at https://buymeacoffee.com/jakeysbakery
 ---
 
 ## Getting Started
