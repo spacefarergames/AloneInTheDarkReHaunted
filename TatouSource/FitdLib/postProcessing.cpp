@@ -11,6 +11,7 @@
 #include "configRemaster.h"
 #include <bx/math.h>
 #include <bgfx/embedded_shader.h>
+#include <algorithm>
 #include <string>
 
 extern bgfx::ProgramHandle loadBgfxProgram(const std::string& VSFile, const std::string& PSFile);
@@ -43,6 +44,9 @@ PostProcessing::~PostProcessing()
 
 void PostProcessing::init(int width, int height)
 {
+    if (width <= 0) width = 1;
+    if (height <= 0) height = 1;
+
     m_width = width;
     m_height = height;
 
@@ -60,6 +64,8 @@ void PostProcessing::init(int width, int height)
     u_ssaoParams = bgfx::createUniform("u_ssaoParams", bgfx::UniformType::Vec4);
     u_depthParams = bgfx::createUniform("u_depthParams", bgfx::UniformType::Vec4);
     u_ssgiParams = bgfx::createUniform("u_ssgiParams", bgfx::UniformType::Vec4);
+    u_colorGradeParams = bgfx::createUniform("u_colorGradeParams", bgfx::UniformType::Vec4);
+    u_toneParams = bgfx::createUniform("u_toneParams", bgfx::UniformType::Vec4);
 
     createFramebuffers(width, height);
     createShaders();
@@ -83,6 +89,8 @@ void PostProcessing::shutdown()
     if (bgfx::isValid(u_ssaoParams)) bgfx::destroy(u_ssaoParams);
     if (bgfx::isValid(u_depthParams)) bgfx::destroy(u_depthParams);
     if (bgfx::isValid(u_ssgiParams)) bgfx::destroy(u_ssgiParams);
+    if (bgfx::isValid(u_colorGradeParams)) bgfx::destroy(u_colorGradeParams);
+    if (bgfx::isValid(u_toneParams)) bgfx::destroy(u_toneParams);
 
     s_texColor = BGFX_INVALID_HANDLE;
     s_texBloom = BGFX_INVALID_HANDLE;
@@ -96,10 +104,26 @@ void PostProcessing::shutdown()
     u_ssaoParams = BGFX_INVALID_HANDLE;
     u_depthParams = BGFX_INVALID_HANDLE;
     u_ssgiParams = BGFX_INVALID_HANDLE;
+    u_colorGradeParams = BGFX_INVALID_HANDLE;
+    u_toneParams = BGFX_INVALID_HANDLE;
+}
+
+void PostProcessing::setColorGrade(float exposure, float contrast, float saturation,
+                                   float temperature, float shadowLift, float highlightRolloff)
+{
+    m_exposure = (std::max)(-2.0f, (std::min)(2.0f, exposure));
+    m_contrast = (std::max)(0.5f, (std::min)(1.5f, contrast));
+    m_saturation = (std::max)(0.0f, (std::min)(2.0f, saturation));
+    m_temperature = (std::max)(-1.0f, (std::min)(1.0f, temperature));
+    m_shadowLift = (std::max)(0.0f, (std::min)(0.2f, shadowLift));
+    m_highlightRolloff = (std::max)(0.0f, (std::min)(1.0f, highlightRolloff));
 }
 
 void PostProcessing::resize(int width, int height)
 {
+    if (width <= 0) width = 1;
+    if (height <= 0) height = 1;
+
     if (m_width == width && m_height == height)
         return;
 
@@ -112,6 +136,9 @@ void PostProcessing::resize(int width, int height)
 
 void PostProcessing::createFramebuffers(int width, int height)
 {
+    if (width <= 0) width = 1;
+    if (height <= 0) height = 1;
+
     // Main render target - color + depth (depth readable for SSAO)
     m_mainColorTex = bgfx::createTexture2D(width, height, false, 1, bgfx::TextureFormat::RGBA8, 
         BGFX_TEXTURE_RT | BGFX_SAMPLER_U_CLAMP | BGFX_SAMPLER_V_CLAMP);
@@ -132,8 +159,8 @@ void PostProcessing::createFramebuffers(int width, int height)
     m_ssaoBlurFB = bgfx::createFrameBuffer(1, ssaoBlurAttach, false);
 
     // Bloom bright pass (half resolution for performance)
-    int bloomWidth = width / 2;
-    int bloomHeight = height / 2;
+    int bloomWidth = (std::max)(1, width / 2);
+    int bloomHeight = (std::max)(1, height / 2);
     m_brightPassTex = bgfx::createTexture2D(bloomWidth, bloomHeight, false, 1, bgfx::TextureFormat::RGBA8,
         BGFX_TEXTURE_RT | BGFX_SAMPLER_U_CLAMP | BGFX_SAMPLER_V_CLAMP);
     bgfx::TextureHandle brightAttach[] = { m_brightPassTex };
@@ -151,8 +178,8 @@ void PostProcessing::createFramebuffers(int width, int height)
     m_blurV_FB = bgfx::createFrameBuffer(1, blurVAttach, false);
 
     // SSGI render targets (half resolution for performance)
-    int ssgiWidth = width / 2;
-    int ssgiHeight = height / 2;
+    int ssgiWidth = (std::max)(1, width / 2);
+    int ssgiHeight = (std::max)(1, height / 2);
     m_ssgiTex = bgfx::createTexture2D(ssgiWidth, ssgiHeight, false, 1, bgfx::TextureFormat::RGBA8,
         BGFX_TEXTURE_RT | BGFX_SAMPLER_U_CLAMP | BGFX_SAMPLER_V_CLAMP);
     bgfx::TextureHandle ssgiAttach[] = { m_ssgiTex };
@@ -239,6 +266,9 @@ void PostProcessing::destroyShaders()
 
 static void renderFullscreenQuad(bgfx::ViewId viewId, bgfx::ProgramHandle program)
 {
+    if (!bgfx::isValid(program))
+        return;
+
     bgfx::VertexLayout layout;
     layout.begin()
         .add(bgfx::Attrib::Position, 3, bgfx::AttribType::Float)
@@ -246,6 +276,9 @@ static void renderFullscreenQuad(bgfx::ViewId viewId, bgfx::ProgramHandle progra
         .end();
 
     bgfx::TransientVertexBuffer tvb;
+    if (bgfx::getAvailTransientVertexBuffer(6, layout) < 6)
+        return;
+
     bgfx::allocTransientVertexBuffer(&tvb, 6, layout);
 
     struct Vertex {
@@ -279,11 +312,17 @@ static void renderFullscreenQuad(bgfx::ViewId viewId, bgfx::ProgramHandle progra
 void PostProcessing::beginScene()
 {
     // Set rendering to main offscreen buffer
-    bgfx::setViewFrameBuffer(0, m_mainFB);
+    if (bgfx::isValid(m_mainFB))
+        bgfx::setViewFrameBuffer(0, m_mainFB);
+    else
+        bgfx::setViewFrameBuffer(0, BGFX_INVALID_HANDLE);
 }
 
 void PostProcessing::endScene()
 {
+    if (!bgfx::isValid(m_mainColorTex) || !bgfx::isValid(m_compositeShader))
+        return;
+
     m_time += 0.016f;
 
     // If no effects enabled, just composite the scene to the backbuffer as-is
@@ -295,6 +334,17 @@ void PostProcessing::endScene()
         float ssaoParams[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
         float ssgiParams[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
         float timeParams[4] = { m_time, 0.0f, 0.0f, 0.0f };
+        float colorGradeParams[4] = {
+            m_colorGradingEnabled ? m_exposure : 0.0f,
+            m_colorGradingEnabled ? m_contrast : 1.0f,
+            m_colorGradingEnabled ? m_saturation : 1.0f,
+            m_colorGradingEnabled ? m_temperature : 0.0f
+        };
+        float toneParams[4] = {
+            m_colorGradingEnabled ? m_shadowLift : 0.0f,
+            m_colorGradingEnabled ? m_highlightRolloff : 0.0f,
+            0.0f, 0.0f
+        };
 
         bgfx::setViewName(kViewComposite, "Composite");
         bgfx::setViewRect(kViewComposite, 0, 0, (uint16_t)m_width, (uint16_t)m_height);
@@ -306,6 +356,8 @@ void PostProcessing::endScene()
         bgfx::setUniform(u_ssaoParams, ssaoParams);
         bgfx::setUniform(u_ssgiParams, ssgiParams);
         bgfx::setUniform(u_time, timeParams);
+        bgfx::setUniform(u_colorGradeParams, colorGradeParams);
+        bgfx::setUniform(u_toneParams, toneParams);
         bgfx::setTexture(0, s_texColor, m_mainColorTex);
         bgfx::setTexture(1, s_texBloom, m_mainColorTex); // dummy, won't contribute
         bgfx::setTexture(2, s_texAO, m_mainColorTex);    // dummy, won't contribute
@@ -338,8 +390,11 @@ void PostProcessing::endScene()
 
 void PostProcessing::renderBloom()
 {
-    int bloomWidth = m_width / 2;
-    int bloomHeight = m_height / 2;
+    if (!bgfx::isValid(m_brightPassShader) || !bgfx::isValid(m_blurShader))
+        return;
+
+    int bloomWidth = (std::max)(1, m_width / 2);
+    int bloomHeight = (std::max)(1, m_height / 2);
 
     // 1. Bright pass - extract bright pixels from main scene
     {
@@ -423,10 +478,13 @@ void PostProcessing::renderFilmGrain()
 
 void PostProcessing::renderSSAO()
 {
+    if (!bgfx::isValid(m_ssaoShader) || !bgfx::isValid(m_ssaoBlurShader) ||
+        !bgfx::isValid(m_mainDepthTex))
+        return;
+
     float ssaoParams[4] = { m_ssaoRadius, 1.0f, m_ssaoIntensity, 0.0f };
     float depthParams[4] = { nearVal, farVal, 1.0f / (float)m_width, 1.0f / (float)m_height };
     float timeParams[4] = { m_time, 0.0f, 0.0f, 0.0f };
-
     // 1. SSAO pass - compute raw ambient occlusion from depth
     {
         bgfx::setViewName(kViewSSAO, "SSAO");
@@ -463,14 +521,16 @@ void PostProcessing::renderSSGI()
     if (!m_ssgiEnabled)
         return;
 
-    float nearVal = 10.0f;
-    float farVal = 65535.0f;
+    if (!bgfx::isValid(m_ssgiShader) || !bgfx::isValid(m_ssgiBlurShader) ||
+        !bgfx::isValid(m_mainColorTex) || !bgfx::isValid(m_mainDepthTex))
+        return;
+
     float depthParams[4] = { nearVal, farVal, 1.0f / (float)m_width, 1.0f / (float)m_height };
     float ssgiParams[4] = { m_ssgiRadius, m_ssgiIntensity, (float)m_ssgiNumSamples, 0.0f };
     float timeParams[4] = { m_time, 0.0f, 0.0f, 0.0f };
 
-    int ssgiWidth = m_width / 2;
-    int ssgiHeight = m_height / 2;
+    int ssgiWidth = (std::max)(1, m_width / 2);
+    int ssgiHeight = (std::max)(1, m_height / 2);
 
     // 1. SSGI pass - compute indirect illumination from nearby surfaces
     {
@@ -511,6 +571,17 @@ void PostProcessing::renderFinalComposite()
     float ssaoParams[4] = { m_ssaoRadius, 1.0f, m_ssaoEnabled ? m_ssaoIntensity : 0.0f, 0.0f };
     float ssgiParams[4] = { m_ssgiRadius, m_ssgiEnabled ? m_ssgiIntensity : 0.0f, 0.0f, 0.0f };
     float timeParams[4] = { m_time, 0.0f, 0.0f, 0.0f };
+    float colorGradeParams[4] = {
+        m_colorGradingEnabled ? m_exposure : 0.0f,
+        m_colorGradingEnabled ? m_contrast : 1.0f,
+        m_colorGradingEnabled ? m_saturation : 1.0f,
+        m_colorGradingEnabled ? m_temperature : 0.0f
+    };
+    float toneParams[4] = {
+        m_colorGradingEnabled ? m_shadowLift : 0.0f,
+        m_colorGradingEnabled ? m_highlightRolloff : 0.0f,
+        0.0f, 0.0f
+    };
 
     bgfx::setViewName(kViewComposite, "Composite");
     bgfx::setViewRect(kViewComposite, 0, 0, (uint16_t)m_width, (uint16_t)m_height);
@@ -522,6 +593,8 @@ void PostProcessing::renderFinalComposite()
     bgfx::setUniform(u_ssaoParams, ssaoParams);
     bgfx::setUniform(u_ssgiParams, ssgiParams);
     bgfx::setUniform(u_time, timeParams);
+    bgfx::setUniform(u_colorGradeParams, colorGradeParams);
+    bgfx::setUniform(u_toneParams, toneParams);
     bgfx::setTexture(0, s_texColor, m_mainColorTex);
     bgfx::setTexture(1, s_texBloom, m_bloomEnabled ? m_blurV_Tex : m_mainColorTex);
     bgfx::setTexture(2, s_texAO, m_ssaoEnabled ? m_ssaoBlurTex : m_mainColorTex);

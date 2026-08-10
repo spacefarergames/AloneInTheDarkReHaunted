@@ -26,8 +26,13 @@
 #include "bloodParticles.h"
 #include "inventory.h"
 #include "debugger.h"
+#include "remasterOptions.h"
 #include "osystem.h"
 #include "menuFade.h"
+
+#ifndef LANTERN_VERBOSE_LOGS
+#define LANTERN_VERBOSE_LOGS 0
+#endif
 
 #if BX_PLATFORM_OSX
 extern "C" {
@@ -195,9 +200,8 @@ void StartFrame()
     // contains the composited scene (needed for pause-menu preview in all modes).
     if (g_postProcessing)
     {
-        // Apply effect settings when effects are enabled
-        if (g_remasterConfig.postProcessing.enableBloom || g_remasterConfig.postProcessing.enableFilmGrain || g_remasterConfig.postProcessing.enableSSAO || g_remasterConfig.postProcessing.enableSSGI)
-        {
+        // Apply every setting every frame. This also guarantees that an effect
+        // is actually disabled after a live config/menu toggle.
             g_postProcessing->setBloomEnabled(g_remasterConfig.postProcessing.enableBloom);
             g_postProcessing->setBloomThreshold(g_remasterConfig.postProcessing.bloomThreshold);
             g_postProcessing->setBloomIntensity(g_remasterConfig.postProcessing.bloomIntensity);
@@ -217,7 +221,13 @@ void StartFrame()
             // Light Probe settings
             g_postProcessing->setLightProbesEnabled(g_remasterConfig.postProcessing.enableLightProbes);
             g_postProcessing->setLightProbeIntensity(g_remasterConfig.postProcessing.lightProbeIntensity);
-        }
+            g_postProcessing->setColorGradingEnabled(g_remasterConfig.postProcessing.enableColorGrading);
+            g_postProcessing->setColorGrade(g_remasterConfig.postProcessing.exposure,
+                g_remasterConfig.postProcessing.contrast,
+                g_remasterConfig.postProcessing.saturation,
+                g_remasterConfig.postProcessing.temperature,
+                g_remasterConfig.postProcessing.shadowLift,
+                g_remasterConfig.postProcessing.highlightRolloff);
 
         g_postProcessing->beginScene();
     }
@@ -263,6 +273,7 @@ void StartFrame()
 
             tWorldObject& heldObj = ListWorldObjets[heldObjIdx];
 
+#if LANTERN_VERBOSE_LOGS
             // Debug: print foundBody when held item changes
             static s16 lastHeldObjIdx[NUM_MAX_INVENTORY] = { -1, -1 };
             if (heldObjIdx != lastHeldObjIdx[inv])
@@ -271,6 +282,7 @@ void StartFrame()
                     inv, (int)heldObjIdx, (int)heldObj.foundBody);
                 lastHeldObjIdx[inv] = heldObjIdx;
             }
+#endif
 
             const bool isLitLantern   = (heldObj.foundBody == LANTERN_LIT_BODY_NUM);
             const bool isUnlitLantern = (heldObj.foundBody == LANTERN_BODY_NUM);
@@ -342,6 +354,10 @@ void EndFrame()
 
     // Render TTF text overlay before ImGui render
     renderTTFText();
+
+    // F1 remaster options are rendered last so the dialog stays above the game,
+    // cinematic overlays and ordinary UI at every resolution.
+    remasterOptionsDraw();
 
     // Always call imguiEndFrame() to render ImGui windows to bgfx
     imguiEndFrame();
@@ -489,7 +505,12 @@ int initBgfxGlue(int argc, char* argv[])
     //initparam.type = bgfx::RendererType::Vulkan;
     //initparam.type = bgfx::RendererType::Direct3D12;
 #if BX_CONFIG_DEBUG
-    initparam.debug = true;
+    // DXGI reports validation failures by raising 0x87A. Keep the validation
+    // device opt-in so ordinary Debug gameplay does not stop at
+    // KernelBase!RaiseException in Visual Studio.
+    initparam.debug = g_remasterConfig.debug.enableGraphicsValidation;
+#else
+    initparam.debug = false;
 #endif
 
     printf(BGFX_TAG "Initializing BGFX with resolution: %dx%d\n", windowWidth, windowHeight);

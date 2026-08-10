@@ -86,6 +86,13 @@ static bool isPrimSphere(sPrimitive* pPrim)
     return pPrim->m_type == primTypeEnum_Sphere;
 }
 
+static bool isPrimPointStyle(sPrimitive* pPrim)
+{
+    return pPrim->m_type == primTypeEnum_Point
+        || pPrim->m_type == primTypeEnum_BigPoint
+        || pPrim->m_type == primTypeEnum_Zixel;
+}
+
 static bool isPrimRamp(sPrimitive* pPrim)
 {
     // Ramp-shaded polygons: material 3 (marbre), 4 (copper), 5 (copper2), 6 (marbre2)
@@ -386,6 +393,14 @@ static std::string getOtherAtlasPath(const std::string& hqrName, int bodyNum)
 {
     char buf[128];
     snprintf(buf, sizeof(buf), "other_%s_%03d.png", hqrName.c_str(), bodyNum);
+    return getAtlasFolder() + buf;
+}
+
+// Get point atlas file path for point-style primitives
+static std::string getPointAtlasPath(const std::string& hqrName, int bodyNum)
+{
+    char buf[128];
+    snprintf(buf, sizeof(buf), "point_%s_%03d.png", hqrName.c_str(), bodyNum);
     return getAtlasFolder() + buf;
 }
 
@@ -765,6 +780,34 @@ ModelAtlasData* loadModelAtlas(int bodyNum, sBody* pBody, const std::string& hqr
         }
     }
 
+    // Also try to load point-style atlas if it exists
+    std::string pointPath = getPointAtlasPath(hqrName, bodyNum);
+    unsigned char* pointData = loadAtlasDataFromArchiveOrFile(pointPath, w, h, channels);
+    if (!pointData)
+    {
+        // Auto-dump point atlas if it doesn't exist
+        dumpPointAtlas(bodyNum, pBody, hqrName);
+        pointData = loadAtlasDataFromArchiveOrFile(pointPath, w, h, channels);
+    }
+
+    if (pointData)
+    {
+        printf(RNDR_TAG "Loading point atlas: %s (%dx%d)\n", pointPath.c_str(), w, h);
+        atlas.pointAtlasWidth = w;
+        atlas.pointAtlasHeight = h;
+        atlas.pointCellsPerRow = 8;
+        atlas.pointCellSize = 128;
+
+        const bgfx::Memory* pointMem = bgfx::copy(pointData, w * h * 4);
+        atlas.pointTexture = bgfx::createTexture2D(w, h, false, 1, bgfx::TextureFormat::RGBA8, 0, pointMem);
+        stbi_image_free(pointData);
+
+        if (!bgfx::isValid(atlas.pointTexture))
+        {
+            printf(RNDR_WARN "Failed to create point atlas texture for body %d" CON_RESET "\n", bodyNum);
+        }
+    }
+
     // Also try to load flat poly atlas for mixed models (textured + flat-shaded)
     std::string flatPath = getFlatPolyAtlasPath(hqrName, bodyNum);
     unsigned char* flatData = loadAtlasDataFromArchiveOrFile(flatPath, w, h, channels);
@@ -1047,6 +1090,102 @@ bool dumpSphereAtlas(int bodyNum, sBody* pBody, const std::string& hqrName)
     else
     {
         printf(RNDR_ERR "Failed to write sphere atlas: %s" CON_RESET "\n", path.c_str());
+    }
+
+    return result != 0;
+}
+
+bool dumpPointAtlas(int bodyNum, sBody* pBody, const std::string& hqrName)
+{
+    if (!pBody) return false;
+
+    int numPrims = (int)pBody->m_primitives.size();
+    if (numPrims == 0) return false;
+
+    int numPoints = 0;
+    for (int i = 0; i < numPrims; i++)
+    {
+        if (isPrimPointStyle(&pBody->m_primitives[i]))
+            numPoints++;
+    }
+
+    if (numPoints == 0)
+        return false;
+
+    const int cellSize = 128;
+    const int cellsPerRow = 8;
+    int numRows = (numPoints + cellsPerRow - 1) / cellsPerRow;
+    int atlasW = cellsPerRow * cellSize;
+    int atlasH = numRows * cellSize;
+
+    auto nextPow2 = [](int v) -> int {
+        v--;
+        v |= v >> 1; v |= v >> 2; v |= v >> 4; v |= v >> 8; v |= v >> 16;
+        return v + 1;
+    };
+    atlasW = nextPow2((std::max)(atlasW, 64));
+    atlasH = nextPow2((std::max)(atlasH, 64));
+
+    std::vector<unsigned char> image(atlasW * atlasH * 4, 0);
+
+    int pointIdx = 0;
+    for (int i = 0; i < numPrims; i++)
+    {
+        sPrimitive* pPrim = &pBody->m_primitives[i];
+        if (!isPrimPointStyle(pPrim)) continue;
+
+        unsigned char r = 128, g = 128, b = 128;
+        int palIdx = pPrim->m_color;
+        r = (unsigned char)RGB_Pal[palIdx * 3 + 0];
+        g = (unsigned char)RGB_Pal[palIdx * 3 + 1];
+        b = (unsigned char)RGB_Pal[palIdx * 3 + 2];
+
+        int cellX = (pointIdx % cellsPerRow) * cellSize;
+        int cellY = (pointIdx / cellsPerRow) * cellSize;
+        float centerX = cellX + cellSize * 0.5f;
+        float centerY = cellY + cellSize * 0.5f;
+        float radius = cellSize * 0.38f;
+
+        for (int y = 0; y < cellSize; y++)
+        {
+            for (int x = 0; x < cellSize; x++)
+            {
+                int pixelX = cellX + x;
+                int pixelY = cellY + y;
+                if (pixelX >= atlasW || pixelY >= atlasH) continue;
+
+                float dx = (pixelX + 0.5f) - centerX;
+                float dy = (pixelY + 0.5f) - centerY;
+                float dist = sqrtf(dx * dx + dy * dy);
+                if (dist <= radius)
+                {
+                    float t = dist / radius;
+                    float alpha = 1.0f - (t * t);
+                    alpha = (std::max)(0.0f, (std::min)(1.0f, alpha));
+
+                    int offset = (pixelY * atlasW + pixelX) * 4;
+                    image[offset + 0] = r;
+                    image[offset + 1] = g;
+                    image[offset + 2] = b;
+                    image[offset + 3] = (unsigned char)(alpha * 255);
+                }
+            }
+        }
+
+        pointIdx++;
+    }
+
+    ensureAtlasDir();
+    std::string path = getPointAtlasPath(hqrName, bodyNum);
+    int result = stbi_write_png(path.c_str(), atlasW, atlasH, 4, image.data(), atlasW * 4);
+
+    if (result)
+    {
+        printf(RNDR_TAG "Point atlas dumped: %s (%dx%d, %d points)\n", path.c_str(), atlasW, atlasH, numPoints);
+    }
+    else
+    {
+        printf(RNDR_ERR "Failed to write point atlas: %s" CON_RESET "\n", path.c_str());
     }
 
     return result != 0;
@@ -1354,6 +1493,8 @@ void clearModelAtlases()
             bgfx::destroy(pair.second.rampTexture);
         if (bgfx::isValid(pair.second.otherTexture))
             bgfx::destroy(pair.second.otherTexture);
+        if (bgfx::isValid(pair.second.pointTexture))
+            bgfx::destroy(pair.second.pointTexture);
     }
     s_atlasCache.clear();
 }
@@ -1590,6 +1731,8 @@ ModelAtlasData* loadTatouAtlas(int bodyNum, sBody* pBody, const std::string& hqr
         return nullptr;
     }
 
+    printf(RNDR_OK "Tatou 4-way atlas texture created: %dx%d\n", w, h);
+
     // Compute 4-way projection UVs matching the dump layout
     std::vector<point3dStruct> globalVerts;
     computeRestPoseVertices(pBody, globalVerts);
@@ -1651,3 +1794,4 @@ ModelAtlasData* loadTatouAtlas(int bodyNum, sBody* pBody, const std::string& hqr
     auto result = s_atlasCache.emplace(cacheKey, std::move(atlas));
     return &result.first->second;
 }
+

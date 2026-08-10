@@ -16,6 +16,7 @@
 #include "controlsMenu.h"
 #include "bgfxGlue.h"
 #include "debugger.h"
+#include "remasterOptions.h"
 
 extern float nearVal;
 extern float farVal;
@@ -50,8 +51,19 @@ void resetWindowResizeFlag()
 
 void handleKeyDown(SDL_Event& event)
 {
-    switch (event.key.key)
+    // Ignore key-repeat so holding F1 cannot rapidly open and close the dialog.
+    if (event.key.repeat)
+        return;
+
+    // SDL3 exposes the physical key in `scancode` and the layout-dependent
+    // keycode in `key`.  All cases below use SDL_SCANCODE_* constants, so they
+    // must be compared with the scancode field.
+    switch (event.key.scancode)
     {
+    case SDL_SCANCODE_F1:
+    case SDL_SCANCODE_HOME:
+        remasterOptionsToggle();
+        break;
 #ifdef FITD_DEBUGGER
     case SDL_SCANCODE_GRAVE:
         debuggerVar_debugMenuDisplayed ^= 1;
@@ -94,7 +106,7 @@ void readKeyboard(void)
             break;
         case SDL_EVENT_MOUSE_BUTTON_DOWN:
             // Double-click toggles fullscreen
-            if (event.button.clicks == 2 && event.button.button == SDL_BUTTON_LEFT)
+            if (!remasterOptionsIsOpen() && event.button.clicks == 2 && event.button.button == SDL_BUTTON_LEFT)
             {
                 toggleFullscreen();
             }
@@ -116,6 +128,20 @@ void readKeyboard(void)
 #ifdef FITD_DEBUGGER
     debuggerVar_fastForward = false;
 #endif
+
+    // The settings window owns keyboard, mouse and controller focus while open.
+    // Events still reach ImGui above, but none leak into the legacy game inputs.
+    if (remasterOptionsIsOpen())
+    {
+        g_controllerState.leftStickX = 0.0f;
+        g_controllerState.leftStickY = 0.0f;
+        g_controllerState.rightStickX = 0.0f;
+        g_controllerState.rightStickY = 0.0f;
+        JoyD = 0;
+        Click = 0;
+        key = 0;
+        return;
+    }
 
     // Update controller state
     updateController();

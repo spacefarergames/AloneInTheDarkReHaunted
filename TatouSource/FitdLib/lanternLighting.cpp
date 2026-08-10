@@ -42,6 +42,12 @@ static constexpr float LANTERN_BASE_RADIUS = 200.0f;  // World units
 // Body numbers
 static constexpr int LAMP_BODY_NUM = 11;  // Held lit lamp (both LISTBODY/Carny and LISTBOD2/Emily)
 
+#ifndef LANTERN_VERBOSE_LOGS
+#define LANTERN_VERBOSE_LOGS 0
+#endif
+
+#define LANTERN_DEBUG_LOG(...) do { if (LANTERN_VERBOSE_LOGS) printf(__VA_ARGS__); } while (0)
+
 // Sticky primitive tracking - locks onto the lamp primitive once found
 struct LampPrimitiveTracker
 {
@@ -255,7 +261,7 @@ void populateLampPrimitiveCache()
         static int debugCacheCount = 0;
         if (debugCacheCount++ % 120 == 0)
         {
-            printf("[LANTERN-DEBUG] Cached %d lamp primitives from body 11\n", s_lampPrimCache.count);
+            LANTERN_DEBUG_LOG("[LANTERN-DEBUG] Cached %d lamp primitives from body 11\n", s_lampPrimCache.count);
         }
     }
 }
@@ -1020,7 +1026,7 @@ static bool findLampColorPosition(float& outX, float& outY)
         // Reset tracker if player no longer has lamp body
         if (s_lampTracker.hasValidCache)
         {
-            printf("[LANTERN-DEBUG] Player bodyNum changed from lamp (%d != %d), resetting tracker\n",
+            LANTERN_DEBUG_LOG("[LANTERN-DEBUG] Player bodyNum changed from lamp (%d != %d), resetting tracker\n",
                    player.bodyNum, LAMP_BODY_NUM);
             s_lampTracker.reset();
         }
@@ -1047,7 +1053,7 @@ static bool findLampColorPosition(float& outX, float& outY)
         static int debugInvalidBoundsCount = 0;
         if (debugInvalidBoundsCount++ % 60 == 0)
         {
-            printf("[LANTERN-DEBUG] Player screen bounds invalid (%.1f,%.1f)-(%.1f,%.1f), skipping proximity filter\n",
+            LANTERN_DEBUG_LOG("[LANTERN-DEBUG] Player screen bounds invalid (%.1f,%.1f)-(%.1f,%.1f), skipping proximity filter\n",
                    player.screenXMin, player.screenYMin, player.screenXMax, player.screenYMax);
         }
     }
@@ -1060,7 +1066,7 @@ static bool findLampColorPosition(float& outX, float& outY)
         static int debugNoCacheCount = 0;
         if (debugNoCacheCount++ % 60 == 0)
         {
-            printf("[LANTERN-DEBUG] Lamp primitive cache not valid\n");
+            LANTERN_DEBUG_LOG("[LANTERN-DEBUG] Lamp primitive cache not valid\n");
         }
         return false;
     }
@@ -1091,7 +1097,7 @@ static bool findLampColorPosition(float& outX, float& outY)
                 static int debugTrackedCount = 0;
                 if (debugTrackedCount++ % 120 == 0)
                 {
-                    printf("[LANTERN-DEBUG] Tracking cached prim #%d at screen=(%.1f,%.1f)\n",
+                    LANTERN_DEBUG_LOG("[LANTERN-DEBUG] Tracking cached prim #%d at screen=(%.1f,%.1f)\n",
                            s_lampTracker.cachedOriginalPrimIndex, outX, outY);
                 }
 
@@ -1100,7 +1106,7 @@ static bool findLampColorPosition(float& outX, float& outY)
         }
 
         // Cached primitive not found - immediately stop rendering and reset
-        printf("[LANTERN-DEBUG] Cached prim #%d lost, resetting tracker\n",
+        LANTERN_DEBUG_LOG("[LANTERN-DEBUG] Cached prim #%d lost, resetting tracker\n",
                s_lampTracker.cachedOriginalPrimIndex);
         s_lampTracker.reset();
         // Fall through to search for new primitive
@@ -1145,7 +1151,7 @@ static bool findLampColorPosition(float& outX, float& outY)
                 static int debugPolyCount = 0;
                 if (debugPolyCount++ % 180 == 0)  // Log every 3 seconds
                 {
-                    printf("[LANTERN-DEBUG] Candidate: cacheIdx=%d, origIdx=%d, type=%d, ramp=%d, material=%d, pos=(%.1f,%.1f), dist=%.1f\n",
+                    LANTERN_DEBUG_LOG("[LANTERN-DEBUG] Candidate: cacheIdx=%d, origIdx=%d, type=%d, ramp=%d, material=%d, pos=(%.1f,%.1f), dist=%.1f\n",
                            i, prim.originalPrimIndex, prim.type, prim.isRampPrim, prim.material, polyX, polyY, distFromPlayer);
                 }
 
@@ -1174,7 +1180,7 @@ static bool findLampColorPosition(float& outX, float& outY)
         s_lampTracker.lastKnownX = outX;
         s_lampTracker.lastKnownY = outY;
 
-        printf("[LANTERN-DEBUG] Locked onto prim #%d (origIdx=%d) at game=(%.1f,%.1f) screen=(%.1f,%.1f), dist=%.1f\n",
+        LANTERN_DEBUG_LOG("[LANTERN-DEBUG] Locked onto prim #%d (origIdx=%d) at game=(%.1f,%.1f) screen=(%.1f,%.1f), dist=%.1f\n",
                bestPrimIndex, bestOriginalPrimIndex, bestX, bestY, outX, outY, bestDist);
 
         return true;
@@ -1184,7 +1190,7 @@ static bool findLampColorPosition(float& outX, float& outY)
     static int debugMissCount = 0;
     if (debugMissCount++ % 60 == 0)
     {
-        printf("[LANTERN-DEBUG] No lamp prims found (player at %.1f,%.1f, %d total prims)\n",
+        LANTERN_DEBUG_LOG("[LANTERN-DEBUG] No lamp prims found (player at %.1f,%.1f, %d total prims)\n",
                playerCX, playerCY, positionInPrimEntry);
     }
 
@@ -1361,7 +1367,7 @@ static bool isLampOccludedByPlayerDynamic()
         static int debugOcclusionCount = 0;
         if (debugOcclusionCount++ % 60 == 0)
         {
-            printf("[LANTERN-DEBUG] Lamp occluded (playerBeta=%d, cameraBeta=%d, camFrom=%d, diff=%d)\n",
+            LANTERN_DEBUG_LOG("[LANTERN-DEBUG] Lamp occluded (playerBeta=%d, cameraBeta=%d, camFrom=%d, diff=%d)\n",
                    playerBeta, cameraBeta, cameraLookingFrom, angleDiff);
         }
     }
@@ -1439,7 +1445,7 @@ static bool isPlayerUnderCameraMask()
                 static int debugMaskCount = 0;
                 if (debugMaskCount++ % 60 == 0)
                 {
-                    printf("[LANTERN-DEBUG] Player under camera mask (room=%d, pX=%d-%d, pZ=%d-%d, mX=%d-%d, mZ=%d-%d)\n",
+                    LANTERN_DEBUG_LOG("[LANTERN-DEBUG] Player under camera mask (room=%d, pX=%d-%d, pZ=%d-%d, mX=%d-%d, mZ=%d-%d)\n",
                            player.room, actorX1, actorX2, actorZ1, actorZ2,
                            pRect.zoneX1, pRect.zoneX2, pRect.zoneZ1, pRect.zoneZ2);
                 }

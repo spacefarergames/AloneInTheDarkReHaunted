@@ -36,6 +36,7 @@ extern void playMenuSound(const char* soundName);
 #endif
 
 #include "configRemaster.h"
+#include "remasterOptions.h"
 #include "jobSystemInit.h"
 
 #include <array>
@@ -5520,6 +5521,22 @@ int FitdMain(int argc, char* argv[])
 #endif
 
     osystem_startOfFrame();
+
+    // Present configuration before any game resources, title sequences or
+    // menus are initialized. The main SDL thread continues pumping events and
+    // bgfx frames, but game boot is gated until the dialog is dismissed.
+    if (g_remasterConfig.ui.showOptionsAtStartup)
+    {// Hide the console window at startup; it will be shown after the main window is created
+        HWND hConsole = GetConsoleWindow();
+        if (hConsole)
+            ShowWindow(hConsole, SW_HIDE);
+        remasterOptionsBeginStartupGate();
+        do
+        {
+            osystem_endOfFrame();
+            osystem_startOfFrame();
+        } while (remasterOptionsIsOpen());
+    }
 
     //  int protectionToBeDone = 1;
 

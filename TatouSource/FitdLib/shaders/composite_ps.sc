@@ -11,11 +11,18 @@ uniform vec4 u_filmGrainParams;  // x: intensity
 uniform vec4 u_ssaoParams;       // x: radius, y: bias, z: intensity (used here for enable flag)
 uniform vec4 u_ssgiParams;       // x: radius, y: intensity
 uniform vec4 u_time;             // x: time in seconds
+uniform vec4 u_colorGradeParams; // x: exposure, y: contrast, z: saturation, w: temperature
+uniform vec4 u_toneParams;       // x: shadow lift, y: highlight rolloff
 
 // Simple noise function for film grain
 float hash(vec2 p)
 {
     return fract(sin(dot(p, vec2(12.9898, 78.233))) * 43758.5453);
+}
+
+float luminance(vec3 c)
+{
+    return dot(c, vec3(0.2126, 0.7152, 0.0722));
 }
 
 void main()
@@ -44,14 +51,32 @@ void main()
     vec4 bloom = texture2D(s_texBloom, v_texcoord0);
     color.rgb += bloom.rgb * u_bloomParams.y;
 
-    // Add film grain if intensity > 0
+    // Scene-referred cinematic grade. Exposure happens before highlight
+    // compression so bright windows and lamps retain shape instead of clipping.
+    color.rgb *= exp2(u_colorGradeParams.x);
+    color.rgb += vec3_splat(u_toneParams.x) * (vec3_splat(1.0) - smoothstep(vec3_splat(0.0), vec3_splat(0.35), color.rgb));
+    color.rgb = color.rgb / (vec3_splat(1.0) + color.rgb * u_toneParams.y);
+
+    // A small temperature offset uses opposing red/blue changes and leaves
+    // green stable, preserving neutral UI text better than a blanket tint.
+    float temperature = u_colorGradeParams.w;
+    color.rgb *= vec3(1.0 + temperature * 0.10, 1.0, 1.0 - temperature * 0.10);
+
+    float luma = luminance(color.rgb);
+    color.rgb = mix(vec3_splat(luma), color.rgb, u_colorGradeParams.z);
+    color.rgb = (color.rgb - vec3_splat(0.5)) * u_colorGradeParams.y + vec3_splat(0.5);
+
+    // Add luminance-adaptive, zero-mean grain. Two decorrelated samples form
+    // triangular noise, avoiding the coarse sparkling of uniform white noise.
     float grainIntensity = u_filmGrainParams.x;
     if (grainIntensity > 0.0)
     {
-        vec2 noiseCoord = v_texcoord0 * 1000.0 + u_time.x * 10.0;
-        float noise = hash(noiseCoord) * 2.0 - 1.0;
-        color.rgb += vec3_splat(noise * grainIntensity);
+        vec2 pixelCoord = v_texcoord0 * vec2(1920.0, 1080.0);
+        float frame = floor(u_time.x * 24.0);
+        float noise = hash(pixelCoord + frame * 17.0) + hash(pixelCoord * 0.73 - frame * 11.0) - 1.0;
+        float grainMask = 0.35 + 0.65 * (1.0 - smoothstep(0.08, 0.85, luminance(color.rgb)));
+        color.rgb += vec3_splat(noise * grainIntensity * grainMask);
     }
 
-    gl_FragColor = vec4(color.rgb, 1.0);
+    gl_FragColor = vec4(clamp(color.rgb, 0.0, 1.0), 1.0);
 }

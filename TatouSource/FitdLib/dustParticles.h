@@ -36,8 +36,10 @@ private:
         float vx, vy, vz;       // Velocity
         float size;             // Particle size
         float alpha;            // Transparency
+        float baseAlpha;        // Peak transparency
         float life;             // Remaining lifetime
         float maxLife;          // Initial lifetime
+        float driftPhase;       // Per-particle phase for floating motion
         bool isDirt;            // True for brown dirt, false for white dust
     };
 
@@ -54,6 +56,7 @@ private:
     bool m_enabled = false;
     bool m_initialized = false;
     float m_spawnTimer = 0.0f;
+    float m_timeAccum = 0.0f;
 };
 
 // Global instance

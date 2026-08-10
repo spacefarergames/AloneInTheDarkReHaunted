@@ -9,6 +9,7 @@
 
 #include "common.h"
 #include "hybrid.h"
+#include "configRemaster.h"
 
 hqrEntryStruct<sAnimation>* HQ_Anims = nullptr;
 
@@ -826,6 +827,25 @@ void PatchInterStep(s16* value, s16 previousValue, s16 nextValue, int bp, int bx
     }
 }
 
+// Blend authored linear keyframes toward smoothstep for the displayed pose.
+// Keeping root translation on the original linear clock is important: collision,
+// hit timing and track movement must remain byte-for-byte gameplay compatible.
+static int getSmoothedPoseTime(int elapsed, int duration)
+{
+    if (!g_remasterConfig.animation.enablePoseSmoothing || duration <= 1)
+        return elapsed;
+
+    float t = (float)elapsed / (float)duration;
+    if (t < 0.0f) t = 0.0f;
+    if (t > 1.0f) t = 1.0f;
+    const float eased = t * t * (3.0f - 2.0f * t);
+    float strength = g_remasterConfig.animation.poseSmoothingStrength;
+    if (strength < 0.0f) strength = 0.0f;
+    if (strength > 1.0f) strength = 1.0f;
+    const float blended = t + (eased - t) * strength;
+    return (int)(blended * (float)duration + 0.5f);
+}
+
 s16 SetInterAnimObjet(int frame, sAnimation* pAnim, sBody* pBody)
 {
     int numOfBonesInAnim = pAnim->m_numGroups;
@@ -869,6 +889,7 @@ s16 SetInterAnimObjet(int frame, sAnimation* pAnim, sBody* pBody)
 
     if(time<keyframeLength) // interpolate keyframe
     {
+        const int poseBp = getSmoothedPoseTime(bp, bx);
         if(!(flag&INFO_OPTIMISE))
         {
             for (int i = 0; i < numOfBonesInAnim; i++)
@@ -879,15 +900,15 @@ s16 SetInterAnimObjet(int frame, sAnimation* pAnim, sBody* pBody)
                 switch(PatchType(&pBody->m_groups[i].m_state, pKeyframe->m_groups[i].m_type))
                 {
                 case 0: // rotate
-                    PatchInterAngle(&state.x, previousState.x, nextState.x, bp, bx);
-                    PatchInterAngle(&state.y, previousState.y, nextState.y, bp, bx);
-                    PatchInterAngle(&state.z, previousState.z, nextState.z, bp, bx);
+                    PatchInterAngle(&state.x, previousState.x, nextState.x, poseBp, bx);
+                    PatchInterAngle(&state.y, previousState.y, nextState.y, poseBp, bx);
+                    PatchInterAngle(&state.z, previousState.z, nextState.z, poseBp, bx);
                     break;
                 case 1: // translate
                 case 2: // zoom
-                    PatchInterStep(&state.x, previousState.x, nextState.x, bp, bx);
-                    PatchInterStep(&state.y, previousState.y, nextState.y, bp, bx);
-                    PatchInterStep(&state.z, previousState.z, nextState.z, bp, bx);
+                    PatchInterStep(&state.x, previousState.x, nextState.x, poseBp, bx);
+                    PatchInterStep(&state.y, previousState.y, nextState.y, poseBp, bx);
+                    PatchInterStep(&state.z, previousState.z, nextState.z, poseBp, bx);
                     break;
                 }
             }
@@ -905,9 +926,9 @@ s16 SetInterAnimObjet(int frame, sAnimation* pAnim, sBody* pBody)
                         break;
                 case 1:
                 case 2:
-                    PatchInterStep(&state.x, previousState.x, nextState.x, bp, bx);
-                    PatchInterStep(&state.y, previousState.y, nextState.y, bp, bx);
-                    PatchInterStep(&state.z, previousState.z, nextState.z, bp, bx);
+                    PatchInterStep(&state.x, previousState.x, nextState.x, poseBp, bx);
+                    PatchInterStep(&state.y, previousState.y, nextState.y, poseBp, bx);
+                    PatchInterStep(&state.z, previousState.z, nextState.z, poseBp, bx);
                     break;
                 }
 
@@ -916,9 +937,9 @@ s16 SetInterAnimObjet(int frame, sAnimation* pAnim, sBody* pBody)
                     point3dStruct& previousState = pPreviousKeyframe->m_groups[i].m_rotateDelta.value();
                     point3dStruct& nextState = pKeyframe->m_groups[i].m_rotateDelta.value();
 
-                    PatchInterAngle(&state.x, previousState.x, nextState.x, bp, bx);
-                    PatchInterAngle(&state.y, previousState.y, nextState.y, bp, bx);
-                    PatchInterAngle(&state.z, previousState.z, nextState.z, bp, bx);
+                    PatchInterAngle(&state.x, previousState.x, nextState.x, poseBp, bx);
+                    PatchInterAngle(&state.y, previousState.y, nextState.y, poseBp, bx);
+                    PatchInterAngle(&state.z, previousState.z, nextState.z, poseBp, bx);
                 }
             }
         }

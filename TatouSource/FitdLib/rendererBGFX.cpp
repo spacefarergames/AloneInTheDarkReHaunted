@@ -155,8 +155,18 @@ int numUsedTransparentVertices = 0;
 int numUsedRampVertices = 0;
 int numUsedSpheres = 0;
 int numSpheresPrimitives = 0;  // Counter for which sphere primitive we're rendering (for atlas grid indexing)
+int numPointPrimitives = 0;  // Counter for point-style primitive atlas cells
 int numUsedTexturedVertices = 0;
 bgfx::TextureHandle g_activeModelTexture = BGFX_INVALID_HANDLE;
+
+enum BillboardAtlasKind
+{
+    BillboardAtlas_Palette = 0,
+    BillboardAtlas_Sphere,
+    BillboardAtlas_Point,
+};
+
+static BillboardAtlasKind g_billboardAtlasKind = BillboardAtlas_Palette;
 
 //static unsigned long int zoom = 0;
 
@@ -2885,21 +2895,26 @@ void osystem_flushPendingPrimitives()
             | BGFX_STATE_BLEND_FUNC(BGFX_STATE_BLEND_SRC_ALPHA, BGFX_STATE_BLEND_INV_SRC_ALPHA)
         );
 
-        // Check if we have a sphere atlas texture for the current model.
+        // Check if we have a sphere/point atlas texture for the current model.
         // Correctness relies on osystem_drawPoint flushing the pending sphere
         // batch whenever getCurrentAtlas() changes, so every submit here has
-        // spheres from exactly one model and numSpheresPrimitives indexes
-        // that model's atlas cells from 0.
+        // billboards from exactly one model and one atlas kind.
         ModelAtlasData* currentAtlas = getCurrentAtlas();
         bgfx::TextureHandle sphereTexToUse = g_paletteTexture;  // fallback
         float atlasWidth = 0.f;
         float atlasHeight = 0.f;
 
-        if (currentAtlas && bgfx::isValid(currentAtlas->sphereTexture))
+        if (currentAtlas && g_billboardAtlasKind == BillboardAtlas_Sphere && bgfx::isValid(currentAtlas->sphereTexture))
         {
             sphereTexToUse = currentAtlas->sphereTexture;
             atlasWidth = (float)currentAtlas->sphereAtlasWidth;
             atlasHeight = (float)currentAtlas->sphereAtlasHeight;
+        }
+        else if (currentAtlas && g_billboardAtlasKind == BillboardAtlas_Point && bgfx::isValid(currentAtlas->pointTexture))
+        {
+            sphereTexToUse = currentAtlas->pointTexture;
+            atlasWidth = (float)currentAtlas->pointAtlasWidth;
+            atlasHeight = (float)currentAtlas->pointAtlasHeight;
         }
 
         // Use s_modelTexture uniform for sphere atlas (sampler slot 0)
@@ -3052,6 +3067,8 @@ void osystem_flushPendingPrimitives()
     numUsedRampVertices = 0;
     numUsedSpheres = 0;
     numSpheresPrimitives = 0;
+    numPointPrimitives = 0;
+    g_billboardAtlasKind = BillboardAtlas_Palette;
     numUsedTransparentVertices = 0;
     numUsedTexturedVertices = 0;
     g_lineVertices.clear();
@@ -3373,35 +3390,26 @@ void osystem_draw3dQuad(float x1, float y1, float z1, float x2, float y2, float 
 
 void osystem_drawSphere(float X, float Y, float Z, u8 color, u8 material, float size)
 {
-    osystem_drawPoint(X, Y, Z, color, material, size);
-}
-
-void osystem_drawPoint(float X, float Y, float Z, u8 color, u8 material, float size)
-{
     // Guard against zero/negative radius: the UV normalization below divides
     // by (size * 1.2f), so size <= 0 produces NaN/Inf UVs and garbage samples.
     if (size <= 0.f)
         return;
 
-    // Sphere atlases are per-model, and atlas cell UVs are indexed by
-    // (numSpheresPrimitives - 1). The flush submit only binds ONE atlas
-    // texture, so if the current model's atlas changes while we still have
-    // spheres queued for the previous model, both the bound texture AND the
-    // cell indices would be wrong -> spheres go missing / sample wrong cells.
-    // Flush the current batch whenever the atlas pointer changes so each
-    // submit contains spheres from exactly one model, and the per-flush
-    // counter restarts cleanly at 0 for the new model.
-    static ModelAtlasData* s_lastSphereAtlas = nullptr;
     ModelAtlasData* currentAtlasForSphere = getCurrentAtlas();
-    if (currentAtlasForSphere != s_lastSphereAtlas && numUsedSpheres > 0)
+    BillboardAtlasKind desiredKind =
+        (currentAtlasForSphere && bgfx::isValid(currentAtlasForSphere->sphereTexture))
+        ? BillboardAtlas_Sphere
+        : BillboardAtlas_Palette;
+
+    static ModelAtlasData* s_lastBillboardAtlas = nullptr;
+    if (numUsedSpheres > 0 &&
+        (currentAtlasForSphere != s_lastBillboardAtlas || desiredKind != g_billboardAtlasKind))
     {
         osystem_flushPendingPrimitives();
     }
-    s_lastSphereAtlas = currentAtlasForSphere;
+    s_lastBillboardAtlas = currentAtlasForSphere;
+    g_billboardAtlasKind = desiredKind;
 
-    // Advance the per-frame sphere primitive counter so each sphere samples its
-    // own cell of the sphere atlas. The cell index used below is
-    // (numSpheresPrimitives - 1), so we must increment BEFORE emitting vertices.
     numSpheresPrimitives++;
 
     float fScaleRatio = 6.f / 5.f;
@@ -3442,14 +3450,8 @@ void osystem_drawPoint(float X, float Y, float Z, u8 color, u8 material, float s
         pVertex->Y = corners[mapping[i]].Y;
         pVertex->Z = corners[mapping[i]].Z;
 
-        // Sphere atlas UV encoding. Correctness requires that every sphere
-        // queued in the current batch belongs to the same model (same
-        // getCurrentAtlas() pointer). osystem_drawPoint flushes the batch
-        // at the top of the function whenever the atlas pointer changes,
-        // so numSpheresPrimitives indexes cells of a single model's atlas
-        // starting from 0.
         ModelAtlasData* atlasData = getCurrentAtlas();
-        if (atlasData && atlasData->sphereAtlasWidth > 0 && atlasData->sphereAtlasHeight > 0)
+        if (desiredKind == BillboardAtlas_Sphere && atlasData && atlasData->sphereAtlasWidth > 0 && atlasData->sphereAtlasHeight > 0)
         {
             const int CELLS_PER_ROW = 8;
             const int CELL_SIZE_PIXELS = 128;
@@ -3462,6 +3464,102 @@ void osystem_drawPoint(float X, float Y, float Z, u8 color, u8 material, float s
             float cornerLocalV = (corners[mapping[i]].Y - Y) / (size * 1.2f) * 0.5f + 0.5f;
             pVertex->U = (cellPixelX + cornerLocalU * CELL_SIZE_PIXELS) / (float)atlasData->sphereAtlasWidth;
             pVertex->V = (cellPixelY + cornerLocalV * CELL_SIZE_PIXELS) / (float)atlasData->sphereAtlasHeight;
+        }
+        else
+        {
+            int bank = (color >> 4) & 0xF;
+            int startColor = color & 0xF;
+            pVertex->U = (float)startColor / 15.f;
+            pVertex->V = (float)bank / 15.f;
+        }
+
+        pVertex->size = size;
+        pVertex->centerX = X;
+        pVertex->centerY = Y;
+        pVertex->material = material;
+    }
+}
+
+void osystem_drawPoint(float X, float Y, float Z, u8 color, u8 material, float size)
+{
+    // Guard against zero/negative radius: the UV normalization below divides
+    // by (size * 1.2f), so size <= 0 produces NaN/Inf UVs and garbage samples.
+    if (size <= 0.f)
+        return;
+
+    // Point atlases are per-model, just like sphere atlases. Flush when the
+    // model or billboard atlas kind changes so every submit binds one texture.
+    static ModelAtlasData* s_lastBillboardAtlas = nullptr;
+    ModelAtlasData* currentAtlasForPoint = getCurrentAtlas();
+    BillboardAtlasKind desiredKind =
+        (currentAtlasForPoint && bgfx::isValid(currentAtlasForPoint->pointTexture))
+        ? BillboardAtlas_Point
+        : BillboardAtlas_Palette;
+
+    if (numUsedSpheres > 0 &&
+        (currentAtlasForPoint != s_lastBillboardAtlas || desiredKind != g_billboardAtlasKind))
+    {
+        osystem_flushPendingPrimitives();
+    }
+    s_lastBillboardAtlas = currentAtlasForPoint;
+    g_billboardAtlasKind = desiredKind;
+
+    numPointPrimitives++;
+
+    float fScaleRatio = 6.f / 5.f;
+    std::array<sphereVertex, 4> corners;
+    corners[0].X = X + size * fScaleRatio;
+    corners[0].Y = Y + size * fScaleRatio;
+    corners[0].Z = Z;
+
+    corners[1].X = X + size * fScaleRatio;
+    corners[1].Y = Y - size * fScaleRatio;
+    corners[1].Z = Z;
+
+    corners[2].X = X - size * fScaleRatio;
+    corners[2].Y = Y - size * fScaleRatio;
+    corners[2].Z = Z;
+
+    corners[3].X = X - size * fScaleRatio;
+    corners[3].Y = Y + size * fScaleRatio;
+    corners[3].Z = Z;
+
+    std::array<int, 2 * 3> mapping = { {
+            0,1,2,
+            0,2,3
+    } };
+
+    for (int i = 0; i < mapping.size(); i++)
+    {
+        if (numUsedSpheres >= NUM_MAX_SPHERES_VERTICES)
+        {
+            assert(false && "numUsedSpheres >= NUM_MAX_SPHERES_VERTICES");
+            return;
+        }
+
+        sphereVertex* pVertex = &sphereVertices[numUsedSpheres];
+        numUsedSpheres++;
+
+        pVertex->X = corners[mapping[i]].X;
+        pVertex->Y = corners[mapping[i]].Y;
+        pVertex->Z = corners[mapping[i]].Z;
+
+        // Point atlas UV encoding. Correctness requires that every billboard
+        // queued in the current batch belongs to the same model and atlas kind.
+        ModelAtlasData* atlasData = getCurrentAtlas();
+        if (desiredKind == BillboardAtlas_Point && atlasData && atlasData->pointAtlasWidth > 0 && atlasData->pointAtlasHeight > 0)
+        {
+            const int CELLS_PER_ROW = atlasData->pointCellsPerRow > 0 ? atlasData->pointCellsPerRow : 8;
+            const int CELL_SIZE_PIXELS = atlasData->pointCellSize > 0 ? atlasData->pointCellSize : 128;
+            int cellIdx = numPointPrimitives - 1;
+            int cellX = cellIdx % CELLS_PER_ROW;
+            int cellY = cellIdx / CELLS_PER_ROW;
+            float cellPixelX = (float)(cellX * CELL_SIZE_PIXELS);
+            float cellPixelY = (float)(cellY * CELL_SIZE_PIXELS);
+            float cornerLocalU = (corners[mapping[i]].X - X) / (size * 1.2f) * 0.5f + 0.5f;
+            float cornerLocalV = (corners[mapping[i]].Y - Y) / (size * 1.2f) * 0.5f + 0.5f;
+            pVertex->U = (cellPixelX + cornerLocalU * CELL_SIZE_PIXELS) / (float)atlasData->pointAtlasWidth;
+            pVertex->V = (cellPixelY + cornerLocalV * CELL_SIZE_PIXELS) / (float)atlasData->pointAtlasHeight;
         }
         else
         {

@@ -13,6 +13,11 @@
 // Remaster configuration management
 struct RemasterConfig
 {
+    // Remaster options dialog behavior
+    struct {
+        bool showOptionsAtStartup;
+    } ui;
+
     // Controller settings
     struct {
         float analogDeadzone;
@@ -62,7 +67,23 @@ struct RemasterConfig
         // Light Probes
         bool enableLightProbes;
         float lightProbeIntensity;
+        // Global cinematic color pipeline. Values are deliberately subtle so
+        // original artwork keeps its authored palette while gaining depth.
+        bool enableColorGrading;
+        float exposure;
+        float contrast;
+        float saturation;
+        float temperature;
+        float shadowLift;
+        float highlightRolloff;
     } postProcessing;
+
+    // Animation presentation. Root motion remains linear/gameplay-authored;
+    // smoothing is applied only to the rendered skeletal pose.
+    struct {
+        bool enablePoseSmoothing;
+        float poseSmoothingStrength;
+    } animation;
 
     // External music settings (for future implementation)
     struct {
@@ -109,6 +130,7 @@ struct RemasterConfig
 
     // Debug / diagnostics settings
     struct {
+        bool enableGraphicsValidation; // Opt-in graphics API validation layers (developer use)
         bool logLifeScripts;    // Log every LIFE macro dispatch to console (default: false)
         bool dumpLifeScripts;   // Dump all LISTLIFE scripts to file on startup (default: false)
         bool generateNativeLifeScripts; // Generate native C code for all life scripts (default: false)

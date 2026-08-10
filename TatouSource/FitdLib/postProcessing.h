@@ -45,6 +45,9 @@ public:
     void setSSGIIntensity(float intensity) { m_ssgiIntensity = intensity; }
     void setSSGINumSamples(int samples) { m_ssgiNumSamples = (samples >= 8 && samples <= 32) ? samples : 16; }
     void setLightProbeIntensity(float intensity) { m_lightProbeIntensity = intensity; }
+    void setColorGradingEnabled(bool enabled) { m_colorGradingEnabled = enabled; }
+    void setColorGrade(float exposure, float contrast, float saturation, float temperature,
+                       float shadowLift, float highlightRolloff);
 
     // Begin scene - render to main framebuffer
     void beginScene();
@@ -109,6 +112,8 @@ private:
     bgfx::UniformHandle u_ssaoParams = BGFX_INVALID_HANDLE;
     bgfx::UniformHandle u_depthParams = BGFX_INVALID_HANDLE;
     bgfx::UniformHandle u_ssgiParams = BGFX_INVALID_HANDLE;
+    bgfx::UniformHandle u_colorGradeParams = BGFX_INVALID_HANDLE;
+    bgfx::UniformHandle u_toneParams = BGFX_INVALID_HANDLE;
 
     // Samplers
     bgfx::UniformHandle s_texColor = BGFX_INVALID_HANDLE;
@@ -134,6 +139,13 @@ private:
     float m_ssgiIntensity = 0.6f;
     int m_ssgiNumSamples = 16;
     float m_lightProbeIntensity = 0.5f;
+    bool m_colorGradingEnabled = true;
+    float m_exposure = 0.0f;
+    float m_contrast = 1.0f;
+    float m_saturation = 1.0f;
+    float m_temperature = 0.0f;
+    float m_shadowLift = 0.0f;
+    float m_highlightRolloff = 0.0f;
 
     int m_width = 0;
     int m_height = 0;

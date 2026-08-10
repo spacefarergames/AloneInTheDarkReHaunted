@@ -48,9 +48,14 @@ void readPakInfo(pakInfoStruct* pPakInfo, FILE* fileHandle)
     pPakInfo->offset = READ_LE_U16(&pPakInfo->offset);
 }
 
-// Memory-buffer equivalent of readPakInfo for embedded data
-static void readPakInfoFromMem(pakInfoStruct* pPakInfo, const unsigned char* data, size_t* offset)
+// Memory-buffer equivalent of readPakInfo for embedded data.
+static bool readPakInfoFromMem(pakInfoStruct* pPakInfo, const unsigned char* data,
+                               size_t dataSize, size_t* offset)
 {
+    const size_t headerSize = 12;
+    if (!pPakInfo || !data || !offset || *offset > dataSize || dataSize - *offset < headerSize)
+        return false;
+
     memcpy(&pPakInfo->discSize, data + *offset, 4); *offset += 4;
     memcpy(&pPakInfo->uncompressedSize, data + *offset, 4); *offset += 4;
     memcpy(&pPakInfo->compressionFlag, data + *offset, 1); *offset += 1;
@@ -60,11 +65,77 @@ static void readPakInfoFromMem(pakInfoStruct* pPakInfo, const unsigned char* dat
     pPakInfo->discSize = READ_LE_U32(&pPakInfo->discSize);
     pPakInfo->uncompressedSize = READ_LE_U32(&pPakInfo->uncompressedSize);
     pPakInfo->offset = READ_LE_U16(&pPakInfo->offset);
+    return true;
 }
 
-// Build the PAK filename used for embedded lookup (e.g. "CAMERA00.PAK")
-static void buildPakFilename(char* out, const char* name)
+static bool readEmbeddedU32(const unsigned char* data, size_t dataSize,
+                            size_t offset, u32* value)
 {
+    if (!data || !value || offset > dataSize || dataSize - offset < sizeof(u32))
+        return false;
+    memcpy(value, data + offset, sizeof(u32));
+    *value = READ_LE_U32(value);
+    return true;
+}
+
+// Validate an embedded entry before any pointer arithmetic, allocation or
+// decompression. Corrupt indices used to turn into unchecked reads beyond the
+// generated archive and could obscure the original stack overwrite.
+static bool parseEmbeddedPakEntry(const unsigned char* data, size_t dataSize, int index,
+                                  pakInfoStruct* pakInfo, size_t* payloadOffset)
+{
+    if (!data || !pakInfo || !payloadOffset || index < 0)
+        return false;
+
+    const size_t tablePos = ((size_t)index + 1u) * sizeof(u32);
+    u32 fileOffset = 0;
+    if (tablePos / sizeof(u32) != (size_t)index + 1u ||
+        !readEmbeddedU32(data, dataSize, tablePos, &fileOffset))
+        return false;
+
+    size_t pos = (size_t)fileOffset;
+    u32 descriptorSize = 0;
+    if (!readEmbeddedU32(data, dataSize, pos, &descriptorSize))
+        return false;
+    pos += sizeof(u32);
+
+    if (descriptorSize != 0)
+    {
+        if (descriptorSize < sizeof(u32))
+            return false;
+        const size_t skip = (size_t)descriptorSize - sizeof(u32);
+        if (pos > dataSize || skip > dataSize - pos)
+            return false;
+        pos += skip;
+    }
+
+    if (!readPakInfoFromMem(pakInfo, data, dataSize, &pos))
+        return false;
+    if (pakInfo->offset < 0 || pos > dataSize || (size_t)pakInfo->offset > dataSize - pos)
+        return false;
+    pos += (size_t)pakInfo->offset;
+
+    const s32 maxPakSize = 16 * 1024 * 1024;
+    if (pakInfo->discSize <= 0 || pakInfo->discSize > maxPakSize ||
+        pakInfo->uncompressedSize <= 0 || pakInfo->uncompressedSize > maxPakSize ||
+        (size_t)pakInfo->discSize > dataSize - pos)
+        return false;
+    if (pakInfo->compressionFlag != 0 && pakInfo->compressionFlag != 1 && pakInfo->compressionFlag != 4)
+        return false;
+
+    *payloadOffset = pos;
+    return true;
+}
+
+// Build the PAK filename used for embedded lookup (e.g. "CAMERA00.PAK").
+// The old implementation hard-coded a 512-byte destination extent even though
+// every caller supplied a 256-byte local array. MSVC's Debug CRT can fill the
+// full declared extent in strcpy_s/strcat_s, corrupting the caller's stack.
+static bool buildPakFilename(char* out, size_t outSize, const char* name)
+{
+    if (!out || outSize == 0 || !name)
+        return false;
+
     const char* base = name;
     const char* p = name;
     while (*p)
@@ -73,8 +144,13 @@ static void buildPakFilename(char* out, const char* name)
             base = p + 1;
         p++;
     }
-    strcpy_s(out, 512, base);
-    strcat_s(out, 512, ".PAK");
+    const int written = snprintf(out, outSize, "%s.PAK", base);
+    if (written < 0 || (size_t)written >= outSize)
+    {
+        out[0] = '\0';
+        return false;
+    }
+    return true;
 }
 
 unsigned int PAK_getNumFiles(const char* name)
@@ -106,14 +182,18 @@ unsigned int PAK_getNumFiles(const char* name)
     // Fall back to embedded data
     {
         char pakName[256];
-        buildPakFilename(pakName, name);
+        if (!buildPakFilename(pakName, sizeof(pakName), name))
+            return 0;
         const unsigned char* embData = nullptr;
         size_t embSize = 0;
         if (getEmbeddedFile(pakName, &embData, &embSize))
         {
+            if (embSize < 8)
+                return 0;
             u32 fileOffset;
-            memcpy(&fileOffset, embData + 4, 4);
-            fileOffset = READ_LE_U32(&fileOffset);
+            if (!readEmbeddedU32(embData, embSize, 4, &fileOffset) ||
+                fileOffset < 8 || fileOffset > embSize || (fileOffset & 3u) != 0)
+                return 0;
             return ((fileOffset / 4) - 2);
         }
     }
@@ -250,32 +330,19 @@ int getPakSize(const char* name, int index)
     // Fall back to embedded data
     {
         char pakName[256];
-        buildPakFilename(pakName, name);
+        if (!buildPakFilename(pakName, sizeof(pakName), name))
+            return 0;
         const unsigned char* embData = nullptr;
         size_t embSize = 0;
         if (getEmbeddedFile(pakName, &embData, &embSize))
         {
-            size_t pos = (size_t)(index + 1) * 4;
-            s32 fileOffset;
-            memcpy(&fileOffset, embData + pos, 4);
-            fileOffset = READ_LE_U32(&fileOffset);
-
-            pos = (size_t)fileOffset;
-            s32 additionalDescriptorSize;
-            memcpy(&additionalDescriptorSize, embData + pos, 4); pos += 4;
-            additionalDescriptorSize = READ_LE_U32(&additionalDescriptorSize);
-            if (additionalDescriptorSize)
-                pos += additionalDescriptorSize - 4;
-
             pakInfoStruct pakInfo;
-            readPakInfoFromMem(&pakInfo, embData, &pos);
-
-            pos += pakInfo.offset;
-
-            // Apply same safety caps as loadPak for consistency
-            const s32 MAX_PAK_SIZE = 16 * 1024 * 1024;
-            if(pakInfo.discSize > MAX_PAK_SIZE || pakInfo.discSize <= 0) pakInfo.discSize = 4096;
-            if(pakInfo.uncompressedSize > MAX_PAK_SIZE || pakInfo.uncompressedSize <= 0) pakInfo.uncompressedSize = 4096;
+            size_t pos = 0;
+            if (!parseEmbeddedPakEntry(embData, embSize, index, &pakInfo, &pos))
+            {
+                printf("[PAK] Invalid embedded entry %d in '%s'\n", index, pakName);
+                return 0;
+            }
 
             if (pakInfo.compressionFlag == 0)
                 return pakInfo.discSize;
@@ -445,26 +512,19 @@ char* loadPak(const char* name, int index)
 	// Fall back to embedded data
 	{
 		char pakName[256];
-		buildPakFilename(pakName, name);
+		if (!buildPakFilename(pakName, sizeof(pakName), name))
+			return NULL;
 		const unsigned char* embData = nullptr;
 		size_t embSize = 0;
 		if (getEmbeddedFile(pakName, &embData, &embSize))
 		{
-			size_t pos = (size_t)(index + 1) * 4;
-			u32 fileOffset;
-			memcpy(&fileOffset, embData + pos, 4);
-			fileOffset = READ_LE_U32(&fileOffset);
-
-			pos = (size_t)fileOffset;
-			u32 additionalDescriptorSize;
-			memcpy(&additionalDescriptorSize, embData + pos, 4); pos += 4;
-			additionalDescriptorSize = READ_LE_U32(&additionalDescriptorSize);
-			if (additionalDescriptorSize)
-				pos += additionalDescriptorSize - 4;
-
 			pakInfoStruct pakInfo;
-			readPakInfoFromMem(&pakInfo, embData, &pos);
-			pos += pakInfo.offset; // skip name buffer
+			size_t pos = 0;
+			if (!parseEmbeddedPakEntry(embData, embSize, index, &pakInfo, &pos))
+			{
+				printf("[PAK] Invalid embedded entry %d in '%s'\n", index, pakName);
+				return NULL;
+			}
 
 			char* ptr = nullptr;
 				switch (pakInfo.compressionFlag)

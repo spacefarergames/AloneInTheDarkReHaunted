@@ -53,15 +53,24 @@ IF(${CMAKE_SYSTEM_NAME} MATCHES Darwin)
         MACOSX_BUNDLE_INFO_PLIST "${CMAKE_CURRENT_SOURCE_DIR}/Info.plist"
     )
 
-    # Collect game assets to embed in Resources
+    # Collect game assets to embed in Resources when they exist at configure time.
+    # Release assets may be staged either next to the executable in the build tree
+    # or in the source tree, depending on which packaging path produced them.
     set(MACOS_ASSETS
         "${CMAKE_BINARY_DIR}/Fitd/aitd_remaster.cfg"
+        "${CMAKE_SOURCE_DIR}/aitd_remaster.cfg"
         "${CMAKE_BINARY_DIR}/Fitd/atlases.hda"
+        "${CMAKE_SOURCE_DIR}/atlases.hda"
         "${CMAKE_BINARY_DIR}/Fitd/audio.hda"
+        "${CMAKE_SOURCE_DIR}/audio.hda"
         "${CMAKE_BINARY_DIR}/Fitd/audio_fre.hda"
+        "${CMAKE_SOURCE_DIR}/audio_fre.hda"
         "${CMAKE_BINARY_DIR}/Fitd/backgrounds_hd.hda"
+        "${CMAKE_SOURCE_DIR}/backgrounds_hd.hda"
         "${CMAKE_BINARY_DIR}/Fitd/BLKCHCRY.TTF"
+        "${CMAKE_SOURCE_DIR}/BLKCHCRY.TTF"
         "${CMAKE_BINARY_DIR}/Fitd/version.txt"
+        "${CMAKE_SOURCE_DIR}/version.txt"
     )
 
     # Mark asset files so CMake places them in Contents/Resources
@@ -74,19 +83,15 @@ IF(${CMAKE_SYSTEM_NAME} MATCHES Darwin)
         endif()
     endforeach()
 
-    # Copy any assets that might not exist yet at configure time via a post-build step
+    # Copy any assets that might not exist yet at configure time via a post-build step.
+    # Missing optional assets should not make the executable link fail.
     add_custom_command(TARGET Fitd POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E make_directory
-            "$<TARGET_BUNDLE_CONTENT_DIR:Fitd>/Resources"
-        COMMAND ${CMAKE_COMMAND} -E copy_if_different
-            "${CMAKE_BINARY_DIR}/Fitd/aitd_remaster.cfg"
-            "${CMAKE_BINARY_DIR}/Fitd/atlases.hda"
-            "${CMAKE_BINARY_DIR}/Fitd/audio.hda"
-            "${CMAKE_BINARY_DIR}/Fitd/audio_fre.hda"
-            "${CMAKE_BINARY_DIR}/Fitd/backgrounds_hd.hda"
-            "${CMAKE_BINARY_DIR}/Fitd/BLKCHCRY.TTF"
-            "${CMAKE_BINARY_DIR}/Fitd/version.txt"
-            "$<TARGET_BUNDLE_CONTENT_DIR:Fitd>/Resources/"
+        COMMAND ${CMAKE_COMMAND}
+            -DDESTINATION="$<TARGET_BUNDLE_CONTENT_DIR:Fitd>/Resources"
+            "-DFILES=${MACOS_ASSETS}"
+            -P "${CMAKE_SOURCE_DIR}/cmake/copy_existing_files.cmake"
+        COMMAND chmod +x
+            "$<TARGET_BUNDLE_CONTENT_DIR:Fitd>/MacOS/Tatou"
         COMMENT "Copying game assets into Tatou.app/Contents/Resources"
     )
 endif()
@@ -109,7 +114,7 @@ else()
     endif()
 endif()
 
-set_target_properties(Fitd PROPERTIES VS_DEBUGGER_WORKING_DIRECTORY "D:/SteamLibrary/steamapps/common/Alone in the Dark 2/INDARK2")
+set_target_properties(Fitd PROPERTIES VS_DEBUGGER_WORKING_DIRECTORY "$<TARGET_FILE_DIR:Fitd>")
 
 # Hide console window in Release builds, show in Debug builds
 if(CMAKE_BUILD_TYPE STREQUAL "Release" OR CMAKE_BUILD_TYPE STREQUAL "RelWithDebInfo" OR CMAKE_BUILD_TYPE STREQUAL "MinSizeRel")

@@ -1,5 +1,5 @@
-$input a_position, a_color0, a_color1
-$output v_color0, v_color1
+$input a_position, a_texcoord0, a_color0, a_color1
+$output v_color0, v_color1, v_texcoord0
 
 #include <bgfx_shader.sh>
 
@@ -17,4 +17,5 @@ void main()
     // Pass through alpha and isDirt flag to pixel shader
     v_color0 = a_color0;  // alpha
     v_color1 = a_color1;  // isDirt (0.0 = white dust, 1.0 = brown dirt)
+    v_texcoord0 = a_texcoord0;
 }

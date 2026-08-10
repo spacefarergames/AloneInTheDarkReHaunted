@@ -18,6 +18,9 @@ RemasterConfig g_remasterConfig;
 
 void initDefaultRemasterConfig()
 {
+    // Show the one-time boot configuration until the player opts out.
+    g_remasterConfig.ui.showOptionsAtStartup = true;
+
     // Controller defaults
     g_remasterConfig.controller.analogDeadzone = 0.15f;
     g_remasterConfig.controller.analogSensitivity = 1.0f;
@@ -59,6 +62,16 @@ void initDefaultRemasterConfig()
     // Light Probe defaults
     g_remasterConfig.postProcessing.enableLightProbes = false;
     g_remasterConfig.postProcessing.lightProbeIntensity = 0.5f;
+    g_remasterConfig.postProcessing.enableColorGrading = true;
+    g_remasterConfig.postProcessing.exposure = 0.05f;
+    g_remasterConfig.postProcessing.contrast = 1.06f;
+    g_remasterConfig.postProcessing.saturation = 0.96f;
+    g_remasterConfig.postProcessing.temperature = -0.02f;
+    g_remasterConfig.postProcessing.shadowLift = 0.012f;
+    g_remasterConfig.postProcessing.highlightRolloff = 0.18f;
+
+    g_remasterConfig.animation.enablePoseSmoothing = true;
+    g_remasterConfig.animation.poseSmoothingStrength = 0.72f;
 
     // External music defaults
     g_remasterConfig.music.enableExternalMusic = false;
@@ -108,6 +121,7 @@ void initDefaultRemasterConfig()
     g_remasterConfig.gameData.jackMode = false;    // Default to AITD1 (INDARK); enable to run Jack in the Dark from JACK folder
 
     // Debug / diagnostics defaults
+    g_remasterConfig.debug.enableGraphicsValidation = false; // Avoid DXGI 0x87A exceptions in normal Debug play
     g_remasterConfig.debug.logLifeScripts = false;  // Don't log life scripts by default (very verbose)
     g_remasterConfig.debug.dumpLifeScripts = false;   // Don't dump life scripts by default
     g_remasterConfig.debug.generateNativeLifeScripts = false; // Don't generate native C code by default
@@ -139,8 +153,12 @@ void loadRemasterConfig()
         
         if (sscanf(line, "%127s = %127s", key, value) == 2)
         {
+            // Remaster options dialog behavior
+            if (strcmp(key, "interface.showOptionsAtStartup") == 0)
+                g_remasterConfig.ui.showOptionsAtStartup = (strcmp(value, "true") == 0 || strcmp(value, "1") == 0);
+
             // Controller settings
-            if (strcmp(key, "controller.deadzone") == 0)
+            else if (strcmp(key, "controller.deadzone") == 0)
                 g_remasterConfig.controller.analogDeadzone = (float)atof(value);
             else if (strcmp(key, "controller.sensitivity") == 0)
                 g_remasterConfig.controller.analogSensitivity = (float)atof(value);
@@ -249,6 +267,26 @@ void loadRemasterConfig()
                 g_remasterConfig.postProcessing.enableLightProbes = (strcmp(value, "true") == 0 || strcmp(value, "1") == 0);
             else if (strcmp(key, "postprocessing.lightProbeIntensity") == 0)
                 g_remasterConfig.postProcessing.lightProbeIntensity = (float)atof(value);
+            else if (strcmp(key, "postprocessing.colorGrading") == 0)
+                g_remasterConfig.postProcessing.enableColorGrading = (strcmp(value, "true") == 0 || strcmp(value, "1") == 0);
+            else if (strcmp(key, "postprocessing.exposure") == 0)
+                g_remasterConfig.postProcessing.exposure = (float)atof(value);
+            else if (strcmp(key, "postprocessing.contrast") == 0)
+                g_remasterConfig.postProcessing.contrast = (float)atof(value);
+            else if (strcmp(key, "postprocessing.saturation") == 0)
+                g_remasterConfig.postProcessing.saturation = (float)atof(value);
+            else if (strcmp(key, "postprocessing.temperature") == 0)
+                g_remasterConfig.postProcessing.temperature = (float)atof(value);
+            else if (strcmp(key, "postprocessing.shadowLift") == 0)
+                g_remasterConfig.postProcessing.shadowLift = (float)atof(value);
+            else if (strcmp(key, "postprocessing.highlightRolloff") == 0)
+                g_remasterConfig.postProcessing.highlightRolloff = (float)atof(value);
+
+            // Animation presentation
+            else if (strcmp(key, "animation.poseSmoothing") == 0)
+                g_remasterConfig.animation.enablePoseSmoothing = (strcmp(value, "true") == 0 || strcmp(value, "1") == 0);
+            else if (strcmp(key, "animation.poseSmoothingStrength") == 0)
+                g_remasterConfig.animation.poseSmoothingStrength = (float)atof(value);
 
             // Controls settings
             else if (strcmp(key, "controls.key.up") == 0)
@@ -315,6 +353,8 @@ void loadRemasterConfig()
                 g_remasterConfig.gameData.jackMode = (strcmp(value, "true") == 0 || strcmp(value, "1") == 0);
 
             // Debug / diagnostics settings
+            else if (strcmp(key, "debug.graphicsValidation") == 0)
+                g_remasterConfig.debug.enableGraphicsValidation = (strcmp(value, "true") == 0 || strcmp(value, "1") == 0);
             else if (strcmp(key, "debug.logLifeScripts") == 0)
                 g_remasterConfig.debug.logLifeScripts = (strcmp(value, "true") == 0 || strcmp(value, "1") == 0);
             else if (strcmp(key, "debug.dumpLifeScripts") == 0)
@@ -382,6 +422,10 @@ void saveRemasterConfig()
     fprintf(file, "# Alone In The Dark - Remaster Configuration\n");
     fprintf(file, "# This file is automatically generated\n\n");
 
+    fprintf(file, "# Remaster Options Dialog\n");
+    fprintf(file, "interface.showOptionsAtStartup = %s\n\n",
+        g_remasterConfig.ui.showOptionsAtStartup ? "true" : "false");
+
     fprintf(file, "# Controller Settings\n");
     fprintf(file, "controller.enable = %s\n", g_remasterConfig.controller.enableController ? "true" : "false");
     fprintf(file, "controller.deadzone = %.2f\n", g_remasterConfig.controller.analogDeadzone);
@@ -436,6 +480,17 @@ void saveRemasterConfig()
     // Light Probe settings
     fprintf(file, "postprocessing.lightProbes = %s\n", g_remasterConfig.postProcessing.enableLightProbes ? "true" : "false");
     fprintf(file, "postprocessing.lightProbeIntensity = %.2f\n", g_remasterConfig.postProcessing.lightProbeIntensity);
+    fprintf(file, "postprocessing.colorGrading = %s\n", g_remasterConfig.postProcessing.enableColorGrading ? "true" : "false");
+    fprintf(file, "postprocessing.exposure = %.3f\n", g_remasterConfig.postProcessing.exposure);
+    fprintf(file, "postprocessing.contrast = %.3f\n", g_remasterConfig.postProcessing.contrast);
+    fprintf(file, "postprocessing.saturation = %.3f\n", g_remasterConfig.postProcessing.saturation);
+    fprintf(file, "postprocessing.temperature = %.3f\n", g_remasterConfig.postProcessing.temperature);
+    fprintf(file, "postprocessing.shadowLift = %.3f\n", g_remasterConfig.postProcessing.shadowLift);
+    fprintf(file, "postprocessing.highlightRolloff = %.3f\n", g_remasterConfig.postProcessing.highlightRolloff);
+
+    fprintf(file, "\n# Animation Presentation\n");
+    fprintf(file, "animation.poseSmoothing = %s\n", g_remasterConfig.animation.enablePoseSmoothing ? "true" : "false");
+    fprintf(file, "animation.poseSmoothingStrength = %.2f\n", g_remasterConfig.animation.poseSmoothingStrength);
 
     fprintf(file, "\n# Controls Settings\n");
     fprintf(file, "controls.key.up = %d\n", g_remasterConfig.controls.keyBindings[0]);
@@ -475,6 +530,7 @@ void saveRemasterConfig()
     fprintf(file, "gamedata.jackmode = %s\n", g_remasterConfig.gameData.jackMode ? "true" : "false");
 
     fprintf(file, "\n# Debug / Diagnostics Settings\n");
+    fprintf(file, "debug.graphicsValidation = %s\n", g_remasterConfig.debug.enableGraphicsValidation ? "true" : "false");
     fprintf(file, "debug.logLifeScripts = %s\n", g_remasterConfig.debug.logLifeScripts ? "true" : "false");
     fprintf(file, "debug.dumpLifeScripts = %s\n", g_remasterConfig.debug.dumpLifeScripts ? "true" : "false");
     fprintf(file, "debug.generateNativeLifeScripts = %s\n", g_remasterConfig.debug.generateNativeLifeScripts ? "true" : "false");

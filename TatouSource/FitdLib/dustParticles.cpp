@@ -27,6 +27,7 @@ DustParticleSystem* g_dustParticles = nullptr;
 struct ParticleVertex
 {
     float x, y, z;
+    float u, v;
     float alpha;
     float isDirt;  // 0.0 = white dust, 1.0 = brown dirt
 
@@ -35,6 +36,7 @@ struct ParticleVertex
         ms_layout
             .begin()
             .add(bgfx::Attrib::Position, 3, bgfx::AttribType::Float)
+            .add(bgfx::Attrib::TexCoord0, 2, bgfx::AttribType::Float)
             .add(bgfx::Attrib::Color0, 1, bgfx::AttribType::Float)
             .add(bgfx::Attrib::Color1, 1, bgfx::AttribType::Float)
             .end();
@@ -81,19 +83,20 @@ void DustParticleSystem::init()
     {
         Particle& p = m_particles[i];
 
-        // Screen-space coordinates - START IN CENTER FOR TESTING
-        p.x = randomFloat(150.0f, 170.0f);  // Center screen X
-        p.y = randomFloat(90.0f, 110.0f);   // Center screen Y
+        // Screen-space coordinates distributed across and just above the view.
+        p.x = randomFloat(0.0f, 320.0f);
+        p.y = randomFloat(-20.0f, 200.0f);
         p.z = randomFloat(500.0f, 950.0f);
 
-        // Very slow drift in screen space
-        p.vx = randomFloat(-5.0f, 5.0f);
-        p.vy = randomFloat(-10.0f, -2.0f);  // Slight downward drift
-        p.vz = randomFloat(-10.0f, 10.0f);
+        // Slow, subtle drift in screen space.
+        p.vx = randomFloat(-2.0f, 2.0f);
+        p.vy = randomFloat(1.0f, 5.0f);
+        p.vz = randomFloat(-3.0f, 3.0f);
 
-        // Random size and alpha
-        p.size = randomFloat(0.5f, 2.0f);
-        p.alpha = randomFloat(0.7f, 1.0f);  // Full opacity for testing
+        p.size = randomFloat(0.6f, 1.8f);
+        p.baseAlpha = randomFloat(0.12f, 0.32f);
+        p.alpha = p.baseAlpha;
+        p.driftPhase = randomFloat(0.0f, 6.2831853f);
 
         // Random lifetime
         p.maxLife = randomFloat(10.0f, 20.0f);
@@ -127,25 +130,31 @@ void DustParticleSystem::updateParticle(Particle& p, float deltaTime)
     p.y += p.vy * deltaTime;
     p.z += p.vz * deltaTime;
 
-    // Add gentle sine wave motion for floating effect
-    static float timeAccum = 0.0f;
-    timeAccum += deltaTime;
-    p.x += sin(timeAccum * 0.3f + p.y * 0.01f) * 2.0f * deltaTime;
+    // Add gentle per-particle sine motion for floating effect.
+    p.x += sinf(m_timeAccum * 0.65f + p.driftPhase) * 1.4f * deltaTime;
 
     // Update lifetime
     p.life -= deltaTime;
 
     // Respawn particle if dead or out of screen bounds
     if (p.life <= 0.0f || 
-        p.y < -10.0f || p.y > 210.0f ||
+        p.y < -30.0f || p.y > 210.0f ||
         p.x < -10.0f || p.x > 330.0f ||
         p.z < 400.0f || p.z > 1000.0f)
     {
-        // Reset particle at top of screen
+        // Reset atmospheric dust above or across the screen.
         p.x = randomFloat(0.0f, 320.0f);
         p.y = randomFloat(-20.0f, 0.0f);
         p.z = randomFloat(500.0f, 950.0f);
+        p.vx = randomFloat(-2.0f, 2.0f);
+        p.vy = randomFloat(1.0f, 5.0f);
+        p.vz = randomFloat(-3.0f, 3.0f);
+        p.size = randomFloat(0.6f, 1.8f);
+        p.baseAlpha = randomFloat(0.12f, 0.32f);
+        p.driftPhase = randomFloat(0.0f, 6.2831853f);
+        p.maxLife = randomFloat(10.0f, 20.0f);
         p.life = p.maxLife;
+        p.isDirt = false;
     }
 
     // Fade in/out based on lifetime
@@ -153,12 +162,16 @@ void DustParticleSystem::updateParticle(Particle& p, float deltaTime)
     if (lifeFraction > 0.85f)
     {
         // Fade in at start
-        p.alpha = (1.0f - lifeFraction) * 5.0f * randomFloat(0.15f, 0.35f);
+        p.alpha = (1.0f - lifeFraction) * (1.0f / 0.15f) * p.baseAlpha;
     }
     else if (lifeFraction < 0.15f)
     {
         // Fade out at end
-        p.alpha = lifeFraction * (1.0f / 0.15f) * randomFloat(0.15f, 0.35f);
+        p.alpha = lifeFraction * (1.0f / 0.15f) * p.baseAlpha;
+    }
+    else
+    {
+        p.alpha = p.baseAlpha;
     }
 }
 
@@ -167,7 +180,11 @@ void DustParticleSystem::update(float deltaTime)
     if (!m_enabled || !m_initialized)
         return;
 
-    // Update all particles
+    if (deltaTime > 0.1f)
+        deltaTime = 0.1f;
+
+    m_timeAccum += deltaTime;
+
     for (int i = 0; i < MAX_PARTICLES; i++)
     {
         updateParticle(m_particles[i], deltaTime);
@@ -214,8 +231,6 @@ void DustParticleSystem::render(bgfx::ViewId viewId)
     ParticleVertex* vertices = (ParticleVertex*)tvb.data;
     int vertexIdx = 0;
 
-    const float particleSize = 10.0f; // Very large for testing visibility
-
     for (int i = 0; i < MAX_PARTICLES; i++)
     {
         const Particle& p = m_particles[i];
@@ -225,41 +240,26 @@ void DustParticleSystem::render(bgfx::ViewId viewId)
         float px = p.x;
         float py = p.y;
         float pz = p.z;
-        float size = particleSize;
+        float size = p.size * (p.isDirt ? 2.4f : 1.6f);
         float isDirt = p.isDirt ? 1.0f : 0.0f;
 
-        // Create a small quad around the particle center
-        // Triangle 1
-        vertices[vertexIdx].x = px - size; vertices[vertexIdx].y = py - size; vertices[vertexIdx].z = pz;
-        vertices[vertexIdx].alpha = p.alpha;
-        vertices[vertexIdx].isDirt = isDirt;
-        vertexIdx++;
+        // UVs let the fragment shader turn the card into a soft mote instead
+        // of exposing the old square particle geometry.
+        auto addVertex = [&](float x, float y, float u, float v)
+        {
+            ParticleVertex& out = vertices[vertexIdx++];
+            out.x = x; out.y = y; out.z = pz;
+            out.u = u; out.v = v;
+            out.alpha = p.alpha;
+            out.isDirt = isDirt;
+        };
 
-        vertices[vertexIdx].x = px + size; vertices[vertexIdx].y = py - size; vertices[vertexIdx].z = pz;
-        vertices[vertexIdx].alpha = p.alpha;
-        vertices[vertexIdx].isDirt = isDirt;
-        vertexIdx++;
-
-        vertices[vertexIdx].x = px + size; vertices[vertexIdx].y = py + size; vertices[vertexIdx].z = pz;
-        vertices[vertexIdx].alpha = p.alpha;
-        vertices[vertexIdx].isDirt = isDirt;
-        vertexIdx++;
-
-        // Triangle 2
-        vertices[vertexIdx].x = px - size; vertices[vertexIdx].y = py - size; vertices[vertexIdx].z = pz;
-        vertices[vertexIdx].alpha = p.alpha;
-        vertices[vertexIdx].isDirt = isDirt;
-        vertexIdx++;
-
-        vertices[vertexIdx].x = px + size; vertices[vertexIdx].y = py + size; vertices[vertexIdx].z = pz;
-        vertices[vertexIdx].alpha = p.alpha;
-        vertices[vertexIdx].isDirt = isDirt;
-        vertexIdx++;
-
-        vertices[vertexIdx].x = px - size; vertices[vertexIdx].y = py + size; vertices[vertexIdx].z = pz;
-        vertices[vertexIdx].alpha = p.alpha;
-        vertices[vertexIdx].isDirt = isDirt;
-        vertexIdx++;
+        addVertex(px - size, py - size, 0.0f, 0.0f);
+        addVertex(px + size, py - size, 1.0f, 0.0f);
+        addVertex(px + size, py + size, 1.0f, 1.0f);
+        addVertex(px - size, py - size, 0.0f, 0.0f);
+        addVertex(px + size, py + size, 1.0f, 1.0f);
+        addVertex(px - size, py + size, 0.0f, 1.0f);
     }
 
     // Set state for transparent particles
@@ -313,7 +313,9 @@ void DustParticleSystem::spawnDirtParticles(int worldX, int worldY, int worldZ, 
 
             // Brown dirt particles - larger and more visible than dust
             p.size = randomFloat(1.5f, 3.0f);
-            p.alpha = randomFloat(0.4f, 0.7f);
+            p.baseAlpha = randomFloat(0.35f, 0.65f);
+            p.alpha = p.baseAlpha;
+            p.driftPhase = randomFloat(0.0f, 6.2831853f);
 
             // Short lifetime for dirt puffs
             p.maxLife = randomFloat(0.8f, 1.5f);

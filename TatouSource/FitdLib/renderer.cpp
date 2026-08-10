@@ -1109,6 +1109,23 @@ void renderPoly(primEntryStruct* pEntry) // poly
     {
         if (g_gameId == JACK)
         {
+            if (bgfx::isValid(s_currentAtlas->rampTexture)
+                && pEntry->originalPrimIndex < (int)s_currentAtlas->rampPolyUVs.size())
+            {
+                AtlasPolyUVs& uvs = s_currentAtlas->rampPolyUVs[pEntry->originalPrimIndex];
+                if (!uvs.u.empty() && (int)uvs.u.size() >= pEntry->numOfVertices)
+                {
+                    float uvArray[NUM_MAX_VERTEX_IN_PRIM * 2];
+                    for (int i = 0; i < pEntry->numOfVertices; i++)
+                    {
+                        uvArray[i * 2 + 0] = uvs.u[i];
+                        uvArray[i * 2 + 1] = uvs.v[i];
+                    }
+                    osystem_fillPolyTextured((float*)pEntry->vertices, pEntry->numOfVertices, uvArray, s_currentAtlas->rampTexture);
+                    return;
+                }
+            }
+
             if (bgfx::isValid(s_currentAtlas->flatTexture)
                 && pEntry->originalPrimIndex < (int)s_currentAtlas->flatPolyUVs.size())
             {
@@ -1211,11 +1228,8 @@ void renderSphere(primEntryStruct* pEntry) // sphere
 
     transformedSize = (((float)pEntry->size * (float)cameraFovX) / (float)(pEntry->vertices[0].Z+cameraPerspective));
 
-    // NOTE: The atlas cell index counter (numSpheresPrimitives) is advanced
-    // inside osystem_drawPoint (the backend for osystem_drawSphere), so we
-    // must NOT increment it here too - that double-increment was causing
-    // every sphere to sample the wrong (usually empty) atlas cell, making
-    // spheres invisible.
+    // NOTE: The atlas cell index counter is advanced inside the BGFX sphere
+    // backend, so we must NOT increment it here too.
 
     osystem_drawSphere(pEntry->vertices[0].X,pEntry->vertices[0].Y,pEntry->vertices[0].Z,pEntry->color, pEntry->material, transformedSize);
 }
@@ -1246,8 +1260,9 @@ void setCurrentBodyNum(int bodyNum, sBody* pBody, const std::string& hqrName)
 {
     s_currentBodyNum = bodyNum;  // Track current body for special rendering rules
 
-    // Only load texture atlases when HD backgrounds are enabled
-    if (isHDBackgroundEnabled())
+    // JACK/Grace uses model atlases independently of HD backgrounds. Other
+    // games keep the existing HD-background gate for atlas replacement.
+    if (g_gameId == JACK || isHDBackgroundEnabled())
     {
         // Namespace atlases per game so JACK and AITD1 (which both use
         // "LISTBODY" as the HQR name) don't collide on disk or in cache.

@@ -15,6 +15,7 @@
 #include <cmath>
 #include <cstdlib>
 #include <ctime>
+#include <algorithm>
 
 // Global blood particle system instance
 BloodParticleSystem* g_bloodParticleSystem = nullptr;
@@ -91,12 +92,6 @@ void BloodParticleSystem::spawnBloodSplatter(float x, float y, float z,
                               velX, velY, velZ, lifetime, size);
     }
 
-    static int debugSpatterCount = 0;
-    if (debugSpatterCount++ % 10 == 0)
-    {
-        printf("[BLOOD-DEBUG] Spawned blood splatter at (%.1f, %.1f, %.1f) with %d particles\n",
-               x, y, z, particleCount);
-    }
 }
 
 void BloodParticleSystem::spawnBloodSpray(float x, float y, float z,
@@ -158,17 +153,15 @@ void BloodParticleSystem::spawnBloodSpray(float x, float y, float z,
                               velX, velY, velZ, lifetime, size);
     }
 
-    printf("[BLOOD-DEBUG] Spawned blood spray at (%.1f, %.1f, %.1f) with %d particles\n",
-           x, y, z, particleCount);
 }
 
 void BloodParticleSystem::update(float deltaTime)
 {
-    auto it = particles.begin();
-    while (it != particles.end())
-    {
-        BloodParticle& p = *it;
+    if (deltaTime > 0.1f)
+        deltaTime = 0.1f;
 
+    for (BloodParticle& p : particles)
+    {
         // Apply gravity
         p.velY += BloodParticle::GRAVITY * deltaTime;
 
@@ -196,16 +189,12 @@ void BloodParticleSystem::update(float deltaTime)
             p.alpha = 1.0f;
         }
 
-        // Remove if dead
-        if (p.lifetime <= 0.0f)
-        {
-            it = particles.erase(it);
-        }
-        else
-        {
-            ++it;
-        }
     }
+
+    particles.erase(
+        std::remove_if(particles.begin(), particles.end(),
+            [](const BloodParticle& p) { return p.lifetime <= 0.0f; }),
+        particles.end());
 }
 
 void BloodParticleSystem::render()
