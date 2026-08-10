@@ -217,7 +217,9 @@ All remaster features are configurable through `aitd_remaster.cfg` — see [`fit
 ---
 
 ## Configuration
+<img width="1069" height="762" alt="image" src="https://github.com/user-attachments/assets/10519c13-ce2e-4c75-84a2-ea852cc4cff2" />
 
+Since 2.4 update, Re-Haunted now has a built in Options Dialog which can now be triggered with HOME/F1 and on startup.
 Copy `fitd_remaster.cfg.example` to `aitd_remaster.cfg` alongside the game data and edit to taste. Key sections:
 
 | Section | Key Settings |
