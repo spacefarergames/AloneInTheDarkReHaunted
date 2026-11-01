@@ -276,6 +276,26 @@ extern int unkScreenVar2;
 
 extern std::vector<s16> CVars;
 
+// Smoke cloud (special effect 4) timing in timer ticks, from the original engine
+// (INDARK.EXE 17ae:054b): FOG_FLAG becomes 2 (the player coughs) at HIT, the cloud
+// spreads until FADE, shrinks away and ends at END.
+#define SMOKE_CLOUD_HIT  480
+#define SMOKE_CLOUD_FADE 540
+#define SMOKE_CLOUD_END  660
+// Its puffs (INDARK.EXE 17ae:0430 / 17ae:085f): each moves from the centre to a
+// random X/Z target within SPREAD, reaching it at MOVE ticks, SMOKE_HEIGHT above
+// the spawn point (Y is down); its radius is the cloud's age until FADE, then
+// 5 * (END - age). The whole cloud turns about the vertical axis: the original adds
+// 4 to its beta per drawn frame; here 4 per SMOKE_TURN_TICKS ticks (an estimate of
+// the DOS frame rate, ~20 fps) so the speed doesn't depend on the frame rate.
+#define SMOKE_NUM_PUFFS  20
+#define SMOKE_SPREAD     2000
+#define SMOKE_MOVE       600
+#define SMOKE_HEIGHT     (-200)
+#define SMOKE_TURN_TICKS 3
+#define SMOKE_COLOR      0xB0
+#define SMOKE_MATERIAL   2      // transparent
+
 extern char* PtrPrioritySample;
 
 extern char* PtrFont;

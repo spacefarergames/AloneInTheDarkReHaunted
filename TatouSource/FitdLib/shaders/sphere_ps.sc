@@ -9,6 +9,7 @@ uniform vec4 u_specularParams;      // x: specular intensity, y: specular power,
 uniform vec4 u_specularColor;       // RGB specular highlight color (xyz), alpha unused
 
 #include "bgfx_shader.sh"
+#include "modelLighting.sh"
 #include "palette.sh"
 
 // Sphere atlas texture sampler (for textured sphere atlases)
@@ -93,4 +94,5 @@ void main()
         vec3 specular = u_specularColor.rgb * u_specularParams.x * specularAmount;
         gl_FragColor.rgb = min(vec3_splat(1.0), gl_FragColor.rgb + specular);
     }
+    gl_FragColor = applyModelAmbient(gl_FragColor);
 }

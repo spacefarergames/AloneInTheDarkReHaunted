@@ -25,4 +25,11 @@ extern int numSequenceParam;
 
 extern sequenceParamStruct sequenceParams[NUM_MAX_SEQUENCE_PARAM];
 
+// Incremental full-game movie extraction. One call processes one frame so
+// normal gameplay and rendering continue between source-dump operations.
+void beginFullSequenceDump();
+bool pumpFullSequenceDumpFrame();
+bool isFullSequenceDumpActive();
+bool isSequencePlaybackActive();
+
 #endif // _SEQUENCE_H_

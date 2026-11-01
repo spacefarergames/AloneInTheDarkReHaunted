@@ -15,8 +15,7 @@
 // and outSize set to its length. The data pointer is valid for the lifetime
 // of the program (static storage).
 //
-// getEmbeddedFile() dispatches to either the AITD1 or the JACK (Jack in the
-// Dark) embedded data set based on g_remasterConfig.gameData.jackMode, so
+// getEmbeddedFile() dispatches to the selected game's embedded data set, so
 // callers don't need to care which game is active.
 bool getEmbeddedFile(const char* filename, const unsigned char** outData, size_t* outSize);
 
@@ -24,3 +23,7 @@ bool getEmbeddedFile(const char* filename, const unsigned char** outData, size_t
 // when you need to bypass the active-mode dispatch above.
 bool getEmbeddedAitd1File(const char* filename, const unsigned char** outData, size_t* outSize);
 bool getEmbeddedJackFile (const char* filename, const unsigned char** outData, size_t* outSize);
+bool getEmbeddedAitd2File(const char* filename, const unsigned char** outData, size_t* outSize);
+bool getEmbeddedAitd3File(const char* filename, const unsigned char** outData, size_t* outSize);
+
+bool preferEmbeddedGameData();

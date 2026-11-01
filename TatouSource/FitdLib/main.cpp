@@ -20,10 +20,15 @@ extern void playMenuSound(const char* soundName);
 
 #include "hdBackground.h"
 #include "nativeLife.h"
+#include "pickupPromptGuard.h"
+#include "lifeBugfixes.h"
+#include "lightProbes.h"
 #include "bytecodePatches.h"
 #include "bgAnimGrassMask.h"
 #include "hdBackgroundRenderer.h"
 #include "resourceGC.h"
+#include "hdAutoUpscale.h"
+#include "backgroundDump.h"
 #include "track.h"
 #include "lanternLighting.h"
 #include "menuMouse.h"
@@ -164,110 +169,6 @@ int getCVarsIdx(int searchedType)
     return getCVarsIdx((enumCVars)searchedType);
 }
 
-const unsigned char defaultPalette[0x30] =
-{
-    0x00,
-    0x00,
-    0x00,
-    0x3F,
-    0x3F,
-    0x3F,
-    0x0C,
-    0x0C,
-    0x0E,
-    0x30,
-    0x2F,
-    0x3F,
-    0x23,
-    0x2C,
-    0x23,
-    0x2A,
-    0x1D,
-    0x2A,
-    0x2A,
-    0x21,
-    0x18,
-    0x3F,
-    0x05,
-    0x2A,
-    0x12,
-    0x14,
-    0x18,
-    0x31,
-    0x15,
-    0x17,
-    0x15,
-    0x25,
-    0x15,
-    0x15,
-    0x2F,
-    0x3F,
-    0x3F,
-    0x22,
-    0x15,
-    0x2B,
-    0x15,
-    0x3F,
-    0x3F,
-    0x3F,
-    0x21,
-    0x3F,
-    0x3F,
-    0x3F
-};
-
-const unsigned char defaultPaletteAITD3[0x30] =
-{
-    0x00,
-    0x00,
-    0x00,
-    0xFC,
-    0xFC,
-    0xFC,
-    0x30,
-    0x30,
-    0x38,
-    0xC0,
-    0xBC,
-    0xFC,
-    0x78,
-    0x58,
-    0x3C,
-    0x00,
-    0x00,
-    0x00,
-    0xF0,
-    0x70,
-    0x10,
-    0xFC,
-    0xFC,
-    0xFC,
-    0x48,
-    0x50,
-    0x60,
-    0xC4,
-    0x54,
-    0x5C,
-    0x54,
-    0x94,
-    0x54,
-    0x54,
-    0xBC,
-    0xFC,
-    0xFC,
-    0x88,
-    0x54,
-    0xAC,
-    0x54,
-    0xFC,
-    0xFC,
-    0xFC,
-    0xFC,
-    0xFC,
-    0xFC,
-    0xF8
-};
-
 void executeFoundLife(int objIdx)
 {
     int var_2;
@@ -296,7 +197,7 @@ void executeFoundLife(int objIdx)
 
     if (currentLifeNum != -1 && currentLifePtr != nullptr)
     {
-        lifeOffset = (int)((currentLifePtr - HQR_Get(listLife, currentActorLifeNum)) / 2);
+        lifeOffset = (int)((currentLifePtr - lifeBugfixPatchLife(currentActorLifeNum, HQR_Get(listLife, currentActorLifeNum))) / 2);
     }
     else
     {
@@ -360,7 +261,7 @@ void executeFoundLife(int objIdx)
     if (currentActorLifeNum != -1 && currentLifePtr != nullptr)
     {
         currentLifeNum = currentActorLifeNum;
-        currentLifePtr = HQR_Get(listLife, currentLifeNum) + lifeOffset * 2;
+        currentLifePtr = lifeBugfixPatchLife(currentLifeNum, HQR_Get(listLife, currentLifeNum)) + lifeOffset * 2;
     }
 }
 
@@ -1316,6 +1217,8 @@ void LoadWorld(void)
     int i;
     int choosePersoBackup;
 
+    pickupPromptGuardReset();
+
     {
         const unsigned char* embData = nullptr;
         size_t embSize = 0;
@@ -1642,24 +1545,7 @@ void loadCamera(int cameraIdx)
     if (g_gameId >= JACK)
     {
         copyPalette(aux + 64000, currentGamePalette);
-
-        if (g_gameId == AITD3)
-        {
-            for (int i = 0; i < 16; i++) {
-                currentGamePalette[i][0] = defaultPaletteAITD3[i * 3 + 0];
-                currentGamePalette[i][1] = defaultPaletteAITD3[i * 3 + 1];
-                currentGamePalette[i][2] = defaultPaletteAITD3[i * 3 + 2];
-            }
-        }
-        else
-        {
-            for (int i = 0; i < 16; i++) {
-                currentGamePalette[i][0] = defaultPalette[i * 3 + 0];
-                currentGamePalette[i][1] = defaultPalette[i * 3 + 1];
-                currentGamePalette[i][2] = defaultPalette[i * 3 + 2];
-            }
-        }
-        convertPaletteIfRequired(currentGamePalette);
+        prepareCameraPalette(currentGamePalette);
 
         osystem_setPalette(&currentGamePalette);
     }
@@ -1680,12 +1566,16 @@ void loadCamera(int cameraIdx)
     if (g_gameId == AITD1 && g_roomIsDark)
         bgSuffix = "DARK";
 
+    if (g_lightProbeManager)
+        g_lightProbeManager->setScene(g_currentFloor, cameraIdx);
+
     HDBackgroundInfo* hdBg = nullptr;
     bool isFromCache = false;
 
     // Check preload cache first (only for standard camera loads, not special ITD_RESS overrides)
     // Note: Only static backgrounds are cached; animated ones are always loaded fresh
-    if (useSpecial == -1 && areHDBackgroundsPreloaded())
+    // (not when HD backgrounds were switched off after the floor was preloaded)
+    if (useSpecial == -1 && isHDBackgroundEnabled() && areHDBackgroundsPreloaded())
     {
         hdBg = getPreloadedHDBackground(cameraIdx, bgSuffix);
         isFromCache = (hdBg != nullptr);
@@ -1700,6 +1590,8 @@ void loadCamera(int cameraIdx)
     if (hdBg)
     {
         // HD background available
+        if (g_lightProbeManager)
+            g_lightProbeManager->setBackgroundAmbient(hdBg->data, hdBg->width, hdBg->height, hdBg->channels);
         updateBackgroundTextureHD(hdBg->data, hdBg->width, hdBg->height, hdBg->channels);
 
         // If it's animated, keep it alive for animation updates
@@ -3478,6 +3370,71 @@ void drawBgOverlay(tObject* actorPtr)
 
 extern void clearCurrentAtlas();
 
+// The smoke cloud as the original engine draws it (INDARK.EXE 17ae:085f): each puff
+// sits at its target offset scaled by age / SMOKE_MOVE (no clamp, as the original),
+// SMOKE_HEIGHT above the spawn point; the cloud is turned by the actor's angles plus
+// its own spin, and every puff is a transparent sphere of radius age (then shrinking).
+static void drawSmokeCloud(tObject* actorPtr, const s16* targets, int numPuffs, int age)
+{
+    const int radius = age < SMOKE_CLOUD_FADE ? age : 5 * (SMOKE_CLOUD_END - age);
+    if (radius <= 0)
+        return;
+
+    // same rotation as pointRotate (Z, then Y, then X), without its global state
+    const int beta = actorPtr->beta + age * 4 / SMOKE_TURN_TICKS;
+    const int cosX = cosTable[actorPtr->alpha & 0x3FF], sinX = cosTable[(actorPtr->alpha + 0x100) & 0x3FF];
+    const int cosY = cosTable[beta & 0x3FF], sinY = cosTable[(beta + 0x100) & 0x3FF];
+    const int cosZ = cosTable[actorPtr->gamma & 0x3FF], sinZ = cosTable[(actorPtr->gamma + 0x100) & 0x3FF];
+
+    struct Puff { float x, y, depth, size; };
+    Puff puffs[SMOKE_NUM_PUFFS];
+    int count = 0;
+
+    BBox3D1 = 32000;
+    BBox3D2 = 32000;
+    BBox3D3 = -32000;
+    BBox3D4 = -32000;
+
+    for (int i = 0; i < numPuffs && count < SMOKE_NUM_PUFFS; i++)
+    {
+        int x = targets[i * 3 + 0] * age / SMOKE_MOVE;
+        int y = SMOKE_HEIGHT;
+        int z = targets[i * 3 + 2] * age / SMOKE_MOVE;
+        int t;
+        t = x; x = (((t * sinZ) - (y * cosZ)) >> 16) << 1; y = (((t * cosZ) + (y * sinZ)) >> 16) << 1;
+        t = x; x = (((t * sinY) - (z * cosY)) >> 16) << 1; z = (((t * cosY) + (z * sinY)) >> 16) << 1;
+        t = y; y = (((t * sinX) - (z * cosX)) >> 16) << 1; z = (((t * cosX) + (z * sinX)) >> 16) << 1;
+
+        float wx = (float)(actorPtr->worldX + x) - translateX;
+        float wy = (float)(actorPtr->worldY + y) - translateY;
+        float wz = (float)(actorPtr->worldZ + z) - translateZ;
+
+        transformPoint(&wx, &wy, &wz);
+
+        float depth = wz + cameraPerspective;
+        if (depth <= 50)
+            continue;
+
+        Puff& p = puffs[count++];
+        p.x = ((wx * cameraFovX) / depth) + cameraCenterX;
+        p.y = ((wy * cameraFovY) / depth) + cameraCenterY;
+        p.depth = depth;
+        p.size = ((float)radius * (float)cameraFovX) / depth;
+
+        if (p.x < BBox3D1) BBox3D1 = (int)p.x;
+        if (p.x > BBox3D3) BBox3D3 = (int)p.x;
+        if (p.y < BBox3D2) BBox3D2 = (int)p.y;
+        if (p.y > BBox3D4) BBox3D4 = (int)p.y;
+    }
+
+    // back to front, so the transparent puffs blend over each other
+    std::sort(puffs, puffs + count, [](const Puff& a, const Puff& b) { return a.depth > b.depth; });
+    for (int i = 0; i < count; i++)
+        osystem_drawSphere(puffs[i].x, puffs[i].y, puffs[i].depth, SMOKE_COLOR, SMOKE_MATERIAL, puffs[i].size);
+
+    osystem_flushPendingPrimitives();
+}
+
 void AffSpecialObjet(int actorIdx) // draw flow
 {
     // Clear atlas so particles use palette-based colors, not a stale model atlas
@@ -3487,9 +3444,30 @@ void AffSpecialObjet(int actorIdx) // draw flow
 
     int mode = actorPtr->ANIM;
 
+    // Smoke (mode 4) follows the original engine's timing instead of a frame count
+    // (INDARK.EXE 17ae:054b): FOG_FLAG 1 -> 2 at SMOKE_CLOUD_HIT ticks (the room's
+    // script then makes the player cough and lose health), 2 -> 3 on the next frame,
+    // and at SMOKE_CLOUD_END the cloud ends and FOG_FLAG returns to 0 (a new cloud
+    // may start). Like the original, this is checked while the cloud is drawn.
+    int smokeAge = 0;
+    if (mode == 4)
+    {
+        smokeAge = evalChrono(&actorPtr->CHRONO);
+        s16& fogFlag = CVars[getCVarsIdx(FOG_FLAG)];
+        if (fogFlag == 2)
+            fogFlag = 3;
+        if (smokeAge >= SMOKE_CLOUD_HIT && fogFlag == 1)
+            fogFlag = 2;
+        if (smokeAge >= SMOKE_CLOUD_END)
+        {
+            DeleteObjet(actorIdx);      // clears FOG_FLAG
+            return;
+        }
+    }
+
     // increment frame counter and check lifetime
     actorPtr->numOfFrames++;
-    if (actorPtr->END_FRAME > 0 && actorPtr->numOfFrames >= actorPtr->END_FRAME)
+    if (mode != 4 && actorPtr->END_FRAME > 0 && actorPtr->numOfFrames >= actorPtr->END_FRAME)
     {
         DeleteObjet(actorIdx);
         return;
@@ -3546,6 +3524,12 @@ void AffSpecialObjet(int actorIdx) // draw flow
     s16 numPoints = *(s16*)(data + 2);
     s16* positions = (s16*)(data + 4);
 
+    if (mode == 4)
+    {
+        drawSmokeCloud(actorPtr, positions, numPoints, smokeAge);
+        return;
+    }
+
     if (mode == 0) color = 0x5A; // evaporate: purple
     if (mode == 1) color = 0x28; // blood: bright red
 
@@ -3571,11 +3555,6 @@ void AffSpecialObjet(int actorIdx) // draw flow
             positions[i * 3 + 2] += spreadZ + (rand() % 5) - 2;
             break;
         }
-        case 4: // smoke: particles drift upward slowly
-            positions[i * 3 + 1] -= 2; // rise slowly
-            positions[i * 3 + 0] += (rand() % 5) - 2; // more horizontal drift
-            positions[i * 3 + 2] += (rand() % 5) - 2;
-            break;
         }
     }
 
@@ -3721,6 +3700,24 @@ void drawShadowMaskStencilPrepass()
     }
 }
 
+// AITD1: the collapsing floor in the first-floor corridor (stage 1, room 1).
+// LIFE 38 deletes the floor model OBJ 30 when the floor gives way. The player's
+// fall animation then lowers the model through the floor, but the actor itself
+// stays at floor level, so its shadows would stay on the floor. Hide the player's
+// shadows from then on, on the two cameras that show the hole (CAMERA01 002/003).
+static bool hideShadowFloorHoleFall(int actorIdx)
+{
+    if (g_gameId != AITD1 || g_currentFloor != 1 || actorIdx != currentCameraTargetActor)
+        return false;
+    if ((int)ListWorldObjets.size() <= 30 || ListWorldObjets[30].room != -1)
+        return false;
+    if (currentRoom < 0 || currentRoom >= (int)roomDataTable.size() || NumCamera < 0 ||
+        NumCamera >= (int)roomDataTable[currentRoom].cameraIdxTable.size())
+        return false;
+    const int camera = roomDataTable[currentRoom].cameraIdxTable[NumCamera];
+    return camera == 2 || camera == 3;
+}
+
 void drawSceneObjects()
 {
     SetClip(0, 0, 319, 199);
@@ -3757,6 +3754,8 @@ void drawSceneObjects()
         // Bytecode patch: hide shadow for actors still flagged hidden (e.g. Zombie
         // Chickens behind a window before they crash through).
         if (shouldDrawShadows && bytecodePatch_shouldHideShadowForActor(actorPtr))
+            shouldDrawShadows = false;
+        if (shouldDrawShadows && hideShadowFloorHoleFall(currentDrawActor))
             shouldDrawShadows = false;
 
         // Non-character objects (doors, etc.) only cast shadows while moving
@@ -3835,6 +3834,14 @@ void AllRedraw(int flagFlip)
     SetClip(0, 0, 319, 199);
     NbLogBoxs = 0;
 
+    // Original INDARK.EXE: no light object -> no light position (20000); otherwise the
+    // position is updated below when the LIGHT_OBJECT actor is drawn on screen.
+    if (g_gameId == AITD1 && CVars[getCVarsIdx(LIGHT_OBJECT)] == -1)
+    {
+        lightX = 20000;
+        lightY = 20000;
+    }
+
     // Safety: If the object draw list is empty, force regeneration (prevents 3D objects from disappearing)
     if (NbAffObjets == 0 && !lightOff) {
         GenereActiveList();
@@ -3901,6 +3908,8 @@ void AllRedraw(int flagFlip)
                         // Bytecode patch: hide shadow for actors still flagged hidden
                         // (e.g. Zombie Chickens behind a window before they crash through).
                         if (shouldDrawShadows && bytecodePatch_shouldHideShadowForActor(actorPtr))
+                            shouldDrawShadows = false;
+                        if (shouldDrawShadows && hideShadowFloorHoleFall(currentDrawActor))
                             shouldDrawShadows = false;
 
                         // Non-character objects (doors, etc.) only cast shadows while moving
@@ -4056,8 +4065,10 @@ void AllRedraw(int flagFlip)
             //mainDrawSub1();
         }
     }
-    else
+    else if (g_gameId == AITD1)
     {
+        // Dark room (LIGHT 0): black except the light circle (osystem_drawDarkMask).
+        osystem_drawDarkMask(lightX, lightY);
     }
 
     //    osystem_stopFrame();
@@ -4138,6 +4149,7 @@ int CheckObjectCol(int actorIdx, ZVStruct* zvPtr)
             continue;
 
         ZVStruct* currentActorZv = &currentActor->zv;
+        bool intersects = false;
 
         if (currentActor->room != actorRoom)
         {
@@ -4147,23 +4159,29 @@ int CheckObjectCol(int actorIdx, ZVStruct* zvPtr)
 
             AdjustZV(&localZv, actorRoom, currentActor->room);
 
-            if (CubeIntersect(&localZv, currentActorZv))
-            {
-                currentProcessedActorPtr->COL[currentCollisionSlot++] = i;
-
-                if (currentCollisionSlot == 3)
-                    return(3);
-            }
+            intersects = CubeIntersect(&localZv, currentActorZv) != 0;
         }
         else
         {
-            if (CubeIntersect(zvPtr, currentActorZv))
-            {
-                currentProcessedActorPtr->COL[currentCollisionSlot++] = i;
+            intersects = CubeIntersect(zvPtr, currentActorZv) != 0;
+        }
 
-                if (currentCollisionSlot == 3)
-                    return(3);
-            }
+        // Foundable actors do not physically block the player. Keep freshly
+        // dropped or recently declined items out of the three collision slots
+        // until their prompt guard permits another interaction.
+        if (ListObjets[actorIdx].trackMode == 1 &&
+            (currentActor->objectType & AF_FOUNDABLE) &&
+            pickupPromptGuardShouldSuppressCollision(currentActor->indexInWorld, intersects))
+        {
+            continue;
+        }
+
+        if (intersects)
+        {
+            currentProcessedActorPtr->COL[currentCollisionSlot++] = i;
+
+            if (currentCollisionSlot == 3)
+                return(3);
         }
     }
 
@@ -4215,6 +4233,8 @@ void take(int objIdx)
 
     objPtr->room = -1;
     objPtr->stage = -1;
+
+    pickupPromptGuardOnObjectTaken(objIdx);
 }
 
 void Glisser(int flag)
@@ -5434,23 +5454,30 @@ void detectGame(void)
 {
     const char* gameName = NULL;
 
-    // JACK mode forces Jack in the Dark, even if AITD1 sentinel files
-    // are also present in the working directory.
-    if (g_remasterConfig.gameData.jackMode && fileExists("PERE.PAK"))
+    // The selected mode is authoritative. Each mode has its own embedded
+    // registry, so identically named loose files cannot select another game.
+    if (g_remasterConfig.gameData.mode == REMASTER_GAME_JACK && fileExists("PERE.PAK"))
     {
         g_gameId = JACK;
         CVars.resize(70);
         currentCVarTable = AITD2KnownCVars;
         gameName = "Jack in the Dark";
     }
-    else if (fileExists("AITD2.flag"))
+    else if (g_remasterConfig.gameData.mode == REMASTER_GAME_AITD2 && fileExists("MER.PAK"))
     {
         g_gameId = AITD2;
         CVars.resize(70);
         currentCVarTable = AITD2KnownCVars;
         gameName = "Alone in the Dark 2";
     }
-    else if (fileExists("LISTBOD2.PAK"))
+    else if (g_remasterConfig.gameData.mode == REMASTER_GAME_AITD3 && fileExists("AN1.PAK"))
+    {
+        g_gameId = AITD3;
+        CVars.resize(70);
+        currentCVarTable = AITD2KnownCVars;
+        gameName = "Alone in the Dark 3";
+    }
+    else if (g_remasterConfig.gameData.mode == REMASTER_GAME_AITD1 && fileExists("LISTBOD2.PAK"))
     {
         g_gameId = AITD1;
         CVars.resize(45);
@@ -5549,11 +5576,18 @@ int FitdMain(int argc, char* argv[])
     // Apply the loaded palette to the renderer
     osystem_setPalette(&currentGamePalette);
 
+    // AITD2/AITD3 can build missing replacement content in the background.
+    // The quick source extraction happens here while PAK access is single-
+    // threaded; all GPU-heavy Upscayl work continues during gameplay.
+    hdAutoUpscale_Initialize();
+
     // Optionally dump every original PAK background to PNG on launch.
     if (g_remasterConfig.backgrounds.dumpEnabled)
     {
-        extern void dumpAllBackgrounds();
-        dumpAllBackgrounds();
+        char sourceDir[512], outputDir[512];
+        snprintf(sourceDir, sizeof(sourceDir), "%sbackgrounds_dump", homePath);
+        snprintf(outputDir, sizeof(outputDir), "%s%s", homePath, getHDBackgroundFolder());
+        beginIncrementalBackgroundDump(sourceDir, outputDir, false);
     }
 
     switch (g_gameId)
@@ -5593,7 +5627,9 @@ int drawTextOverlay(void)
 
     currentMessage = messageTable;
 
-    if (lightOff == 0)
+    // Messages are drawn in dark rooms too ("This room is in the dark!" is queued by the
+    // same script that turns the light off); the darkness mask sits behind the UI.
+    if (lightOff == 0 || g_gameId == AITD1)
     {
         int i;
 

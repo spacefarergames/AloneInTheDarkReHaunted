@@ -3,6 +3,7 @@ $input v_texcoord0
 uniform vec4 u_rampAtlasInfo;  // x=atlasWidth, y=atlasHeight, z=reserved, w=reserved
 
 #include "bgfx_shader.sh"
+#include "modelLighting.sh"
 #include "palette.sh"
 
 // Ramp atlas texture sampler (for textured ramp atlases)
@@ -37,4 +38,5 @@ void main()
         int bank = int(v_texcoord0.y * 15.f);
         gl_FragColor = getColor(bank, color);
     }
+    gl_FragColor = applyModelAmbient(gl_FragColor);
 }

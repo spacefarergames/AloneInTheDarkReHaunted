@@ -60,7 +60,7 @@ void initDefaultRemasterConfig()
     g_remasterConfig.postProcessing.ssgiIntensity = 0.6f;
     g_remasterConfig.postProcessing.ssgiNumSamples = 16;
     // Light Probe defaults
-    g_remasterConfig.postProcessing.enableLightProbes = false;
+    g_remasterConfig.postProcessing.enableLightProbes = true;
     g_remasterConfig.postProcessing.lightProbeIntensity = 0.5f;
     g_remasterConfig.postProcessing.enableColorGrading = true;
     g_remasterConfig.postProcessing.exposure = 0.05f;
@@ -114,11 +114,13 @@ void initDefaultRemasterConfig()
     g_remasterConfig.sequences.loadEnabled = true;   // Load HD replacement sequence frames if available
 
     // Background dumping defaults
-    g_remasterConfig.backgrounds.dumpEnabled = true;  // Auto-dump every original PAK background to PNG once on launch
+    g_remasterConfig.backgrounds.dumpEnabled = false; // Automatic HD generation manages its own resumable source dump
 
     // Game data defaults
     g_remasterConfig.gameData.steamless = false;   // Allow automatic file copying/installation by default
-    g_remasterConfig.gameData.jackMode = false;    // Default to AITD1 (INDARK); enable to run Jack in the Dark from JACK folder
+    g_remasterConfig.gameData.mode = REMASTER_GAME_AITD1;
+    g_remasterConfig.assetGeneration.autoUpscaleMissingHD = true;
+    g_remasterConfig.assetGeneration.upscaleScale = 4;
 
     // Debug / diagnostics defaults
     g_remasterConfig.debug.enableGraphicsValidation = false; // Avoid DXGI 0x87A exceptions in normal Debug play
@@ -349,8 +351,20 @@ void loadRemasterConfig()
             // Game data settings
             else if (strcmp(key, "gamedata.steamless") == 0)
                 g_remasterConfig.gameData.steamless = (strcmp(value, "true") == 0 || strcmp(value, "1") == 0);
-            else if (strcmp(key, "gamedata.jackmode") == 0)
-                g_remasterConfig.gameData.jackMode = (strcmp(value, "true") == 0 || strcmp(value, "1") == 0);
+            else if (strcmp(key, "gamedata.mode") == 0)
+            {
+                if (_stricmp(value, "jack") == 0) g_remasterConfig.gameData.mode = REMASTER_GAME_JACK;
+                else if (_stricmp(value, "aitd2") == 0) g_remasterConfig.gameData.mode = REMASTER_GAME_AITD2;
+                else if (_stricmp(value, "aitd3") == 0) g_remasterConfig.gameData.mode = REMASTER_GAME_AITD3;
+                else g_remasterConfig.gameData.mode = REMASTER_GAME_AITD1;
+            }
+            else if (strcmp(key, "gamedata.jackmode") == 0 &&
+                     (strcmp(value, "true") == 0 || strcmp(value, "1") == 0))
+                g_remasterConfig.gameData.mode = REMASTER_GAME_JACK;
+            else if (strcmp(key, "assets.autoUpscaleMissingHD") == 0)
+                g_remasterConfig.assetGeneration.autoUpscaleMissingHD = (strcmp(value, "true") == 0 || strcmp(value, "1") == 0);
+            else if (strcmp(key, "assets.upscaleScale") == 0)
+                g_remasterConfig.assetGeneration.upscaleScale = atoi(value);
 
             // Debug / diagnostics settings
             else if (strcmp(key, "debug.graphicsValidation") == 0)
@@ -376,6 +390,16 @@ void loadRemasterConfig()
 
     if (g_remasterConfig.graphics.backgroundScale < 1) g_remasterConfig.graphics.backgroundScale = 1;
     if (g_remasterConfig.graphics.backgroundScale > 8) g_remasterConfig.graphics.backgroundScale = 8;
+    if (g_remasterConfig.assetGeneration.upscaleScale < 2) g_remasterConfig.assetGeneration.upscaleScale = 2;
+    if (g_remasterConfig.assetGeneration.upscaleScale > 4) g_remasterConfig.assetGeneration.upscaleScale = 4;
+    if (g_remasterConfig.gameData.mode < REMASTER_GAME_AITD1 ||
+        g_remasterConfig.gameData.mode > REMASTER_GAME_AITD3)
+        g_remasterConfig.gameData.mode = REMASTER_GAME_AITD1;
+    if (g_remasterConfig.assetGeneration.autoUpscaleMissingHD &&
+        (g_remasterConfig.gameData.mode == REMASTER_GAME_AITD2 ||
+         g_remasterConfig.gameData.mode == REMASTER_GAME_AITD3) &&
+        g_remasterConfig.graphics.backgroundScale < g_remasterConfig.assetGeneration.upscaleScale)
+        g_remasterConfig.graphics.backgroundScale = g_remasterConfig.assetGeneration.upscaleScale;
 
     // Clamp MSAA to valid values
     if (g_remasterConfig.graphics.msaaLevel != 0 && g_remasterConfig.graphics.msaaLevel != 2 &&
@@ -527,7 +551,14 @@ void saveRemasterConfig()
 
     fprintf(file, "\n# Game Data Settings\n");
     fprintf(file, "gamedata.steamless = %s\n", g_remasterConfig.gameData.steamless ? "true" : "false");
-    fprintf(file, "gamedata.jackmode = %s\n", g_remasterConfig.gameData.jackMode ? "true" : "false");
+    static const char* gameModeNames[] = { "aitd1", "jack", "aitd2", "aitd3" };
+    int gameMode = g_remasterConfig.gameData.mode;
+    if (gameMode < REMASTER_GAME_AITD1 || gameMode > REMASTER_GAME_AITD3)
+        gameMode = REMASTER_GAME_AITD1;
+    fprintf(file, "gamedata.mode = %s\n", gameModeNames[gameMode]);
+    fprintf(file, "assets.autoUpscaleMissingHD = %s\n",
+        g_remasterConfig.assetGeneration.autoUpscaleMissingHD ? "true" : "false");
+    fprintf(file, "assets.upscaleScale = %d\n", g_remasterConfig.assetGeneration.upscaleScale);
 
     fprintf(file, "\n# Debug / Diagnostics Settings\n");
     fprintf(file, "debug.graphicsValidation = %s\n", g_remasterConfig.debug.enableGraphicsValidation ? "true" : "false");

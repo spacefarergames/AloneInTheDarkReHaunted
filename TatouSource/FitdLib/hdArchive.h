@@ -71,6 +71,11 @@ namespace HDArchive
     // Is an archive currently open?
     bool isOpen();
 
+    // Path passed to the successful open() call, or an empty string when closed.
+    // Callers use this to avoid mistaking another subsystem's singleton archive
+    // for the background archive they need.
+    const char* currentPath();
+
     // Look up a single entry by exact relative path (case-insensitive).
     // Uses a hash map for O(1) average lookup time.
     // Returns nullptr if not found.
@@ -90,5 +95,10 @@ namespace HDArchive
     // Sets outSize to the uncompressed number of bytes read.
     // Returns nullptr on failure.
     unsigned char* readEntryAlloc(const HDArchiveEntry* entry, size_t* outSize);
+
+    // Reads only the first `len` uncompressed bytes of an entry (a compressed
+    // one is inflated just that far), e.g. to read an image header without
+    // reading the whole image.  Returns the number of bytes read (0 on failure).
+    size_t readEntryPrefix(const HDArchiveEntry* entry, void* buf, size_t len);
 }
 

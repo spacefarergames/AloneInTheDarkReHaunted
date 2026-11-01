@@ -53,6 +53,6 @@ void main()
 
     rgb = clamp(rgb, vec3_splat(0.0), vec3_splat(1.0));
 
-    // Apply fade level and slight darkening; use maskAlpha for smooth edge blending
-    gl_FragColor = vec4(rgb * u_fadeLevel.x * 0.99, maskAlpha);
+    // Apply exactly the background fade level; use maskAlpha for smooth edge blending
+    gl_FragColor = vec4(rgb * u_fadeLevel.x, maskAlpha);
 }

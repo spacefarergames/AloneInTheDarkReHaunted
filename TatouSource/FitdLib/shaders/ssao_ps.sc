@@ -1,11 +1,11 @@
 $input v_texcoord0
 
 #include <bgfx_shader.sh>
+#include "noiseHash.sh"
 
 SAMPLER2D(s_texDepth, 0);
 uniform vec4 u_ssaoParams;     // x: radius, y: bias, z: intensity, w: unused
 uniform vec4 u_depthParams;    // x: near, y: far, z: 1/width, w: 1/height
-uniform vec4 u_time;           // x: time (for noise rotation)
 
 // Linearize depth from [0,1] range to view-space distance
 float linearizeDepth(float d)
@@ -15,11 +15,6 @@ float linearizeDepth(float d)
     return n * f / (f - d * (f - n));
 }
 
-// Hash-based pseudo-random for sample rotation
-float hash(vec2 p)
-{
-    return fract(sin(dot(p, vec2(12.9898, 78.233))) * 43758.5453);
-}
 
 void main()
 {
@@ -41,8 +36,10 @@ void main()
     // Scale radius by depth (closer objects get larger AO radius in screen space)
     float radiusScreen = radius / centerDepth;
 
-    // Pseudo-random rotation angle per pixel to reduce banding
-    float angle = hash(v_texcoord0 * 1000.0 + u_time.x) * 6.2831853;
+    // Stable per-pixel rotation. With no temporal accumulation, animating
+    // this pattern makes stationary surfaces crawl and flicker.
+    uvec2 pixel = uvec2(floor(gl_FragCoord.xy));
+    float angle = pixelNoise(pixel.x, pixel.y, 0u) * 6.2831853;
     float cosA = cos(angle);
     float sinA = sin(angle);
 

@@ -8,6 +8,7 @@
 ///////////////////////////////////////////////////////////////////////////////
 
 #include "common.h"
+#include "lifeBugfixes.h"
 #include "consoleLog.h"
 #include "math.h"
 
@@ -201,20 +202,112 @@ static unsigned int s_gotoLastDistance[NUM_MAX_OBJECT] = {};
 static unsigned int s_gotoStuckFrames[NUM_MAX_OBJECT] = {};
 #define GOTO_STUCK_FRAME_LIMIT 180  // ~3 seconds at 60fps
 
+static bool isValidRoomIndex(int room)
+{
+    return room >= 0 && room < (int)roomDataTable.size();
+}
+
+static bool isValidWorldObjectIndex(int index)
+{
+    return index >= 0 && index < (int)ListWorldObjets.size();
+}
+
+static bool isValidTrackNumber(int trackNumber)
+{
+    static int cachedGameId = -1;
+    static unsigned int cachedTrackCount = 0;
+    if (cachedGameId != g_gameId)
+    {
+        cachedGameId = g_gameId;
+        cachedTrackCount = PAK_getNumFiles("LISTTRAK");
+    }
+    return trackNumber >= 0 && (unsigned int)trackNumber < cachedTrackCount;
+}
+
+static void resetVerticalTrackMotion(tObject* actor)
+{
+    actor->YHandler.numSteps = 0;
+    actor->YHandler.startValue = 0;
+    actor->YHandler.endValue = 0;
+    actor->hidePlanarShadow = false;
+}
+
+static void stopInvalidTrack(const char* reason)
+{
+    printf(TRACK_WARN "Stopping invalid track %d for actor %d: %s" CON_RESET "\n",
+        currentProcessedActorPtr->trackNumber, currentProcessedActorIdx, reason);
+    s_gotoStuckFrames[currentProcessedActorIdx] = 0;
+    s_gotoLastDistance[currentProcessedActorIdx] = 0;
+    resetVerticalTrackMotion(currentProcessedActorPtr);
+    currentProcessedActorPtr->speed = 0;
+    currentProcessedActorPtr->direction = 0;
+    currentProcessedActorPtr->trackNumber = -1;
+    InitDeplacement(0, 0);
+    if (currentProcessedActorIdx == currentCameraTargetActor)
+        osystem_endLetterboxWithCooldown();
+}
+
+static int getLoadedTrackSize(int trackNumber)
+{
+    if (!listTrack)
+        return 0;
+
+    for (int i = 0; i < listTrack->numUsedEntry; ++i)
+    {
+        const hqrSubEntryStruct<char>& entry = listTrack->entries[i];
+        if (entry.ptr && entry.key == trackNumber)
+            return entry.size;
+    }
+    return 0;
+}
+
+// Size of each implemented opcode in 16-bit words, including the opcode.
+// Keeping this table beside the interpreter prevents a bad cursor or truncated
+// LISTTRAK entry from turning the next operand into an opcode.
+static int getTrackMacroWordCount(s16 trackMacro)
+{
+    switch (trackMacro)
+    {
+    case TL_INIT_COOR: return 5;
+    case TL_GOTO: return 4;
+    case TL_END:
+    case TL_REPEAT:
+    case TL_WALK:
+    case TL_RUN:
+    case TL_STOP:
+    case TL_BACK:
+    case TL_COL_OFF:
+    case TL_COL_ON:
+    case TL_DEC_OFF:
+    case TL_DEC_ON:
+    case TL_MEMO_COOR: return 1;
+    case TL_MARK:
+    case TL_SET_ANGLE: return 2;
+    case TL_GOTO_3D: return 6;
+    case TL_GOTO_3DX:
+    case TL_GOTO_3DZ:
+    case TL_ANGLE: return 4;
+    default: return 0;
+    }
+}
+
 unsigned int lastTimeForward = 0;
 
 char* getRoomLink(unsigned int room1, unsigned int room2)
 {
     int i;
     s16 numOfZones;
-    char* zoneData = (char*)getRoomData(room1);  
-    char* bestZone;
+    if (!isValidRoomIndex((int)room1) || !isValidRoomIndex((int)room2))
+        return nullptr;
+
+    char* zoneData = (char*)getRoomData(room1);
+    if (!zoneData)
+        return nullptr;
+    char* bestZone = nullptr;
 
     zoneData += *(s16*)(zoneData);
     numOfZones = *(s16*)zoneData;
     zoneData+=2;
-
-    bestZone = zoneData;
 
     for(i=0;i<numOfZones;i++)
     {
@@ -282,9 +375,16 @@ void processTrack(void)
         }
     case 2: // follow
         {
+            if (!isValidWorldObjectIndex(currentProcessedActorPtr->trackNumber))
+            {
+                currentProcessedActorPtr->trackMode = 0;
+                currentProcessedActorPtr->direction = 0;
+                currentProcessedActorPtr->speed = 0;
+                break;
+            }
             int followedActorIdx = ListWorldObjets[currentProcessedActorPtr->trackNumber].objIndex;
 
-            if(followedActorIdx == -1)
+            if(followedActorIdx < 0 || followedActorIdx >= NUM_MAX_OBJECT)
             {
                 // Target was deleted - stop following and switch to idle.
                 // Without this, the enemy stays in trackMode 2 forever with
@@ -305,18 +405,23 @@ void processTrack(void)
 
                 if (g_gameId == AITD1) {
                     // in AITD1, if the target entity is in a different room, the entity would aim for the center of the trigger zone to get to that room
-                    if (currentProcessedActorPtr->room != targetRoomNumber)
+                    if (currentProcessedActorPtr->room != targetRoomNumber &&
+                        isValidRoomIndex(currentProcessedActorPtr->room) &&
+                        isValidRoomIndex(targetRoomNumber))
                     {
                         char* link = getRoomLink(currentProcessedActorPtr->room, targetRoomNumber);
-
-                        targetX = *(s16*)(link + 0) + (((*(s16*)(link + 2)) - (*(s16*)(link + 0))) / 2);
-                        targetY = *(s16*)(link + 4) + (((*(s16*)(link + 6)) - (*(s16*)(link + 4))) / 2);
-                        targetZ = *(s16*)(link + 8) + (((*(s16*)(link + 10)) - (*(s16*)(link + 8))) / 2);
+                        if (link)
+                        {
+                            targetX = *(s16*)(link + 0) + (((*(s16*)(link + 2)) - (*(s16*)(link + 0))) / 2);
+                            targetY = *(s16*)(link + 4) + (((*(s16*)(link + 6)) - (*(s16*)(link + 4))) / 2);
+                            targetZ = *(s16*)(link + 8) + (((*(s16*)(link + 10)) - (*(s16*)(link + 8))) / 2);
+                        }
                     }
                 }
                 else {
                     // This was changed from AITD2+ to aim for the target in world-space
-                    if((followedActorPtr->room >= 0) && (currentProcessedActorPtr->room>=0))
+                    if (isValidRoomIndex(followedActorPtr->room) &&
+                        isValidRoomIndex(currentProcessedActorPtr->room))
                     {
                         const auto& targetRoom = roomDataTable[followedActorPtr->room];
                         const auto& sourceRoom = roomDataTable[currentProcessedActorPtr->room];
@@ -353,10 +458,35 @@ void processTrack(void)
         }
     case 3: // track
         {
-            char* trackPtr = HQR_Get(listTrack,currentProcessedActorPtr->trackNumber);
-            trackPtr+=currentProcessedActorPtr->positionInTrack * 2;
+            if (!isValidTrackNumber(currentProcessedActorPtr->trackNumber))
+            {
+                stopInvalidTrack("track number outside LISTTRAK archive");
+                break;
+            }
+            char* trackData = HQR_Get(listTrack,currentProcessedActorPtr->trackNumber);
+            const int trackSize = getLoadedTrackSize(currentProcessedActorPtr->trackNumber);
+            const int position = currentProcessedActorPtr->positionInTrack;
+            if (!trackData || trackSize < 2 || position < 0 || position > (trackSize / 2) - 1)
+            {
+                stopInvalidTrack("missing resource or cursor outside LISTTRAK entry");
+                break;
+            }
+
+            trackData = trackBugfixPatchTrack(currentProcessedActorPtr->trackNumber, trackData);
+            char* trackPtr = trackData + position * 2;
 
             s16 trackMacro = convertTrackMacro(*(s16*)trackPtr);
+            const int macroWords = getTrackMacroWordCount(trackMacro);
+            if (macroWords == 0)
+            {
+                stopInvalidTrack("unsupported opcode");
+                break;
+            }
+            if (position > (trackSize / 2) - macroWords)
+            {
+                stopInvalidTrack("truncated opcode operands");
+                break;
+            }
             trackPtr += 2;
 
             //printf("Track macro %X\n",trackMacro);
@@ -367,6 +497,12 @@ void processTrack(void)
                 {
                     int roomNumber = *(s16*)(trackPtr);
                     trackPtr += 2;
+
+                    if (!isValidRoomIndex(roomNumber) || !isValidRoomIndex(currentRoom))
+                    {
+                        stopInvalidTrack("TL_INIT_COOR references an invalid room");
+                        break;
+                    }
 
                     if(currentProcessedActorPtr->room != roomNumber)
                     {
@@ -426,6 +562,12 @@ void processTrack(void)
                     y = 0;
                     z = *(s16*)(trackPtr);
                     trackPtr += 2;
+
+                    if (!isValidRoomIndex(currentProcessedActorPtr->room) || !isValidRoomIndex(roomNumber))
+                    {
+                        stopInvalidTrack("TL_GOTO references an invalid room");
+                        break;
+                    }
 
                     if(roomNumber != currentProcessedActorPtr->room)
                     {
@@ -507,8 +649,6 @@ void processTrack(void)
                 int x;
                 int y;
                 int z;
-                unsigned int distanceToPoint;
-
                 trackPtr += 2;
 
                 x = *(s16*)(trackPtr);
@@ -519,6 +659,12 @@ void processTrack(void)
                 trackPtr += 2;
                 int time = *(s16*)(trackPtr);
                 trackPtr += 2;
+
+                if (!isValidRoomIndex(currentProcessedActorPtr->room) || !isValidRoomIndex(roomNumber))
+                {
+                    stopInvalidTrack("TL_GOTO_3D references an invalid room");
+                    break;
+                }
 
                 if (roomNumber != currentProcessedActorPtr->room)
                 {
@@ -536,6 +682,7 @@ void processTrack(void)
                     if (distance < DISTANCE_TO_POINT_TRESSHOLD) {
                         s_gotoStuckFrames[currentProcessedActorIdx] = 0;
                         s_gotoLastDistance[currentProcessedActorIdx] = 0;
+                        resetVerticalTrackMotion(currentProcessedActorPtr);
                         currentProcessedActorPtr->positionInTrack += 6;
                         break;
                     }
@@ -546,7 +693,10 @@ void processTrack(void)
                     unsigned int dist3d = GiveDistance2D(
                         currentProcessedActorPtr->roomX + currentProcessedActorPtr->stepX,
                         currentProcessedActorPtr->roomZ + currentProcessedActorPtr->stepZ, x, z);
-                    if (dist3d < s_gotoLastDistance[currentProcessedActorIdx])
+                    dist3d += (unsigned int)abs(y -
+                        (currentProcessedActorPtr->roomY + currentProcessedActorPtr->stepY));
+                    if (s_gotoLastDistance[currentProcessedActorIdx] == 0 ||
+                        dist3d < s_gotoLastDistance[currentProcessedActorIdx])
                     {
                         s_gotoStuckFrames[currentProcessedActorIdx] = 0;
                     }
@@ -560,6 +710,7 @@ void processTrack(void)
                     {
                         s_gotoStuckFrames[currentProcessedActorIdx] = 0;
                         s_gotoLastDistance[currentProcessedActorIdx] = 0;
+                        resetVerticalTrackMotion(currentProcessedActorPtr);
                         currentProcessedActorPtr->positionInTrack += 6;
                         break;
                     }
@@ -648,7 +799,12 @@ void processTrack(void)
                 }
             case TL_SET_ANGLE: // TL_SET_ANGLE
                 {
-                    int betaDif = *(s16*)(trackPtr);
+                    // Track angles are stored as signed 16-bit values but actor
+                    // angles are normalized to 0..1023 after every update.  An
+                    // authored -1/1024-style angle would therefore rotate to the
+                    // right orientation and then wait forever on an impossible
+                    // raw-value equality unless the target is normalized too.
+                    int betaDif = (*(s16*)(trackPtr)) & 0x3FF;
                     trackPtr += 2;
 
                     if(((currentProcessedActorPtr->beta - betaDif)&1023) > 512)
@@ -704,6 +860,12 @@ void processTrack(void)
                 {
                     int objNum = currentProcessedActorPtr->indexInWorld;
 
+                    if (!isValidWorldObjectIndex(objNum))
+                    {
+                        stopInvalidTrack("TL_MEMO_COOR references an invalid world object");
+                        break;
+                    }
+
                     ListWorldObjets[objNum].x = currentProcessedActorPtr->roomX + currentProcessedActorPtr->stepX;
                     ListWorldObjets[objNum].y = currentProcessedActorPtr->roomY + currentProcessedActorPtr->stepY;
                     ListWorldObjets[objNum].z = currentProcessedActorPtr->roomZ + currentProcessedActorPtr->stepZ;
@@ -728,6 +890,12 @@ void processTrack(void)
                     z = *(s16*)(trackPtr);
                     trackPtr += 2;
 
+                    if (!isValidWorldObjectIndex(currentProcessedActorPtr->indexInWorld))
+                    {
+                        stopInvalidTrack("TL_GOTO_3DX references an invalid world object");
+                        break;
+                    }
+
                     objX = ListWorldObjets[currentProcessedActorPtr->indexInWorld].x;
                     objY = ListWorldObjets[currentProcessedActorPtr->indexInWorld].y;
                     objZ = ListWorldObjets[currentProcessedActorPtr->indexInWorld].z;
@@ -744,6 +912,48 @@ void processTrack(void)
                         // Recover speed if zeroed before this stair goto, same reason as TL_GOTO.
                         if (currentProcessedActorPtr->speed == 0)
                             currentProcessedActorPtr->speed = 4;
+
+                        // AITD1's post-sorcerer crawl back into the cellar uses
+                        // track 43 and TL_GOTO_3DX.  If the saved bridge/cave
+                        // state leaves the interpolation origin unusable, the
+                        // actor can make no progress and NUM_TRACK never reaches
+                        // -1, permanently withholding player control.  Apply the
+                        // same bounded waypoint recovery used by TL_GOTO.
+                        const unsigned int distanceToEnd =
+                            (unsigned int)abs(x - (currentProcessedActorPtr->roomX + currentProcessedActorPtr->stepX)) +
+                            (unsigned int)abs(y - (currentProcessedActorPtr->roomY + currentProcessedActorPtr->stepY));
+                        if (s_gotoLastDistance[currentProcessedActorIdx] == 0 ||
+                            distanceToEnd < s_gotoLastDistance[currentProcessedActorIdx])
+                        {
+                            s_gotoStuckFrames[currentProcessedActorIdx] = 0;
+                        }
+                        else
+                        {
+                            ++s_gotoStuckFrames[currentProcessedActorIdx];
+                        }
+                        s_gotoLastDistance[currentProcessedActorIdx] = distanceToEnd;
+
+                        if (s_gotoStuckFrames[currentProcessedActorIdx] >= GOTO_STUCK_FRAME_LIMIT)
+                        {
+                            const int difX = x - (currentProcessedActorPtr->roomX + currentProcessedActorPtr->stepX);
+                            const int difY = y - (currentProcessedActorPtr->roomY + currentProcessedActorPtr->stepY);
+                            currentProcessedActorPtr->worldX += difX;
+                            currentProcessedActorPtr->roomX += difX;
+                            currentProcessedActorPtr->zv.ZVX1 += difX;
+                            currentProcessedActorPtr->zv.ZVX2 += difX;
+                            currentProcessedActorPtr->worldY += difY;
+                            currentProcessedActorPtr->roomY += difY;
+                            currentProcessedActorPtr->zv.ZVY1 += difY;
+                            currentProcessedActorPtr->zv.ZVY2 += difY;
+                            currentProcessedActorPtr->stepX = 0;
+                            currentProcessedActorPtr->stepY = 0;
+                            currentProcessedActorPtr->positionInTrack += 4;
+                            s_gotoStuckFrames[currentProcessedActorIdx] = 0;
+                            s_gotoLastDistance[currentProcessedActorIdx] = 0;
+                            if (currentProcessedActorIdx == currentCameraTargetActor)
+                                osystem_endLetterboxWithCooldown();
+                            break;
+                        }
 
                         int propX = makeProportional(objY, y, x - objX, (currentProcessedActorPtr->roomX + currentProcessedActorPtr->stepX) - objX);
 
@@ -779,6 +989,8 @@ void processTrack(void)
                     }
                     else
                     {
+                        s_gotoStuckFrames[currentProcessedActorIdx] = 0;
+                        s_gotoLastDistance[currentProcessedActorIdx] = 0;
                         int difY = y - currentProcessedActorPtr->worldY;
 
                         currentProcessedActorPtr->stepY = 0;
@@ -814,6 +1026,12 @@ void processTrack(void)
                     z = *(s16*)(trackPtr);
                     trackPtr += 2;
 
+                    if (!isValidWorldObjectIndex(currentProcessedActorPtr->indexInWorld))
+                    {
+                        stopInvalidTrack("TL_GOTO_3DZ references an invalid world object");
+                        break;
+                    }
+
                     objX = ListWorldObjets[currentProcessedActorPtr->indexInWorld].x;
                     objY = ListWorldObjets[currentProcessedActorPtr->indexInWorld].y;
                     objZ = ListWorldObjets[currentProcessedActorPtr->indexInWorld].z;
@@ -830,6 +1048,42 @@ void processTrack(void)
                         // Recover speed if zeroed before this stair goto, same reason as TL_GOTO.
                         if (currentProcessedActorPtr->speed == 0)
                             currentProcessedActorPtr->speed = 4;
+
+                        const unsigned int distanceToEnd =
+                            (unsigned int)abs(z - (currentProcessedActorPtr->roomZ + currentProcessedActorPtr->stepZ)) +
+                            (unsigned int)abs(y - (currentProcessedActorPtr->roomY + currentProcessedActorPtr->stepY));
+                        if (s_gotoLastDistance[currentProcessedActorIdx] == 0 ||
+                            distanceToEnd < s_gotoLastDistance[currentProcessedActorIdx])
+                        {
+                            s_gotoStuckFrames[currentProcessedActorIdx] = 0;
+                        }
+                        else
+                        {
+                            ++s_gotoStuckFrames[currentProcessedActorIdx];
+                        }
+                        s_gotoLastDistance[currentProcessedActorIdx] = distanceToEnd;
+
+                        if (s_gotoStuckFrames[currentProcessedActorIdx] >= GOTO_STUCK_FRAME_LIMIT)
+                        {
+                            const int difZ = z - (currentProcessedActorPtr->roomZ + currentProcessedActorPtr->stepZ);
+                            const int difY = y - (currentProcessedActorPtr->roomY + currentProcessedActorPtr->stepY);
+                            currentProcessedActorPtr->worldZ += difZ;
+                            currentProcessedActorPtr->roomZ += difZ;
+                            currentProcessedActorPtr->zv.ZVZ1 += difZ;
+                            currentProcessedActorPtr->zv.ZVZ2 += difZ;
+                            currentProcessedActorPtr->worldY += difY;
+                            currentProcessedActorPtr->roomY += difY;
+                            currentProcessedActorPtr->zv.ZVY1 += difY;
+                            currentProcessedActorPtr->zv.ZVY2 += difY;
+                            currentProcessedActorPtr->stepZ = 0;
+                            currentProcessedActorPtr->stepY = 0;
+                            currentProcessedActorPtr->positionInTrack += 4;
+                            s_gotoStuckFrames[currentProcessedActorIdx] = 0;
+                            s_gotoLastDistance[currentProcessedActorIdx] = 0;
+                            if (currentProcessedActorIdx == currentCameraTargetActor)
+                                osystem_endLetterboxWithCooldown();
+                            break;
+                        }
 
                         int propZ = makeProportional(objY, y, z - objZ, (currentProcessedActorPtr->roomZ + currentProcessedActorPtr->stepZ) - objZ);
 
@@ -866,6 +1120,8 @@ void processTrack(void)
                     }
                     else
                     {
+                        s_gotoStuckFrames[currentProcessedActorIdx] = 0;
+                        s_gotoLastDistance[currentProcessedActorIdx] = 0;
                         int difY = y - currentProcessedActorPtr->worldY;
 
                         currentProcessedActorPtr->stepY = 0;
@@ -902,8 +1158,7 @@ void processTrack(void)
                 }
             default:
                 {
-                    printf(TRACK_WARN "Unknown track macro %X" CON_RESET "\n",trackMacro);
-                    assert(0);
+                    stopInvalidTrack("unknown opcode");
                     break;
                 }
             }

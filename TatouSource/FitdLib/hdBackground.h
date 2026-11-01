@@ -54,6 +54,10 @@ const char* getHDBackgroundFolder();
 // Returns pixel data (caller must free with freeHDImageData), or nullptr on failure
 unsigned char* loadHDImageFile(const char* filename, int* width, int* height, int* channels);
 
+// Load shared remaster UI artwork. AITD2/AITD3 first check their mode-specific
+// pack, then fall back to the common backgrounds_hd pack used by menus.
+unsigned char* loadSharedHDImageFile(const char* filename, int* width, int* height, int* channels);
+
 // Free image data returned by loadHDImageFile or loadImageFile
 void freeHDImageData(unsigned char* data);
 

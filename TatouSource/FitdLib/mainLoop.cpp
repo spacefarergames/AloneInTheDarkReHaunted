@@ -12,6 +12,7 @@
 #include "anim2d.h"
 #include "fontTTF.h"
 #include "hdBackgroundRenderer.h"
+#include "configRemaster.h"
 #include "jobSystem.h"
 #include "lanternLighting.h"
 #include "menuMouse.h"
@@ -327,6 +328,7 @@ static bool detectNearbyInteractiveHotspot()
 void PlayWorld(int allowSystemMenu, int deltaTime)
 {
     g_playWorldActive = true;
+    stopLoopingSounds();    // a new game or a loaded save starts without an old room's loop
     bool bLoop = true;
 
     while(bLoop)
@@ -492,13 +494,21 @@ void PlayWorld(int allowSystemMenu, int deltaTime)
             action = 0;
         }
 
+        stopLoopingSoundsOnRoomChange();
+        processNextSample();          // sound_then: the queued second sample (tatou.cpp)
+
         executeFoundLife(inHandTable[currentInventory]);
 
         if(FlagChangeEtage == 0)
         {
             if(g_gameId == AITD1)
             {
-                bool isDark = (CVars[getCVarsIdx(LIGHT_OBJECT)] != -1);
+                // Darkness is drawn by osystem_drawDarkMask from lightOff (LIGHT 0/1),
+                // like the original: the light circle shows the normal frame, so the
+                // palette darkening and _DARK backgrounds stay off. (ReHaunted derived
+                // this from LIGHT_OBJECT != -1, which misses LIFE 172's rooms and lit the
+                // maze without a light; REHAUNTED_FIXES.md, "Dark rooms".)
+                bool isDark = false;
                 if (isDark != g_roomIsDark)
                 {
                     g_roomIsDark = isDark;
@@ -650,6 +660,18 @@ void PlayWorld(int allowSystemMenu, int deltaTime)
 
             NumCamera = memocam;
         }
+        // HD backgrounds switched on or off (F1 dialog or the detail option): reload
+        // the current camera so its background follows the setting at once.
+        {
+            static int s_lastHDBackgrounds = -1;
+            const int hdBackgrounds = g_remasterConfig.graphics.enableHDBackgrounds ? 1 : 0;
+            if (s_lastHDBackgrounds != -1 && s_lastHDBackgrounds != hdBackgrounds && !FlagInitView)
+            {
+                NewNumCamera = NumCamera;
+                FlagInitView = 1;
+            }
+            s_lastHDBackgrounds = hdBackgrounds;
+        }
         if (FlagInitView
 #ifdef FITD_DEBUGGER
             || debuggerVar_topCamera
@@ -714,6 +736,7 @@ void PlayWorld(int allowSystemMenu, int deltaTime)
     shakingAmplitude = 0;
 
     stopShaking();
+    stopLoopingSounds();    // back to the menus
     g_playWorldActive = false;
     //  stopSounds();
 }

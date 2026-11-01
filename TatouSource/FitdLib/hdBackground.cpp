@@ -37,7 +37,16 @@
 // Returns the folder path for HD backgrounds
 const char* getHDBackgroundFolder()
 {
+    if (g_remasterConfig.gameData.mode == REMASTER_GAME_AITD2) return "backgrounds_hd_aitd2";
+    if (g_remasterConfig.gameData.mode == REMASTER_GAME_AITD3) return "backgrounds_hd_aitd3";
     return "backgrounds_hd";
+}
+
+static const char* getHDBackgroundArchive()
+{
+    if (g_remasterConfig.gameData.mode == REMASTER_GAME_AITD2) return "backgrounds_hd_aitd2.hda";
+    if (g_remasterConfig.gameData.mode == REMASTER_GAME_AITD3) return "backgrounds_hd_aitd3.hda";
+    return "backgrounds_hd.hda";
 }
 
 // Check if HD backgrounds are enabled in configuration
@@ -53,14 +62,20 @@ bool isHDBackgroundEnabled()
 // whenever it has been closed out from under us.
 static void ensureArchiveOpen()
 {
-    if (HDArchive::isOpen())
-        return; // still open from a previous call
+    const char* requestedArchive = getHDBackgroundArchive();
+    if (HDArchive::isOpen() && _stricmp(HDArchive::currentPath(), requestedArchive) == 0)
+        return;
 
-    static bool s_failed = false;
-    if (s_failed) return; // file does not exist - no point retrying every frame
+    // HDArchive is shared with atlases and common UI artwork. Reopen the
+    // requested background pack when another subsystem has replaced it.
+    static std::string failedArchive;
+    if (failedArchive == requestedArchive)
+        return;
 
-    if (!HDArchive::open("backgrounds_hd.hda"))
-        s_failed = true;
+    if (!HDArchive::open(requestedArchive))
+        failedArchive = requestedArchive;
+    else
+        failedArchive.clear();
 }
 
 // Load an image from an archive entry using stb_image
@@ -241,6 +256,39 @@ unsigned char* loadHDImageFile(const char* filename, int* width, int* height, in
     fclose(testFile);
 
     return loadSingleFrame(filePath, width, height, channels);
+}
+
+unsigned char* loadSharedHDImageFile(const char* filename, int* width, int* height, int* channels)
+{
+    // A mode-specific pack may deliberately override shared menu artwork.
+    unsigned char* image = loadHDImageFile(filename, width, height, channels);
+    if (image || g_remasterConfig.gameData.mode == REMASTER_GAME_AITD1)
+        return image;
+
+    // Development/unpacked distribution fallback.
+    char filePath[512];
+    snprintf(filePath, sizeof(filePath), "backgrounds_hd/%s", filename);
+    FILE* testFile = nullptr;
+    fopen_s(&testFile, filePath, "rb");
+    if (testFile)
+    {
+        fclose(testFile);
+        image = loadSingleFrame(filePath, width, height, channels);
+        if (image)
+            return image;
+    }
+
+    // Shipping fallback. Opening the shared archive is safe because
+    // ensureArchiveOpen() now verifies which singleton archive is active and
+    // restores the game-specific pack on its next background request.
+    if ((!HDArchive::isOpen() || _stricmp(HDArchive::currentPath(), "backgrounds_hd.hda") != 0) &&
+        !HDArchive::open("backgrounds_hd.hda"))
+    {
+        return nullptr;
+    }
+
+    const HDArchiveEntry* entry = HDArchive::findEntry(filename);
+    return entry ? loadFromArchiveEntry(entry, width, height, channels) : nullptr;
 }
 
 // Free image data returned by loadHDImageFile

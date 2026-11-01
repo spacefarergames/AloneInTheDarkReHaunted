@@ -141,6 +141,27 @@ int numOfBones;
 
 std::array<point3dStruct, NUM_MAX_POINT_IN_POINT_BUFFER> pointBuffer;
 s16 cameraSpaceBuffer[NUM_MAX_POINT_IN_POINT_BUFFER*3];
+
+// AITD1 cave water (renderer.h): the vertices of the current model that are below the
+// height limit. A primitive using one is not drawn, as in the original.
+int g_waterCutSuspended = 0;
+static bool s_vertexCut[NUM_MAX_POINT_IN_POINT_BUFFER];
+
+// Room-space y (grows downward) below which model vertices are not drawn
+static int modelHeightLimit()
+{
+    return (g_gameId == AITD1 && shakeVar1 != 0 && g_waterCutSuspended == 0) ? -600 : 10000;
+}
+
+static bool primUsesCutVertex(const sPrimitive* ptr)
+{
+    for (u16 point : ptr->m_points)
+    {
+        if (point < NUM_MAX_POINT_IN_POINT_BUFFER && s_vertexCut[point])
+            return true;
+    }
+    return false;
+}
 s16 bonesBuffer[NUM_MAX_BONES];
 
 bool boneRotateX;
@@ -469,6 +490,7 @@ int AnimNuage(int x,int y,int z,int alpha,int beta,int gamma, sBody* pBody)
 
     {
         s16* outPtr = cameraSpaceBuffer;
+        const int heightLimit = modelHeightLimit();
         for(int i=0;i<numOfPoints;i++)
         {
             float X = pointBuffer[i].x;
@@ -480,12 +502,14 @@ int AnimNuage(int x,int y,int z,int alpha,int beta,int gamma, sBody* pBody)
             Y += renderY;
             Z += renderZ;
 
+            s_vertexCut[i] = Y > heightLimit;
+
 #if defined(AITD_UE4)
             *(outPtr++) = (s16)X;
             *(outPtr++) = (s16)Y;
             *(outPtr++) = (s16)Z;
 #else
-            if(Y>10000) // height clamp
+            if(Y>heightLimit) // height clamp; the waterline while the cave water is on
             {
                 *(outPtr++) = -10000;
                 *(outPtr++) = -10000;
@@ -605,6 +629,7 @@ int RotateNuage(int x,int y,int z,int alpha,int beta,int gamma, sBody* pBody)
     }
 
     outPtr = renderPointList;
+    const int heightLimit = modelHeightLimit();
 
     for(int i=0; i<pBody->m_vertices.size(); i++)
     {
@@ -646,12 +671,15 @@ int RotateNuage(int x,int y,int z,int alpha,int beta,int gamma, sBody* pBody)
         Y += renderY;
         Z += renderZ;
 
+        if (i < NUM_MAX_POINT_IN_POINT_BUFFER)
+            s_vertexCut[i] = Y > heightLimit;
+
 #if defined(AITD_UE4)
         *(outPtr++) = X;
         *(outPtr++) = Y;
         *(outPtr++) = Z;
 #else
-        if(Y>10000) // height clamp
+        if(Y>heightLimit) // height clamp; the waterline while the cave water is on
         {
             *(outPtr++) = -10000;
             *(outPtr++) = -10000;
@@ -711,6 +739,8 @@ void primFunctionDefault(int primType,char** ptr,char** out)
 
 void processPrim_Line(int primType, sPrimitive* ptr, char** out)
 {
+    if (primUsesCutVertex(ptr))
+        return;
     primEntryStruct* pCurrentPrimEntry = &primTable[positionInPrimEntry];
 
     ASSERT(positionInPrimEntry < NUM_MAX_PRIM_ENTRY);
@@ -758,6 +788,8 @@ void processPrim_Line(int primType, sPrimitive* ptr, char** out)
 
 void processPrim_Poly(int primType, sPrimitive* ptr, char** out, int originalPrimIndex)
 {
+    if (primUsesCutVertex(ptr))     // below the waterline / height clamp
+        return;
     primEntryStruct* pCurrentPrimEntry = &primTable[positionInPrimEntry];
 
     ASSERT(positionInPrimEntry < NUM_MAX_PRIM_ENTRY);
@@ -870,6 +902,8 @@ void processPrim_Poly(int primType, sPrimitive* ptr, char** out, int originalPri
 
 void processPrim_Point(primTypeEnum primType, sPrimitive* ptr, char** out)
 {
+    if (primUsesCutVertex(ptr))
+        return;
     primEntryStruct* pCurrentPrimEntry = &primTable[positionInPrimEntry];
 
     ASSERT(positionInPrimEntry < NUM_MAX_PRIM_ENTRY);
@@ -908,6 +942,8 @@ void processPrim_Point(primTypeEnum primType, sPrimitive* ptr, char** out)
 
 void processPrim_Sphere(int primType, sPrimitive* ptr, char** out)
 {
+    if (primUsesCutVertex(ptr))
+        return;
     primEntryStruct* pCurrentPrimEntry = &primTable[positionInPrimEntry];
 
     ASSERT(positionInPrimEntry < NUM_MAX_PRIM_ENTRY);
@@ -1269,6 +1305,10 @@ void setCurrentBodyNum(int bodyNum, sBody* pBody, const std::string& hqrName)
         std::string scopedHqrName = hqrName;
         if (g_gameId == JACK)
             scopedHqrName = std::string("JACK_") + hqrName;
+        else if (g_gameId == AITD2)
+            scopedHqrName = std::string("AITD2_") + hqrName;
+        else if (g_gameId == AITD3)
+            scopedHqrName = std::string("AITD3_") + hqrName;
 
         s_currentAtlas = loadModelAtlas(bodyNum, pBody, scopedHqrName);
     }
@@ -1623,7 +1663,11 @@ int AffObjet(int x,int y,int z,int alpha,int beta,int gamma, sBody* pBody)
 		// Track which body's primitives are now in primTable[] (for external code like lantern glow detection)
 		g_currentPrimTableBodyNum = s_currentBodyNum;
 
-				// Render primitives in order
+		// Flush any prior shadow batch before changing the model lighting.
+        osystem_flushPendingPrimitives();
+        osystem_setModelLighting(g_playWorldActive && g_waterCutSuspended == 0, (float)x, (float)y, (float)z);
+
+		// Render primitives in order
 		for(i=0;i<numOfPrimitiveToRender;i++)
 		{
 			if (primTable[i].nearClipped)
@@ -1636,6 +1680,7 @@ int AffObjet(int x,int y,int z,int alpha,int beta,int gamma, sBody* pBody)
 		}
 
 		osystem_flushPendingPrimitives();
+		osystem_setModelLighting(false);
 		// DON'T reset g_currentPrimTableBodyNum here! It needs to stay set so external
 		// code (like lantern glow) can check which body's primitives are in primTable[].
 		// We reset it when clearing primTable[] at the start of the next AffObjet() call.
@@ -1669,77 +1714,64 @@ void computeScreenBox(int x, int y, int z, int alpha, int beta, int gamma, sBody
 
 void drawBlobShadow(int x, int y, int z, int alpha, int beta, int gamma, sBody* bodyPtr)
 {
-    float radiusX = (float)(bodyPtr->m_zv.ZVX2 - bodyPtr->m_zv.ZVX1) * 0.45f;
-    float radiusZ = (float)(bodyPtr->m_zv.ZVZ2 - bodyPtr->m_zv.ZVZ1) * 0.45f;
-
+    if (!bodyPtr)
+        return;
+    const float radiusX = (bodyPtr->m_zv.ZVX2 - bodyPtr->m_zv.ZVX1) * 0.55f;
+    const float radiusZ = (bodyPtr->m_zv.ZVZ2 - bodyPtr->m_zv.ZVZ1) * 0.55f;
     if (radiusX < 10.f || radiusZ < 10.f)
         return;
-
-    float screenVertices[SHADOW_SEGMENTS * 3];
-    int numValidVertices = 0;
-
-    for (int i = 0; i < SHADOW_SEGMENTS; i++)
+    // Follow the body's footprint and facing, rather than an axis-aligned disc
+    // centred on its model origin (which can be well away from its feet).
+    const float centerX = (bodyPtr->m_zv.ZVX1 + bodyPtr->m_zv.ZVX2) * 0.5f;
+    const float centerZ = (bodyPtr->m_zv.ZVZ1 + bodyPtr->m_zv.ZVZ2) * 0.5f;
+    const float rotCos = beta ? cosTable[(beta + 0x100) & 0x3FF] / 32768.f : 1.f;
+    const float rotSin = beta ? cosTable[beta & 0x3FF] / 32768.f : 0.f;
+    float vertices[(SHADOW_SEGMENTS + 1) * 3];
+    for (int i = 0; i <= SHADOW_SEGMENTS; ++i)
     {
-        float angle = (float)i * 2.0f * 3.14159265f / (float)SHADOW_SEGMENTS;
-
-        float X = (float)x + radiusX * cosf(angle) - (float)translateX;
-        float Y = (float)y - (float)translateY;
-        float Z = (float)z + radiusZ * sinf(angle) - (float)translateZ;
-
+        const float angle = (i - 1) * 6.283185307f / SHADOW_SEGMENTS;
+        const float lx = centerX + (i ? radiusX * cosf(angle) : 0.f);
+        const float lz = centerZ + (i ? radiusZ * sinf(angle) : 0.f);
+        float X = x + lx * rotCos - lz * rotSin - translateX;
+        float Y = (float)y - translateY; // engine actor base is the contact plane
+        float Z = z + lx * rotSin + lz * rotCos - translateZ;
         transformPoint(&X, &Y, &Z);
-
-        Z += (float)cameraPerspective;
-
-        if (Z <= 50.0f)
+        Z += cameraPerspective;
+        if (Z <= 50.f)
             return;
-
-        float screenX = ((X * (float)cameraFovX) / Z) + (float)cameraCenterX;
-        float screenY = ((Y * (float)cameraFovY) / Z) + (float)cameraCenterY;
-
-        if (screenX < -200.f || screenX > 520.f || screenY < -200.f || screenY > 400.f)
-            return;
-
-        screenVertices[numValidVertices * 3 + 0] = screenX;
-        screenVertices[numValidVertices * 3 + 1] = screenY;
-        screenVertices[numValidVertices * 3 + 2] = Z + 1.0f;
-        numValidVertices++;
+        vertices[i * 3] = X * cameraFovX / Z + cameraCenterX;
+        vertices[i * 3 + 1] = Y * cameraFovY / Z + cameraCenterY;
+        vertices[i * 3 + 2] = Z + 1.f;
     }
-
-    if (numValidVertices >= 3)
-    {
-        float signedArea = 0;
-        for (int i = 0; i < numValidVertices; i++)
-        {
-            int next = (i + 1) % numValidVertices;
-            signedArea += screenVertices[i * 3] * screenVertices[next * 3 + 1]
-                        - screenVertices[next * 3] * screenVertices[i * 3 + 1];
-        }
-        if (signedArea > 0)
-        {
-            for (int i = 0; i < numValidVertices / 2; i++)
-            {
-                int j = numValidVertices - 1 - i;
-                float tx = screenVertices[i * 3];     screenVertices[i * 3]     = screenVertices[j * 3];     screenVertices[j * 3]     = tx;
-                float ty = screenVertices[i * 3 + 1]; screenVertices[i * 3 + 1] = screenVertices[j * 3 + 1]; screenVertices[j * 3 + 1] = ty;
-                float tz = screenVertices[i * 3 + 2]; screenVertices[i * 3 + 2] = screenVertices[j * 3 + 2]; screenVertices[j * 3 + 2] = tz;
-            }
-        }
-
-        g_submitShadowStencil = true;
-        osystem_fillPoly(screenVertices, numValidVertices, 0x01, 2);
-        osystem_flushPendingPrimitives();
-        g_submitShadowStencil = false;
-    }
+    osystem_drawContactShadow(vertices, SHADOW_SEGMENTS, 0.32f);
 }
+
+// Keep the entire projected silhouette in one batch, including early exits.
+// Ordinary translucent geometry must never be merged into a shadow batch.
+struct PlanarShadowScope
+{
+    bool previous;
+    PlanarShadowScope() : previous(g_submitShadowStencil)
+    {
+        osystem_flushPendingPrimitives();
+        g_submitShadowStencil = true;
+    }
+    ~PlanarShadowScope()
+    {
+        osystem_flushPendingPrimitives();
+        g_submitShadowStencil = previous;
+    }
+};
 
 void drawPlanarShadow(int x, int y, int z, int alpha, int beta, int gamma, sBody* bodyPtr)
 {
-    if (!g_planarShadowEnabled)
+    if (!bodyPtr || !g_planarShadowEnabled)
         return;
 
     if (g_shadowLightDirY == 0.0f)
         return;
 
+    PlanarShadowScope shadowScope;
     const bool isAnimated = (bodyPtr->m_flags & INFO_ANIM) != 0;
 
     // model rotation trig (mirrors RotateNuage setup)
@@ -1856,9 +1888,7 @@ void drawPlanarShadow(int x, int y, int z, int alpha, int beta, int gamma, sBody
         }
     }
 
-    g_submitShadowStencil = true;
-    osystem_flushPendingPrimitives();
-    g_submitShadowStencil = false;
+
 }
 
 // Maximum distance (in world units) from actor to consider a wall for shadow projection
@@ -1866,7 +1896,7 @@ void drawPlanarShadow(int x, int y, int z, int alpha, int beta, int gamma, sBody
 
 void drawWallPlanarShadow(int x, int y, int z, int alpha, int beta, int gamma, sBody* bodyPtr, int actorRoom)
 {
-    if (!g_wallShadowEnabled || !g_planarShadowEnabled)
+    if (!bodyPtr || !g_wallShadowEnabled || !g_planarShadowEnabled)
         return;
 
     if (g_shadowLightDirY == 0.0f)
@@ -1875,6 +1905,7 @@ void drawWallPlanarShadow(int x, int y, int z, int alpha, int beta, int gamma, s
     if (actorRoom < 0 || actorRoom >= (int)roomDataTable.size())
         return;
 
+    PlanarShadowScope shadowScope;
     const roomDataStruct& roomData = roomDataTable[actorRoom];
 
     // Convert wall coordinates from room-local to current-room world space
@@ -2107,9 +2138,7 @@ void drawWallPlanarShadow(int x, int y, int z, int alpha, int beta, int gamma, s
                 }
             }
 
-            g_submitShadowStencil = true;
             osystem_flushPendingPrimitives();
-            g_submitShadowStencil = false;
         }
     }
 }

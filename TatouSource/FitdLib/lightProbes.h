@@ -56,6 +56,11 @@ public:
     // Runtime sampling - get ambient color at a world position
     // Returns RGB color from nearest probe(s) using SH evaluation
     void sampleProbes(float x, float y, float z, float& r, float& g, float& b);
+    // Camera changes load authored probes; missing files use a restrained
+    // background-derived colour cast rather than a generic white light.
+    void setScene(int floor, int camera);
+    void setBackgroundAmbient(const unsigned char* pixels, int width, int height, int channels);
+    void sampleModelTint(float x, float y, float z, float& r, float& g, float& b);
 
     // Get all probes (for debug visualization)
     const std::vector<LightProbe>& getProbes() const { return m_probes; }
@@ -83,6 +88,8 @@ private:
     float m_intensity = 0.5f;
     int m_currentFloor = -1;
     int m_currentCamera = -1;
+    int m_currentGame = -1;
+    std::array<float, 3> m_backgroundAmbient = {0.4f, 0.4f, 0.4f};
 };
 
 // Global instance

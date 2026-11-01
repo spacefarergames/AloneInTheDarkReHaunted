@@ -63,6 +63,7 @@
 	void osystem_setPalette(palette_t* palette);
 	void osystem_setPalette320x200(byte * palette);
 	void osystem_setDarkRoom(bool dark);
+	void osystem_drawDarkMask(int lightX, int lightY);   // 320x200 coords; 20000 = no light
 	void osystem_flip(unsigned char *videoBuffer);
 	void osystem_draw320x200BufferToScreen(unsigned char *videoBuffer);
 	void osystem_CopyBlockPhys(unsigned char* videoBuffer, int left, int top, int right, int bottom);
@@ -73,8 +74,13 @@
 	void osystem_playSampleFromName(char* sampleName);
 	void osystem_playSample(char* samplePtr,int size);
 	void osystem_playLoopingSample(char* samplePtr, int size);
+	void osystem_stopLoopingSamples();
 	void osystem_stopSample();
 	bool osystem_isSamplePlaying();
+	// The voice of the last one-shot sample started (0: none), and whether a voice still plays.
+	// sound_then waits for its own first sample, not for every overlapping sound (tatou.cpp).
+	unsigned int osystem_lastSampleVoice();
+	bool osystem_isSampleVoicePlaying(unsigned int voice);
 	void osystem_reloadAudioArchive();
 
 	void osystem_playVO(const char* voFileName);
@@ -113,6 +119,8 @@
 	void osystem_drawSphere(float X, float Y, float Z, u8 color, u8 material, float size);
 	void osystem_drawPoint(float X, float Y, float Z, u8 color, u8 material, float size);
 	void osystem_flushPendingPrimitives();
+void osystem_setModelLighting(bool enabled, float x = 0, float y = 0, float z = 0);
+void osystem_drawContactShadow(const float* vertices, int segments, float opacity);
 	void renderHardColDepthPass();
 	void osystem_drawUILayer();
 

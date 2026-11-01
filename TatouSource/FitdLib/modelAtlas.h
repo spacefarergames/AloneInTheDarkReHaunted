@@ -136,3 +136,9 @@ bool dumpTatouAtlas(int bodyNum, sBody* pBody, const std::string& hqrName);
 // If found, creates a bgfx texture and computes 4-way UVs, stores in cache.
 // Returns pointer to cached atlas data, or nullptr if no atlas file exists.
 ModelAtlasData* loadTatouAtlas(int bodyNum, sBody* pBody, const std::string& hqrName);
+
+// Incremental full-game atlas extraction. One body is processed per call so
+// the main loop continues rendering between source-generation steps.
+void beginFullModelAtlasDump();
+bool pumpFullModelAtlasDumpBody();
+bool isFullModelAtlasDumpActive();

@@ -16,6 +16,9 @@ void setPalette(palette_t& palette);
 void copyPalette(void* source, palette_t& dest);
 void copyPalette(palette_t& source, palette_t& dest);
 void convertPaletteIfRequired(palette_t& lpalette);
+// Apply the fixed UI/ramp colors used by JACK/AITD2/AITD3 camera images,
+// then expand the complete camera palette to renderer-ready 8-bit RGB.
+void prepareCameraPalette(palette_t& palette);
 void SetLevelDestPal(palette_t& inPalette, palette_t& outPalette, int coef);
 
 extern palette_t currentGamePalette;

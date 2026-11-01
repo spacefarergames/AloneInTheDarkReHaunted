@@ -1,6 +1,7 @@
 $input v_texcoord0, v_screenSpacePosition
 
 #include "bgfx_shader.sh"
+#include "modelLighting.sh"
 #include "palette.sh"
 
 USAMPLER2D(s_noiseTexture, 0);
@@ -26,7 +27,9 @@ void main()
     if (luminance < noiseThreshold)
     {
         // Dark area (clothing/shadows) - apply film grain noise
-        uvec2 noiseSampler = uvec2(v_screenSpacePosition.xy * v_screenSpacePosition.z) % uvec2(255, 255);
+        // Screen-pixel noise stays stable as model depth changes. Multiplying
+        // interpolated positions by depth produced moving moire/stripe patterns.
+        uvec2 noiseSampler = uvec2(floor(gl_FragCoord.xy)) % uvec2(256, 256);
         float noise = float(texelFetch(s_noiseTexture, ivec2(noiseSampler), 0).r) / 255.f;
 
         // Scale noise strength based on how dark the area is
@@ -39,5 +42,6 @@ void main()
         // Bright area (skin, face, hair) - no noise, just flat color
         gl_FragColor = baseColor;
     }
+    gl_FragColor = applyModelAmbient(gl_FragColor);
 }
 

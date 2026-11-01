@@ -157,7 +157,8 @@ int FitdInit(int argc, char* argv[])
 
     // Auto-detect and copy original AITD game data (PAK/ITD) from
     // Steam, GOG, or CD-ROM if not already present in the working directory.
-    if (!g_remasterConfig.gameData.steamless)
+    if (!g_remasterConfig.gameData.steamless &&
+        g_remasterConfig.gameData.mode == REMASTER_GAME_AITD1)
     {
         gameDataCopy_EnsureDataFiles();
     }

@@ -206,9 +206,9 @@ static void drawEffectsTab()
     intChoice("SSGI samples", &g_remasterConfig.postProcessing.ssgiNumSamples, samples, 5);
     ImGui::EndDisabled();
 
-    ImGui::Checkbox("Light probes", &g_remasterConfig.postProcessing.enableLightProbes);
+    ImGui::Checkbox("Room lighting", &g_remasterConfig.postProcessing.enableLightProbes);
     ImGui::BeginDisabled(!g_remasterConfig.postProcessing.enableLightProbes);
-    ImGui::SliderFloat("Light probe intensity", &g_remasterConfig.postProcessing.lightProbeIntensity, 0.0f, 4.0f, "%.2f");
+    ImGui::SliderFloat("Room lighting strength", &g_remasterConfig.postProcessing.lightProbeIntensity, 0.0f, 1.0f, "%.2f");
     ImGui::EndDisabled();
 }
 
@@ -355,8 +355,15 @@ static void drawAdvancedTab()
     ImGui::Separator();
     ImGui::Checkbox("Steamless mode", &g_remasterConfig.gameData.steamless);
     helpMarker("Disables automatic game-data copying and Steam overlay integration after restart.");
-    ImGui::Checkbox("Jack in the Dark mode", &g_remasterConfig.gameData.jackMode);
-    helpMarker("Selects the JACK data set. Restart required.");
+    static const char* gameModes[] = {
+        "Alone in the Dark", "Jack in the Dark", "Alone in the Dark 2", "Alone in the Dark 3"
+    };
+    ImGui::Combo("Game mode", &g_remasterConfig.gameData.mode, gameModes, 4);
+    helpMarker("Selects a distinct on-disk/embedded data set. Restart required.");
+    ImGui::Checkbox("Auto-generate missing HD assets", &g_remasterConfig.assetGeneration.autoUpscaleMissingHD);
+    helpMarker("For AITD2/AITD3, queues missing backgrounds, model atlases and movie frames for Upscayl while the game continues.");
+    ImGui::SliderInt("Automatic upscale", &g_remasterConfig.assetGeneration.upscaleScale, 2, 4, "%dx");
+    helpMarker("4x is the native model output (320x200 backgrounds become 1280x800). Existing smaller automatic outputs are regenerated.");
 
     ImGui::Spacing();
     ImGui::TextDisabled("Diagnostics");

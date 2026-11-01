@@ -9,13 +9,26 @@
 
 #include "common.h"
 #include "modelAtlas.h"
+#include "hdAutoUpscale.h"
 #include "consoleLog.h"
 #include "hdArchive.h"
 #include <stdio.h>
 #include <string.h>
 #include <math.h>
 #include <algorithm>
+#include <array>
+#include <condition_variable>
+#include <deque>
+#include <exception>
+#include <filesystem>
+#include <fstream>
+#include <mutex>
 #include <string>
+#include <thread>
+
+#ifdef _WIN32
+#include <windows.h>
+#endif
 
 #define STB_IMAGE_WRITE_STATIC
 #define STB_IMAGE_WRITE_IMPLEMENTATION
@@ -31,8 +44,30 @@ extern "C" {
 
 extern char RGB_Pal[256 * 3];
 
+// Atlas generation may run on its low-priority worker. Keep its corrected
+// camera palette thread-local so it never changes the live game's palette.
+static thread_local const unsigned char* s_atlasPaletteOverride = nullptr;
+static const unsigned char* currentAtlasPalette()
+{
+    return s_atlasPaletteOverride ? s_atlasPaletteOverride : (const unsigned char*)RGB_Pal;
+}
+
 // Cache of loaded atlases keyed by HQR source name + body number
 static std::unordered_map<std::string, ModelAtlasData> s_atlasCache;
+static std::mutex s_atlasFileGenerationMutex;
+static thread_local bool s_atlasGenerationWorkerThread = false;
+
+static std::unique_lock<std::mutex> lockAtlasFileGeneration()
+{
+    std::unique_lock<std::mutex> lock(s_atlasFileGenerationMutex, std::defer_lock);
+    if (s_atlasGenerationWorkerThread) lock.lock();
+    else
+    {
+        const bool acquired = lock.try_lock();
+        (void)acquired;
+    }
+    return lock;
+}
 
 static std::string makeAtlasKey(const std::string& hqrName, int bodyNum)
 {
@@ -180,6 +215,12 @@ struct ProjectionParams
     int atlasW, atlasH;
 };
 
+// Flat models get huge projection atlases: the arrows' found bodies 161/163/164
+// have X range 0, so height/width is ~60 and the atlas came out 1024x262144
+// (1 GB; body 162: 1024x32768). Reading one froze the game for seconds on every
+// first draw in a session. Atlases are capped at this size in both directions.
+static const int kMaxAtlasSize = 4096;
+
 static ProjectionParams computeProjectionParams(const std::vector<point3dStruct>& verts)
 {
     ProjectionParams p = {};
@@ -209,7 +250,7 @@ static ProjectionParams computeProjectionParams(const std::vector<point3dStruct>
     int halfW = 512;
     int baseH = (int)ceilf((float)halfW * (p.rangeY / p.rangeX));
     p.atlasW = nextPow2((std::max)(halfW * 2, 128));
-    p.atlasH = nextPow2((std::max)(baseH, 64));
+    p.atlasH = (std::min)(nextPow2((std::max)(baseH, 64)), kMaxAtlasSize);
     return p;
 }
 
@@ -396,6 +437,13 @@ static std::string getOtherAtlasPath(const std::string& hqrName, int bodyNum)
     return getAtlasFolder() + buf;
 }
 
+static const char* getAtlasArchivePath()
+{
+    if (g_gameId == AITD2) return "atlases_aitd2.hda";
+    if (g_gameId == AITD3) return "atlases_aitd3.hda";
+    return "atlases.hda";
+}
+
 // Get point atlas file path for point-style primitives
 static std::string getPointAtlasPath(const std::string& hqrName, int bodyNum)
 {
@@ -420,19 +468,85 @@ static void ensureAtlasDir()
 
 // Generic helper to load atlas PNG data from atlases.hda archive or fall back to filesystem
 // Attempts to load from archive using just the filename as entry name, with fallback to direct file loading
+static bool isAtlasOversized(int w, int h)
+{
+    return w > kMaxAtlasSize || h > kMaxAtlasSize;
+}
+
+// Box-filters an oversized atlas down to kMaxAtlasSize (premultiplied, so
+// transparent texels don't darken the edges). UVs are normalised, so they still fit.
+static unsigned char* shrinkAtlasPixels(unsigned char* src, int& w, int& h)
+{
+    const int newW = (std::min)(w, kMaxAtlasSize);
+    const int newH = (std::min)(h, kMaxAtlasSize);
+    unsigned char* dst = (unsigned char*)malloc((size_t)newW * newH * 4);
+    if (!dst)
+        return src;
+    for (int y = 0; y < newH; y++)
+    {
+        const int y0 = (int)((long long)y * h / newH), y1 = (std::max)(y0 + 1, (int)((long long)(y + 1) * h / newH));
+        for (int x = 0; x < newW; x++)
+        {
+            const int x0 = (int)((long long)x * w / newW), x1 = (std::max)(x0 + 1, (int)((long long)(x + 1) * w / newW));
+            double r = 0, g = 0, b = 0, a = 0;
+            for (int sy = y0; sy < y1; sy++)
+                for (int sx = x0; sx < x1; sx++)
+                {
+                    const unsigned char* p = src + ((size_t)sy * w + sx) * 4;
+                    r += p[0] * p[3]; g += p[1] * p[3]; b += p[2] * p[3]; a += p[3];
+                }
+            unsigned char* q = dst + ((size_t)y * newW + x) * 4;
+            const int n = (x1 - x0) * (y1 - y0);
+            q[0] = a > 0 ? (unsigned char)(r / a + 0.5) : 0;
+            q[1] = a > 0 ? (unsigned char)(g / a + 0.5) : 0;
+            q[2] = a > 0 ? (unsigned char)(b / a + 0.5) : 0;
+            q[3] = (unsigned char)(a / n + 0.5);
+        }
+    }
+    printf(RNDR_TAG "Atlas shrunk from %dx%d to %dx%d\n", w, h, newW, newH);
+    stbi_image_free(src);
+    w = newW;
+    h = newH;
+    return dst;
+}
+
 // Returns decompressed RGBA8 pixel data (caller must free with stbi_image_free)
 // Sets w, h, channels on success; returns nullptr on failure
-static unsigned char* loadAtlasDataFromArchiveOrFile(const std::string& filePath, int& w, int& h, int& channels)
+// afterDump: the loose file was just generated. It is then read first and never
+// skipped (an oversized one is shrunk instead), so a generator that still makes
+// one can't be asked to dump it again on every draw.
+static unsigned char* loadAtlasDataFromArchiveOrFile(const std::string& filePath, int& w, int& h, int& channels,
+    bool afterDump = false)
 {
     // Extract just the filename from the full path for archive entry lookup
     // (Archive entries use simple names like "body_hqrname_001.png", not full paths)
     size_t lastSlash = filePath.find_last_of("/\\");
     std::string fileName = (lastSlash != std::string::npos) ? filePath.substr(lastSlash + 1) : filePath;
 
+    if (afterDump)
+    {
+        if (unsigned char* data = stbi_load(filePath.c_str(), &w, &h, &channels, 4))
+        {
+            return isAtlasOversized(w, h) ? shrinkAtlasPixels(data, w, h) : data;
+        }
+    }
+
     // First, try to load from atlases.hda archive
-    if (HDArchive::open("atlases.hda"))
+    if (HDArchive::open(getAtlasArchivePath()))
     {
         const HDArchiveEntry* entry = HDArchive::findEntry(fileName.c_str());
+        // Size check from the PNG header alone (the IHDR chunk ends at byte 33):
+        // an oversized entry is skipped without reading the image, and the loose
+        // file (generated at a capped size) is used instead
+        unsigned char header[64];
+        const size_t headerLen = entry && !afterDump ? HDArchive::readEntryPrefix(entry, header, sizeof(header)) : 0;
+        int infoW = 0, infoH = 0, infoComp = 0;
+        if (headerLen > 0 && stbi_info_from_memory(header, (int)headerLen, &infoW, &infoH, &infoComp) &&
+            isAtlasOversized(infoW, infoH))
+        {
+            printf(RNDR_TAG "Atlas in atlases.hda skipped, too large: %s (%dx%d)\n", fileName.c_str(), infoW, infoH);
+            entry = nullptr;
+        }
         if (entry)
         {
             size_t dataSize = 0;
@@ -452,7 +566,7 @@ static unsigned char* loadAtlasDataFromArchiveOrFile(const std::string& filePath
                     // Note: uncomment for debug logging
                     // printf(RNDR_INFO "Loaded atlas from archive: %s (%dx%d)" CON_RESET "\n",
                     //     fileName.c_str(), w, h);
-                    return pixels;
+                    return isAtlasOversized(w, h) ? shrinkAtlasPixels(pixels, w, h) : pixels;
                 }
             }
         }
@@ -462,8 +576,17 @@ static unsigned char* loadAtlasDataFromArchiveOrFile(const std::string& filePath
         }
     }
 
-    // Fallback: load from individual file on filesystem
+    // Fallback: load from individual file on filesystem. An oversized one is not
+    // decoded: returning nothing makes the caller generate it again at a capped size.
+    int infoW = 0, infoH = 0, infoComp = 0;
+    if (!afterDump && stbi_info(filePath.c_str(), &infoW, &infoH, &infoComp) && isAtlasOversized(infoW, infoH))
+    {
+        printf(RNDR_TAG "Atlas file too large, regenerating: %s (%dx%d)\n", filePath.c_str(), infoW, infoH);
+        return nullptr;
+    }
     unsigned char* data = stbi_load(filePath.c_str(), &w, &h, &channels, 4);
+    if (data && isAtlasOversized(w, h))
+        data = shrinkAtlasPixels(data, w, h);
 
     // Note: uncomment for debug logging if loaded from file
     // if (data)
@@ -607,6 +730,8 @@ static void projectPolyToUV(sBody* pBody, sPrimitive* pPrim, std::vector<float>&
 
 bool dumpModelAtlas(int bodyNum, sBody* pBody, const std::string& hqrName)
 {
+    auto generationLock = lockAtlasFileGeneration();
+    if (!generationLock.owns_lock()) return false;
     if (!pBody) return false;
 
     int numPrims = (int)pBody->m_primitives.size();
@@ -634,9 +759,10 @@ bool dumpModelAtlas(int bodyNum, sBody* pBody, const std::string& hqrName)
 
         unsigned char r = 128, g = 128, b = 128;
         int palIdx = pPrim->m_color;
-        r = (unsigned char)RGB_Pal[palIdx * 3 + 0];
-        g = (unsigned char)RGB_Pal[palIdx * 3 + 1];
-        b = (unsigned char)RGB_Pal[palIdx * 3 + 2];
+        const unsigned char* atlasPalette = currentAtlasPalette();
+        r = atlasPalette[palIdx * 3 + 0];
+        g = atlasPalette[palIdx * 3 + 1];
+        b = atlasPalette[palIdx * 3 + 2];
 
         bool front = isPolyFrontFacing(globalVerts, pPrim);
 
@@ -670,6 +796,7 @@ bool dumpModelAtlas(int bodyNum, sBody* pBody, const std::string& hqrName)
 
     if (result)
     {
+        hdAutoUpscale_QueueInPlace(path);
         printf(RNDR_TAG "Projection atlas dumped: %s (%dx%d, %d polys)\n", path.c_str(), atlasW, atlasH, numPrims);
     }
     else
@@ -697,7 +824,7 @@ ModelAtlasData* loadModelAtlas(int bodyNum, sBody* pBody, const std::string& hqr
     if (!data)
     {
         dumpModelAtlas(bodyNum, pBody, hqrName);
-        data = loadAtlasDataFromArchiveOrFile(path, w, h, channels);
+        data = loadAtlasDataFromArchiveOrFile(path, w, h, channels, true);
         if (!data)
             return nullptr;
     }
@@ -761,7 +888,7 @@ ModelAtlasData* loadModelAtlas(int bodyNum, sBody* pBody, const std::string& hqr
     {
         // Auto-dump sphere atlas if it doesn't exist
         dumpSphereAtlas(bodyNum, pBody, hqrName);
-        sphereData = loadAtlasDataFromArchiveOrFile(spherePath, w, h, channels);
+        sphereData = loadAtlasDataFromArchiveOrFile(spherePath, w, h, channels, true);
     }
 
     if (sphereData)
@@ -796,7 +923,7 @@ ModelAtlasData* loadModelAtlas(int bodyNum, sBody* pBody, const std::string& hqr
         atlas.pointAtlasWidth = w;
         atlas.pointAtlasHeight = h;
         atlas.pointCellsPerRow = 8;
-        atlas.pointCellSize = 128;
+        atlas.pointCellSize = 128 * (std::max)(1, w / 1024);
 
         const bgfx::Memory* pointMem = bgfx::copy(pointData, w * h * 4);
         atlas.pointTexture = bgfx::createTexture2D(w, h, false, 1, bgfx::TextureFormat::RGBA8, 0, pointMem);
@@ -815,7 +942,7 @@ ModelAtlasData* loadModelAtlas(int bodyNum, sBody* pBody, const std::string& hqr
     {
         // Auto-dump flat poly atlas if it doesn't exist
         dumpFlatPolyAtlas(bodyNum, pBody, hqrName);
-        flatData = loadAtlasDataFromArchiveOrFile(flatPath, w, h, channels);
+        flatData = loadAtlasDataFromArchiveOrFile(flatPath, w, h, channels, true);
     }
 
     if (flatData)
@@ -872,7 +999,7 @@ ModelAtlasData* loadModelAtlas(int bodyNum, sBody* pBody, const std::string& hqr
     {
         // Auto-dump ramp poly atlas if it doesn't exist
         dumpRampAtlas(bodyNum, pBody, hqrName);
-        rampData = loadAtlasDataFromArchiveOrFile(rampPath, w, h, channels);
+        rampData = loadAtlasDataFromArchiveOrFile(rampPath, w, h, channels, true);
     }
 
     if (rampData)
@@ -931,7 +1058,7 @@ ModelAtlasData* loadModelAtlas(int bodyNum, sBody* pBody, const std::string& hqr
     {
         // Auto-dump other poly atlas if it doesn't exist
         dumpOtherAtlas(bodyNum, pBody, hqrName);
-        otherData = loadAtlasDataFromArchiveOrFile(otherPath, w, h, channels);
+        otherData = loadAtlasDataFromArchiveOrFile(otherPath, w, h, channels, true);
     }
 
     if (otherData)
@@ -988,6 +1115,8 @@ ModelAtlasData* loadModelAtlas(int bodyNum, sBody* pBody, const std::string& hqr
 
 bool dumpSphereAtlas(int bodyNum, sBody* pBody, const std::string& hqrName)
 {
+    auto generationLock = lockAtlasFileGeneration();
+    if (!generationLock.owns_lock()) return false;
     if (!pBody) return false;
 
     int numPrims = (int)pBody->m_primitives.size();
@@ -1034,9 +1163,10 @@ bool dumpSphereAtlas(int bodyNum, sBody* pBody, const std::string& hqrName)
         // Get color from palette
         unsigned char r = 128, g = 128, b = 128;
         int palIdx = pPrim->m_color;
-        r = (unsigned char)RGB_Pal[palIdx * 3 + 0];
-        g = (unsigned char)RGB_Pal[palIdx * 3 + 1];
-        b = (unsigned char)RGB_Pal[palIdx * 3 + 2];
+        const unsigned char* atlasPalette = currentAtlasPalette();
+        r = atlasPalette[palIdx * 3 + 0];
+        g = atlasPalette[palIdx * 3 + 1];
+        b = atlasPalette[palIdx * 3 + 2];
 
         // Calculate cell position
         int cellX = (sphereIdx % cellsPerRow) * cellSize;
@@ -1082,6 +1212,7 @@ bool dumpSphereAtlas(int bodyNum, sBody* pBody, const std::string& hqrName)
     ensureAtlasDir();
     std::string path = getSphereAtlasPath(hqrName, bodyNum);
     int result = stbi_write_png(path.c_str(), atlasW, atlasH, 4, image.data(), atlasW * 4);
+    if (result) hdAutoUpscale_QueueInPlace(path);
 
     if (result)
     {
@@ -1097,6 +1228,8 @@ bool dumpSphereAtlas(int bodyNum, sBody* pBody, const std::string& hqrName)
 
 bool dumpPointAtlas(int bodyNum, sBody* pBody, const std::string& hqrName)
 {
+    auto generationLock = lockAtlasFileGeneration();
+    if (!generationLock.owns_lock()) return false;
     if (!pBody) return false;
 
     int numPrims = (int)pBody->m_primitives.size();
@@ -1136,9 +1269,10 @@ bool dumpPointAtlas(int bodyNum, sBody* pBody, const std::string& hqrName)
 
         unsigned char r = 128, g = 128, b = 128;
         int palIdx = pPrim->m_color;
-        r = (unsigned char)RGB_Pal[palIdx * 3 + 0];
-        g = (unsigned char)RGB_Pal[palIdx * 3 + 1];
-        b = (unsigned char)RGB_Pal[palIdx * 3 + 2];
+        const unsigned char* atlasPalette = currentAtlasPalette();
+        r = atlasPalette[palIdx * 3 + 0];
+        g = atlasPalette[palIdx * 3 + 1];
+        b = atlasPalette[palIdx * 3 + 2];
 
         int cellX = (pointIdx % cellsPerRow) * cellSize;
         int cellY = (pointIdx / cellsPerRow) * cellSize;
@@ -1178,6 +1312,7 @@ bool dumpPointAtlas(int bodyNum, sBody* pBody, const std::string& hqrName)
     ensureAtlasDir();
     std::string path = getPointAtlasPath(hqrName, bodyNum);
     int result = stbi_write_png(path.c_str(), atlasW, atlasH, 4, image.data(), atlasW * 4);
+    if (result) hdAutoUpscale_QueueInPlace(path);
 
     if (result)
     {
@@ -1193,6 +1328,8 @@ bool dumpPointAtlas(int bodyNum, sBody* pBody, const std::string& hqrName)
 
 bool dumpFlatPolyAtlas(int bodyNum, sBody* pBody, const std::string& hqrName)
 {
+    auto generationLock = lockAtlasFileGeneration();
+    if (!generationLock.owns_lock()) return false;
     if (!pBody) return false;
 
     int numPrims = (int)pBody->m_primitives.size();
@@ -1243,9 +1380,10 @@ bool dumpFlatPolyAtlas(int bodyNum, sBody* pBody, const std::string& hqrName)
 
         unsigned char r = 128, g = 128, b = 128;
         int palIdx = pPrim->m_color;
-        r = (unsigned char)RGB_Pal[palIdx * 3 + 0];
-        g = (unsigned char)RGB_Pal[palIdx * 3 + 1];
-        b = (unsigned char)RGB_Pal[palIdx * 3 + 2];
+        const unsigned char* atlasPalette = currentAtlasPalette();
+        r = atlasPalette[palIdx * 3 + 0];
+        g = atlasPalette[palIdx * 3 + 1];
+        b = atlasPalette[palIdx * 3 + 2];
 
         bool front = isPolyFrontFacing(globalVerts, pPrim);
 
@@ -1280,6 +1418,7 @@ bool dumpFlatPolyAtlas(int bodyNum, sBody* pBody, const std::string& hqrName)
     ensureAtlasDir();
     std::string path = getFlatPolyAtlasPath(hqrName, bodyNum);
     int result = stbi_write_png(path.c_str(), atlasW, atlasH, 4, image.data(), atlasW * 4);
+    if (result) hdAutoUpscale_QueueInPlace(path);
 
     if (result)
     {
@@ -1295,6 +1434,8 @@ bool dumpFlatPolyAtlas(int bodyNum, sBody* pBody, const std::string& hqrName)
 
 bool dumpRampAtlas(int bodyNum, sBody* pBody, const std::string& hqrName)
 {
+    auto generationLock = lockAtlasFileGeneration();
+    if (!generationLock.owns_lock()) return false;
     if (!pBody) return false;
 
     int numPrims = (int)pBody->m_primitives.size();
@@ -1337,9 +1478,10 @@ bool dumpRampAtlas(int bodyNum, sBody* pBody, const std::string& hqrName)
 
         unsigned char r = 128, g = 128, b = 128;
         int palIdx = pPrim->m_color;
-        r = (unsigned char)RGB_Pal[palIdx * 3 + 0];
-        g = (unsigned char)RGB_Pal[palIdx * 3 + 1];
-        b = (unsigned char)RGB_Pal[palIdx * 3 + 2];
+        const unsigned char* atlasPalette = currentAtlasPalette();
+        r = atlasPalette[palIdx * 3 + 0];
+        g = atlasPalette[palIdx * 3 + 1];
+        b = atlasPalette[palIdx * 3 + 2];
 
         // Determine front vs back facing (2-way split like flat atlas)
         bool isFront = isPolyFrontFacing(globalVerts, pPrim);
@@ -1375,6 +1517,7 @@ bool dumpRampAtlas(int bodyNum, sBody* pBody, const std::string& hqrName)
     ensureAtlasDir();
     std::string path = getRampAtlasPath(hqrName, bodyNum);
     int result = stbi_write_png(path.c_str(), atlasW, atlasH, 4, image.data(), atlasW * 4);
+    if (result) hdAutoUpscale_QueueInPlace(path);
 
     if (result)
     {
@@ -1390,6 +1533,8 @@ bool dumpRampAtlas(int bodyNum, sBody* pBody, const std::string& hqrName)
 
 bool dumpOtherAtlas(int bodyNum, sBody* pBody, const std::string& hqrName)
 {
+    auto generationLock = lockAtlasFileGeneration();
+    if (!generationLock.owns_lock()) return false;
     if (!pBody) return false;
 
     int numPrims = (int)pBody->m_primitives.size();
@@ -1432,9 +1577,10 @@ bool dumpOtherAtlas(int bodyNum, sBody* pBody, const std::string& hqrName)
 
         unsigned char r = 128, g = 128, b = 128;
         int palIdx = pPrim->m_color;
-        r = (unsigned char)RGB_Pal[palIdx * 3 + 0];
-        g = (unsigned char)RGB_Pal[palIdx * 3 + 1];
-        b = (unsigned char)RGB_Pal[palIdx * 3 + 2];
+        const unsigned char* atlasPalette = currentAtlasPalette();
+        r = atlasPalette[palIdx * 3 + 0];
+        g = atlasPalette[palIdx * 3 + 1];
+        b = atlasPalette[palIdx * 3 + 2];
 
         bool isFront = isPolyFrontFacing(globalVerts, pPrim);
 
@@ -1466,6 +1612,7 @@ bool dumpOtherAtlas(int bodyNum, sBody* pBody, const std::string& hqrName)
     ensureAtlasDir();
     std::string path = getOtherAtlasPath(hqrName, bodyNum);
     int result = stbi_write_png(path.c_str(), atlasW, atlasH, 4, image.data(), atlasW * 4);
+    if (result) hdAutoUpscale_QueueInPlace(path);
 
     if (result)
     {
@@ -1559,7 +1706,7 @@ static TatouProjectionParams computeTatouProjectionParams(const std::vector<poin
     float maxHorizRange = (std::max)(p.rangeX, p.rangeZ);
     int baseH = (int)ceilf((float)halfW * (p.rangeY / maxHorizRange));
     p.atlasW = nextPow2((std::max)(halfW * 2, 128));
-    p.atlasH = nextPow2((std::max)(baseH * 2, 128));  // Double height for 4 quadrants
+    p.atlasH = (std::min)(nextPow2((std::max)(baseH * 2, 128)), kMaxAtlasSize);  // Double height for 4 quadrants
     return p;
 }
 
@@ -1619,9 +1766,10 @@ bool dumpTatouAtlas(int bodyNum, sBody* pBody, const std::string& hqrName)
 
         unsigned char r = 128, g = 128, b = 128;
         int palIdx = pPrim->m_color;
-        r = (unsigned char)RGB_Pal[palIdx * 3 + 0];
-        g = (unsigned char)RGB_Pal[palIdx * 3 + 1];
-        b = (unsigned char)RGB_Pal[palIdx * 3 + 2];
+        const unsigned char* atlasPalette = currentAtlasPalette();
+        r = atlasPalette[palIdx * 3 + 0];
+        g = atlasPalette[palIdx * 3 + 1];
+        b = atlasPalette[palIdx * 3 + 2];
 
         int dir = classifyPolyDirection4Way(globalVerts, pPrim);
 
@@ -1677,6 +1825,7 @@ bool dumpTatouAtlas(int bodyNum, sBody* pBody, const std::string& hqrName)
     ensureAtlasDir();
     std::string path = getTatouAtlasPath(hqrName, bodyNum);
     int result = stbi_write_png(path.c_str(), atlasW, atlasH, 4, image.data(), atlasW * 4);
+    if (result) hdAutoUpscale_QueueInPlace(path);
 
     if (result)
     {
@@ -1707,7 +1856,7 @@ ModelAtlasData* loadTatouAtlas(int bodyNum, sBody* pBody, const std::string& hqr
     if (!data)
     {
         dumpTatouAtlas(bodyNum, pBody, hqrName);
-        data = loadAtlasDataFromArchiveOrFile(path, w, h, channels);
+        data = loadAtlasDataFromArchiveOrFile(path, w, h, channels, true);
         if (!data)
             return nullptr;
     }
@@ -1793,5 +1942,224 @@ ModelAtlasData* loadTatouAtlas(int bodyNum, sBody* pBody, const std::string& hqr
 
     auto result = s_atlasCache.emplace(cacheKey, std::move(atlas));
     return &result.first->second;
+}
+
+namespace
+{
+struct FullAtlasDumpState
+{
+    int bodyIndex = 0;
+    int bodyCount = 0;
+    std::string sourceHqr;
+    std::string scopedHqr;
+    std::filesystem::path recipePath;
+    std::array<unsigned char, 256 * 3> palette{};
+    bool initialized = false;
+    bool active = false;
+};
+
+struct AtlasGenerationJob
+{
+    int bodyIndex = 0;
+    std::string scopedHqr;
+    std::vector<unsigned char> rawBody;
+    std::array<unsigned char, 256 * 3> palette{};
+};
+
+struct AtlasGenerationWorker
+{
+    std::mutex mutex;
+    std::condition_variable wake;
+    std::deque<AtlasGenerationJob> jobs;
+    int pending = 0;
+    bool started = false;
+};
+
+FullAtlasDumpState& fullAtlasDumpState()
+{
+    static FullAtlasDumpState state;
+    return state;
+}
+
+static bool atlasFileMissing(const std::string& path)
+{
+    std::error_code ec;
+    return !std::filesystem::is_regular_file(path, ec);
+}
+
+AtlasGenerationWorker& atlasGenerationWorker()
+{
+    static AtlasGenerationWorker* worker = new AtlasGenerationWorker();
+    return *worker;
+}
+
+void atlasGenerationWorkerMain()
+{
+#ifdef _WIN32
+    SetThreadPriority(GetCurrentThread(), THREAD_PRIORITY_BELOW_NORMAL);
+#endif
+    s_atlasGenerationWorkerThread = true;
+    AtlasGenerationWorker& worker = atlasGenerationWorker();
+    for (;;)
+    {
+        AtlasGenerationJob job;
+        {
+            std::unique_lock<std::mutex> lock(worker.mutex);
+            worker.wake.wait(lock, [&] { return !worker.jobs.empty(); });
+            job = std::move(worker.jobs.front());
+            worker.jobs.pop_front();
+        }
+
+        sBody* body = nullptr;
+        try
+        {
+            body = createBodyFromPtr(job.rawBody.data());
+            s_atlasPaletteOverride = job.palette.data();
+            if (atlasFileMissing(getAtlasPath(job.scopedHqr, job.bodyIndex)))
+                dumpModelAtlas(job.bodyIndex, body, job.scopedHqr);
+            if (atlasFileMissing(getSphereAtlasPath(job.scopedHqr, job.bodyIndex)))
+                dumpSphereAtlas(job.bodyIndex, body, job.scopedHqr);
+            if (atlasFileMissing(getPointAtlasPath(job.scopedHqr, job.bodyIndex)))
+                dumpPointAtlas(job.bodyIndex, body, job.scopedHqr);
+            if (atlasFileMissing(getFlatPolyAtlasPath(job.scopedHqr, job.bodyIndex)))
+                dumpFlatPolyAtlas(job.bodyIndex, body, job.scopedHqr);
+            if (atlasFileMissing(getRampAtlasPath(job.scopedHqr, job.bodyIndex)))
+                dumpRampAtlas(job.bodyIndex, body, job.scopedHqr);
+            if (atlasFileMissing(getOtherAtlasPath(job.scopedHqr, job.bodyIndex)))
+                dumpOtherAtlas(job.bodyIndex, body, job.scopedHqr);
+        }
+        catch (const std::exception& error)
+        {
+            printf(RNDR_TAG "Skipping model body %d after atlas error: %s\n",
+                   job.bodyIndex, error.what());
+        }
+        catch (...)
+        {
+            printf(RNDR_TAG "Skipping model body %d after an unknown atlas error.\n",
+                   job.bodyIndex);
+        }
+        s_atlasPaletteOverride = nullptr;
+        delete body;
+        {
+            std::lock_guard<std::mutex> lock(worker.mutex);
+            --worker.pending;
+        }
+    }
+}
+
+}
+
+void beginFullModelAtlasDump()
+{
+    FullAtlasDumpState& state = fullAtlasDumpState();
+    if (state.initialized) return;
+
+    state = FullAtlasDumpState{};
+    state.initialized = true;
+    state.sourceHqr = HQ_Bodys ? HQ_Bodys->string : "LISTBODY";
+    state.scopedHqr = state.sourceHqr;
+    if (g_gameId == AITD2) state.scopedHqr = "AITD2_" + state.sourceHqr;
+    else if (g_gameId == AITD3) state.scopedHqr = "AITD3_" + state.sourceHqr;
+    const char* atlasPack = g_gameId == AITD2 ? "atlases_aitd2.hda" : "atlases_aitd3.hda";
+    std::filesystem::path base = homePath[0] ? std::filesystem::path(homePath) : std::filesystem::current_path();
+    std::error_code ec;
+    if (std::filesystem::is_regular_file(base / atlasPack, ec)) return;
+    state.recipePath = base / "atlases" / (state.scopedHqr + ".fitd_dump_recipe");
+    std::filesystem::create_directories(state.recipePath.parent_path(), ec);
+    std::ofstream recipe(state.recipePath, std::ios::binary | std::ios::trunc);
+    recipe << "camera-palette-v2\n";
+    state.bodyCount = (int)PAK_getNumFiles(state.sourceHqr.c_str());
+    memcpy(state.palette.data(), RGB_Pal, state.palette.size());
+    const int cameraSize = getPakSize("CAMERA00", 0);
+    char* camera = cameraSize >= 64000 + 256 * 3 ? loadPak("CAMERA00", 0) : nullptr;
+    if (camera)
+    {
+        palette_t cameraPalette;
+        copyPalette(camera + 64000, cameraPalette);
+        prepareCameraPalette(cameraPalette);
+        memcpy(state.palette.data(), cameraPalette.data(), state.palette.size());
+        free(camera);
+    }
+    state.active = state.bodyCount > 0;
+    printf(RNDR_TAG "Queued full-game atlas dump: %d model bodies\n", state.bodyCount);
+}
+
+bool isFullModelAtlasDumpActive()
+{
+    return fullAtlasDumpState().active;
+}
+
+bool pumpFullModelAtlasDumpBody()
+{
+    FullAtlasDumpState& state = fullAtlasDumpState();
+    if (!state.active) return false;
+
+    AtlasGenerationWorker& worker = atlasGenerationWorker();
+    {
+        std::lock_guard<std::mutex> lock(worker.mutex);
+        // Keep only two bodies outstanding so background CPU work cannot run
+        // away with memory or monopolize cores needed by the game.
+        if (worker.pending >= 2) return false;
+    }
+
+    while (state.bodyIndex < state.bodyCount)
+    {
+        const int bodyIndex = state.bodyIndex++;
+        const int bodySize = getPakSize(state.sourceHqr.c_str(), bodyIndex);
+        char* rawBody = bodySize >= 20 ? loadPak(state.sourceHqr.c_str(), bodyIndex) : nullptr;
+        // A LISTBODY archive can contain empty/sentinel slots. Check the
+        // variable-sized header before sending it to the bounded worker.
+        if (!rawBody)
+            continue;
+        const unsigned int scratchSize = READ_LE_U16(rawBody + 14);
+        const size_t vertexCountOffset = 16u + scratchSize;
+        if (vertexCountOffset + 2u > (size_t)bodySize)
+        {
+            free(rawBody);
+            continue;
+        }
+        const unsigned int vertexCount = READ_LE_U16(rawBody + vertexCountOffset);
+        if (vertexCount > 4096u || vertexCountOffset + 2u + vertexCount * 6u > (size_t)bodySize)
+        {
+            printf(RNDR_TAG "Skipping malformed model body %d (%d bytes).\n", bodyIndex, bodySize);
+            free(rawBody);
+            continue;
+        }
+
+        AtlasGenerationJob job;
+        job.bodyIndex = bodyIndex;
+        job.scopedHqr = state.scopedHqr;
+        job.rawBody.assign((unsigned char*)rawBody,
+                           (unsigned char*)rawBody + bodySize);
+        job.palette = state.palette;
+        free(rawBody);
+        {
+            std::lock_guard<std::mutex> lock(worker.mutex);
+            worker.jobs.push_back(std::move(job));
+            ++worker.pending;
+            if (!worker.started)
+            {
+                worker.started = true;
+                std::thread(atlasGenerationWorkerMain).detach();
+            }
+        }
+        worker.wake.notify_one();
+        return true;
+    }
+
+    {
+        std::lock_guard<std::mutex> lock(worker.mutex);
+        if (worker.pending > 0)
+        {
+            return false;
+        }
+    }
+
+    state.active = false;
+    std::filesystem::create_directories(state.recipePath.parent_path());
+    std::ofstream recipe(state.recipePath, std::ios::binary | std::ios::trunc);
+    recipe << "camera-palette-v2\n";
+    printf(RNDR_OK "Full-game atlas dump complete." CON_RESET "\n");
+    return false;
 }
 

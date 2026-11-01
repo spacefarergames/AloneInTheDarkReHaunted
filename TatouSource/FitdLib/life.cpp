@@ -13,6 +13,8 @@
 #include "common.h"
 #include "consoleLog.h"
 #include "hybrid.h"
+#include "pickupPromptGuard.h"
+#include "lifeBugfixes.h"
 #include "hdBackground.h"
 #include "hdBackgroundRenderer.h"
 #include "nativeLife.h"
@@ -213,6 +215,7 @@ void put(int x, int y, int z, int room, int stage, int alpha, int beta, int gamm
 void drop(int worldIdx, int worldSource)
 {
     PutAtObjet(worldIdx, worldSource);
+    pickupPromptGuardOnDrop(worldIdx);
 }
 
 void fire(int fireAnim, int X, int Y, int Z, int hitForce, int nextAnim)
@@ -365,7 +368,9 @@ int InitSpecialObjet(int mode, int X, int Y, int Z, int stage, int room, int alp
         char* flowPtr;
         int j;
 
-        currentActorPtr->frame = HQ_Malloc(HQ_Memory, 184);
+        // 4 + 20 * 6 + 20 * 4 = 204 bytes are written below (was 184: a 20-byte heap overrun
+        // on every blood spray; REHAUNTED_FIXES.md, "Particle effects")
+        currentActorPtr->frame = HQ_Malloc(HQ_Memory, 4 + 20 * (6 + 4));
 
         flowPtr = HQ_PtrMalloc(HQ_Memory, currentActorPtr->frame);
 
@@ -413,7 +418,7 @@ int InitSpecialObjet(int mode, int X, int Y, int Z, int stage, int room, int alp
     case 2: // bullet hole / impact
     {
         currentActorPtr->ANIM = mode;
-        currentActorPtr->frame = 0;
+        currentActorPtr->frame = -1;    // no particle data: DeleteObjet must not free HQ key 0
 
         // Small impact marker with short lifetime
         currentActorPtr->zv.ZVX1 = X - 5;
@@ -429,7 +434,7 @@ int InitSpecialObjet(int mode, int X, int Y, int Z, int stage, int room, int alp
     case 3: // muzzle flash
     {
         currentActorPtr->ANIM = mode;
-        currentActorPtr->frame = 0;
+        currentActorPtr->frame = -1;    // no particle data: DeleteObjet must not free HQ key 0
 
         // Brief flash at weapon emit point
         currentActorPtr->zv.ZVX1 = X - 8;
@@ -447,7 +452,10 @@ int InitSpecialObjet(int mode, int X, int Y, int Z, int stage, int room, int alp
         char* flowPtr;
         int j;
 
-        currentActorPtr->frame = HQ_Malloc(HQ_Memory, 244);
+        // As the original engine (INDARK.EXE 17ae:0430): SMOKE_NUM_PUFFS puffs, each
+        // given a random target offset in X/Z that it moves to as the cloud ages
+        // (see AffSpecialObjet). Layout: color, count, then x/y/z per puff.
+        currentActorPtr->frame = HQ_Malloc(HQ_Memory, 4 + SMOKE_NUM_PUFFS * 6);
 
         flowPtr = HQ_PtrMalloc(HQ_Memory, currentActorPtr->frame);
 
@@ -459,37 +467,34 @@ int InitSpecialObjet(int mode, int X, int Y, int Z, int stage, int room, int alp
 
         currentActorPtr->ANIM = mode;
 
-        *(s16*)flowPtr = 192; // gray color for smoke
+        *(s16*)flowPtr = SMOKE_COLOR;
         flowPtr += 2;
-        *(s16*)flowPtr = 25; // num of points
+        *(s16*)flowPtr = SMOKE_NUM_PUFFS; // num of points
         flowPtr += 2;
 
-        for (j = 0; j < 25; j++)
+        for (j = 0; j < SMOKE_NUM_PUFFS; j++)
         {
-            *(s16*)flowPtr = randRange(-10, 10); //X
+            *(s16*)flowPtr = randRange(-SMOKE_SPREAD, SMOKE_SPREAD); //X target
             flowPtr += 2;
-            *(s16*)flowPtr = randRange(-10, 10); //Y
+            *(s16*)flowPtr = 0; //Y
             flowPtr += 2;
-            *(s16*)flowPtr = randRange(-10, 10); //Z
+            *(s16*)flowPtr = randRange(-SMOKE_SPREAD, SMOKE_SPREAD); //Z target
             flowPtr += 2;
         }
 
-        for (j = 0; j < 25; j++)
-        {
-            *(s16*)flowPtr = randRange(50, 150); // velocity
-            flowPtr += 2;
-            *(s16*)flowPtr = randRange(40, 80); // lifetime
-            flowPtr += 2;
-        }
+        currentActorPtr->zv.ZVX1 = X - 10;
+        currentActorPtr->zv.ZVX2 = X + 10;
+        currentActorPtr->zv.ZVY1 = Y + SMOKE_HEIGHT;
+        currentActorPtr->zv.ZVY2 = Y + SMOKE_HEIGHT;
+        currentActorPtr->zv.ZVZ1 = Z - 10;
+        currentActorPtr->zv.ZVZ2 = Z + 10;
 
-        currentActorPtr->zv.ZVX1 = X - 12;
-        currentActorPtr->zv.ZVX2 = X + 12;
-        currentActorPtr->zv.ZVY1 = Y - 12;
-        currentActorPtr->zv.ZVY2 = Y + 12;
-        currentActorPtr->zv.ZVZ1 = Z - 12;
-        currentActorPtr->zv.ZVZ2 = Z + 12;
-
-        currentActorPtr->END_FRAME = 50; // lifetime in frames
+        // As the original engine: the cloud lives SMOKE_CLOUD_END timer ticks (11 s)
+        // and drives FOG_FLAG, which the room's script reads (AITD1 LIFE 427:
+        // 0 = start a cloud, 2 = the player coughs and loses health). See AffSpecialObjet.
+        currentActorPtr->END_FRAME = 50;
+        startChrono(&currentActorPtr->CHRONO);
+        CVars[getCVarsIdx(FOG_FLAG)] = 1;
         break;
     }
     default:
@@ -772,13 +777,14 @@ void processLife(int lifeNum, bool callFoundLife)
 
     currentLifePtr = HQR_Get(listLife, lifeNum);
     assert(currentLifePtr);
+    currentLifePtr = lifeBugfixPatchLife(lifeNum, currentLifePtr);
 
     // Run native C replacement if one is registered (safe-filter mode).
     // Scripts not registered fall through to the bytecode interpreter + patch system.
     if (g_remasterConfig.debug.enableNativeLifeScripts)
     {
         NativeLifeFunc nativeFunc = getNativeLifeScript(lifeNum);
-        if (nativeFunc)
+        if (nativeFunc && !lifeBugfixForcesBytecode(lifeNum))
         {
             if (g_remasterConfig.debug.logLifeScripts)
                 printf(LIFE_TAG "[NATIVE] Actor %d | Life %d" CON_RESET "\n", currentProcessedActorIdx, lifeNum);
@@ -2172,13 +2178,14 @@ void processLife(int lifeNum, bool callFoundLife)
 
                 break;
             }
-            case LM_SAMPLE_THEN: //todo
+            case LM_SAMPLE_THEN: // the second sample is played by processNextSample (tatou.cpp)
             {
                 appendFormated("LM_SAMPLE_THEN ");
                 if (g_gameId == AITD1)
                 {
-                    playSound(evalVar());
-                    nextSample = evalVar();
+                    const int first = evalVar();
+                    const int then = evalVar();
+                    playSoundThen(first, then);
                 }
                 else
                 {
@@ -2198,17 +2205,18 @@ void processLife(int lifeNum, bool callFoundLife)
                         currentLifePtr += 2;
                     }
 
-                    playSound(newSample);
+                    playSoundThen(newSample, nextSample);
                 }
                 printf(LIFE_TAG "LM_SAMPLE_THEN\n");
                 // setSampleFreq(0);
                 break;
             }
-            case LM_SAMPLE_THEN_REPEAT: //todo
+            case LM_SAMPLE_THEN_REPEAT: // the second sample (repeating) is played by processNextSample
             {
                 appendFormated("LM_SAMPLE_THEN_REPEAT ");
-                playSound(evalVar());
-                nextSample = evalVar() | 0x4000;
+                const int first = evalVar();
+                const int then = evalVar();
+                playSoundThen(first, then | 0x4000);
                 // setSampleFreq(0);
                 //printf("LM_SAMPLE_THEN_REPEAT\n");
                 break;
@@ -2312,14 +2320,15 @@ void processLife(int lifeNum, bool callFoundLife)
                 currentLifePtr += 2;
                 break;
             }
-            case LM_WATER: // water/worm attack effect with screen shake
+            case LM_WATER: // AITD1: the cave water on / off (renderer.h modelHeightLimit)
             {
                 appendFormated("LM_WATER ");
                 shakeVar1 = *(s16*)(currentLifePtr);
                 currentLifePtr += 2;
 
-                // Trigger screen shake for dramatic water/worm effects
-                if (shakeVar1 > 0)
+                // AITD1 (INDARK.EXE 1a8f:1a21): only the waterline threshold, no shake; the
+                // renderer cuts models below room y -600 while shakeVar1 != 0
+                if (shakeVar1 > 0 && g_gameId != AITD1)
                 {
                     setupShaking(shakeVar1 * 10); // Amplify for dramatic effect
                 }

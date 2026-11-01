@@ -201,6 +201,62 @@ void playSound(int num)
 	LastSample = num;
 }
 
+// LM_SAMPLE_THEN / LM_SAMPLE_THEN_REPEAT: play a sample, then another once it has finished
+// (e.g. LIFE 100: the library door, then the laugh). `next` with 0x4000 repeats.
+// The original engine (INDARK.EXE) keeps `next` in DS:8375; its per-frame sound update
+// 1693:0373, called from PlayWorld (132d:034b), plays it once no sample is playing, through
+// the REP_SAMPLE routine when bit 0x4000 is set, and resets it to -1. FITD and ReHaunted only
+// stored it (REHAUNTED_FIXES.md, "sound_then"). Sound effects overlap here, so the next sample
+// waits for the first one's own voice instead of for silence.
+static unsigned int s_sampleThenVoice = 0;
+
+void playSoundThen(int num, int next)
+{
+	const unsigned int before = osystem_lastSampleVoice();
+	playSound(num);
+	const unsigned int after = osystem_lastSampleVoice();
+	s_sampleThenVoice = (after != before) ? after : 0;   // not started (muted, already playing): no wait
+	nextSample = next;
+}
+
+// Called every gameplay frame (mainLoop).
+void processNextSample()
+{
+	if (nextSample == -1)
+		return;
+	if (osystem_isSampleVoicePlaying(s_sampleThenVoice))
+		return;
+	const int next = nextSample;
+	nextSample = -1;
+	s_sampleThenVoice = 0;
+	if (next & 0x4000)
+		playSoundLooping(next & ~0x4000);
+	else
+		playSound(next);
+}
+
+// A looping sample (LM_REP_SAMPLE, e.g. the talisman chimes of LIFE 186) belongs to the
+// room it was started in. The scripts never stop one (no script uses LM_STOP_SAMPLE); the
+// original DOS game stops it when the player leaves the room, not when the item is taken
+// (tested in the original game under DOSBox).
+static int s_lastLoopingSample = -1;
+static int s_loopFloor = -1;
+static int s_loopRoom = -1;
+
+void stopLoopingSounds()
+{
+	osystem_stopLoopingSamples();
+	s_lastLoopingSample = -1;
+	s_loopFloor = s_loopRoom = -1;
+}
+
+// Called every gameplay frame.
+void stopLoopingSoundsOnRoomChange()
+{
+	if (s_lastLoopingSample != -1 && (g_currentFloor != s_loopFloor || currentRoom != s_loopRoom))
+		stopLoopingSounds();
+}
+
 void playSoundLooping(int num)
 {
 	if(num == -1)
@@ -210,7 +266,6 @@ void playSoundLooping(int num)
 		return;
 
 	// Skip re-triggering the same looping sample if it is still playing.
-	static int s_lastLoopingSample = -1;
 	if(num == s_lastLoopingSample && osystem_isSamplePlaying())
 		return;
 
@@ -234,6 +289,8 @@ void playSoundLooping(int num)
 
 	osystem_playLoopingSample(ptr, size);
 	s_lastLoopingSample = num;
+	s_loopFloor = g_currentFloor;
+	s_loopRoom = currentRoom;
 }
 
 ////////////////////////

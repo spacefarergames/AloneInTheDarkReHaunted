@@ -14,6 +14,7 @@
 #include <stdlib.h>
 #include <math.h>
 #include <algorithm>
+#include <cmath>
 
 LightProbeManager* g_lightProbeManager = nullptr;
 
@@ -47,75 +48,48 @@ void LightProbeManager::clearProbes()
 bool LightProbeManager::loadProbes(int floor, int camera)
 {
     char filename[256];
+    const char* prefix = g_gameId == AITD2 ? "probes_aitd2" :
+                         g_gameId == AITD3 ? "probes_aitd3" :
+                         g_gameId == JACK ? "probes_jack" : "probes";
     if (camera >= 0)
-        sprintf_s(filename, sizeof(filename), "probes_floor%02d_cam%02d.dat", floor, camera);
+        snprintf(filename, sizeof(filename), "%s_floor%02d_cam%02d.dat", prefix, floor, camera);
     else
-        sprintf_s(filename, sizeof(filename), "probes_floor%02d.dat", floor);
+        snprintf(filename, sizeof(filename), "%s_floor%02d.dat", prefix, floor);
 
     FILE* file = fopen(filename, "rb");
     if (!file)
-    {
-        // No probes file found - create default ambient probe
-        printf("PROBE: No probe file found for floor %d camera %d, using default ambient\n", floor, camera);
-        
-        // Clear existing probes for this floor/camera
-        m_probes.erase(
-            std::remove_if(m_probes.begin(), m_probes.end(),
-                [floor, camera](const LightProbe& p) { return p.floor == floor && p.camera == camera; }),
-            m_probes.end()
-        );
-
-        // Add a single default probe
-        LightProbe defaultProbe;
-        defaultProbe.x = 0.0f;
-        defaultProbe.y = 0.0f;
-        defaultProbe.z = 0.0f;
-        defaultProbe.floor = floor;
-        defaultProbe.camera = camera;
-        createDefaultProbe(defaultProbe);
-        m_probes.push_back(defaultProbe);
-
-        m_currentFloor = floor;
-        m_currentCamera = camera;
         return false;
-    }
-
-    // Read probe count
     int probeCount = 0;
-    fread(&probeCount, sizeof(int), 1, file);
-
-    if (probeCount <= 0 || probeCount > 1000)
+    if (fread(&probeCount, sizeof(int), 1, file) != 1 || probeCount <= 0 || probeCount > 1000)
     {
-        printf("PROBE: Invalid probe count %d in file %s\n", probeCount, filename);
         fclose(file);
         return false;
     }
-
-    // Clear existing probes for this floor/camera
-    m_probes.erase(
-        std::remove_if(m_probes.begin(), m_probes.end(),
-            [floor, camera](const LightProbe& p) { return p.floor == floor && p.camera == camera; }),
-        m_probes.end()
-    );
-
-    // Read probes
-    for (int i = 0; i < probeCount; i++)
+    // Commit only complete, finite files. A truncated file must not partly light a room.
+    std::vector<LightProbe> loaded;
+    bool valid = true;
+    for (int i = 0; i < probeCount && valid; ++i)
     {
         LightProbe probe;
-        fread(&probe.x, sizeof(float), 1, file);
-        fread(&probe.y, sizeof(float), 1, file);
-        fread(&probe.z, sizeof(float), 1, file);
-        fread(probe.sh.r.data(), sizeof(float), 9, file);
-        fread(probe.sh.g.data(), sizeof(float), 9, file);
-        fread(probe.sh.b.data(), sizeof(float), 9, file);
+        valid = fread(&probe.x, sizeof(float), 1, file) == 1 &&
+                fread(&probe.y, sizeof(float), 1, file) == 1 &&
+                fread(&probe.z, sizeof(float), 1, file) == 1 &&
+                fread(probe.sh.r.data(), sizeof(float), 9, file) == 9 &&
+                fread(probe.sh.g.data(), sizeof(float), 9, file) == 9 &&
+                fread(probe.sh.b.data(), sizeof(float), 9, file) == 9;
+        valid = valid && std::isfinite(probe.x) && std::isfinite(probe.y) && std::isfinite(probe.z);
+        for (int c = 0; c < 9 && valid; ++c)
+            valid = std::isfinite(probe.sh.r[c]) && std::isfinite(probe.sh.g[c]) && std::isfinite(probe.sh.b[c]);
         probe.floor = floor;
         probe.camera = camera;
-        m_probes.push_back(probe);
+        loaded.push_back(probe);
     }
-
     fclose(file);
-
-    printf("PROBE: Loaded %d probes for floor %d camera %d\n", probeCount, floor, camera);
+    if (!valid)
+        return false;
+    m_probes.erase(std::remove_if(m_probes.begin(), m_probes.end(),
+        [floor, camera](const LightProbe& p) { return p.floor == floor && p.camera == camera; }), m_probes.end());
+    m_probes.insert(m_probes.end(), loaded.begin(), loaded.end());
     m_currentFloor = floor;
     m_currentCamera = camera;
     return true;
@@ -124,10 +98,13 @@ bool LightProbeManager::loadProbes(int floor, int camera)
 bool LightProbeManager::saveProbes(int floor, int camera)
 {
     char filename[256];
+    const char* prefix = g_gameId == AITD2 ? "probes_aitd2" :
+                         g_gameId == AITD3 ? "probes_aitd3" :
+                         g_gameId == JACK ? "probes_jack" : "probes";
     if (camera >= 0)
-        sprintf_s(filename, sizeof(filename), "probes_floor%02d_cam%02d.dat", floor, camera);
+        snprintf(filename, sizeof(filename), "%s_floor%02d_cam%02d.dat", prefix, floor, camera);
     else
-        sprintf_s(filename, sizeof(filename), "probes_floor%02d.dat", floor);
+        snprintf(filename, sizeof(filename), "%s_floor%02d.dat", prefix, floor);
 
     FILE* file = fopen(filename, "wb");
     if (!file)
@@ -193,6 +170,9 @@ void LightProbeManager::findNearestProbes(float x, float y, float z, int maxProb
     };
     std::vector<ProbeDistance> distances;
 
+    const bool hasCameraProbes = m_currentCamera >= 0 && std::any_of(m_probes.begin(), m_probes.end(),
+        [this](const LightProbe& p) { return p.floor == m_currentFloor && p.camera == m_currentCamera; });
+
     for (int i = 0; i < (int)m_probes.size(); i++)
     {
         const LightProbe& probe = m_probes[i];
@@ -202,7 +182,7 @@ void LightProbeManager::findNearestProbes(float x, float y, float z, int maxProb
             continue;
 
         // If camera-specific probes exist, prefer those
-        if (m_currentCamera >= 0 && probe.camera != m_currentCamera && probe.camera != -1)
+        if (probe.camera != (hasCameraProbes ? m_currentCamera : -1))
             continue;
 
         float dx = probe.x - x;
@@ -287,7 +267,9 @@ void LightProbeManager::sampleProbes(float x, float y, float z, float& r, float&
     if (!m_enabled || m_probes.empty())
     {
         // Default ambient
-        r = g = b = 0.3f;
+        r = m_backgroundAmbient[0] * m_intensity;
+        g = m_backgroundAmbient[1] * m_intensity;
+        b = m_backgroundAmbient[2] * m_intensity;
         return;
     }
 
@@ -299,7 +281,9 @@ void LightProbeManager::sampleProbes(float x, float y, float z, float& r, float&
     if (indices.empty())
     {
         // No probes found, use default ambient
-        r = g = b = 0.3f;
+        r = m_backgroundAmbient[0] * m_intensity;
+        g = m_backgroundAmbient[1] * m_intensity;
+        b = m_backgroundAmbient[2] * m_intensity;
         return;
     }
 
@@ -329,7 +313,7 @@ void LightProbeManager::createDefaultProbe(LightProbe& probe)
 {
     // Create a simple white ambient probe
     // Only the DC coefficient (sh0) is non-zero for uniform ambient
-    float ambientLevel = 0.4f; // Moderate ambient light
+    float ambientLevel = 0.4f / 0.282095f; // Moderate ambient light
     
     // SH DC coefficient (constant term)
     probe.sh.r[0] = ambientLevel;
@@ -343,4 +327,58 @@ void LightProbeManager::createDefaultProbe(LightProbe& probe)
         probe.sh.g[i] = 0.0f;
         probe.sh.b[i] = 0.0f;
     }
+}
+
+void LightProbeManager::setScene(int floor, int camera)
+{
+    m_backgroundAmbient = {0.4f, 0.4f, 0.4f};
+    if (m_currentFloor == floor && m_currentCamera == camera && m_currentGame == (int)g_gameId)
+        return;
+    clearProbes();
+    loadProbes(floor, -1);
+    loadProbes(floor, camera);
+    m_currentFloor = floor;
+    m_currentCamera = camera;
+    m_currentGame = (int)g_gameId;
+}
+
+void LightProbeManager::setBackgroundAmbient(const unsigned char* pixels, int width, int height, int channels)
+{
+    if (!pixels || width <= 0 || height <= 0 || (channels != 3 && channels != 4))
+        return;
+    // Fixed grid: camera loads cost at most 1024 samples regardless of HD resolution.
+    // Ignore transparent pixels, near-black voids and near-white highlights.
+    double sum[3] = {};
+    int count = 0;
+    for (int gy = 0; gy < 32; ++gy)
+        for (int gx = 0; gx < 32; ++gx)
+        {
+            const int x = (int)((gx + 0.5) * width / 32);
+            const int y = (int)((gy + 0.5) * height / 32);
+            const unsigned char* p = pixels + ((size_t)y * width + x) * channels;
+            const float lum = (0.2126f * p[0] + 0.7152f * p[1] + 0.0722f * p[2]) / 255.f;
+            if ((channels == 4 && p[3] < 128) || lum < 0.04f || lum > 0.95f)
+                continue;
+            for (int c = 0; c < 3; ++c) sum[c] += p[c] / 255.0;
+            ++count;
+        }
+    if (!count)
+        return;
+    const double lum = (0.2126 * sum[0] + 0.7152 * sum[1] + 0.0722 * sum[2]);
+    for (int c = 0; c < 3; ++c)
+        m_backgroundAmbient[c] = 0.4f * (float)std::clamp(sum[c] / lum, 0.8, 1.15);
+}
+
+void LightProbeManager::sampleModelTint(float x, float y, float z, float& r, float& g, float& b)
+{
+    r = g = b = 1.f;
+    if (!m_enabled || !std::isfinite(m_intensity) || m_intensity <= 0.f)
+        return;
+    float ar, ag, ab;
+    sampleProbes(x, y, z, ar, ag, ab);
+    const float reference = 0.4f * m_intensity;
+    const float strength = std::clamp(m_intensity, 0.f, 1.f);
+    r += (std::clamp(ar / reference, 0.65f, 1.2f) - 1.f) * strength;
+    g += (std::clamp(ag / reference, 0.65f, 1.2f) - 1.f) * strength;
+    b += (std::clamp(ab / reference, 0.65f, 1.2f) - 1.f) * strength;
 }

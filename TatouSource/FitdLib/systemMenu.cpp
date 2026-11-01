@@ -417,14 +417,16 @@ void processSystemMenu(void)
     int exitMenu = 0;
     int currentSelectedEntry;
 
-    // Capture HD state before recreateBackgroundTexture changes it
-    bool useHDBG = g_currentBackgroundIsHD;
+    // Menu presentation follows the configured detail mode, independently
+    // of whether the current room's generated HD image happens to exist yet.
+    const bool sceneWasHD = g_currentBackgroundIsHD;
+    bool useHDBG = detailLevel == 1 && g_remasterConfig.graphics.enableHDBackgrounds;
 
     // Freeze the scene snapshot so it preserves the last game frame (with 3D objects)
     osystem_freezeSceneForMenu();
 
     // Fallback: capture palettized background for non-PP path
-    if (useHDBG)
+    if (sceneWasHD)
     {
         memcpy(aux2, aux, 64000);
     }
@@ -450,7 +452,7 @@ void processSystemMenu(void)
 
     // Fallback from HD background to standard for menu rendering
     // (This happens AFTER we've captured aux2)
-    if (useHDBG)
+    if (sceneWasHD)
     {
         recreateBackgroundTexture(320, 200);
     }
@@ -494,6 +496,12 @@ void processSystemMenu(void)
 		if (!useHDBG)
 		{
 			memcpy(logicalScreen, aux2, 64000);
+		}
+		else
+		{
+			// HD menu text is redrawn over a clean indexed layer each frame.
+			// This prevents room/menu pixels accumulating behind transparent art.
+			memset(logicalScreen, 0, 64000);
 		}
 
 		clearTTFTextQueue();

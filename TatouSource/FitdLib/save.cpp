@@ -8,7 +8,9 @@
 ///////////////////////////////////////////////////////////////////////////////
 
 #include "common.h"
+#include "pickupPromptGuard.h"
 #include "zlib.h"
+#include <algorithm>
 #include <filesystem>
 
 extern "C" {
@@ -128,6 +130,7 @@ void saveInterpolatedValue(RealValue* pRotateStruct, FILE* fHandle)
 
 int loadSave(int saveNumber)
 {
+    stopLoopingSounds();    // the loaded state starts without the current room's loop
     char buffer[256];
     FILE* fHandle;
     unsigned int var28;
@@ -187,8 +190,12 @@ int loadSave(int saveNumber)
     if(g_gameId == AITD1)
     {
         oldNumMaxObj = maxObjects;
-        maxObjects = 300; // fix for save engine..
-        ListWorldObjets.resize(maxObjects);
+        // The vanilla save format holds 300 records ("fix for save engine").
+        // A table raised past 300 (game data with more objects) keeps every
+        // record; the header holds the real count. Never shrink the table.
+        maxObjects = (std::max)(oldNumMaxObj, 300);
+        if ((int)ListWorldObjets.size() < maxObjects)
+            ListWorldObjets.resize(maxObjects);
     }
 
     for(i=0;i<maxObjects;i++)
@@ -604,6 +611,8 @@ int loadSave(int saveNumber)
         }
     }
 
+    pickupPromptGuardOnSaveLoaded(currentCameraTargetActor);
+
     NewNumCamera = var_E;
 
     return(1);
@@ -662,8 +671,10 @@ int makeSaveFile(int entry)
                 if (ListObjets[i].ANIM == 4)
                 {
                     CVars[getCVarsIdx(FOG_FLAG)] = 0;
-                    HQ_Free_Malloc(HQ_Memory, ListObjets[i].frame);
                 }
+                // every effect with particle data owns an HQ_Memory block (modes 0, 1, 4;
+                // 2 and 3 have frame -1); freeing only smoke leaked the 10000-byte pool
+                HQ_Free_Malloc(HQ_Memory, ListObjets[i].frame);
             }
 		}
 	}
@@ -714,8 +725,12 @@ int makeSaveFile(int entry)
     if(g_gameId == AITD1)
     {
         oldNumMaxObj = maxObjects;
-        maxObjects = 300; // fix for save engine..
-        ListWorldObjets.resize(maxObjects);
+        // The vanilla save format holds 300 records ("fix for save engine").
+        // A table raised past 300 (game data with more objects) keeps every
+        // record; the header holds the real count. Never shrink the table.
+        maxObjects = (std::max)(oldNumMaxObj, 300);
+        if ((int)ListWorldObjets.size() < maxObjects)
+            ListWorldObjets.resize(maxObjects);
     }
 
     for(i=0;i<maxObjects;i++)

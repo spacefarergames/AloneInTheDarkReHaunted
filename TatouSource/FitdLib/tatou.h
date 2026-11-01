@@ -19,6 +19,10 @@ void FadeInPhys(int var1,int var2);
 void FadeOutPhys(int var1, int var2);
 void playSound(int num);
 void playSoundLooping(int num);
+void playSoundThen(int num, int next);
+void processNextSample();
+void stopLoopingSounds();
+void stopLoopingSoundsOnRoomChange();
 void setCameraTarget(int x,int y,int z,int alpha,int beta,int gamma,int time);
 
 void startChrono(unsigned int* chrono);

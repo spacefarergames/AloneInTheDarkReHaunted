@@ -27,8 +27,10 @@
 #include "inventory.h"
 #include "debugger.h"
 #include "remasterOptions.h"
+#include "hdAutoUpscale.h"
 #include "osystem.h"
 #include "menuFade.h"
+#include "sequence.h"
 
 #ifndef LANTERN_VERBOSE_LOGS
 #define LANTERN_VERBOSE_LOGS 0
@@ -284,8 +286,22 @@ void StartFrame()
             }
 #endif
 
-            const bool isLitLantern   = (heldObj.foundBody == LANTERN_LIT_BODY_NUM);
-            const bool isUnlitLantern = (heldObj.foundBody == LANTERN_BODY_NUM);
+            bool isLitLantern   = (heldObj.foundBody == LANTERN_LIT_BODY_NUM);
+            bool isUnlitLantern = (heldObj.foundBody == LANTERN_BODY_NUM);
+            // AITD1's oil lamp (OBJ 13) keeps found body 10 lit or not: no script changes it.
+            // Its real state is var 7 (set to 1 by the matches/lighter scripts LIFE 205/351/429,
+            // back to 0 by the lamp's LIFE 9 when the oil runs out). Without this, holding an
+            // unlit lamp glowed (user report 2026-10-16).
+            if (g_gameId == AITD1)
+            {
+                // In AITD1 only the oil lamp is a lantern. OBJ 2 ("Actions", held whenever
+                // nothing else is) has found body 269 = LANTERN_BODY_NUM, so holding nothing
+                // counted as "unlit lantern in hand" and the real lamp's in-hand state was
+                // never cleared after putting it down (no glow for a placed lamp).
+                const bool lit = heldObjIdx == 13 && vars && vars[7] == 1;
+                isLitLantern = heldObjIdx == 13 && lit;
+                isUnlitLantern = heldObjIdx == 13 && !lit;
+            }
 
             if (isLitLantern || isUnlitLantern)
             {
@@ -357,6 +373,7 @@ void EndFrame()
 
     // F1 remaster options are rendered last so the dialog stays above the game,
     // cinematic overlays and ordinary UI at every resolution.
+    hdAutoUpscale_DrawOverlay();
     remasterOptionsDraw();
 
     // Always call imguiEndFrame() to render ImGui windows to bgfx
@@ -366,7 +383,8 @@ void EndFrame()
     // otherwise does a simple pass-through). Always active for scene snapshot capture.
     // Skip endScene() when in PlayWorld but no 3D geometry was submitted yet (e.g. first
     // iteration or camera transitions) to avoid presenting background-only frames.
-    if (g_postProcessing && (!g_playWorldActive || g_menuActive || g_3dFlushedThisFrame))
+    if (g_postProcessing && (!g_playWorldActive || g_menuActive ||
+        g_3dFlushedThisFrame || isSequencePlaybackActive()))
     {
         g_postProcessing->endScene();
     }

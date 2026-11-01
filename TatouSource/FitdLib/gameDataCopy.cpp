@@ -120,29 +120,53 @@ static void destroyProgressWindow(CopyProgressWindow* pw)
 // ---------------------------------------------------------------------------
 // Constants
 // ---------------------------------------------------------------------------
-static const unsigned int STEAM_APP_ID = 548090;
-static const char* GOG_GAME_ID        = "1207660923";
+static unsigned int getSteamAppId()
+{
+    switch (g_remasterConfig.gameData.mode)
+    {
+    case REMASTER_GAME_AITD2: return 548890;
+    case REMASTER_GAME_AITD3: return 548900;
+    default: return 548090;
+    }
+}
+static const char* GOG_GAME_ID = "1207660923";
 
 // Sentinel file — if this exists in the target directory, we assume all
 // game data is present and skip the copy step.
 static const char* SENTINEL_FILE      = "ITD_RESS.PAK";
 static const char* JACK_SENTINEL_FILE = "PERE.PAK";
+static const char* AITD2_SENTINEL_FILE = "MER.PAK";
+static const char* AITD3_SENTINEL_FILE = "AN1.PAK";
 
 // The original DOS game stores data in an INDARK subdirectory.
 // Jack in the Dark assets live in a sibling JACK subdirectory.
 static const char* INDARK_SUBDIR      = "INDARK";
 static const char* JACK_SUBDIR        = "JACK";
+static const char* AITD2_SUBDIR       = "INDARK2";
+static const char* AITD3_SUBDIR       = "INDARK3";
 
 // Returns the data subdirectory name to use based on the active remaster mode.
 static const char* getDataSubdir()
 {
-    return g_remasterConfig.gameData.jackMode ? JACK_SUBDIR : INDARK_SUBDIR;
+    switch (g_remasterConfig.gameData.mode)
+    {
+    case REMASTER_GAME_JACK: return JACK_SUBDIR;
+    case REMASTER_GAME_AITD2: return AITD2_SUBDIR;
+    case REMASTER_GAME_AITD3: return AITD3_SUBDIR;
+    default: return INDARK_SUBDIR;
+    }
 }
 
 // Returns the sentinel filename to look for based on the active remaster mode.
 static const char* getSentinelFile()
 {
-    return g_remasterConfig.gameData.jackMode ? JACK_SENTINEL_FILE : SENTINEL_FILE;
+    switch (g_remasterConfig.gameData.mode)
+    {
+    case REMASTER_GAME_JACK: return JACK_SENTINEL_FILE;
+    case REMASTER_GAME_AITD2: return AITD2_SENTINEL_FILE;
+    case REMASTER_GAME_AITD3: return AITD3_SENTINEL_FILE;
+    default: return SENTINEL_FILE;
+    }
 }
 
 // ---------------------------------------------------------------------------
@@ -609,7 +633,7 @@ static bool findSteamDataDir(char* outDir, size_t outSize)
         // Check if the app manifest exists in this library
         char manifestPath[MAX_PATH];
         _snprintf(manifestPath, sizeof(manifestPath), "%s\\steamapps\\appmanifest_%u.acf",
-                  libraryPaths[i], STEAM_APP_ID);
+                  libraryPaths[i], getSteamAppId());
         manifestPath[sizeof(manifestPath) - 1] = '\0';
 
         if (!fileExists(manifestPath))

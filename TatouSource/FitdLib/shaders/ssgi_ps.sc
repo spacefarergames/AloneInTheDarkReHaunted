@@ -1,6 +1,7 @@
 $input v_texcoord0
 
 #include <bgfx_shader.sh>
+#include "noiseHash.sh"
 
 // Screen-Space Global Illumination (SSGI) Shader
 // Approximates indirect lighting by sampling nearby colors based on depth discontinuities
@@ -10,7 +11,6 @@ SAMPLER2D(s_texDepth, 1);   // Scene depth
 
 uniform vec4 u_ssgiParams;    // x: radius, y: intensity, z: numSamples, w: unused
 uniform vec4 u_depthParams;   // x: near, y: far, z: 1/width, w: 1/height
-uniform vec4 u_time;          // x: time (for noise variation)
 
 // Linearize depth from [0,1] range to view-space distance
 float linearizeDepth(float d)
@@ -20,18 +20,7 @@ float linearizeDepth(float d)
     return n * f / (f - d * (f - n));
 }
 
-// Hash-based pseudo-random for sample rotation
-float hash(vec2 p)
-{
-    return fract(sin(dot(p, vec2(12.9898, 78.233))) * 43758.5453);
-}
 
-vec2 hash2(vec2 p)
-{
-    vec3 p3 = fract(vec3(p.xyx) * vec3(0.1031, 0.1030, 0.0973));
-    p3 += dot(p3, p3.yzx + 33.33);
-    return fract((p3.xx + p3.yz) * p3.zy);
-}
 
 void main()
 {
@@ -55,8 +44,10 @@ void main()
     // Scale radius by depth (closer objects get larger GI radius in screen space)
     float radiusScreen = radius / centerDepth;
     
-    // Pseudo-random rotation angle per pixel to reduce banding
-    float angle = hash(v_texcoord0 * 1000.0 + u_time.x) * 6.2831853;
+    // Stable per-pixel rotation. With no temporal accumulation, animating
+    // this pattern makes stationary surfaces crawl and flicker.
+    uvec2 pixel = uvec2(floor(gl_FragCoord.xy));
+    float angle = pixelNoise(pixel.x, pixel.y, 0u) * 6.2831853;
     float cosA = cos(angle);
     float sinA = sin(angle);
     

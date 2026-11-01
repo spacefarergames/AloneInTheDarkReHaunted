@@ -27,6 +27,7 @@ static const uint32_t HDARCHIVE_VERSION_2 = 2;
 static FILE*                          s_file    = nullptr;
 static std::vector<HDArchiveEntry>    s_entries;
 static bool                           s_open    = false;
+static std::string                    s_currentPath;
 
 // Hash map for O(1) case-insensitive lookup by path
 static std::unordered_map<std::string, size_t> s_pathIndex; // lowered path -> index in s_entries
@@ -164,6 +165,7 @@ bool open(const char* archivePath)
 
     s_file = f;
     s_open = true;
+    s_currentPath = archivePath ? archivePath : "";
 
     if (isV2)
     {
@@ -196,11 +198,17 @@ void close()
     s_entries.clear();
     s_pathIndex.clear();
     s_open = false;
+    s_currentPath.clear();
 }
 
 bool isOpen()
 {
     return s_open;
+}
+
+const char* currentPath()
+{
+    return s_currentPath.c_str();
 }
 
 const HDArchiveEntry* findEntry(const char* relativePath)
@@ -305,6 +313,48 @@ unsigned char* readEntryAlloc(const HDArchiveEntry* entry, size_t* outSize)
         *outSize = sz;
 
     return buf;
+}
+
+size_t readEntryPrefix(const HDArchiveEntry* entry, void* buf, size_t len)
+{
+    if (!s_open || !entry || !buf || !s_file)
+        return 0;
+    len = (std::min)(len, (size_t)entry->uncompressedSize);
+
+#ifdef _WIN32
+    if (_fseeki64(s_file, (long long)entry->offset, SEEK_SET) != 0)
+        return 0;
+#else
+    if (fseeko(s_file, (off_t)entry->offset, SEEK_SET) != 0)
+        return 0;
+#endif
+
+    if (!(entry->flags & HDARCHIVE_FLAG_COMPRESSED))
+        return fread(buf, 1, len, s_file);
+
+    // Inflate in small steps until `len` bytes are out
+    z_stream zs = {};
+    if (inflateInit(&zs) != Z_OK)
+        return 0;
+    unsigned char in[4096];
+    uint64_t left = entry->size;
+    zs.next_out = (Bytef*)buf;
+    zs.avail_out = (uInt)len;
+    int zrc = Z_OK;
+    while (zs.avail_out > 0 && zrc == Z_OK && left > 0)
+    {
+        const size_t chunk = (size_t)(std::min)(left, (uint64_t)sizeof(in));
+        if (fread(in, 1, chunk, s_file) != chunk)
+            break;
+        left -= chunk;
+        zs.next_in = in;
+        zs.avail_in = (uInt)chunk;
+        while (zs.avail_in > 0 && zs.avail_out > 0 && zrc == Z_OK)
+            zrc = inflate(&zs, Z_NO_FLUSH);
+    }
+    const size_t got = len - zs.avail_out;
+    inflateEnd(&zs);
+    return got;
 }
 
 } // namespace HDArchive

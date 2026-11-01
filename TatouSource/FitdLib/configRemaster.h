@@ -10,6 +10,14 @@
 #ifndef _CONFIG_REMASTER_H_
 #define _CONFIG_REMASTER_H_
 
+enum RemasterGameMode
+{
+    REMASTER_GAME_AITD1 = 0,
+    REMASTER_GAME_JACK  = 1,
+    REMASTER_GAME_AITD2 = 2,
+    REMASTER_GAME_AITD3 = 3
+};
+
 // Remaster configuration management
 struct RemasterConfig
 {
@@ -125,8 +133,13 @@ struct RemasterConfig
     // Game data settings
     struct {
         bool steamless;         // Disable automatic file copying/installation when true (default: false)
-        bool jackMode;          // Run "Jack in the Dark" instead of AITD1; uses JACK\ folder rather than INDARK\ (default: false)
+        int mode;               // RemasterGameMode; selects a distinct on-disk/embedded data set
     } gameData;
+
+    struct {
+        bool autoUpscaleMissingHD; // Generate missing AITD2/AITD3 HD assets in the background
+        int upscaleScale;          // Native Upscayl output scale, 2-4 (default: 4)
+    } assetGeneration;
 
     // Debug / diagnostics settings
     struct {

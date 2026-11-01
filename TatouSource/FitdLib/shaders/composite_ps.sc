@@ -1,6 +1,7 @@
 $input v_texcoord0
 
 #include <bgfx_shader.sh>
+#include "noiseHash.sh"
 
 SAMPLER2D(s_texColor, 0);   // Main scene
 SAMPLER2D(s_texBloom, 1);   // Bloom texture
@@ -14,11 +15,6 @@ uniform vec4 u_time;             // x: time in seconds
 uniform vec4 u_colorGradeParams; // x: exposure, y: contrast, z: saturation, w: temperature
 uniform vec4 u_toneParams;       // x: shadow lift, y: highlight rolloff
 
-// Simple noise function for film grain
-float hash(vec2 p)
-{
-    return fract(sin(dot(p, vec2(12.9898, 78.233))) * 43758.5453);
-}
 
 float luminance(vec3 c)
 {
@@ -71,9 +67,11 @@ void main()
     float grainIntensity = u_filmGrainParams.x;
     if (grainIntensity > 0.0)
     {
-        vec2 pixelCoord = v_texcoord0 * vec2(1920.0, 1080.0);
-        float frame = floor(u_time.x * 24.0);
-        float noise = hash(pixelCoord + frame * 17.0) + hash(pixelCoord * 0.73 - frame * 11.0) - 1.0;
+        // Native framebuffer pixels; reseed each grain frame, never scroll UVs.
+        uvec2 pixel = uvec2(floor(gl_FragCoord.xy));
+        uint frame = uint(floor(u_time.x * 24.0));
+        float noise = pixelNoise(pixel.x, pixel.y, frame)
+                    + pixelNoise(pixel.x, pixel.y, frame ^ 0x68bc21ebu) - 1.0;
         float grainMask = 0.35 + 0.65 * (1.0 - smoothstep(0.08, 0.85, luminance(color.rgb)));
         color.rgb += vec3_splat(noise * grainIntensity * grainMask);
     }

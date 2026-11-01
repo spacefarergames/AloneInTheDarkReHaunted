@@ -10,6 +10,8 @@
 #include "common.h"
 #include "consoleLog.h"
 #include "configRemaster.h"
+#include "lightProbes.h"
+#include "softShadowKernel.h"
 
 /***************************************************************************
 mainSDL.cpp  -  description
@@ -38,10 +40,13 @@ email                : yaz0r@yaz0r.net
 #include "embedded/embeddedData.h"
 #include "debugger.h"
 #include "configRemaster.h"
+#include "lightProbes.h"
+#include "softShadowKernel.h"
 #include "input.h"
 #include "postProcessing.h"
 #include "resourceGC.h"
 #include "modelAtlas.h"
+#include <algorithm>
 #include <array>
 #include <SDL.h>
 #include <string>
@@ -66,6 +71,13 @@ email                : yaz0r@yaz0r.net
 // Access to current model atlas from renderer
 extern ModelAtlasData* getCurrentAtlas();
 
+static float getMenuOverlayFadeLevel()
+{
+    // Sequel menu state can be entered immediately after a movie/room fade,
+    // leaving the scene fade at zero. UI overlays must remain visible.
+    return (g_gameId == AITD2 || g_gameId == AITD3) ? 1.0f : g_fadeLevel;
+}
+
 unsigned int gameViewId = 1;
 
 bool g_playWorldActive = false;
@@ -83,6 +95,8 @@ static int s_frozenSceneHeight = 0;
 // HD sequence (FMV cutscene) frame override
 static bgfx::TextureHandle g_sequenceHDTexture = BGFX_INVALID_HANDLE;
 static bool g_sequenceHDActive = false;
+static int g_sequenceHDWidth = 0;
+static int g_sequenceHDHeight = 0;
 
 extern int outputResolution[2];
 
@@ -148,6 +162,8 @@ std::array<polyVertex, NUM_MAX_RAMP_VERTICES> rampVertices;
 std::array<sphereVertex, NUM_MAX_SPHERES_VERTICES> sphereVertices;
 std::vector<polyVertex> g_lineVertices;
 std::array<polyVertex, NUM_MAX_TEXTURED_VERTICES> texturedVertices;
+
+static std::vector<polyVertex> s_planarShadowVertices;
 
 int numUsedFlatVertices = 0;
 int numUsedNoiseVertices = 0;
@@ -457,8 +473,82 @@ bgfx::ProgramHandle getHDMaskBackgroundShader()
 
     return programHandle;
 }
+static float s_modelAmbient[4] = {1.f, 1.f, 1.f, 0.f};
+
+void osystem_setModelLighting(bool enabled, float x, float y, float z)
+{
+    s_modelAmbient[0] = s_modelAmbient[1] = s_modelAmbient[2] = 1.f;
+    s_modelAmbient[3] = 0.f;
+    if (enabled && g_remasterConfig.postProcessing.enableLightProbes && g_lightProbeManager)
+    {
+        g_lightProbeManager->setEnabled(true);
+        g_lightProbeManager->setIntensity(g_remasterConfig.postProcessing.lightProbeIntensity);
+        g_lightProbeManager->sampleModelTint(x, y, z,
+            s_modelAmbient[0], s_modelAmbient[1], s_modelAmbient[2]);
+        s_modelAmbient[3] = 1.f;
+    }
+}
+
+static void applyModelAmbientUniform()
+{
+    static bgfx::UniformHandle uniform = BGFX_INVALID_HANDLE;
+    if (!bgfx::isValid(uniform))
+        uniform = bgfx::createUniform("u_modelAmbient", bgfx::UniformType::Vec4);
+    const float neutral[4] = {1.f, 1.f, 1.f, 0.f};
+    bgfx::setUniform(uniform, g_submitShadowStencil ? neutral : s_modelAmbient);
+}
+
+// A single soft disc avoids the hard ellipse and per-ring overdraw of a blob.
+// Vertices contain a projected centre followed by the projected perimeter.
+void osystem_drawContactShadow(const float* vertices, int segments, float opacity)
+{
+    if (!vertices || segments < 3 || segments > 128 || opacity <= 0.f)
+        return;
+    osystem_flushPendingPrimitives();
+    bgfx::VertexLayout layout;
+    layout.begin().add(bgfx::Attrib::Position, 3, bgfx::AttribType::Float)
+        .add(bgfx::Attrib::TexCoord0, 2, bgfx::AttribType::Float).end();
+    const uint32_t count = (uint32_t)segments * 3;
+    if (bgfx::getAvailTransientVertexBuffer(count, layout) != count)
+        return;
+    bgfx::TransientVertexBuffer buffer;
+    bgfx::allocTransientVertexBuffer(&buffer, count, layout);
+    struct Vertex { float position[3]; float uv[2]; };
+    Vertex* dst = (Vertex*)buffer.data;
+    for (int i = 0; i < segments; ++i)
+    {
+        const int indices[3] = {0, i + 1, (i + 1) % segments + 1};
+        for (int j = 0; j < 3; ++j)
+        {
+            const float* src = vertices + indices[j] * 3;
+            dst->position[0] = src[0] + g_shakeOffsetX;
+            dst->position[1] = src[1] + g_shakeOffsetY;
+            dst->position[2] = src[2];
+            const float angle = (float)((i + j - 1) % segments) * 6.283185307f / segments;
+            dst->uv[0] = j ? cosf(angle) : 0.f;
+            dst->uv[1] = j ? sinf(angle) : 0.f;
+            ++dst;
+        }
+    }
+    static bgfx::ProgramHandle program = BGFX_INVALID_HANDLE;
+    static bgfx::UniformHandle params = BGFX_INVALID_HANDLE;
+    if (!bgfx::isValid(program)) program = loadBgfxProgram("flat_vs", "contactShadow_ps");
+    if (!bgfx::isValid(params)) params = bgfx::createUniform("u_contactShadowParams", bgfx::UniformType::Vec4);
+    const float values[4] = {opacity, 0.f, 0.f, 0.f};
+    bgfx::setUniform(params, values);
+    // Test foreground masks, but leave stencil unchanged so the feathered edge
+    // cannot cut a hard hole out of the separate projected model shadow.
+    bgfx::setStencil(BGFX_STENCIL_TEST_EQUAL | BGFX_STENCIL_FUNC_REF(0)
+        | BGFX_STENCIL_FUNC_RMASK(0xFF) | BGFX_STENCIL_OP_FAIL_Z_KEEP | BGFX_STENCIL_OP_PASS_Z_KEEP);
+    bgfx::setState(BGFX_STATE_WRITE_RGB | BGFX_STATE_DEPTH_TEST_LEQUAL | BGFX_STATE_MSAA
+        | BGFX_STATE_BLEND_FUNC(BGFX_STATE_BLEND_SRC_ALPHA, BGFX_STATE_BLEND_INV_SRC_ALPHA));
+    bgfx::setVertexBuffer(0, &buffer);
+    bgfx::submit(gameViewId, program);
+}
+
 bgfx::ProgramHandle getFlatShader()
 {
+    applyModelAmbientUniform();
     static bgfx::ProgramHandle programHandle = BGFX_INVALID_HANDLE;
     if (!bgfx::isValid(programHandle))
     {
@@ -470,6 +560,7 @@ bgfx::ProgramHandle getFlatShader()
 
 bgfx::ProgramHandle getNoiseShader()
 {
+    applyModelAmbientUniform();
     static bgfx::ProgramHandle programHandle = BGFX_INVALID_HANDLE;
     if (!bgfx::isValid(programHandle))
     {
@@ -481,6 +572,7 @@ bgfx::ProgramHandle getNoiseShader()
 
 bgfx::ProgramHandle getRampShader()
 {
+    applyModelAmbientUniform();
     static bgfx::ProgramHandle programHandle = BGFX_INVALID_HANDLE;
     if (!bgfx::isValid(programHandle))
     {
@@ -492,6 +584,7 @@ bgfx::ProgramHandle getRampShader()
 
 bgfx::ProgramHandle getSphereShader()
 {
+    applyModelAmbientUniform();
     static bgfx::ProgramHandle programHandle = BGFX_INVALID_HANDLE;
     if (!bgfx::isValid(programHandle))
     {
@@ -503,6 +596,7 @@ bgfx::ProgramHandle getSphereShader()
 
 bgfx::ProgramHandle getTexturedShader()
 {
+    applyModelAmbientUniform();
     static bgfx::ProgramHandle programHandle = BGFX_INVALID_HANDLE;
     if (!bgfx::isValid(programHandle))
     {
@@ -814,7 +908,7 @@ void osystem_drawFrozenScenePreview(float x1, float y1, float x2, float y2)
     bgfx::setVertexBuffer(0, &transientBuffer);
     bgfx::setTexture(0, previewTexUniform, s_frozenSceneTex);
 
-    float fadeParams[4] = { g_fadeLevel, 0.0f, 0.0f, 0.0f };
+    float fadeParams[4] = { getMenuOverlayFadeLevel(), 0.0f, 0.0f, 0.0f };
     bgfx::setUniform(previewFadeUniform, fadeParams);
 
     submitHDBackground(gameViewId);
@@ -830,7 +924,7 @@ static void loadSystemMenuTexture()
         return;
 
     int width, height, channels;
-    unsigned char* data = loadHDImageFile("SystemMenu.png", &width, &height, &channels);
+    unsigned char* data = loadSharedHDImageFile("SystemMenu.png", &width, &height, &channels);
     if (!data)
     {
         g_systemMenuBGLoaded = true;
@@ -943,7 +1037,7 @@ void osystem_drawSystemMenuBackground()
     bgfx::setVertexBuffer(0, &transientBuffer);
     bgfx::setTexture(0, sysMenuTexUniform, g_systemMenuBGTexture);
 
-    float fadeParams[4] = { g_fadeLevel, 0.0f, 0.0f, 0.0f };
+    float fadeParams[4] = { getMenuOverlayFadeLevel(), 0.0f, 0.0f, 0.0f };
     bgfx::setUniform(sysMenuFadeUniform, fadeParams);
 
     submitHDBackground(gameViewId);
@@ -959,7 +1053,7 @@ static void loadSaveRestoreTexture()
         return;
 
     int width, height, channels;
-    unsigned char* data = loadHDImageFile("SaveRestoreScreen.png", &width, &height, &channels);
+    unsigned char* data = loadSharedHDImageFile("SaveRestoreScreen.png", &width, &height, &channels);
     if (!data)
     {
         g_saveRestoreBGLoaded = true;
@@ -1070,7 +1164,7 @@ void osystem_drawSaveRestoreBackground()
     bgfx::setVertexBuffer(0, &transientBuffer);
     bgfx::setTexture(0, saveRestoreTexUniform, g_saveRestoreBGTexture);
 
-    float fadeParams[4] = { g_fadeLevel, 0.0f, 0.0f, 0.0f };
+    float fadeParams[4] = { getMenuOverlayFadeLevel(), 0.0f, 0.0f, 0.0f };
     bgfx::setUniform(saveRestoreFadeUniform, fadeParams);
 
     submitHDBackground(gameViewId);
@@ -1095,22 +1189,17 @@ void osystem_updateSaveSlotPreviewTexture(unsigned char* rgbaData, int width, in
         return;
     }
 
-    if (width != g_saveSlotPreviewW || height != g_saveSlotPreviewH)
-    {
-        if (bgfx::isValid(g_saveSlotPreviewTex))
-            bgfx::destroy(g_saveSlotPreviewTex);
+    // Recreate on every slot change: a texture created with initial data is
+    // immutable in bgfx, so updateTexture2D on it was silently ignored and the
+    // first slot's picture stayed (all save PNGs share one size).
+    if (bgfx::isValid(g_saveSlotPreviewTex))
+        bgfx::destroy(g_saveSlotPreviewTex);
 
-        g_saveSlotPreviewTex = bgfx::createTexture2D(width, height, false, 1,
-            bgfx::TextureFormat::RGBA8, BGFX_SAMPLER_U_CLAMP | BGFX_SAMPLER_V_CLAMP,
-            bgfx::copy(rgbaData, width * height * 4));
-        g_saveSlotPreviewW = width;
-        g_saveSlotPreviewH = height;
-    }
-    else
-    {
-        bgfx::updateTexture2D(g_saveSlotPreviewTex, 0, 0, 0, 0, width, height,
-            bgfx::copy(rgbaData, width * height * 4));
-    }
+    g_saveSlotPreviewTex = bgfx::createTexture2D(width, height, false, 1,
+        bgfx::TextureFormat::RGBA8, BGFX_SAMPLER_U_CLAMP | BGFX_SAMPLER_V_CLAMP,
+        bgfx::copy(rgbaData, width * height * 4));
+    g_saveSlotPreviewW = width;
+    g_saveSlotPreviewH = height;
 }
 
 void osystem_drawSaveSlotPreviewHD(float x1, float y1, float x2, float y2)
@@ -1181,7 +1270,7 @@ void osystem_drawSaveSlotPreviewHD(float x1, float y1, float x2, float y2)
     bgfx::setVertexBuffer(0, &transientBuffer);
     bgfx::setTexture(0, slotPreviewTexUniform, g_saveSlotPreviewTex);
 
-    float fadeParams[4] = { g_fadeLevel, 0.0f, 0.0f, 0.0f };
+    float fadeParams[4] = { getMenuOverlayFadeLevel(), 0.0f, 0.0f, 0.0f };
     bgfx::setUniform(slotPreviewFadeUniform, fadeParams);
 
     submitHDBackground(gameViewId);
@@ -1382,7 +1471,7 @@ static void loadStartupMenuTexture()
             snprintf(frameName, sizeof(frameName), "StartupMenuBackground_%03d.png", i);
 
         int width, height, channels;
-        unsigned char* data = loadHDImageFile(frameName, &width, &height, &channels);
+        unsigned char* data = loadSharedHDImageFile(frameName, &width, &height, &channels);
         if (!data)
             break;
 
@@ -1418,7 +1507,7 @@ static void loadStartupMenuTexture()
     const char* bgFileName = g_remasterConfig.graphics.enableArtwork
         ? "StartupMenuBackgroundWithArt.png"
         : "StartupMenuBackground.png";
-    unsigned char* data = loadHDImageFile(bgFileName, &width, &height, &channels);
+    unsigned char* data = loadSharedHDImageFile(bgFileName, &width, &height, &channels);
     if (!data)
     {
         g_startupMenuBGLoaded = true;
@@ -1513,7 +1602,7 @@ void osystem_drawStartupMenuBackground()
     bgfx::setVertexBuffer(0, &transientBuffer);
     bgfx::setTexture(0, startupMenuTexUniform, activeTex);
 
-    float fadeParams[4] = { g_fadeLevel, 0.0f, 0.0f, 0.0f };
+    float fadeParams[4] = { getMenuOverlayFadeLevel(), 0.0f, 0.0f, 0.0f };
     bgfx::setUniform(startupMenuFadeUniform, fadeParams);
 
     submitHDBackground(gameViewId);
@@ -1529,7 +1618,7 @@ static void loadLanguageSelectionTexture()
         return;
 
     int width, height, channels;
-    unsigned char* data = loadHDImageFile("LanguageSelection.png", &width, &height, &channels);
+    unsigned char* data = loadSharedHDImageFile("LanguageSelection.png", &width, &height, &channels);
     if (!data)
     {
         g_langSelectBGLoaded = true;
@@ -1642,7 +1731,7 @@ void osystem_drawLanguageSelectionBackground()
     bgfx::setVertexBuffer(0, &transientBuffer);
     bgfx::setTexture(0, langSelectTexUniform, g_langSelectBGTexture);
 
-    float fadeParams[4] = { g_fadeLevel, 0.0f, 0.0f, 0.0f };
+    float fadeParams[4] = { getMenuOverlayFadeLevel(), 0.0f, 0.0f, 0.0f };
     bgfx::setUniform(langSelectFadeUniform, fadeParams);
 
     submitHDBackground(gameViewId);
@@ -1658,7 +1747,7 @@ static void loadFullScreenFrameTexture()
         return;
 
     int width, height, channels;
-    unsigned char* data = loadHDImageFile("FullScreenFrame.png", &width, &height, &channels);
+    unsigned char* data = loadSharedHDImageFile("FullScreenFrame.png", &width, &height, &channels);
     if (!data)
     {
         g_fullScreenFrameLoaded = true;
@@ -1769,7 +1858,7 @@ void osystem_drawFullScreenFrame()
     bgfx::setVertexBuffer(0, &transientBuffer);
     bgfx::setTexture(0, fsFrameTexUniform, g_fullScreenFrameTexture);
 
-    float fadeParams[4] = { g_fadeLevel, 0.0f, 0.0f, 0.0f };
+    float fadeParams[4] = { getMenuOverlayFadeLevel(), 0.0f, 0.0f, 0.0f };
     bgfx::setUniform(fsFrameFadeUniform, fadeParams);
 
     submitHDBackground(gameViewId);
@@ -1898,7 +1987,7 @@ void osystem_drawInventoryBackground()
     bgfx::setVertexBuffer(0, &transientBuffer);
     bgfx::setTexture(0, invBGTextureUniform, g_inventoryBGTexture);
 
-    float fadeParams[4] = { g_fadeLevel, 0.0f, 0.0f, 0.0f };
+    float fadeParams[4] = { getMenuOverlayFadeLevel(), 0.0f, 0.0f, 0.0f };
     bgfx::setUniform(invFadeLevelUniform, fadeParams);
 
     submitHDBackground(gameViewId);
@@ -2027,11 +2116,76 @@ void osystem_drawFoundObjectBackground()
     bgfx::setVertexBuffer(0, &transientBuffer);
     bgfx::setTexture(0, foundObjBGTextureUniform, g_foundObjectBGTexture);
 
-    float fadeParams[4] = { g_fadeLevel, 0.0f, 0.0f, 0.0f };
+    float fadeParams[4] = { getMenuOverlayFadeLevel(), 0.0f, 0.0f, 0.0f };
     bgfx::setUniform(foundObjFadeLevelUniform, fadeParams);
 
     submitHDBackground(gameViewId);
 }
+// Dark room (LIGHT 0, lightOff != 0), as the original INDARK.EXE draws it: the screen is
+// black except a circle of radius 30 pixels of the 320x200 screen around the light source
+// (the LIGHT_OBJECT actor's on-screen centre), which shows the normal frame. 320x200 pixels
+// are not square on a 4:3 display, so the circle appears as a tall ellipse
+// (as in the original's dark maze). Original: FUN_2763_001f clears the old box, then
+// FUN_2755_0004(lightX, lightY, 30, 30, 7, 0) copies the circle (REHAUNTED_FIXES.md,
+// "Dark rooms"). Drawn like osystem_drawBlackScreen: in front of the 3D
+// scene, behind the UI, so messages stay visible.
+void osystem_drawDarkMask(int lightX, int lightY)
+{
+    static const int NO_LIGHT = 20000;
+    static const float RADIUS = 30.0f;
+    static const int SEGMENTS = 48;
+    if (lightX == NO_LIGHT || lightY == NO_LIGHT)
+    {
+        osystem_drawBlackScreen();
+        return;
+    }
+
+    bgfx::VertexLayout layout;
+    layout
+        .begin()
+        .add(bgfx::Attrib::Position, 3, bgfx::AttribType::Float)
+        .add(bgfx::Attrib::Color0, 4, bgfx::AttribType::Uint8, true)
+        .end();
+
+    bgfx::TransientVertexBuffer transientBuffer;
+    bgfx::allocTransientVertexBuffer(&transientBuffer, SEGMENTS * 6, layout);
+
+    struct sVertice
+    {
+        float position[3];
+        uint32_t color;
+    };
+    sVertice* v = (sVertice*)transientBuffer.data;
+    const uint32_t black = 0xFF000000;
+    const float cx = (float)lightX, cy = (float)lightY;
+    // Each circle segment is extended far beyond the screen: the quads between the circle
+    // and their far points cover everything outside the circle.
+    const float EXTENT = 2000.0f;
+    auto put = [&](float x, float y) {
+        v->position[0] = x; v->position[1] = y; v->position[2] = 100.f;
+        v->color = black;
+        v++;
+    };
+    for (int i = 0; i < SEGMENTS; i++)
+    {
+        const float a0 = 6.2831853f * i / SEGMENTS, a1 = 6.2831853f * (i + 1) / SEGMENTS;
+        const float c0 = cosf(a0), s0 = sinf(a0), c1 = cosf(a1), s1 = sinf(a1);
+        const float ix0 = cx + RADIUS * c0, iy0 = cy + RADIUS * s0;
+        const float ix1 = cx + RADIUS * c1, iy1 = cy + RADIUS * s1;
+        const float ox0 = cx + EXTENT * c0, oy0 = cy + EXTENT * s0;
+        const float ox1 = cx + EXTENT * c1, oy1 = cy + EXTENT * s1;
+        put(ix0, iy0); put(ox0, oy0); put(ox1, oy1);
+        put(ix0, iy0); put(ox1, oy1); put(ix1, iy1);
+    }
+
+    bgfx::setState(0 | BGFX_STATE_WRITE_RGB
+        | BGFX_STATE_WRITE_A
+        | BGFX_STATE_MSAA
+    );
+    bgfx::setVertexBuffer(0, &transientBuffer);
+    bgfx::submit(gameViewId, getFlatShader());
+}
+
 void osystem_drawBlackScreen()
 {
     bgfx::VertexLayout layout;
@@ -2200,8 +2354,12 @@ void osystem_drawBackground()
         }
         bgfx::setTexture(1, paletteTextureUniform, g_paletteTexture);
 
-        // Set fade level uniform for HD backgrounds
-        float fadeParams[4] = { g_fadeLevel, 0.0f, 0.0f, 0.0f };
+        // Sequence playback has its own palette/fade timing.  The scene fade
+        // is commonly still zero after the transition into a movie; applying
+        // it to a true-colour replacement frame makes the whole movie black.
+        const float effectiveFade =
+            (g_sequenceHDActive && bgfx::isValid(g_sequenceHDTexture)) ? 1.0f : g_fadeLevel;
+        float fadeParams[4] = { effectiveFade, 0.0f, 0.0f, 0.0f };
         bgfx::setUniform(fadeLevelUniform, fadeParams);
 
         if (useHDShader) { applyHDBackgroundLightingUniforms(); bgfx::submit(gameViewId, getHDBackgroundShader()); }
@@ -2603,20 +2761,39 @@ void osystem_refreshFrontTextureBuffer()
 
 void osystem_setSequenceHDFrame(unsigned char* rgbaData, int width, int height)
 {
-    if (bgfx::isValid(g_sequenceHDTexture))
+    if (!rgbaData || width <= 0 || height <= 0)
+        return;
+
+    // Movie packs normally keep one resolution for every frame. Recreating
+    // and destroying a large BGFX texture for every decoded image can stall
+    // the render thread long enough that the sequence appears frozen. Reuse
+    // the allocation and upload only the new pixels.
+    if (bgfx::isValid(g_sequenceHDTexture) &&
+        (g_sequenceHDWidth != width || g_sequenceHDHeight != height))
     {
         bgfx::destroy(g_sequenceHDTexture);
         g_sequenceHDTexture = BGFX_INVALID_HANDLE;
     }
 
-    g_sequenceHDTexture = bgfx::createTexture2D(
-        width, height, false, 1,
-        bgfx::TextureFormat::RGBA8,
-        BGFX_TEXTURE_NONE | BGFX_SAMPLER_MIN_POINT | BGFX_SAMPLER_MAG_POINT,
-        bgfx::copy(rgbaData, width * height * 4)
-    );
+    const uint32_t byteCount = (uint32_t)((size_t)width * (size_t)height * 4u);
+    if (!bgfx::isValid(g_sequenceHDTexture))
+    {
+        g_sequenceHDTexture = bgfx::createTexture2D(
+            (uint16_t)width, (uint16_t)height, false, 1,
+            bgfx::TextureFormat::RGBA8,
+            BGFX_TEXTURE_NONE | BGFX_SAMPLER_MIN_POINT | BGFX_SAMPLER_MAG_POINT,
+            bgfx::copy(rgbaData, byteCount)
+        );
+        g_sequenceHDWidth = width;
+        g_sequenceHDHeight = height;
+    }
+    else
+    {
+        bgfx::updateTexture2D(g_sequenceHDTexture, 0, 0, 0, 0,
+            (uint16_t)width, (uint16_t)height, bgfx::copy(rgbaData, byteCount));
+    }
 
-    g_sequenceHDActive = true;
+    g_sequenceHDActive = bgfx::isValid(g_sequenceHDTexture);
 }
 
 void osystem_clearSequenceHDFrame()
@@ -2627,6 +2804,8 @@ void osystem_clearSequenceHDFrame()
         g_sequenceHDTexture = BGFX_INVALID_HANDLE;
     }
     g_sequenceHDActive = false;
+    g_sequenceHDWidth = 0;
+    g_sequenceHDHeight = 0;
 }
 
 void osystem_initBuffer()
@@ -2679,8 +2858,67 @@ void osystem_clearClip()
 void osystem_stopFrame()
 {}
 
+static void submitSoftPlanarShadow()
+{
+    if (s_planarShadowVertices.empty())
+        return;
+    bgfx::VertexLayout layout;
+    layout.begin().add(bgfx::Attrib::Position, 3, bgfx::AttribType::Float)
+        .add(bgfx::Attrib::TexCoord0, 2, bgfx::AttribType::Float).end();
+    const uint32_t count = (uint32_t)s_planarShadowVertices.size();
+    if (bgfx::getAvailTransientVertexBuffer(count + 6, layout) < count + 6)
+    {
+        s_planarShadowVertices.clear();
+        return;
+    }
+    bgfx::TransientVertexBuffer geometry, clear;
+    bgfx::allocTransientVertexBuffer(&geometry, count, layout);
+    memcpy(geometry.data, s_planarShadowVertices.data(), count * sizeof(polyVertex));
+    s_planarShadowVertices.clear();
+    bgfx::allocTransientVertexBuffer(&clear, 6, layout);
+    const polyVertex fullscreen[] = {
+        {0,0,0,0,0}, {320,0,0,0,0}, {0,200,0,0,0},
+        {320,0,0,0,0}, {320,200,0,0,0}, {0,200,0,0,0}
+    };
+    memcpy(clear.data, fullscreen, sizeof(fullscreen));
+    static bgfx::ProgramHandle program = BGFX_INVALID_HANDLE;
+    static bgfx::UniformHandle params = BGFX_INVALID_HANDLE;
+    if (!bgfx::isValid(program)) program = loadBgfxProgram("softShadow_vs", "softShadow_ps");
+    if (!bgfx::isValid(params)) params = bgfx::createUniform("u_softShadow", bgfx::UniformType::Vec4);
+
+    // Foreground coverage is reserved as 255. Clear only previous shadow sample
+    // markers (0..254), without changing foreground, colour, or scene depth.
+    const float clearParams[4] = {0, 0, 1, 0};
+    bgfx::setUniform(params, clearParams);
+    bgfx::setState(0);
+    bgfx::setStencil(BGFX_STENCIL_TEST_NOTEQUAL | BGFX_STENCIL_FUNC_REF(255)
+        | BGFX_STENCIL_FUNC_RMASK(0xFF) | BGFX_STENCIL_OP_FAIL_S_KEEP
+        | BGFX_STENCIL_OP_FAIL_Z_KEEP | BGFX_STENCIL_OP_PASS_Z_ZERO);
+    bgfx::setVertexBuffer(0, &clear);
+    bgfx::submit(gameViewId, program);
+
+    for (size_t i = 0; i < kSoftShadowTaps.size(); ++i)
+    {
+        const auto& tap = kSoftShadowTaps[i];
+        const float values[4] = {tap.x + g_shakeOffsetX, tap.y + g_shakeOffsetY,
+            softShadowTapAlpha(tap.weight), 0};
+        bgfx::setUniform(params, values);
+        bgfx::setState(BGFX_STATE_WRITE_RGB | BGFX_STATE_DEPTH_TEST_LEQUAL | BGFX_STATE_MSAA
+            | BGFX_STATE_BLEND_FUNC(BGFX_STATE_BLEND_SRC_ALPHA, BGFX_STATE_BLEND_INV_SRC_ALPHA));
+        // Reference > stored: each triangle in this sample can cover a pixel
+        // once; subsequent taps can cover it again. Foreground 255 always fails.
+        bgfx::setStencil(BGFX_STENCIL_TEST_GREATER | BGFX_STENCIL_FUNC_REF((uint32_t)i + 1)
+            | BGFX_STENCIL_FUNC_RMASK(0xFF) | BGFX_STENCIL_OP_FAIL_S_KEEP
+            | BGFX_STENCIL_OP_FAIL_Z_KEEP | BGFX_STENCIL_OP_PASS_Z_REPLACE);
+        bgfx::setVertexBuffer(0, &geometry);
+        bgfx::submit(gameViewId, program);
+    }
+    g_3dFlushedThisFrame = true;
+}
+
 void osystem_flushPendingPrimitives()
 {
+    submitSoftPlanarShadow();
     if (numUsedFlatVertices || numUsedNoiseVertices || numUsedRampVertices ||
         numUsedSpheres || numUsedTransparentVertices || numUsedTexturedVertices ||
         !g_lineVertices.empty())
@@ -3081,6 +3319,17 @@ void osystem_fillPoly(float* buffer, int numPoint, unsigned char color, u8 polyT
     if (numPoint >= MAX_POINTS_PER_POLY || numPoint < 3)
         return;
 
+    if (g_submitShadowStencil && polyType == 2)
+    {
+        // Union all model polygons per tap, without the ordinary translucent
+        // buffer's size limit splitting a silhouette into darker overlapping batches.
+        for (int i = 1; i + 1 < numPoint; ++i)
+            for (int index : {0, i, i + 1})
+                s_planarShadowVertices.push_back({buffer[index * 3], buffer[index * 3 + 1],
+                    buffer[index * 3 + 2], 0.f, 0.f});
+        return;
+    }
+
     // compute the polygon bounding box
     float polyMinX = 320.f;
     float polyMaxX = 0.f;
@@ -3454,7 +3703,10 @@ void osystem_drawSphere(float X, float Y, float Z, u8 color, u8 material, float 
         if (desiredKind == BillboardAtlas_Sphere && atlasData && atlasData->sphereAtlasWidth > 0 && atlasData->sphereAtlasHeight > 0)
         {
             const int CELLS_PER_ROW = 8;
-            const int CELL_SIZE_PIXELS = 128;
+            // Sphere atlases are generated at 1024 px wide (8 x 128). Keep
+            // cell addressing proportional when Upscayl replaces them with a
+            // 2x/4x image.
+            const int CELL_SIZE_PIXELS = 128 * (std::max)(1, atlasData->sphereAtlasWidth / 1024);
             int cellIdx = numSpheresPrimitives - 1;
             int cellX = cellIdx % CELLS_PER_ROW;
             int cellY = cellIdx / CELLS_PER_ROW;
@@ -3815,12 +4067,36 @@ void osystem_createMask(const std::array<u8, 320 * 200>& mask, int roomId, int m
         }
     }
 
+    if (replacementData)
+    {
+        int minX = maskW, minY = maskH, maxX = -1, maxY = -1;
+        for (int y = 0; y < maskH; ++y)
+            for (int x = 0; x < maskW; ++x)
+                if (maskData[(size_t)y * maskW + x] != 0)
+                {
+                    minX = (std::min)(minX, x); minY = (std::min)(minY, y);
+                    maxX = (std::max)(maxX, x); maxY = (std::max)(maxY, y);
+                }
+        if (maxX >= 0)
+        {
+            maskX1 = (std::min)(maskX1, (int)floorf((minX - 1.f) * 320.f / maskW));
+            maskY1 = (std::min)(maskY1, (int)floorf((minY - 1.f) * 200.f / maskH));
+            maskX2 = (std::max)(maskX2, (int)ceilf((maxX + 2.f) * 320.f / maskW));
+            maskY2 = (std::max)(maskY2, (int)ceilf((maxY + 2.f) * 200.f / maskH));
+        }
+    }
+    maskX1 = (std::max)(0, maskX1 - 1);
+    maskY1 = (std::max)(0, maskY1 - 1);
+    maskX2 = (std::min)(319, maskX2 + 1);
+    maskY2 = (std::min)(199, maskY2 + 1);
+
     // R8 (normalized float) with linear filtering enables bilinear AA at mask edges.
     // Clamp sampler prevents wrap-around artifacts at the texture border.
     // Texture may be HD-resolution when a replacement is loaded; the shader
     // samples via UVs so any size works.
     maskTextures[roomId][maskId].maskTexture = bgfx::createTexture2D(maskW, maskH, false, 1, bgfx::TextureFormat::R8,
-        BGFX_SAMPLER_U_CLAMP | BGFX_SAMPLER_V_CLAMP,
+        BGFX_SAMPLER_U_CLAMP | BGFX_SAMPLER_V_CLAMP |
+            (g_currentBackgroundIsHD ? 0 : BGFX_SAMPLER_MIN_POINT | BGFX_SAMPLER_MAG_POINT),
         bgfx::copy(maskData, maskW * maskH));
 
     if (replacementData)
@@ -3951,34 +4227,8 @@ void osystem_drawMask(int roomId, int maskId)
     bgfx::TransientVertexBuffer maskTransientBuffer;
     bgfx::allocTransientVertexBuffer(&maskTransientBuffer, 4, maskLayout);
 
-    // Calculate horizontal offset for aspect ratio correction
-    // Game viewport is 320x200 (16:10 = 1.6), HD backgrounds are often 16:9 (1.778)
-    // If the HD background is wider than 16:10, we need to pillarbox (center horizontally)
-    float horizontalOffset = 0.f;
-    if (g_currentBackgroundIsHD && g_currentBackgroundWidth > 0 && g_currentBackgroundHeight > 0)
-    {
-        float bgAspect = (float)g_currentBackgroundWidth / (float)g_currentBackgroundHeight;
-        float gameAspect = 320.f / 200.f;  // 1.6
-
-        if (bgAspect > gameAspect)
-        {
-            // Background is wider - need to pillarbox (center horizontally)
-            // Calculate how much of the 320-wide space the background actually occupies
-            float effectiveWidth = 320.f * (gameAspect / bgAspect);
-            horizontalOffset = (320.f - effectiveWidth) / 2.f;
-
-            static bool s_logged = false;
-            if (!s_logged)
-            {
-                printf(LIFE_TAG "Regular-mask: aspect correction - bg=%.3f game=%.3f offset=%.1f" CON_RESET "\n",
-                       bgAspect, gameAspect, horizontalOffset);
-                s_logged = true;
-            }
-        }
-    }
-
-    float mX1 = maskTextures[roomId][maskId].maskX1 + horizontalOffset + g_shakeOffsetX;
-    float mX2 = maskTextures[roomId][maskId].maskX2 + horizontalOffset + g_shakeOffsetX;
+    float mX1 = maskTextures[roomId][maskId].maskX1 + g_shakeOffsetX;
+    float mX2 = maskTextures[roomId][maskId].maskX2 + g_shakeOffsetX;
     float mY1 = maskTextures[roomId][maskId].maskY1 + g_shakeOffsetY;
     float mY2 = maskTextures[roomId][maskId].maskY2 + g_shakeOffsetY;
     float mZ = 0.f;
@@ -4000,9 +4250,9 @@ void osystem_drawMask(int roomId, int maskId)
     float fadeParams[4] = { g_fadeLevel, 0.0f, 0.0f, 0.0f };
     bgfx::setUniform(fadeLevelUniform, fadeParams);
 
-    // Write stencil=1 where mask is active (fragment shader will discard transparent pixels)
+    // Write reserved foreground stencil=255 where mask is active (fragment shader will discard transparent pixels)
     bgfx::setStencil(BGFX_STENCIL_TEST_ALWAYS
-        | BGFX_STENCIL_FUNC_REF(1)
+        | BGFX_STENCIL_FUNC_REF(255)
         | BGFX_STENCIL_FUNC_RMASK(0xFF)
         | BGFX_STENCIL_OP_FAIL_Z_KEEP
         | BGFX_STENCIL_OP_PASS_Z_REPLACE);
@@ -4244,10 +4494,10 @@ void osystem_drawMaskStencilPrepass(int roomId, int maskId)
     float fadeParams[4] = { g_fadeLevel, 0.0f, 0.0f, 0.0f };
     bgfx::setUniform(fadeLevelUniform, fadeParams);
 
-    // Write stencil=2 where mask foreground is opaque, so shadows
+    // Write reserved foreground stencil=255 where mask foreground is opaque, so shadows
     // (which test stencil==0) are rejected at these pixels.
     bgfx::setStencil(BGFX_STENCIL_TEST_ALWAYS
-        | BGFX_STENCIL_FUNC_REF(2)
+        | BGFX_STENCIL_FUNC_REF(255)
         | BGFX_STENCIL_FUNC_RMASK(0xFF)
         | BGFX_STENCIL_OP_FAIL_Z_KEEP
         | BGFX_STENCIL_OP_PASS_Z_REPLACE);
@@ -4467,7 +4717,7 @@ void osystem_drawFrozenSceneBackground()
     bgfx::setVertexBuffer(0, &transientBuffer);
     bgfx::setTexture(0, frozenSceneTexUniform, s_frozenSceneTex);
 
-    float fadeParams[4] = { g_fadeLevel, 0.0f, 0.0f, 0.0f };
+    float fadeParams[4] = { getMenuOverlayFadeLevel(), 0.0f, 0.0f, 0.0f };
     bgfx::setUniform(frozenSceneFadeUniform, fadeParams);
 
     submitHDBackground(gameViewId);

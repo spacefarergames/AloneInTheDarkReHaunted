@@ -43,6 +43,40 @@ endif()
 
 add_executable (Fitd ${SOURCES})
 
+# Ship the small headless Upscayl backend and the one model used by automatic
+# AITD2/AITD3 asset generation. The runtime prefers this local copy and falls
+# back to UPSCAYL_BIN/a system installation for developer builds.
+if(WIN32 AND NOT UWP)
+    set(UPSCAYL_BUNDLE_DIR "${CMAKE_SOURCE_DIR}/ThirdParty/Upscayl/windows-x64")
+    if(EXISTS "${UPSCAYL_BUNDLE_DIR}/bin/upscayl-bin.exe")
+        add_custom_command(TARGET Fitd POST_BUILD
+            COMMAND ${CMAKE_COMMAND} -E copy_directory
+                "${UPSCAYL_BUNDLE_DIR}" "$<TARGET_FILE_DIR:Fitd>/upscayl"
+        COMMENT "Bundling headless Upscayl runtime and fast model"
+        )
+    endif()
+
+    # The AITD2/AITD3 room packs are generated independently, but their menus
+    # share the small remaster UI artwork from the common AITD1 background pack.
+    # Stage those files beside developer builds so mode-specific menu lookup has
+    # the same fallback assets as a packaged release.
+    set(SHARED_MENU_ASSET_DIR "${CMAKE_SOURCE_DIR}/Shipping/backgrounds_hd")
+    if(EXISTS "${SHARED_MENU_ASSET_DIR}/StartupMenuBackground.png")
+        add_custom_command(TARGET Fitd POST_BUILD
+            COMMAND ${CMAKE_COMMAND} -E make_directory "$<TARGET_FILE_DIR:Fitd>/backgrounds_hd"
+            COMMAND ${CMAKE_COMMAND} -E copy_if_different
+                "${SHARED_MENU_ASSET_DIR}/StartupMenuBackground.png"
+                "${SHARED_MENU_ASSET_DIR}/StartupMenuBackgroundWithArt.png"
+                "${SHARED_MENU_ASSET_DIR}/SystemMenu.png"
+                "${SHARED_MENU_ASSET_DIR}/SaveRestoreScreen.png"
+                "${SHARED_MENU_ASSET_DIR}/LanguageSelection.png"
+                "${SHARED_MENU_ASSET_DIR}/FullscreenFrame.png"
+                "$<TARGET_FILE_DIR:Fitd>/backgrounds_hd"
+            COMMENT "Bundling shared menu backgrounds for AITD2/AITD3"
+        )
+    endif()
+endif()
+
 # Output executable as Tatou / Tatou.app on macOS
 set_target_properties(Fitd PROPERTIES OUTPUT_NAME "Tatou")
 

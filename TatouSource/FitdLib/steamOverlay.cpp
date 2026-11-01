@@ -12,6 +12,7 @@
 
 #include "steamOverlay.h"
 #include "consoleLog.h"
+#include "configRemaster.h"
 
 #include <stdio.h>
 
@@ -42,6 +43,13 @@ static pfn_SteamAPI_IsSteamRunning s_SteamAPI_IsSteamRunning = nullptr;
 static pfn_SteamAPI_RestartAppIfNecessary s_SteamAPI_RestartAppIfNecessary = nullptr;
 static bool                 s_steamActive           = false;
 static bool                 s_steamNeedsRelaunch    = false;
+
+static unsigned int selectedSteamAppId()
+{
+    if (g_remasterConfig.gameData.mode == REMASTER_GAME_AITD2) return 548890;
+    if (g_remasterConfig.gameData.mode == REMASTER_GAME_AITD3) return 548900;
+    return 548090;
+}
 
 // ---------------------------------------------------------------------------
 // steamOverlay_Init
@@ -103,7 +111,7 @@ bool steamOverlay_Init()
 
     // SteamAPI_RestartAppIfNecessary returns true when the game was NOT
     // launched through the Steam client and should be restarted via Steam.
-    if (s_SteamAPI_RestartAppIfNecessary && s_SteamAPI_RestartAppIfNecessary(548090))
+    if (s_SteamAPI_RestartAppIfNecessary && s_SteamAPI_RestartAppIfNecessary(selectedSteamAppId()))
     {
         printf(STEAM_TAG "SteamAPI_RestartAppIfNecessary returned true — process should exit for Steam relaunch\n");
         FreeLibrary(s_steamDLL);
