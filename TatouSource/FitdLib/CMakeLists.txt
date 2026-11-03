@@ -87,7 +87,7 @@ endfunction(assign_source_group)
 
 macro(addShaderProgramPermutation vsname psname varyingname)
     # Skip shader compilation for Nintendo Switch (use pre-compiled shaders)
-    if(NOT NINTENDO_SWITCH)
+    if(NOT NINTENDO_SWITCH AND NOT FITD_UNITY_ONLY)
         bgfx_compile_shaders(SHADERS shaders/${vsname}.sc AS_HEADERS OUTPUT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/shaders/generated TYPE VERTEX VARYING_DEF ${CMAKE_CURRENT_SOURCE_DIR}/shaders/${varyingname}.sc INCLUDE_DIRS ${BGFX_DIR}/src AS_HEADERS)
         bgfx_compile_shaders(SHADERS shaders/${psname}.sc AS_HEADERS OUTPUT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/shaders/generated TYPE FRAGMENT VARYING_DEF ${CMAKE_CURRENT_SOURCE_DIR}/shaders/${varyingname}.sc INCLUDE_DIRS ${BGFX_DIR}/src AS_HEADERS)
     endif()

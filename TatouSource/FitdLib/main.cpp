@@ -1,3 +1,8 @@
+#ifdef FITD_UNITY_COMMANDS
+#include "../Unity/Native/unityHost.h"
+#endif
+#include "filePaths.h"
+#include "processExit.h"
 ///////////////////////////////////////////////////////////////////////////////
 // Alone In The Dark Re-Haunted
 // Copyright (C) 2026 Infogrames / Spacefarer Retro Remasters LLC
@@ -58,22 +63,23 @@ extern "C" {
     extern char homePath[512];
 }
 
-FILE* Open(const char* filename, const char* mode) {
+FitdReadFile* Open(const char* filename, const char* mode) {
     std::filesystem::path path = std::filesystem::path(homePath) / filename;
-    return fopen(path.string().c_str(), mode);
+    return fitdOpenRead(path.string().c_str(), mode);
 }
 
 static std::string g_versionString;
 
 static void loadVersionString()
 {
-    std::filesystem::path versionPath = std::filesystem::path(homePath) / "version.txt";
-    std::ifstream file(versionPath);
-    if (file.is_open())
+    if (auto* file = fitdOpenRead("version.txt"))
     {
-        std::getline(file, g_versionString);
-        // trim trailing whitespace
-        while (!g_versionString.empty() && (g_versionString.back() == '\r' || g_versionString.back() == '\n' || g_versionString.back() == ' '))
+        char version[256]{};
+        fitdRead(version, 1, sizeof(version) - 1, file);
+        fitdClose(file);
+        g_versionString = version;
+        while (!g_versionString.empty() && (g_versionString.back() == '\r' ||
+               g_versionString.back() == '\n' || g_versionString.back() == ' '))
             g_versionString.pop_back();
     }
 }
@@ -400,7 +406,7 @@ void reloadLanguage(const char* langName)
 void OpenProgram(void)
 {
     //time_t ltime;
-    FILE* fHandle;
+    FitdReadFile* fHandle;
 
     setupScreen();
     //setupInterrupt();
@@ -517,10 +523,10 @@ void OpenProgram(void)
             }
             for (int i = 0; i < CVars.size(); i++) {
                 s16 cvarValue = 0;
-                fread(&cvarValue, 2, 1, fHandle);
+                fitdRead(&cvarValue, 2, 1, fHandle);
                 CVars[i] = READ_BE_S16(&cvarValue);
             }
-            fclose(fHandle);
+            fitdClose(fHandle);
         }
     }
 
@@ -578,7 +584,14 @@ void freeAll(void)
 
 textEntryStruct* getTextFromIdx(int index)
 {
-#ifndef _WIN32
+#if defined(FITD_UNITY_COMMANDS)
+    if (index == 13)
+    {
+        static textEntryStruct quitEntry = { 13, (u8*)"Quit", 0 };
+        quitEntry.width = ExtGetSizeFont(quitEntry.textPtr);
+        return &quitEntry;
+    }
+#elif !defined(_WIN32)
     // Platform-specific text overrides
     // String 13 = "Return to Windows" -> platform name
     if (index == 13)
@@ -1213,7 +1226,7 @@ void LoadWorld(void)
     u8* pObjectData;
     u8* pObjectDataBackup;
     size_t objectDataSize;
-    FILE* fHandle;
+    FitdReadFile* fHandle;
     int i;
     int choosePersoBackup;
 
@@ -1234,20 +1247,20 @@ void LoadWorld(void)
             char objectPath[512];
             strcpy(objectPath, homePath);
             strcat(objectPath, "OBJETS.ITD");
-            fHandle = fopen(objectPath, "rb");
+            fHandle = fitdOpenRead(objectPath, "rb");
             if (!fHandle) {
                 fatalError(0, "OBJETS.ITD");
             }
 
-            fseek(fHandle, 0, SEEK_END);
-            objectDataSize = ftell(fHandle);
-            fseek(fHandle, 0, SEEK_SET);
+            fitdSeek(fHandle, 0, SEEK_END);
+            objectDataSize = fitdTell(fHandle);
+            fitdSeek(fHandle, 0, SEEK_SET);
 
             pObjectDataBackup = pObjectData = (u8*)malloc(objectDataSize);
             ASSERT(pObjectData);
 
-            fread(pObjectData, objectDataSize, 1, fHandle);
-            fclose(fHandle);
+            fitdRead(pObjectData, objectDataSize, 1, fHandle);
+            fitdClose(fHandle);
         }
     }
 
@@ -1368,14 +1381,14 @@ void LoadWorld(void)
             strcpy(definestPath, homePath);
             strcat(definestPath, "DEFINES.ITD");
 
-            fHandle = fopen(definestPath, "rb");
+            fHandle = fitdOpenRead(definestPath, "rb");
             if (!fHandle)
             {
                 fatalError(0, "DEFINES.ITD");
             }
 
-            fread(&CVars[0], CVars.size(), 2, fHandle);
-            fclose(fHandle);
+            fitdRead(&CVars[0], CVars.size(), 2, fHandle);
+            fitdClose(fHandle);
         }
 
         for (i = 0; i < CVars.size(); i++)
@@ -2820,7 +2833,7 @@ void drawLaserSight(tObject* actorPtr)
     if (range <= 0)
         return;
 
-    // Compute aim endpoint — same convention as DO_TIR raycast (beta - 0x100)
+    // Compute aim endpoint â€” same convention as DO_TIR raycast (beta - 0x100)
     int dz, dx;
     Rotate((unsigned int)(actorPtr->beta - 0x100) & 0x3FF, 0, -range, &dz, &dx);
 
@@ -2828,7 +2841,7 @@ void drawLaserSight(tObject* actorPtr)
     int endY = startY;
     int endZ = startZ + dz;
 
-    // Color 0x3C = bank 3, index 12 — bright red on the AITD ramp palette
+    // Color 0x3C = bank 3, index 12 â€” bright red on the AITD ramp palette
     drawProjectedLine(startX, startY, startZ, endX, endY, endZ, 0x3C);
 }
 
@@ -5217,7 +5230,7 @@ int parseAllSaves(int arg)
                 sprintf_s(pngFile, sizeof(pngFile), "SAVE%d.png", currentSelectedSlot);
                 strcat(pngPath, pngFile);
                 int channels = 0;
-                previewImageData = stbi_load(pngPath, &previewImageW, &previewImageH, &channels, 4);
+                previewImageData = fitdLoadImage(pngPath, &previewImageW, &previewImageH, &channels, 4);
             }
             lastPreviewSlot = currentSelectedSlot;
 
@@ -5528,7 +5541,7 @@ void detectGame(void)
     }
 
     printf(MAIN_TAG "%s\n", titleStr.c_str());
-#ifndef AITD_UE4
+#if !defined(AITD_UE4) && !defined(FITD_UNITY_COMMANDS)
     SDL_SetWindowTitle(gWindowBGFX, titleStr.c_str());
 #endif
 }
@@ -5542,6 +5555,9 @@ int FitdMain(int argc, char* argv[])
 {
     // Load remaster configuration early, before any systems that depend on it
     loadRemasterConfig();
+#ifdef FITD_UNITY
+    g_remasterConfig.gameData.steamless = true;
+#endif
 
 #ifndef AITD_UE4
     initBgfxGlue(argc, argv);
@@ -5552,11 +5568,17 @@ int FitdMain(int argc, char* argv[])
     // Present configuration before any game resources, title sequences or
     // menus are initialized. The main SDL thread continues pumping events and
     // bgfx frames, but game boot is gated until the dialog is dismissed.
-    if (g_remasterConfig.ui.showOptionsAtStartup)
+    if (g_remasterConfig.ui.showOptionsAtStartup
+#ifdef FITD_UNITY_COMMANDS
+        && !unityManagedStartup()
+#endif
+    )
     {// Hide the console window at startup; it will be shown after the main window is created
+#ifndef FITD_UNITY
         HWND hConsole = GetConsoleWindow();
         if (hConsole)
             ShowWindow(hConsole, SW_HIDE);
+#endif
         remasterOptionsBeginStartupGate();
         do
         {
@@ -5743,6 +5765,9 @@ extern "C" {
 
 void cleanupAndExit(void)
 {
+#ifdef FITD_UNITY
+    fitdExit(0);
+#endif
     shutdownController();
 
     Sound_Quit();
@@ -5778,6 +5803,6 @@ void cleanupAndExit(void)
     osystem_clearVocCache();
     shutdownJobSystem();
 
-    exit(0);
+    fitdExit(0);
 }
 

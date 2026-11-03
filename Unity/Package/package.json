@@ -1,0 +1,16 @@
+{
+  "name": "com.fitd.native",
+  "version": "0.1.0",
+  "displayName": "FITD Native Runtime",
+  "description": "Portable C++ gameplay with Unity rendering, audio, input, and platform-specific AssetBundles.",
+  "unity": "2022.3",
+  "dependencies": {
+    "com.unity.inputsystem": "1.19.0",
+    "com.unity.modules.audio": "1.0.0",
+    "com.unity.modules.assetbundle": "1.0.0",
+    "com.unity.modules.imageconversion": "1.0.0",
+    "com.unity.modules.imgui": "1.0.0",
+    "com.unity.modules.unitywebrequestassetbundle": "1.0.0",
+    "com.unity.modules.uielements": "1.0.0"
+  }
+}

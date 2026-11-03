@@ -42,6 +42,9 @@ static bool isSequelMode()
 
 static bool anyUpscaleRequested()
 {
+#ifdef FITD_UNITY
+    return false; // Detached external-tool worker cannot survive native plugin unload.
+#endif
     return isSequelMode() && (g_remasterConfig.assetGeneration.autoUpscaleMissingHD ||
         g_remasterConfig.backgrounds.dumpEnabled || g_remasterConfig.sequences.dumpEnabled);
 }
@@ -316,6 +319,9 @@ static void ensureWorker()
 
 bool hdAutoUpscale_IsEnabled()
 {
+#ifdef FITD_UNITY
+    return false;
+#endif
     return isSequelMode() && g_remasterConfig.assetGeneration.autoUpscaleMissingHD;
 }
 

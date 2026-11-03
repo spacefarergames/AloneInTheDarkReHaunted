@@ -8,6 +8,7 @@
 ///////////////////////////////////////////////////////////////////////////////
 
 #include "common.h"
+#include "remasterOptions.h"
 #include "consoleLog.h"
 #include "anim2d.h"
 #include "fontTTF.h"
@@ -337,6 +338,13 @@ void PlayWorld(int allowSystemMenu, int deltaTime)
 		JobSystem::instance().processPendingCallbacks();
 
 		process_events();
+#ifdef FITD_UNITY_COMMANDS
+        if(remasterOptionsIsOpen()){
+            if(FlagInitView)InitView();
+            AllRedraw(flagRedraw);
+            continue;
+        }
+#endif
 
 		// Auto-hide cursor during gameplay after inactivity
 		menuUpdateGameplayCursor();

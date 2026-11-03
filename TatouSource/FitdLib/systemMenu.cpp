@@ -1,3 +1,4 @@
+#include "processExit.h"
 ///////////////////////////////////////////////////////////////////////////////
 // Alone In The Dark Re-Haunted
 // Copyright (C) 2026 Infogrames / Spacefarer Retro Remasters LLC
@@ -8,6 +9,9 @@
 ///////////////////////////////////////////////////////////////////////////////
 
 #include "common.h"
+#ifdef FITD_UNITY_COMMANDS
+#include "remasterOptions.h"
+#endif
 #include "configRemaster.h"
 #include "fontTTF.h"
 #include "hdBackgroundRenderer.h"
@@ -215,6 +219,9 @@ void AffOptionList(int selectedStringNumber, bool hdPreview)
     // Fullscreen option (no string table entry, draw manually)
     {
         int y = WindowY1 + ((WindowY2 - WindowY1) / 2) - (NB_OPTIONS * SIZE_FONT) / 2 + (6 * SIZE_FONT);
+#ifdef FITD_UNITY_COMMANDS
+        const char* fsText = "Rehaunted Options";
+#else
         const char* fsText = gIsFullscreen ? "Display: Fullscreen" : "Display: Windowed";
         if (languageNameString == "FRANCAIS")
             fsText = gIsFullscreen ? "Affichage: Plein \x82" "cran" : "Affichage: Fen\x88" "tr\x82";
@@ -225,6 +232,7 @@ void AffOptionList(int selectedStringNumber, bool hdPreview)
         else if (languageNameString == "DEUTSCH")
             fsText = gIsFullscreen ? "Anzeige: Vollbild" : "Anzeige: Fenster";
 
+#endif
         u8* fsPtr = (u8*)fsText;
 
         if (g_remasterConfig.font.enableTTF)
@@ -543,8 +551,12 @@ void processSystemMenu(void)
                         notifyTTFMenuSelectionChanged();
                     }
                 }
-                if (menuMouseClicked() && getSystemMenuItemAtMouse(useHDBG) >= 0)
+                const int clickedItem = menuMouseClicked() ? getSystemMenuItemAtMouse(useHDBG) : -1;
+                if (clickedItem >= 0)
                 {
+#ifdef FITD_UNITY_COMMANDS
+                    currentSelectedEntry = clickedItem;
+#endif
                     localKey = 0x1C;
                     localClick = 0;
                 }
@@ -575,8 +587,12 @@ void processSystemMenu(void)
                             return;
                         }
                         break;
-                    case 6: // fullscreen toggle
+                    case 6:
+#ifdef FITD_UNITY_COMMANDS
+                        if (!remasterOptionsIsOpen()) remasterOptionsToggle();
+#else
                         g_pendingFullscreenToggle = true;
+#endif
                         break;
                     case 7: // controls
                         processControlsMenu(useHDBG);
@@ -592,7 +608,7 @@ void processSystemMenu(void)
                         if (g_gameId == JACK)
                         {
                             freeAll();
-                            exit(0);
+                            fitdExit(0);
                         }
                         FlagGameOver = 1;
                         exitMenu = 1;
@@ -724,6 +740,7 @@ void processSystemMenu(void)
                         notifyTTFMenuSelectionChanged();
                         AntiRebond = 1;
                     }
+                    #ifndef FITD_UNITY_COMMANDS
                     // Handle left/right for fullscreen toggle
                     if((localJoyD == 4 || localJoyD == 8) && currentSelectedEntry == 6) // left or right on fullscreen option
                     {
@@ -735,6 +752,7 @@ void processSystemMenu(void)
                         notifyTTFMenuSelectionChanged();
                         AntiRebond = 1;
                     }
+                    #endif
                     // Handle left/right for hints toggle
                     if((localJoyD == 4 || localJoyD == 8) && currentSelectedEntry == 8) // left or right on hints option
                     {

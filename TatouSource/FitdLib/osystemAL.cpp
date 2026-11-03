@@ -1,3 +1,4 @@
+#include "filePaths.h"
 ///////////////////////////////////////////////////////////////////////////////
 // Alone In The Dark Re-Haunted
 // Copyright (C) 2026 Infogrames / Spacefarer Retro Remasters LLC
@@ -44,12 +45,12 @@ void osystemAL_adlib_Update();
 SoLoud::Soloud* gSoloud = NULL;
 
 // Self-contained audio archive reader (same HDBG format, separate instance from HDArchive)
-static FILE* s_audioArchiveFile = nullptr;
+static FitdReadFile* s_audioArchiveFile = nullptr;
 static std::vector<HDArchiveEntry> s_audioEntries;
 static std::unordered_map<std::string, size_t> s_audioPathIndex; // lowered path -> index
 static bool s_audioArchiveOpen = false;
 static bool s_audioArchiveTried = false;
-static std::mutex s_audioArchiveMutex;  // Thread safety: protects FILE* and entry access
+static std::mutex s_audioArchiveMutex;  // Thread safety: protects FitdReadFile* and entry access
 
 static std::string audioToLowerASCII(const char* str)
 {
@@ -69,37 +70,37 @@ static void ensureAudioArchiveOpen()
     s_audioArchiveTried = true;
 
     // Use language-specific audio archive for French voices, fall back to default
-    FILE* f = nullptr;
+    FitdReadFile* f = nullptr;
     const char* archiveName = "audio.hda";
     if (languageNameString == "FRANCAIS")
     {
-        fopen_s(&f, "audio_fre.hda", "rb");
+        fitdOpenRead_s(&f, "audio_fre.hda", "rb");
         if (f) archiveName = "audio_fre.hda";
     }
     if (!f)
-        fopen_s(&f, "audio.hda", "rb");
+        fitdOpenRead_s(&f, "audio.hda", "rb");
     if (!f) return;
 
     uint32_t magic = 0, version = 0, entryCount = 0;
-    if (fread(&magic, 4, 1, f) != 1 ||
-        fread(&version, 4, 1, f) != 1 ||
-        fread(&entryCount, 4, 1, f) != 1)
+    if (fitdRead(&magic, 4, 1, f) != 1 ||
+        fitdRead(&version, 4, 1, f) != 1 ||
+        fitdRead(&entryCount, 4, 1, f) != 1)
     {
-        fclose(f);
+        fitdClose(f);
         return;
     }
 
     if (magic != 0x47424448)
     {
         printf(AL_ERR "bad magic in audio archive (magic=0x%08X)" CON_RESET "\n", magic);
-        fclose(f);
+        fitdClose(f);
         return;
     }
 
     if (version != 1 && version != 2)
     {
         printf(AL_ERR "unsupported version %u in audio archive" CON_RESET "\n", version);
-        fclose(f);
+        fitdClose(f);
         return;
     }
 
@@ -109,24 +110,24 @@ static void ensureAudioArchiveOpen()
     for (uint32_t i = 0; i < entryCount; i++)
     {
         uint16_t pathLen = 0;
-        if (fread(&pathLen, 2, 1, f) != 1)
+        if (fitdRead(&pathLen, 2, 1, f) != 1)
         {
             s_audioEntries.clear();
-            fclose(f);
+            fitdClose(f);
             return;
         }
         std::string path(pathLen, '\0');
-        if (fread(&path[0], 1, pathLen, f) != pathLen)
+        if (fitdRead(&path[0], 1, pathLen, f) != pathLen)
         {
             s_audioEntries.clear();
-            fclose(f);
+            fitdClose(f);
             return;
         }
         uint64_t offset = 0, size = 0;
-        if (fread(&offset, 8, 1, f) != 1 || fread(&size, 8, 1, f) != 1)
+        if (fitdRead(&offset, 8, 1, f) != 1 || fitdRead(&size, 8, 1, f) != 1)
         {
             s_audioEntries.clear();
-            fclose(f);
+            fitdClose(f);
             return;
         }
 
@@ -135,11 +136,11 @@ static void ensureAudioArchiveOpen()
 
         if (isV2)
         {
-            if (fread(&uncompressedSize, 8, 1, f) != 1 ||
-                fread(&flags, 4, 1, f) != 1)
+            if (fitdRead(&uncompressedSize, 8, 1, f) != 1 ||
+                fitdRead(&flags, 4, 1, f) != 1)
             {
                 s_audioEntries.clear();
-                fclose(f);
+                fitdClose(f);
                 return;
             }
         }
@@ -196,9 +197,9 @@ static unsigned char* readAudioEntry(const HDArchiveEntry* entry, size_t* outSiz
     if (!entry || !s_audioArchiveFile) return nullptr;
 
 #ifdef _WIN32
-    if (_fseeki64(s_audioArchiveFile, (long long)entry->offset, SEEK_SET) != 0)
+    if (fitdSeek(s_audioArchiveFile, (long long)entry->offset, SEEK_SET) != 0)
 #else
-    if (fseeko(s_audioArchiveFile, (off_t)entry->offset, SEEK_SET) != 0)
+    if (fitdSeek(s_audioArchiveFile, (off_t)entry->offset, SEEK_SET) != 0)
 #endif
     {
         return nullptr;
@@ -210,7 +211,7 @@ static unsigned char* readAudioEntry(const HDArchiveEntry* entry, size_t* outSiz
         unsigned char* compBuf = (unsigned char*)malloc((size_t)entry->size);
         if (!compBuf) return nullptr;
 
-        if (fread(compBuf, 1, (size_t)entry->size, s_audioArchiveFile) != (size_t)entry->size)
+        if (fitdRead(compBuf, 1, (size_t)entry->size, s_audioArchiveFile) != (size_t)entry->size)
         {
             free(compBuf);
             return nullptr;
@@ -246,7 +247,7 @@ static unsigned char* readAudioEntry(const HDArchiveEntry* entry, size_t* outSiz
     unsigned char* buf = new (std::nothrow) unsigned char[sz];
     if (!buf) return nullptr;
 
-    if (fread(buf, 1, sz, s_audioArchiveFile) != sz)
+    if (fitdRead(buf, 1, sz, s_audioArchiveFile) != sz)
     {
         delete[] buf;
         return nullptr;
@@ -308,7 +309,7 @@ void closeAudioArchive()
 
     if (s_audioArchiveFile)
     {
-        fclose(s_audioArchiveFile);
+        fitdClose(s_audioArchiveFile);
         s_audioArchiveFile = nullptr;
     }
     s_audioEntries.clear();
@@ -455,7 +456,12 @@ void osystem_stopTrack()
 void osystemAL_init()
 {
     gSoloud = new SoLoud::Soloud();
+#ifdef FITD_UNITY_COMMANDS
+    extern unsigned int unityAudioSampleRate();
+    gSoloud->init(SoLoud::Soloud::CLIP_ROUNDOFF, SoLoud::Soloud::NULLDRIVER, unityAudioSampleRate(), 0, 2);
+#else
     gSoloud->init(SoLoud::Soloud::CLIP_ROUNDOFF, SoLoud::Soloud::AUTO, SoLoud::Soloud::AUTO, SoLoud::Soloud::AUTO, 2);
+#endif
 }
 
 void osystemAL_deinit()
@@ -894,26 +900,54 @@ int osystem_playTrack(int trackId)
         }
     }
 
+#ifdef FITD_UNITY_COMMANDS
+    for (const char* extension : {".ogg", ".wav", ".mp3"})
+    {
+        char name[32];
+        snprintf(name, sizeof(name), "%02d%s", fileTrackId, extension);
+        auto* file = fitdOpenRead(name);
+        if (!file) continue;
+        fitdSeek(file, 0, SEEK_END);
+        const auto size = fitdTell(file);
+        fitdSeek(file, 0, SEEK_SET);
+        if (size <= 0 || size > 256 * 1024 * 1024) { fitdClose(file); continue; }
+        auto* bytes = new unsigned char[size];
+        const auto read = fitdRead(bytes, 1, size_t(size), file);
+        fitdClose(file);
+        if (read == size_t(size)) {
+            pWavStream = new SoLoud::WavStream();
+            if (pWavStream->loadMem(bytes, unsigned(size), false, false) == SoLoud::SO_NO_ERROR) {
+                s_musicArchiveBuf = bytes;
+                gSoloud->play(*pWavStream);
+                return 1;
+            }
+            delete pWavStream;
+            pWavStream = nullptr;
+        }
+        delete[] bytes;
+    }
+    return 0;
+#else
     // Filesystem fallback
     char filename[256];
     FILE* fHandle = NULL;
 
     // Try OGG first  
     sprintf_s(filename, sizeof(filename), "%02d.ogg", fileTrackId);
-    fopen_s(&fHandle, filename, "rb");
+    fitdFopen_s(&fHandle, filename, "rb");
 
     // Fall back to WAV if OGG not found
     if (fHandle == NULL)
     {
         sprintf_s(filename, sizeof(filename), "%02d.wav", fileTrackId);
-        fopen_s(&fHandle, filename, "rb");
+        fitdFopen_s(&fHandle, filename, "rb");
     }
 
     // Fall back to MP3 if WAV not found
     if (fHandle == NULL)
     {
         sprintf_s(filename, sizeof(filename), "%02d.mp3", fileTrackId);
-        fopen_s(&fHandle, filename, "rb");
+        fitdFopen_s(&fHandle, filename, "rb");
     }
     
     if (fHandle == NULL)
@@ -936,6 +970,7 @@ int osystem_playTrack(int trackId)
     }
 
     return 0;
+#endif
 }
 
 // ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚ÂÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚ÂÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ Voice Over (VO) playback ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚ÂÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚ÂÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚ÂÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚ÂÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚ÂÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚ÂÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚ÂÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚ÂÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚ÂÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚ÂÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚ÂÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚ÂÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚ÂÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚ÂÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚ÂÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚ÂÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚ÂÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚ÂÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚ÂÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚ÂÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚ÂÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚ÂÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚ÂÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚ÂÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚ÂÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚ÂÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚ÂÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚ÂÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚ÂÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚ÂÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚ÂÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚ÂÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚ÂÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚ÂÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚ÂÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚ÂÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚ÂÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚ÂÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚ÂÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚ÂÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚ÂÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚ÂÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚ÂÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚ÂÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚ÂÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚ÂÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚ÂÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬
@@ -991,27 +1026,27 @@ static bool hasExtCI(const char* path, const char* ext)
 // Returns true on success.
 static bool tryPlayVoFile(const char* path, const char* label)
 {
-    FILE* fh = nullptr;
-    fopen_s(&fh, path, "rb");
+    FitdReadFile* fh = nullptr;
+    fitdOpenRead_s(&fh, path, "rb");
     if (!fh) return false;
 
     // VOC files need special decoding ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â read fully into memory first
     if (hasExtCI(path, ".voc"))
     {
-        fseek(fh, 0, SEEK_END);
-        long fileLen = ftell(fh);
-        fseek(fh, 0, SEEK_SET);
-        if (fileLen <= 0) { fclose(fh); return false; }
+        fitdSeek(fh, 0, SEEK_END);
+        long fileLen = fitdTell(fh);
+        fitdSeek(fh, 0, SEEK_SET);
+        if (fileLen <= 0) { fitdClose(fh); return false; }
 
         unsigned char* raw = new (std::nothrow) unsigned char[(size_t)fileLen];
-        if (!raw) { fclose(fh); return false; }
-        if (fread(raw, 1, (size_t)fileLen, fh) != (size_t)fileLen)
+        if (!raw) { fitdClose(fh); return false; }
+        if (fitdRead(raw, 1, (size_t)fileLen, fh) != (size_t)fileLen)
         {
             delete[] raw;
-            fclose(fh);
+            fitdClose(fh);
             return false;
         }
-        fclose(fh);
+        fitdClose(fh);
 
         bool ok = tryPlayVocFromMemory(raw, (size_t)fileLen, label);
         delete[] raw;
@@ -1019,6 +1054,29 @@ static bool tryPlayVoFile(const char* path, const char* label)
     }
 
     // Standard audio formats ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â let SoLoud handle directly
+#ifdef FITD_UNITY_COMMANDS
+    fitdSeek(fh, 0, SEEK_END);
+    const auto length = fitdTell(fh);
+    fitdSeek(fh, 0, SEEK_SET);
+    if (length <= 0 || length > 256 * 1024 * 1024) { fitdClose(fh); return false; }
+    auto* bytes = new unsigned char[length];
+    const auto read = fitdRead(bytes, 1, size_t(length), fh);
+    fitdClose(fh);
+    if (read == size_t(length))
+    {
+        s_voStream = new SoLoud::WavStream();
+        if (s_voStream->loadMem(bytes, unsigned(length), false, false) == SoLoud::SO_NO_ERROR)
+        {
+            s_voBuf = bytes;
+            s_voHandle = gSoloud->play(*s_voStream);
+            return true;
+        }
+        delete s_voStream;
+        s_voStream = nullptr;
+    }
+    delete[] bytes;
+    return false;
+#else
     s_voFile   = new SoLoud::DiskFile(fh);
     s_voStream = new SoLoud::WavStream();
     SoLoud::result res = s_voStream->loadFile(s_voFile);
@@ -1032,6 +1090,7 @@ static bool tryPlayVoFile(const char* path, const char* label)
     delete s_voStream; s_voStream = nullptr;
     delete s_voFile;   s_voFile   = nullptr;
     return false;
+#endif
 }
 
 void osystem_playVocByIndex(int vocIndex)
@@ -1083,24 +1142,24 @@ static unsigned char* loadVocFileData(const char* vocName, size_t* outSize)
         {
             char cdPath[512];
             sprintf_s(cdPath, sizeof(cdPath), "%c:\\INDARK\\%s%s", s_cdDriveLetter, vocName, exts[i]);
-            FILE* fh = nullptr;
-            fopen_s(&fh, cdPath, "rb");
+            FitdReadFile* fh = nullptr;
+            fitdOpenRead_s(&fh, cdPath, "rb");
             if (!fh) continue;
 
-            fseek(fh, 0, SEEK_END);
-            long fileLen = ftell(fh);
-            fseek(fh, 0, SEEK_SET);
-            if (fileLen <= 0) { fclose(fh); continue; }
+            fitdSeek(fh, 0, SEEK_END);
+            long fileLen = fitdTell(fh);
+            fitdSeek(fh, 0, SEEK_SET);
+            if (fileLen <= 0) { fitdClose(fh); continue; }
 
             unsigned char* raw = new (std::nothrow) unsigned char[(size_t)fileLen];
-            if (!raw) { fclose(fh); continue; }
-            if (fread(raw, 1, (size_t)fileLen, fh) != (size_t)fileLen)
+            if (!raw) { fitdClose(fh); continue; }
+            if (fitdRead(raw, 1, (size_t)fileLen, fh) != (size_t)fileLen)
             {
                 delete[] raw;
-                fclose(fh);
+                fitdClose(fh);
                 continue;
             }
-            fclose(fh);
+            fitdClose(fh);
             *outSize = (size_t)fileLen;
             return raw;
         }
@@ -1114,24 +1173,24 @@ static unsigned char* loadVocFileData(const char* vocName, size_t* outSize)
         {
             char path[512];
             sprintf_s(path, sizeof(path), "%s%s", vocName, exts[i]);
-            FILE* fh = nullptr;
-            fopen_s(&fh, path, "rb");
+            FitdReadFile* fh = nullptr;
+            fitdOpenRead_s(&fh, path, "rb");
             if (!fh) continue;
 
-            fseek(fh, 0, SEEK_END);
-            long fileLen = ftell(fh);
-            fseek(fh, 0, SEEK_SET);
-            if (fileLen <= 0) { fclose(fh); continue; }
+            fitdSeek(fh, 0, SEEK_END);
+            long fileLen = fitdTell(fh);
+            fitdSeek(fh, 0, SEEK_SET);
+            if (fileLen <= 0) { fitdClose(fh); continue; }
 
             unsigned char* raw = new (std::nothrow) unsigned char[(size_t)fileLen];
-            if (!raw) { fclose(fh); continue; }
-            if (fread(raw, 1, (size_t)fileLen, fh) != (size_t)fileLen)
+            if (!raw) { fitdClose(fh); continue; }
+            if (fitdRead(raw, 1, (size_t)fileLen, fh) != (size_t)fileLen)
             {
                 delete[] raw;
-                fclose(fh);
+                fitdClose(fh);
                 continue;
             }
-            fclose(fh);
+            fitdClose(fh);
             *outSize = (size_t)fileLen;
             return raw;
         }

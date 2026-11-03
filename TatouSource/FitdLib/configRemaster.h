@@ -155,7 +155,7 @@ extern RemasterConfig g_remasterConfig;
 
 // Configuration functions
 void loadRemasterConfig();
-void saveRemasterConfig();
+bool saveRemasterConfig();
 void initDefaultRemasterConfig();
 
 #endif // _CONFIG_REMASTER_H_

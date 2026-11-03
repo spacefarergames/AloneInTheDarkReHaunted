@@ -1,3 +1,4 @@
+#include "filePaths.h"
 ///////////////////////////////////////////////////////////////////////////////
 // Alone In The Dark Re-Haunted
 // Copyright (C) 2026 Infogrames / Spacefarer Retro Remasters LLC
@@ -269,7 +270,7 @@ void sequencePngWorker()
             rgba[i * 4 + 2] = job.palette[index][2];
             rgba[i * 4 + 3] = 255;
         }
-        if (stbi_write_png(job.sourcePath.c_str(), 320, 200, 4, rgba.data(), 320 * 4))
+        if (fitdWritePng(job.sourcePath.c_str(), 320, 200, 4, rgba.data(), 320 * 4))
         {
             printf(SEQ_OK "Dumped sequence frame: %s" CON_RESET "\n", job.sourcePath.c_str());
             hdAutoUpscale_QueueFile(job.sourcePath, job.upscalePath);
@@ -306,15 +307,15 @@ static void dumpSequenceFrame(const char* seqName, int frameId, const char* auxB
     snprintf(upscalePath, sizeof(upscalePath), "%s%s/%s/%s_%04d.png",
              homePath, getHDSequenceFolder(), seqName, seqName, frameId);
 
-    FILE* existing = nullptr;
+    FitdReadFile* existing = nullptr;
 #ifdef _WIN32
-    fopen_s(&existing, filePath, "rb");
+    fitdOpenRead_s(&existing, filePath, "rb");
 #else
-    existing = fopen(filePath, "rb");
+    existing = fitdOpenRead(filePath, "rb");
 #endif
     if (existing)
     {
-        fclose(existing);
+        fitdClose(existing);
         hdAutoUpscale_QueueFile(filePath, upscalePath);
         return;
     }
@@ -345,7 +346,7 @@ static unsigned char* tryLoadHDSequenceFrame(const char* seqName, int frameId, i
     snprintf(filePath, sizeof(filePath), "%s%s/%s/%s_%04d.png", homePath, getHDSequenceFolder(), seqName, seqName, frameId);
 
     int channels = 0;
-    unsigned char* data = stbi_load(filePath, outWidth, outHeight, &channels, 4);
+    unsigned char* data = fitdLoadImage(filePath, outWidth, outHeight, &channels, 4);
     if (data)
     {
         printf(SEQ_OK "Loaded HD sequence frame: %s (%dx%d)" CON_RESET "\n", filePath, *outWidth, *outHeight);

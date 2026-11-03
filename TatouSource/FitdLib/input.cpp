@@ -1,3 +1,9 @@
+#ifdef FITD_UNITY_COMMANDS
+#include "../Unity/Native/unityHost.h"
+#define SDL_GetKeyboardState unityKeyboardState
+#define SDL_GetGamepadButton unityGamepadButton
+#define SDL_GetGamepadAxis unityGamepadAxis
+#endif
 ///////////////////////////////////////////////////////////////////////////////
 // Alone In The Dark Re-Haunted
 // Copyright (C) 2026 Infogrames / Spacefarer Retro Remasters LLC
@@ -273,9 +279,9 @@ void initController()
     initDefaultKeyBindings();
     for (int i = 0; i < ACTION_COUNT; i++)
     {
-        if (g_remasterConfig.controls.keyBindings[i] != 0)
+        if (g_remasterConfig.controls.keyBindings[i] >= 0 && g_remasterConfig.controls.keyBindings[i] < SDL_SCANCODE_COUNT)
             setKeyboardBinding((KeyAction)i, (SDL_Scancode)g_remasterConfig.controls.keyBindings[i]);
-        if (g_remasterConfig.controls.gamepadBindings[i] != 0)
+        if (g_remasterConfig.controls.gamepadBindings[i] >= -1 && g_remasterConfig.controls.gamepadBindings[i] < SDL_GAMEPAD_BUTTON_COUNT)
             setGamepadBinding((KeyAction)i, (SDL_GamepadButton)g_remasterConfig.controls.gamepadBindings[i]);
     }
 
@@ -291,6 +297,10 @@ void initController()
         return;
     }
 
+#ifdef FITD_UNITY_COMMANDS
+    // Unity owns devices; bindings and controller settings above are still needed.
+    return;
+#endif
     // Initialize SDL gamepad subsystem
     if (SDL_InitSubSystem(SDL_INIT_GAMEPAD) < 0)
     {
@@ -368,7 +378,11 @@ float applyDeadzone(float value, float deadzone)
 
 void updateController()
 {
-    if (!g_controllerState.connected || !g_controllerState.gamepad)
+    if (!g_controllerState.connected
+#ifndef FITD_UNITY_COMMANDS
+        || !g_controllerState.gamepad
+#endif
+    )
         return;
 
     // Read analog sticks (SDL3 returns -32768 to 32767)

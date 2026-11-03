@@ -1,3 +1,7 @@
+#include <stdexcept>
+#ifdef FITD_UNITY
+#include "../Unity/Native/unityHost.h"
+#endif
 ///////////////////////////////////////////////////////////////////////////////
 // Alone In The Dark Re-Haunted
 // Copyright (C) 2026 Infogrames / Spacefarer Retro Remasters LLC
@@ -67,6 +71,9 @@ void toggleFullscreen()
 {
     if (gWindowBGFX == nullptr)
         return;
+#ifdef FITD_UNITY
+    return; // Unity owns the visible window.
+#endif
 
     gIsFullscreen = !gIsFullscreen;
 
@@ -160,7 +167,12 @@ void StartFrame()
     oldResolution[0] = outputResolution[0];
     oldResolution[1] = outputResolution[1];
 
+#ifdef FITD_UNITY_COMMANDS
+    const uint32_t size = unityRenderSize();
+    outputResolution[0] = size & 65535; outputResolution[1] = size >> 16;
+#else
     SDL_GetWindowSizeInPixels(gWindowBGFX, &outputResolution[0], &outputResolution[1]);
+#endif
 
     if ((oldResolution[0] != outputResolution[0]) || (oldResolution[1] != outputResolution[1]))
     {
@@ -179,9 +191,21 @@ void StartFrame()
 
     // Increment TTF frame counter once per actual frame
     incrementTTFFrameCounter();
+#ifdef FITD_UNITY_COMMANDS
+    unitySettingsUpdate();
+#endif
 
     // Pull the input from SDL2 instead
+#ifdef FITD_UNITY_COMMANDS
+    ImGui::GetIO().DisplaySize = ImVec2(float(outputResolution[0]), float(outputResolution[1]));
+    ImGui::GetIO().DeltaTime = 1.0f / float(gFrameLimit > 0 ? gFrameLimit : 60);
+#else
     ImGui_ImplSDL3_NewFrame();
+#endif
+#ifdef FITD_UNITY
+    unityFrameInput();
+#endif
+    if(g_remasterConfig.font.enableTTF)initTTFFont();
     imguiBeginFrame(0, 0, 0, 0, outputResolution[0], outputResolution[1], -1);
 
     // Menu bar is hidden for cleaner look - uncomment to show debug info
@@ -394,12 +418,16 @@ void EndFrame()
     // but before bgfx::frame() (which presents and advances the frame).
     osystem_updateSceneSnapshot();
 
+#ifdef FITD_UNITY
+    bgfx::requestScreenShot(BGFX_INVALID_HANDLE, "unity");
+#endif
     bgfx::frame();
 
     // Don't clear the text queue here - text should persist until a new batch is queued
     // The game doesn't re-draw text every frame, only when menus change
     // Clearing happens in queueTTFText() when a new batch is detected
 
+#ifndef FITD_UNITY_COMMANDS
     {
         static Uint64 last_time = SDL_GetPerformanceCounter();
         Uint64 now = SDL_GetPerformanceCounter();
@@ -415,12 +443,14 @@ void EndFrame()
 
         last_time = SDL_GetPerformanceCounter();
     }
+#endif
 }
 
 bgfx::Init initparam;
 
 void createBgfxInitParams()
 {
+#ifndef FITD_UNITY_COMMANDS
 #if BX_PLATFORM_LINUX
     const char* sdlVideoDriver = SDL_GetCurrentVideoDriver();
     if (sdlVideoDriver == NULL) sdlVideoDriver = "(null)";
@@ -444,6 +474,7 @@ void createBgfxInitParams()
     initparam.platformData.ndt = NULL;
     initparam.platformData.nwh = (HWND)SDL_GetPointerProperty(SDL_GetWindowProperties(gWindowBGFX), SDL_PROP_WINDOW_WIN32_HWND_POINTER, NULL);
 #endif // BX_PLATFORM_
+#endif // FITD_UNITY_COMMANDS
 }
 
 int initBgfxGlue(int argc, char* argv[])
@@ -509,7 +540,11 @@ int initBgfxGlue(int argc, char* argv[])
     // ReShade compatibility settings
     // Set resolution explicitly to match window size
     int windowWidth, windowHeight;
+#ifdef FITD_UNITY_COMMANDS
+    windowWidth = unityRenderWidth(); windowHeight = unityRenderHeight();
+#else
     SDL_GetWindowSizeInPixels(gWindowBGFX, &windowWidth, &windowHeight);
+#endif
     initparam.resolution.width = windowWidth;
     initparam.resolution.height = windowHeight;
     initparam.resolution.reset = BGFX_RESET_VSYNC | getMsaaResetFlags();
@@ -533,7 +568,15 @@ int initBgfxGlue(int argc, char* argv[])
 
     printf(BGFX_TAG "Initializing BGFX with resolution: %dx%d\n", windowWidth, windowHeight);
 
-    bgfx::init(initparam);
+#ifdef FITD_UNITY
+    initparam.callback = unityBgfxCallback();
+    initparam.type = bgfx::RendererType::Direct3D11;
+#endif
+    if (!bgfx::init(initparam))
+        throw std::runtime_error("BGFX initialization failed");
+#ifdef FITD_UNITY
+    unityBgfxReady();
+#endif
 
     // Print actual renderer type for debugging
     const char* rendererName = bgfx::getRendererName(bgfx::getRendererType());
@@ -546,6 +589,7 @@ int initBgfxGlue(int argc, char* argv[])
 
     ImGuiIO& io = ImGui::GetIO();
     //io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
+#ifndef FITD_UNITY_COMMANDS
     if ((bgfx::getRendererType() == bgfx::RendererType::Direct3D11) || (bgfx::getRendererType() == bgfx::RendererType::Direct3D12)) {
         ImGui_ImplSDL3_InitForD3D(gWindowBGFX);
     }
@@ -564,6 +608,8 @@ int initBgfxGlue(int argc, char* argv[])
     else {
         ImGui_ImplSDL3_InitForOther(gWindowBGFX);
     }
+
+#endif // FITD_UNITY_COMMANDS
 
     // Initialize TTF font system
     // Note: This adds fonts after imguiCreate() has already built the font atlas.
@@ -587,11 +633,13 @@ int initBgfxGlue(int argc, char* argv[])
 
     printf(BGFX_OK "Light Probe system initialized\n");
 
-    // Initialize dust particle system
+#ifndef FITD_UNITY
+    // Unity builds omit the dust system, including its updates and draw calls.
     g_dustParticles = new DustParticleSystem();
     g_dustParticles->init();
 
     printf(BGFX_OK "Dust particle system initialized\n");
+#endif
 
     // Initialize lantern oil lighting system
     initLanternLighting();

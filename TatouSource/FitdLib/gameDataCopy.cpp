@@ -1,3 +1,4 @@
+#include "filePaths.h"
 ///////////////////////////////////////////////////////////////////////////////
 // Alone In The Dark Re-Haunted
 // Copyright (C) 2026 Infogrames / Spacefarer Retro Remasters LLC
@@ -549,7 +550,7 @@ static bool getSteamInstallPath(char* buf, size_t size)
 // and store them in `paths` (up to maxPaths).  Returns number found.
 static int parseSteamLibraryFolders(const char* vdfPath, char paths[][MAX_PATH], int maxPaths)
 {
-    FILE* f = fopen(vdfPath, "r");
+    FILE* f = fitdFopen(vdfPath, "r");
     if (!f)
         return 0;
 
@@ -641,7 +642,7 @@ static bool findSteamDataDir(char* outDir, size_t outSize)
 
         // Parse installdir from manifest
         char installDir[MAX_PATH] = "";
-        FILE* mf = fopen(manifestPath, "r");
+        FILE* mf = fitdFopen(manifestPath, "r");
         if (mf)
         {
             char mline[1024];

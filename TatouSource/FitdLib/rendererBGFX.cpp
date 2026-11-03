@@ -1,4 +1,5 @@
-﻿///////////////////////////////////////////////////////////////////////////////
+#include "filePaths.h"
+///////////////////////////////////////////////////////////////////////////////
 // Alone In The Dark Re-Haunted
 // Copyright (C) 2026 Infogrames / Spacefarer Retro Remasters LLC
 // Based on FITD by yaz0r, Re-haunted is released under GPL
@@ -335,16 +336,16 @@ s_vertexData gVertexArray[1024 * 1024];
 bgfx::ShaderHandle loadBgfxShader(const std::string& filename)
 {
     std::vector<u8> memBlob;
-    FILE* fHandle = nullptr;
-    fopen_s(&fHandle, filename.c_str(), "rb");
+    FitdReadFile* fHandle = nullptr;
+    fitdOpenRead_s(&fHandle, filename.c_str(), "rb");
     if (fHandle == nullptr)
         return BGFX_INVALID_HANDLE;
-    fseek(fHandle, 0, SEEK_END);
-    u32 size = ftell(fHandle);
-    fseek(fHandle, 0, SEEK_SET);
+    fitdSeek(fHandle, 0, SEEK_END);
+    u32 size = fitdTell(fHandle);
+    fitdSeek(fHandle, 0, SEEK_SET);
     memBlob.resize(size);
-    fread(&memBlob[0], 1, size, fHandle);
-    fclose(fHandle);
+    fitdRead(&memBlob[0], 1, size, fHandle);
+    fitdClose(fHandle);
 
     bgfx::ShaderHandle handle = bgfx::createShader(bgfx::copy(&memBlob[0], size));
     bgfx::setName(handle, filename.c_str());
@@ -3989,7 +3990,7 @@ static void dumpMaskToPng(const std::array<u8, 320 * 200>& mask, int roomId, int
     }
 
     // Write composited RGBA PNG
-    stbi_write_png(path, outW, outH, 4, compositedImage, outW * 4);
+    fitdWritePng(path, outW, outH, 4, compositedImage, outW * 4);
 
     printf(RBGFX_OK "Dumped composited mask: %s (%dx%d)" CON_RESET "\n", path, outW, outH);
 
@@ -4009,7 +4010,7 @@ static bool loadReplacementMask(int roomId, int actualRoomNumber, int maskId, u8
     buildMaskFilename(path, sizeof(path), hdFolder, roomId, actualRoomNumber, maskId);
 
     int w, h, channels;
-    unsigned char* data = stbi_load(path, &w, &h, &channels, 1); // force single channel
+    unsigned char* data = fitdLoadImage(path, &w, &h, &channels, 1); // force single channel
     if (!data)
         return false;
 
@@ -4185,7 +4186,7 @@ void osystem_drawMask(int roomId, int maskId)
     static bgfx::UniformHandle maskTextureUniform = BGFX_INVALID_HANDLE;
     if (!bgfx::isValid(maskTextureUniform))
     {
-        maskTextureUniform = bgfx::createUniform("s_maskTexture", bgfx::UniformType::Sampler);
+        maskTextureUniform = bgfx::createUniform("s_maskPaletteTexture", bgfx::UniformType::Sampler);
     }
     static bgfx::UniformHandle fadeLevelUniform = BGFX_INVALID_HANDLE;
     if (!bgfx::isValid(fadeLevelUniform))
@@ -4339,7 +4340,7 @@ void osystem_drawAnimatedGrassMask()
         paletteTextureUniform = bgfx::createUniform("s_paletteTexture", bgfx::UniformType::Sampler);
     static bgfx::UniformHandle maskTextureUniform = BGFX_INVALID_HANDLE;
     if (!bgfx::isValid(maskTextureUniform))
-        maskTextureUniform = bgfx::createUniform("s_maskTexture", bgfx::UniformType::Sampler);
+        maskTextureUniform = bgfx::createUniform("s_maskPaletteTexture", bgfx::UniformType::Sampler);
     static bgfx::UniformHandle fadeLevelUniform = BGFX_INVALID_HANDLE;
     if (!bgfx::isValid(fadeLevelUniform))
         fadeLevelUniform = bgfx::createUniform("u_fadeLevel", bgfx::UniformType::Vec4);
@@ -4446,7 +4447,7 @@ void osystem_drawMaskStencilPrepass(int roomId, int maskId)
     static bgfx::UniformHandle maskTextureUniform = BGFX_INVALID_HANDLE;
     if (!bgfx::isValid(maskTextureUniform))
     {
-        maskTextureUniform = bgfx::createUniform("s_maskTexture", bgfx::UniformType::Sampler);
+        maskTextureUniform = bgfx::createUniform("s_maskPaletteTexture", bgfx::UniformType::Sampler);
     }
     static bgfx::UniformHandle fadeLevelUniform = BGFX_INVALID_HANDLE;
     if (!bgfx::isValid(fadeLevelUniform))

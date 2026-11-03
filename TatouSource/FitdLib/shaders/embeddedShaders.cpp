@@ -1,3 +1,11 @@
+#ifdef FITD_UNITY_COMMANDS
+#include <string>
+#include <bgfx/bgfx.h>
+#include <bgfx/embedded_shader.h>
+bgfx::ProgramHandle loadBgfxProgram(const std::string& vertex,const std::string& fragment) {
+    return bgfx::createProgram(bgfx::createEmbeddedShader(nullptr,bgfx::RendererType::Direct3D11,vertex.c_str()),bgfx::createEmbeddedShader(nullptr,bgfx::RendererType::Direct3D11,fragment.c_str()),true);
+}
+#else
 #include "embeddedShadersMacro.h"
 #include "config.h"
 #include "embeddedShadersIncludes.h"
@@ -54,3 +62,4 @@ bgfx::createEmbeddedShader(s_embeddedShaders, type, VSFile.c_str())
 assert(bgfx::isValid(ProgramHandle));
 return ProgramHandle;
 }
+#endif // FITD_UNITY_COMMANDS

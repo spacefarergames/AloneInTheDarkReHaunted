@@ -1,3 +1,4 @@
+#include "filePaths.h"
 ///////////////////////////////////////////////////////////////////////////////
 // Alone In The Dark Re-Haunted
 // Copyright (C) 2026 Infogrames / Spacefarer Retro Remasters LLC
@@ -34,14 +35,14 @@
 
 static bool bgDumpFileExists(const char* path)
 {
-    FILE* file = nullptr;
+    FitdReadFile* file = nullptr;
 #ifdef _WIN32
-    fopen_s(&file, path, "rb");
+    fitdOpenRead_s(&file, path, "rb");
 #else
-    file = fopen(path, "rb");
+    file = fitdOpenRead(path, "rb");
 #endif
     if (!file) return false;
-    fclose(file);
+    fitdClose(file);
     return true;
 }
 
@@ -81,7 +82,7 @@ static bool dumpOneBackground(const char* outDir, const char* baseName,
         rgba[i * 4 + 3] = 255;
     }
 
-    bool ok = stbi_write_png(filePath, 320, 200, 4, rgba, 320 * 4) != 0;
+    bool ok = fitdWritePng(filePath, 320, 200, 4, rgba, 320 * 4) != 0;
     free(rgba);
     return ok;
 }
@@ -187,7 +188,7 @@ int dumpAllBackgroundsTo(const char* outputDirectory, bool overwriteExisting)
                     rgba[i * 4 + 2] = resourcePalette[p][2];
                     rgba[i * 4 + 3] = 255;
                 }
-                if (stbi_write_png(filePath, 320, 200, 4, rgba, 320 * 4))
+                if (fitdWritePng(filePath, 320, 200, 4, rgba, 320 * 4))
                     totalDumped++;
                 free(rgba);
             }
@@ -345,9 +346,9 @@ bool pumpIncrementalBackgroundDump()
              request.outputDirectory.c_str());
     FILE* recipe = nullptr;
 #ifdef _WIN32
-    fopen_s(&recipe, recipePath, "wb");
+    fitdFopen_s(&recipe, recipePath, "wb");
 #else
-    recipe = fopen(recipePath, "wb");
+    recipe = fitdFopen(recipePath, "wb");
 #endif
     if (recipe)
     {

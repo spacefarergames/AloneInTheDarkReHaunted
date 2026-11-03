@@ -1,0 +1,130 @@
+.fitd-root { position:absolute; left:0; right:0; top:0; bottom:0; color:rgb(236,237,240); font-size:15px; }
+
+.settings-icon { width:24px; height:24px; flex-shrink:0; margin-right:12px; }
+
+.eyebrow { font-size:12px; letter-spacing:2.2px; color:rgb(147,153,166); margin-top:8px; }
+
+.preview-outline { position:absolute; left:1.8%; top:20%; width:42%; border-width:1px; border-color:rgba(220,194,145,.50); border-radius:3px; }
+
+.keyboard-hint { position:absolute; left:3.5%; bottom:5.5%; font-size:12px; letter-spacing:1px; color:rgb(106,118,138); }
+
+.settings-card { position:absolute; left:45%; right:1.8%; top:2%; bottom:2%; background-color:rgb(19,23,31); border-color:rgb(53,60,74); border-width:1px; border-radius:18px; overflow:hidden; padding:0; }
+
+.card-header { flex-direction:row; align-items:center; padding:25px 28px 16px 28px; }
+
+.header-titles { flex-grow:1; }
+
+.card-title { font-size:32px; -unity-font-style:bold; letter-spacing:-.6px; margin-top:5px; }
+
+.icon-button { background-color:rgba(58,64,76,.5); border-width:1px; border-color:rgb(64,72,88); border-radius:24px; width:42px; height:42px; padding:8px; align-items:center; justify-content:center; }
+
+.icon-button .settings-icon { margin-right:0; }
+
+.icon-button:hover { background-color:rgb(73,67,54); border-color:rgb(198,171,121); }
+
+.unity-base-text-field__input { background-color:rgb(12,16,23); border-width:0; color:rgb(232,234,238); padding:6px 8px; border-radius:5px; }
+
+.settings-content { flex-direction:row; flex-grow:1; min-height:0; border-top-width:1px; border-top-color:rgb(38,44,56); }
+
+.category-rail { width:186px; padding:16px 10px 12px 12px; border-right-width:1px; border-right-color:rgb(38,44,56); background-color:rgb(16,20,28); }
+
+.category { min-height:49px; flex-direction:row; align-items:center; background-color:transparent; border-width:0; border-radius:7px; margin:2px 0; padding:10px; color:rgb(145,153,170); }
+
+.category .settings-icon { width:20px; height:20px; margin-right:10px; opacity:.6; }
+
+.category Label { font-size:14px; white-space:nowrap; }
+
+.category:hover { background-color:rgb(31,37,48); color:rgb(238,235,225); }
+
+.category.selected { background-color:rgb(54,49,41); color:rgb(237,214,170); border-left-width:2px; border-left-color:rgb(214,182,125); }
+
+.category.selected .settings-icon { opacity:1; }
+
+.settings-body { flex-grow:1; min-width:0; padding:22px 22px 0 24px; }
+
+.page-title { font-size:21px; -unity-font-style:bold; letter-spacing:-.2px; }
+
+.page-hint { color:rgb(125,137,155); font-size:13px; margin-top:7px; margin-bottom:16px; white-space:normal; }
+
+.settings-scroll { flex-grow:1; min-height:0; }
+
+.settings-scroll .unity-scroll-view__content-container { padding-right:12px; padding-bottom:20px; transition-property:opacity,translate; transition-duration:.16s; }
+
+.section-label { color:rgb(190,171,136); letter-spacing:1.5px; font-size:9px; margin-top:21px; margin-bottom:9px; -unity-font-style:bold; }
+
+.setting-row { flex-direction:row; align-items:center; padding:14px 0; border-bottom-width:1px; border-bottom-color:rgb(37,44,57); min-height:56px; }
+
+.setting-words { flex-grow:1; flex-basis:0; min-width:0; margin-right:20px; }
+
+.setting-title { font-size:16px; color:rgb(225,229,236); white-space:normal; }
+
+.setting-description { font-size:12px; color:rgb(126,137,155); white-space:normal; margin-top:5px; }
+
+.switch { margin:0; flex-shrink:0; }
+
+.switch .unity-toggle__input { background-color:rgb(57,66,82); border-width:0; border-radius:12px; width:40px; height:22px; padding:0; align-items:flex-start; }
+
+.switch .unity-toggle__checkmark { background-image:none; background-color:rgb(172,181,197); width:14px; height:14px; margin-left:4px; margin-top:4px; border-radius:8px; opacity:1; transition-property:margin-left,background-color; transition-duration:.15s; }
+
+.switch:checked .unity-toggle__input { background-color:rgb(214,182,125); }
+
+.switch:checked .unity-toggle__checkmark { margin-left:21px; background-color:rgb(29,29,29); }
+
+.slider-controls { width:155px; flex-shrink:0; }
+
+.value-label { font-size:13px; -unity-text-align:middle-right; color:rgb(219,194,152); margin-bottom:4px; }
+
+.setting-slider { margin:0; height:19px; }
+
+.setting-slider .unity-base-slider__tracker { background-color:rgb(54,64,82); height:3px; border-radius:3px; }
+
+.setting-slider .unity-base-slider__dragger { background-color:rgb(221,193,143); border-width:0; width:12px; height:12px; border-radius:7px; margin-top:-4px; }
+
+.setting-slider:focus .unity-base-slider__dragger { background-color:rgb(255,225,173); }
+
+.binding-row .setting-words { margin-right:8px; }
+
+.binding-button { width:95px; margin-right:8px; font-size:13px; }
+
+.binding-pad { width:135px; font-size:13px; }
+
+.binding-pad .unity-base-popup-field__input { background-color:rgb(31,39,52); color:rgb(208,215,228); border-color:rgb(52,63,81); border-radius:6px; padding:8px; }
+
+.text-row { flex-direction:column; align-items:stretch; }
+
+.text-row .setting-words { margin-right:0; }
+
+.path-field { margin-top:10px; border-width:1px; border-color:rgb(48,59,77); border-radius:6px; }
+
+.settings-status { color:rgb(131,159,148); font-size:13px; margin:10px 28px; min-height:16px; white-space:normal; }
+
+.settings-status.error { color:rgb(235,139,123); }
+
+.card-footer { flex-direction:row; justify-content:flex-end; align-items:center; padding:14px 24px 20px 24px; border-top-width:1px; border-top-color:rgb(38,44,56); }
+
+.quiet-button, .primary-button, .binding-button { border-radius:7px; padding:10px 15px; min-height:38px; background-color:rgb(31,38,50); border-width:1px; border-color:rgb(52,63,80); color:rgb(184,195,213); margin-left:7px; font-size:13px; transition-property:background-color,border-color; transition-duration:.12s; }
+
+.quiet-button:hover, .binding-button:hover { background-color:rgb(46,56,72); border-color:rgb(112,119,130); color:rgb(241,235,224); }
+
+.primary-button { background-color:rgb(213,183,130); color:rgb(22,24,29); border-color:rgb(213,183,130); -unity-font-style:bold; min-width:142px; }
+
+.primary-button:hover { background-color:rgb(237,211,164); border-color:rgb(237,211,164); }
+
+Button:focus { border-color:rgb(231,205,159); }
+
+.unity-disabled { opacity:.35; }
+
+.unity-scroller--vertical { width:8px; margin-left:5px; }
+
+.unity-scroller__low-button, .unity-scroller__high-button { display:none; }
+
+.unity-scroller .unity-base-slider__tracker { background-color:transparent; }
+
+.unity-scroller .unity-base-slider__dragger { background-color:rgb(62,74,96); border-radius:5px; border-width:0; }
+
+
+
+.game-logo { position:absolute; left:1.8%; top:2%; width:42%; height:16%; }
+
+ .card-header, .card-footer, .settings-status { flex-shrink:0; }
+

@@ -379,6 +379,9 @@ static void drawAdvancedTab()
 
 void remasterOptionsDraw()
 {
+#ifdef FITD_UNITY_COMMANDS
+    return; // Unity owns the settings overlay. Keep the native input/startup gate.
+#endif
     if (!remasterOptionsIsOpen())
         return;
 

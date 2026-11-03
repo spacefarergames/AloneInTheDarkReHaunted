@@ -1,3 +1,4 @@
+#include "filePaths.h"
 ///////////////////////////////////////////////////////////////////////////////
 // Alone In The Dark Re-Haunted
 // Copyright (C) 2026 Infogrames / Spacefarer Retro Remasters LLC
@@ -35,13 +36,13 @@ struct pakInfoStruct // warning: alignment unsafe
 
 //#define USE_UNPACKED_DATA
 
-void readPakInfo(pakInfoStruct* pPakInfo, FILE* fileHandle)
+void readPakInfo(pakInfoStruct* pPakInfo, FitdReadFile* fileHandle)
 {
-    fread(&pPakInfo->discSize,4,1,fileHandle);
-    fread(&pPakInfo->uncompressedSize,4,1,fileHandle);
-    fread(&pPakInfo->compressionFlag,1,1,fileHandle);
-    fread(&pPakInfo->info5,1,1,fileHandle);
-    fread(&pPakInfo->offset,2,1,fileHandle);
+    fitdRead(&pPakInfo->discSize,4,1,fileHandle);
+    fitdRead(&pPakInfo->uncompressedSize,4,1,fileHandle);
+    fitdRead(&pPakInfo->compressionFlag,1,1,fileHandle);
+    fitdRead(&pPakInfo->info5,1,1,fileHandle);
+    fitdRead(&pPakInfo->offset,2,1,fileHandle);
 
     pPakInfo->discSize = READ_LE_U32(&pPakInfo->discSize);
     pPakInfo->uncompressedSize = READ_LE_U32(&pPakInfo->uncompressedSize);
@@ -159,23 +160,23 @@ unsigned int PAK_getNumFiles(const char* name)
     if (!preferEmbeddedGameData())
     {
         char bufferName[512];
-        FILE* fileHandle;
+        FitdReadFile* fileHandle;
         u32 fileOffset;
 
         strcpy_s(bufferName, sizeof(bufferName), homePath);
         strcat_s(bufferName, sizeof(bufferName), name);
         strcat_s(bufferName, sizeof(bufferName), ".PAK");
 
-        fopen_s(&fileHandle, bufferName,"rb");
+        fitdOpenRead_s(&fileHandle, bufferName,"rb");
 
         if (fileHandle)
         {
-            fseek(fileHandle,4,SEEK_CUR);
-            fread(&fileOffset,4,1,fileHandle);
+            fitdSeek(fileHandle,4,SEEK_CUR);
+            fitdRead(&fileOffset,4,1,fileHandle);
 #ifdef MACOSX
             fileOffset = READ_LE_U32(&fileOffset);
 #endif
-            fclose(fileHandle);
+            fitdClose(fileHandle);
             return((fileOffset/4)-2);
         }
     }
@@ -206,22 +207,22 @@ int LoadPak(const char* name, int index, char* ptr)
 {
 #ifdef USE_UNPACKED_DATA
     char buffer[256];
-    FILE* fHandle;
+    FitdReadFile* fHandle;
     int size;
 
     sprintf_s(buffer, sizeof(buffer), "%s/%04X.OUT",name,index);
 
-    fopen_s(&fHandle, buffer,"rb");
+    fitdOpenRead_s(&fHandle, buffer,"rb");
 
     if(!fHandle)
         return(0);
 
-    fseek(fHandle,0L,SEEK_END);
-    size = ftell(fHandle);
-    fseek(fHandle,0L,SEEK_SET);
+    fitdSeek(fHandle,0L,SEEK_END);
+    size = fitdTell(fHandle);
+    fitdSeek(fHandle,0L,SEEK_SET);
 
-    fread(ptr,size,1,fHandle);
-    fclose(fHandle);
+    fitdRead(ptr,size,1,fHandle);
+    fitdClose(fHandle);
 
     return(1);
 #else
@@ -251,21 +252,21 @@ int getPakSize(const char* name, int index)
 
 #ifdef USE_UNPACKED_DATA
     char buffer[256];
-    FILE* fHandle;
+    FitdReadFile* fHandle;
     int size;
 
     sprintf_s(buffer, sizeof(buffer), "%s/%04X.OUT",name,index);
 
-    fopen_s(&fHandle, buffer,"rb");
+    fitdOpenRead_s(&fHandle, buffer,"rb");
 
     if(!fHandle)
         return(0);
 
-    fseek(fHandle,0L,SEEK_END);
-    size = ftell(fHandle);
-    fseek(fHandle,0L,SEEK_SET);
+    fitdSeek(fHandle,0L,SEEK_END);
+    size = fitdTell(fHandle);
+    fitdSeek(fHandle,0L,SEEK_SET);
 
-    fclose(fHandle);
+    fitdClose(fHandle);
 
     return (size);
 #else
@@ -273,7 +274,7 @@ int getPakSize(const char* name, int index)
     if (!preferEmbeddedGameData())
     {
         char bufferName[512];
-        FILE* fileHandle;
+        FitdReadFile* fileHandle;
         s32 fileOffset;
         s32 additionalDescriptorSize;
         pakInfoStruct pakInfo;
@@ -283,28 +284,28 @@ int getPakSize(const char* name, int index)
         strcat_s(bufferName, sizeof(bufferName), name);
         strcat_s(bufferName, sizeof(bufferName), ".PAK");
 
-        fopen_s(&fileHandle, bufferName,"rb");
+        fitdOpenRead_s(&fileHandle, bufferName,"rb");
 
         if(fileHandle)
         {
-            fseek(fileHandle,(index+1)*4,SEEK_SET);
+            fitdSeek(fileHandle,(index+1)*4,SEEK_SET);
 
-            fread(&fileOffset,4,1,fileHandle);
+            fitdRead(&fileOffset,4,1,fileHandle);
             fileOffset = READ_LE_U32(&fileOffset);
 
-            fseek(fileHandle,fileOffset,SEEK_SET);
+            fitdSeek(fileHandle,fileOffset,SEEK_SET);
 
-            fread(&additionalDescriptorSize,4,1,fileHandle);
+            fitdRead(&additionalDescriptorSize,4,1,fileHandle);
             additionalDescriptorSize = READ_LE_U32(&additionalDescriptorSize);
 
             if(additionalDescriptorSize)
             {
-                fseek(fileHandle, additionalDescriptorSize-4, SEEK_CUR);
+                fitdSeek(fileHandle, additionalDescriptorSize-4, SEEK_CUR);
             }
 
             readPakInfo(&pakInfo,fileHandle);
 
-            fseek(fileHandle,pakInfo.offset,SEEK_CUR);
+            fitdSeek(fileHandle,pakInfo.offset,SEEK_CUR);
 
             // Apply same safety caps as loadPak for DOS buffer skipover consistency
             const s32 MAX_PAK_SIZE = 16 * 1024 * 1024;
@@ -324,7 +325,7 @@ int getPakSize(const char* name, int index)
                 size = pakInfo.uncompressedSize;
             }
 
-            fclose(fileHandle);
+            fitdClose(fileHandle);
             return size;
         }
     }
@@ -374,25 +375,25 @@ char* loadPak(const char* name, int index)
 	//dumpPak(name);
 #ifdef USE_UNPACKED_DATA
 	char buffer[256];
-	FILE* fHandle;
+	FitdReadFile* fHandle;
 	int size;
 	char* ptr;
 
 	sprintf_s(buffer, sizeof(buffer), "%s/%04X.OUT",name,index);
 
-	fopen_s(&fHandle, buffer,"rb");
+	fitdOpenRead_s(&fHandle, buffer,"rb");
 
 	if(!fHandle)
 		return NULL;
 
-	fseek(fHandle,0L,SEEK_END);
-	size = ftell(fHandle);
-	fseek(fHandle,0L,SEEK_SET);
+	fitdSeek(fHandle,0L,SEEK_END);
+	size = fitdTell(fHandle);
+	fitdSeek(fHandle,0L,SEEK_SET);
 
 	ptr = (char*)malloc(size);
 
-	fread(ptr,size,1,fHandle);
-	fclose(fHandle);
+	fitdRead(ptr,size,1,fHandle);
+	fitdClose(fHandle);
 
 	return ptr;
 #else
@@ -400,7 +401,7 @@ char* loadPak(const char* name, int index)
 	if (!preferEmbeddedGameData())
 	{
 		char bufferName[512];
-		FILE* fileHandle;
+		FitdReadFile* fileHandle;
 		u32 fileOffset;
 		u32 additionalDescriptorSize;
 		pakInfoStruct pakInfo;
@@ -410,25 +411,25 @@ char* loadPak(const char* name, int index)
 		strcat_s(bufferName, sizeof(bufferName), name);
 		strcat_s(bufferName, sizeof(bufferName), ".PAK");
 
-		fopen_s(&fileHandle, bufferName,"rb");
+		fitdOpenRead_s(&fileHandle, bufferName,"rb");
 
 		if(fileHandle)
 		{
 			char nameBuffer[256] = "";
 
-			fseek(fileHandle,(index+1)*4,SEEK_SET);
+			fitdSeek(fileHandle,(index+1)*4,SEEK_SET);
 
-			fread(&fileOffset,4,1,fileHandle);
+			fitdRead(&fileOffset,4,1,fileHandle);
 			fileOffset = READ_LE_U32(&fileOffset);
 
-			fseek(fileHandle,fileOffset,SEEK_SET);
+			fitdSeek(fileHandle,fileOffset,SEEK_SET);
 
-			fread(&additionalDescriptorSize,4,1,fileHandle);
+			fitdRead(&additionalDescriptorSize,4,1,fileHandle);
 			additionalDescriptorSize = READ_LE_U32(&additionalDescriptorSize);
 
 			if(additionalDescriptorSize)
 		{
-			fseek(fileHandle, additionalDescriptorSize-4, SEEK_CUR);
+			fitdSeek(fileHandle, additionalDescriptorSize-4, SEEK_CUR);
 		}
 
 		readPakInfo(&pakInfo,fileHandle);
@@ -437,14 +438,14 @@ char* loadPak(const char* name, int index)
 		{
 			ASSERT(pakInfo.offset<256);
 
-			fread(nameBuffer,pakInfo.offset,1,fileHandle);
+			fitdRead(nameBuffer,pakInfo.offset,1,fileHandle);
 #ifdef FITD_DEBUGGER
 			printf(PAK_TAG "Loading %s/%s\n", name,nameBuffer+2);
 #endif
 		}
 		else
 		{
-			fseek(fileHandle,pakInfo.offset,SEEK_CUR);
+			fitdSeek(fileHandle,pakInfo.offset,SEEK_CUR);
 		}
 
 		// DOS buffer skipover safety: cap sizes to prevent crash from garbage pakInfo
@@ -459,7 +460,7 @@ char* loadPak(const char* name, int index)
 		case 0:
 			{
 				ptr = (char*)malloc(pakInfo.discSize);
-				if(ptr) fread(ptr,pakInfo.discSize,1,fileHandle);
+				if(ptr) fitdRead(ptr,pakInfo.discSize,1,fileHandle);
 				break;
 			}
 		case 1:
@@ -467,7 +468,7 @@ char* loadPak(const char* name, int index)
 				char * compressedDataPtr = (char *) malloc(pakInfo.discSize);
 				if(compressedDataPtr)
 				{
-					fread(compressedDataPtr, pakInfo.discSize, 1, fileHandle);
+					fitdRead(compressedDataPtr, pakInfo.discSize, 1, fileHandle);
 					ptr = (char *) malloc(pakInfo.uncompressedSize);
 					if(ptr)
 					{
@@ -482,7 +483,7 @@ char* loadPak(const char* name, int index)
 				char * compressedDataPtr = (char *) malloc(pakInfo.discSize);
 				if(compressedDataPtr)
 				{
-					fread(compressedDataPtr, pakInfo.discSize, 1, fileHandle);
+					fitdRead(compressedDataPtr, pakInfo.discSize, 1, fileHandle);
 					ptr = (char *) malloc(pakInfo.uncompressedSize);
 					if(ptr)
 					{
@@ -507,7 +508,7 @@ char* loadPak(const char* name, int index)
 			if(ptr) memset(ptr, 0, 4096);
 		}
 
-			fclose(fileHandle);
+			fitdClose(fileHandle);
 			return ptr;
 		}
 	}
@@ -586,7 +587,7 @@ void dumpPak(const char* name)
     for (unsigned int index = 0; index < numEntries; index++)
     {
         char bufferName[512];
-        FILE* fileHandle;
+        FitdReadFile* fileHandle;
         u32 fileOffset;
         u32 additionalDescriptorSize;
         pakInfoStruct pakInfo;
@@ -598,25 +599,25 @@ void dumpPak(const char* name)
         strcat_s(bufferName, sizeof(bufferName), name); // temporary until makeExtention is coded
         strcat_s(bufferName, sizeof(bufferName), ".PAK");
 
-        fopen_s(&fileHandle, bufferName, "rb");
+        fitdOpenRead_s(&fileHandle, bufferName, "rb");
 
         if (fileHandle) // a bit stupid, should return NULL right away
         {
             char nameBuffer[256] = "";
 
-            fseek(fileHandle, (index + 1) * 4, SEEK_SET);
+            fitdSeek(fileHandle, (index + 1) * 4, SEEK_SET);
 
-            fread(&fileOffset, 4, 1, fileHandle);
+            fitdRead(&fileOffset, 4, 1, fileHandle);
             fileOffset = READ_LE_U32(&fileOffset);
 
-            fseek(fileHandle, fileOffset, SEEK_SET);
+            fitdSeek(fileHandle, fileOffset, SEEK_SET);
 
-            fread(&additionalDescriptorSize, 4, 1, fileHandle);
+            fitdRead(&additionalDescriptorSize, 4, 1, fileHandle);
             additionalDescriptorSize = READ_LE_U32(&additionalDescriptorSize);
 
             if (additionalDescriptorSize)
             {
-                fseek(fileHandle, additionalDescriptorSize - 4, SEEK_CUR);
+                fitdSeek(fileHandle, additionalDescriptorSize - 4, SEEK_CUR);
             }
 
             readPakInfo(&pakInfo, fileHandle);
@@ -625,14 +626,14 @@ void dumpPak(const char* name)
             {
                 ASSERT(pakInfo.offset < 256);
 
-                fread(nameBuffer, pakInfo.offset, 1, fileHandle);
+                fitdRead(nameBuffer, pakInfo.offset, 1, fileHandle);
 #ifdef FITD_DEBUGGER
                 printf(PAK_TAG "Loading %s/%s\n", name, nameBuffer + 2);
 #endif
             }
             else
             {
-                fseek(fileHandle, pakInfo.offset, SEEK_CUR);
+                fitdSeek(fileHandle, pakInfo.offset, SEEK_CUR);
             }
 
             switch (pakInfo.compressionFlag)
@@ -640,13 +641,13 @@ void dumpPak(const char* name)
             case 0:
             {
                 ptr = (char*)malloc(pakInfo.discSize);
-                fread(ptr, pakInfo.discSize, 1, fileHandle);
+                fitdRead(ptr, pakInfo.discSize, 1, fileHandle);
                 break;
             }
             case 1:
             {
                 char * compressedDataPtr = (char *)malloc(pakInfo.discSize);
-                fread(compressedDataPtr, pakInfo.discSize, 1, fileHandle);
+                fitdRead(compressedDataPtr, pakInfo.discSize, 1, fileHandle);
                 ptr = (char *)malloc(pakInfo.uncompressedSize);
 
                 int explodeResult = PAK_explode((unsigned char*)compressedDataPtr, (unsigned char*)ptr, pakInfo.discSize, pakInfo.uncompressedSize, pakInfo.info5);
@@ -665,7 +666,7 @@ void dumpPak(const char* name)
             case 4:
             {
                 char * compressedDataPtr = (char *)malloc(pakInfo.discSize);
-                fread(compressedDataPtr, pakInfo.discSize, 1, fileHandle);
+                fitdRead(compressedDataPtr, pakInfo.discSize, 1, fileHandle);
                 ptr = (char *)malloc(pakInfo.uncompressedSize);
 
                 PAK_deflate((unsigned char*)compressedDataPtr, (unsigned char*)ptr, pakInfo.discSize, pakInfo.uncompressedSize);
@@ -677,14 +678,14 @@ void dumpPak(const char* name)
                 assert(false);
                 break;
             }
-            fclose(fileHandle);
+            fitdClose(fileHandle);
 
             {
                 _mkdir(name);
                 char outputName[256];
                 sprintf_s(outputName, sizeof(outputName), "%s/%02d_%s", name, index, nameBuffer + 2);
                 FILE* foutputHandle = nullptr;
-                        fopen_s(&foutputHandle, outputName, "wb+");
+                        fitdFopen_s(&foutputHandle, outputName, "wb+");
                 if (foutputHandle)
                 {
                     fwrite(ptr, pakInfo.uncompressedSize, 1, foutputHandle);

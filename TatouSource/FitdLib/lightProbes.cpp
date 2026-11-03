@@ -1,3 +1,4 @@
+#include "filePaths.h"
 ///////////////////////////////////////////////////////////////////////////////
 // Alone In The Dark Re-Haunted
 // Copyright (C) 2026 Infogrames / Spacefarer Retro Remasters LLC
@@ -56,13 +57,13 @@ bool LightProbeManager::loadProbes(int floor, int camera)
     else
         snprintf(filename, sizeof(filename), "%s_floor%02d.dat", prefix, floor);
 
-    FILE* file = fopen(filename, "rb");
+    FitdReadFile* file = fitdOpenRead(filename, "rb");
     if (!file)
         return false;
     int probeCount = 0;
-    if (fread(&probeCount, sizeof(int), 1, file) != 1 || probeCount <= 0 || probeCount > 1000)
+    if (fitdRead(&probeCount, sizeof(int), 1, file) != 1 || probeCount <= 0 || probeCount > 1000)
     {
-        fclose(file);
+        fitdClose(file);
         return false;
     }
     // Commit only complete, finite files. A truncated file must not partly light a room.
@@ -71,12 +72,12 @@ bool LightProbeManager::loadProbes(int floor, int camera)
     for (int i = 0; i < probeCount && valid; ++i)
     {
         LightProbe probe;
-        valid = fread(&probe.x, sizeof(float), 1, file) == 1 &&
-                fread(&probe.y, sizeof(float), 1, file) == 1 &&
-                fread(&probe.z, sizeof(float), 1, file) == 1 &&
-                fread(probe.sh.r.data(), sizeof(float), 9, file) == 9 &&
-                fread(probe.sh.g.data(), sizeof(float), 9, file) == 9 &&
-                fread(probe.sh.b.data(), sizeof(float), 9, file) == 9;
+        valid = fitdRead(&probe.x, sizeof(float), 1, file) == 1 &&
+                fitdRead(&probe.y, sizeof(float), 1, file) == 1 &&
+                fitdRead(&probe.z, sizeof(float), 1, file) == 1 &&
+                fitdRead(probe.sh.r.data(), sizeof(float), 9, file) == 9 &&
+                fitdRead(probe.sh.g.data(), sizeof(float), 9, file) == 9 &&
+                fitdRead(probe.sh.b.data(), sizeof(float), 9, file) == 9;
         valid = valid && std::isfinite(probe.x) && std::isfinite(probe.y) && std::isfinite(probe.z);
         for (int c = 0; c < 9 && valid; ++c)
             valid = std::isfinite(probe.sh.r[c]) && std::isfinite(probe.sh.g[c]) && std::isfinite(probe.sh.b[c]);
@@ -84,7 +85,7 @@ bool LightProbeManager::loadProbes(int floor, int camera)
         probe.camera = camera;
         loaded.push_back(probe);
     }
-    fclose(file);
+    fitdClose(file);
     if (!valid)
         return false;
     m_probes.erase(std::remove_if(m_probes.begin(), m_probes.end(),
@@ -106,7 +107,7 @@ bool LightProbeManager::saveProbes(int floor, int camera)
     else
         snprintf(filename, sizeof(filename), "%s_floor%02d.dat", prefix, floor);
 
-    FILE* file = fopen(filename, "wb");
+    FILE* file = fitdFopen(filename, "wb");
     if (!file)
     {
         printf("PROBE: Failed to save probes to %s\n", filename);

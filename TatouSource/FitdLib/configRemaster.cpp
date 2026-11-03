@@ -1,3 +1,4 @@
+#include "filePaths.h"
 ///////////////////////////////////////////////////////////////////////////////
 // Alone In The Dark Re-Haunted
 // Copyright (C) 2026 Infogrames / Spacefarer Retro Remasters LLC
@@ -29,14 +30,22 @@ void initDefaultRemasterConfig()
     g_remasterConfig.controller.enableController = true;
 
     // HD Graphics defaults (for future)
+#ifdef FITD_UNITY_COMMANDS
+    g_remasterConfig.graphics.enableHDBackgrounds = true;
+#else
     g_remasterConfig.graphics.enableHDBackgrounds = false;
+#endif
     g_remasterConfig.graphics.backgroundScale = 2;
     g_remasterConfig.graphics.enableFiltering = true;
     g_remasterConfig.graphics.enableBlurredMenu = false;
     g_remasterConfig.graphics.menuBlurAmount = 5.0f;
     g_remasterConfig.graphics.enableHints = true;
     g_remasterConfig.graphics.enableArtwork = true;
+#ifdef FITD_UNITY_COMMANDS
+    g_remasterConfig.graphics.fullscreen = true;
+#else
     g_remasterConfig.graphics.fullscreen = false;
+#endif
     strcpy(g_remasterConfig.graphics.rendererBackend, "auto");
     g_remasterConfig.graphics.msaaLevel = 4; // 4x MSAA by default in HD mode
     g_remasterConfig.graphics.enableWallDepth = true; // Wall depth for SSAO edge darkening
@@ -78,7 +87,11 @@ void initDefaultRemasterConfig()
     strcpy(g_remasterConfig.music.musicFolder, "music");
 
     // TTF font defaults
+#ifdef FITD_UNITY_COMMANDS
+    g_remasterConfig.font.enableTTF = true;
+#else
     g_remasterConfig.font.enableTTF = false;
+#endif
     strcpy(g_remasterConfig.font.fontPath, "BLKCHCRY.TTF");
     g_remasterConfig.font.fontSize = 16;
     g_remasterConfig.font.hideOriginalText = true;
@@ -130,9 +143,22 @@ void initDefaultRemasterConfig()
     g_remasterConfig.debug.enableNativeLifeScripts = false;    // Don't use native life scripts by default
 }
 
+#ifdef FITD_UNITY_COMMANDS
+static std::string unityConfigPath;
+void setUnityRemasterConfigPath(const char* path) { unityConfigPath = path; }
+#endif
+
+static const char* remasterConfigPath()
+{
+#ifdef FITD_UNITY_COMMANDS
+    if (!unityConfigPath.empty()) return unityConfigPath.c_str();
+#endif
+    return "aitd_remaster.cfg";
+}
+
 void loadRemasterConfig()
 {
-    FILE* file = fopen("aitd_remaster.cfg", "r");
+    FILE* file = fitdFopen(remasterConfigPath(), "r");
     
     // Initialize defaults first
     initDefaultRemasterConfig();
@@ -179,7 +205,11 @@ void loadRemasterConfig()
             else if (strcmp(key, "graphics.filtering") == 0)
                 g_remasterConfig.graphics.enableFiltering = (strcmp(value, "true") == 0 || strcmp(value, "1") == 0);
             else if (strcmp(key, "graphics.blurredMenu") == 0)
+            {
+#ifndef FITD_UNITY_COMMANDS
                 g_remasterConfig.graphics.enableBlurredMenu = (strcmp(value, "true") == 0 || strcmp(value, "1") == 0);
+#endif
+            }
             else if (strcmp(key, "graphics.menuBlurAmount") == 0)
                 g_remasterConfig.graphics.menuBlurAmount = (float)atof(value);
             else if (strcmp(key, "gameplay.hints") == 0)
@@ -433,14 +463,14 @@ void loadRemasterConfig()
     detailLevel = g_remasterConfig.graphics.enableHDBackgrounds ? 1 : 0;
 }
 
-void saveRemasterConfig()
+bool saveRemasterConfig()
 {
-    FILE* file = fopen("aitd_remaster.cfg", "w");
+    FILE* file = fitdFopen(remasterConfigPath(), "w");
     
     if (!file)
     {
         printf(CFG_ERR "Failed to save config file" CON_RESET "\n");
-        return;
+        return false;
     }
 
     fprintf(file, "# Alone In The Dark - Remaster Configuration\n");
@@ -567,6 +597,7 @@ void saveRemasterConfig()
     fprintf(file, "debug.generateNativeLifeScripts = %s\n", g_remasterConfig.debug.generateNativeLifeScripts ? "true" : "false");
     fprintf(file, "debug.enableNativeLifeScripts = %s\n", g_remasterConfig.debug.enableNativeLifeScripts ? "true" : "false");
 
-    fclose(file);
+    bool success=ferror(file)==0;success=(fclose(file)==0) && success;
     printf(CFG_OK "Remaster config saved\n");
+    return success;
 }

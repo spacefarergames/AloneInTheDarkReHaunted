@@ -28,6 +28,7 @@ struct TTFTextCommand
 
 // Initialize TTF font system
 void initTTFFont();
+int getTTFFontStatus();
 
 // Shutdown TTF font system
 void shutdownTTFFont();

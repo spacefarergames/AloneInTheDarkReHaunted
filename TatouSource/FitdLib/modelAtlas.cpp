@@ -1,3 +1,4 @@
+#include "filePaths.h"
 ///////////////////////////////////////////////////////////////////////////////
 // Alone In The Dark Re-Haunted
 // Copyright (C) 2026 Infogrames / Spacefarer Retro Remasters LLC
@@ -525,7 +526,7 @@ static unsigned char* loadAtlasDataFromArchiveOrFile(const std::string& filePath
 
     if (afterDump)
     {
-        if (unsigned char* data = stbi_load(filePath.c_str(), &w, &h, &channels, 4))
+        if (unsigned char* data = fitdLoadImage(filePath.c_str(), &w, &h, &channels, 4))
         {
             return isAtlasOversized(w, h) ? shrinkAtlasPixels(data, w, h) : data;
         }
@@ -584,7 +585,7 @@ static unsigned char* loadAtlasDataFromArchiveOrFile(const std::string& filePath
         printf(RNDR_TAG "Atlas file too large, regenerating: %s (%dx%d)\n", filePath.c_str(), infoW, infoH);
         return nullptr;
     }
-    unsigned char* data = stbi_load(filePath.c_str(), &w, &h, &channels, 4);
+    unsigned char* data = fitdLoadImage(filePath.c_str(), &w, &h, &channels, 4);
     if (data && isAtlasOversized(w, h))
         data = shrinkAtlasPixels(data, w, h);
 
@@ -792,7 +793,7 @@ bool dumpModelAtlas(int bodyNum, sBody* pBody, const std::string& hqrName)
     // Write the PNG
     ensureAtlasDir();
     std::string path = getAtlasPath(hqrName, bodyNum);
-    int result = stbi_write_png(path.c_str(), atlasW, atlasH, 4, image.data(), atlasW * 4);
+    int result = fitdWritePng(path.c_str(), atlasW, atlasH, 4, image.data(), atlasW * 4);
 
     if (result)
     {
@@ -1211,7 +1212,7 @@ bool dumpSphereAtlas(int bodyNum, sBody* pBody, const std::string& hqrName)
     // Write the PNG
     ensureAtlasDir();
     std::string path = getSphereAtlasPath(hqrName, bodyNum);
-    int result = stbi_write_png(path.c_str(), atlasW, atlasH, 4, image.data(), atlasW * 4);
+    int result = fitdWritePng(path.c_str(), atlasW, atlasH, 4, image.data(), atlasW * 4);
     if (result) hdAutoUpscale_QueueInPlace(path);
 
     if (result)
@@ -1311,7 +1312,7 @@ bool dumpPointAtlas(int bodyNum, sBody* pBody, const std::string& hqrName)
 
     ensureAtlasDir();
     std::string path = getPointAtlasPath(hqrName, bodyNum);
-    int result = stbi_write_png(path.c_str(), atlasW, atlasH, 4, image.data(), atlasW * 4);
+    int result = fitdWritePng(path.c_str(), atlasW, atlasH, 4, image.data(), atlasW * 4);
     if (result) hdAutoUpscale_QueueInPlace(path);
 
     if (result)
@@ -1417,7 +1418,7 @@ bool dumpFlatPolyAtlas(int bodyNum, sBody* pBody, const std::string& hqrName)
     // Write the PNG
     ensureAtlasDir();
     std::string path = getFlatPolyAtlasPath(hqrName, bodyNum);
-    int result = stbi_write_png(path.c_str(), atlasW, atlasH, 4, image.data(), atlasW * 4);
+    int result = fitdWritePng(path.c_str(), atlasW, atlasH, 4, image.data(), atlasW * 4);
     if (result) hdAutoUpscale_QueueInPlace(path);
 
     if (result)
@@ -1516,7 +1517,7 @@ bool dumpRampAtlas(int bodyNum, sBody* pBody, const std::string& hqrName)
     // Write the PNG
     ensureAtlasDir();
     std::string path = getRampAtlasPath(hqrName, bodyNum);
-    int result = stbi_write_png(path.c_str(), atlasW, atlasH, 4, image.data(), atlasW * 4);
+    int result = fitdWritePng(path.c_str(), atlasW, atlasH, 4, image.data(), atlasW * 4);
     if (result) hdAutoUpscale_QueueInPlace(path);
 
     if (result)
@@ -1611,7 +1612,7 @@ bool dumpOtherAtlas(int bodyNum, sBody* pBody, const std::string& hqrName)
 
     ensureAtlasDir();
     std::string path = getOtherAtlasPath(hqrName, bodyNum);
-    int result = stbi_write_png(path.c_str(), atlasW, atlasH, 4, image.data(), atlasW * 4);
+    int result = fitdWritePng(path.c_str(), atlasW, atlasH, 4, image.data(), atlasW * 4);
     if (result) hdAutoUpscale_QueueInPlace(path);
 
     if (result)
@@ -1824,7 +1825,7 @@ bool dumpTatouAtlas(int bodyNum, sBody* pBody, const std::string& hqrName)
     // Write the PNG
     ensureAtlasDir();
     std::string path = getTatouAtlasPath(hqrName, bodyNum);
-    int result = stbi_write_png(path.c_str(), atlasW, atlasH, 4, image.data(), atlasW * 4);
+    int result = fitdWritePng(path.c_str(), atlasW, atlasH, 4, image.data(), atlasW * 4);
     if (result) hdAutoUpscale_QueueInPlace(path);
 
     if (result)

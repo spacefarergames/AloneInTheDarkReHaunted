@@ -1,3 +1,4 @@
+#include "filePaths.h"
 ///////////////////////////////////////////////////////////////////////////////
 // Alone In The Dark Re-Haunted
 // Copyright (C) 2026 Infogrames / Spacefarer Retro Remasters LLC
@@ -1271,7 +1272,7 @@ void dumpLifeScript(int lifeNum)
 void dumpAllLifeScripts()
 {
     // Open output file for the dump
-    fopen_s(&s_dumpFile, "LISTLIFE_dump.txt", "w");
+    fitdFopen_s(&s_dumpFile, "LISTLIFE_dump.txt", "w");
     if (!s_dumpFile)
         printf(LIFE_WARN "Could not open LISTLIFE_dump.txt for writing" CON_RESET "\n");
 
@@ -1314,7 +1315,7 @@ static std::string captureLifeScriptDump(int lifeNum)
 void validateNativeLifeScriptsAgainstDump(const char* dumpFilePath)
 {
     FILE* f = nullptr;
-    fopen_s(&f, dumpFilePath, "r");
+    fitdFopen_s(&f, dumpFilePath, "r");
     if (!f)
     {
         printf(LIFE_WARN "Cannot open '%s' - native scripts not validated against bytecode" CON_RESET "\n", dumpFilePath);
@@ -2609,7 +2610,7 @@ void generateNativeLifeScriptC(int lifeNum)
 
 void generateAllNativeLifeScripts()
 {
-    fopen_s(&s_genFile, "nativeLifeScripts_generated.cpp", "w");
+    fitdFopen_s(&s_genFile, "nativeLifeScripts_generated.cpp", "w");
     if (!s_genFile) {
         printf(LIFE_WARN "Could not open nativeLifeScripts_generated.cpp" CON_RESET "\n");
         return;

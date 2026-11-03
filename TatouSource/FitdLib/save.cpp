@@ -1,3 +1,4 @@
+#include "filePaths.h"
 ///////////////////////////////////////////////////////////////////////////////
 // Alone In The Dark Re-Haunted
 // Copyright (C) 2026 Infogrames / Spacefarer Retro Remasters LLC
@@ -47,7 +48,7 @@ static void writePNGChunk(FILE* f, const char* type, const unsigned char* data, 
 static bool writePNG(const char* filename, const unsigned char* rgba, int width, int height)
 {
     FILE* f = nullptr;
-    fopen_s(&f, filename, "wb");
+    fitdFopen_s(&f, filename, "wb");
     if (!f) return false;
 
     static const unsigned char sig[8] = { 137, 80, 78, 71, 13, 10, 26, 10 };
@@ -151,7 +152,7 @@ int loadSave(int saveNumber)
             sprintf_s(buffer, sizeof(buffer), "SAVE%d.ITD", saveNumber);
     }
 
-    fopen_s(&fHandle, buffer,"rb");
+    fitdFopen_s(&fHandle, buffer,"rb");
 
     if(!fHandle)
     {
@@ -688,7 +689,7 @@ int makeSaveFile(int entry)
             sprintf_s(buffer, sizeof(buffer), "SAVE%d.ITD", entry);
     }
 
-    fopen_s(&fHandle, buffer,"wb+");
+    fitdFopen_s(&fHandle, buffer,"wb+");
 
     if(!fHandle)
         return 0;
@@ -1115,7 +1116,7 @@ int makeSaveFile(int entry)
     {
         // Remove stale preview PNG so old screenshots don't persist
         std::error_code ec;
-        std::filesystem::remove(pngPath, ec);
+        std::filesystem::remove(std::filesystem::u8path(fitdWritePath(pngPath.string().c_str())), ec);
     }
 
     return 1;

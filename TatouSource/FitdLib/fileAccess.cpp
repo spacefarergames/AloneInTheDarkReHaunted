@@ -1,3 +1,4 @@
+#include "filePaths.h"
 ///////////////////////////////////////////////////////////////////////////////
 // Alone In The Dark Re-Haunted
 // Copyright (C) 2026 Infogrames / Spacefarer Retro Remasters LLC
@@ -29,28 +30,28 @@ char* loadFromItd(const char* name)
     // Try disk file first
     if (!preferEmbeddedGameData())
     {
-        FILE* fHandle;
+        FitdReadFile* fHandle;
         char* ptr;
 
         char filePath[512];
         snprintf(filePath, sizeof(filePath), "%s%s", homePath, name);
 
-        fHandle = fopen(filePath,"rb");
+        fHandle = fitdOpenRead(filePath,"rb");
         if(fHandle)
         {
-            fseek(fHandle,0,SEEK_END);
-            fileSize = ftell(fHandle);
-            fseek(fHandle,0,SEEK_SET);
+            fitdSeek(fHandle,0,SEEK_END);
+            fileSize = fitdTell(fHandle);
+            fitdSeek(fHandle,0,SEEK_SET);
             ptr = (char*)malloc(fileSize);
 
             if(!ptr)
             {
-                fclose(fHandle);
+                fitdClose(fHandle);
                 fatalError(1,name);
                 return NULL;
             }
-            fread(ptr,fileSize,1,fHandle);
-            fclose(fHandle);
+            fitdRead(ptr,fileSize,1,fHandle);
+            fitdClose(fHandle);
             return(ptr);
         }
     }

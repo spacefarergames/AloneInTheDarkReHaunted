@@ -1,3 +1,4 @@
+#include "filePaths.h"
 ///////////////////////////////////////////////////////////////////////////////
 // Alone In The Dark Re-Haunted
 // Copyright (C) 2026 Infogrames / Spacefarer Retro Remasters LLC
@@ -20,6 +21,10 @@
 #include <vector>
 #include <string>
 #include <algorithm>
+#ifdef FITD_UNITY_COMMANDS
+#include <cctype>
+#include <filesystem>
+#endif
 
 #ifdef _WIN32
 #include <windows.h>
@@ -102,7 +107,20 @@ static std::vector<std::string> scanAnimationDirectory(const char* dirPath)
 {
     std::vector<std::string> files;
 
-#ifdef _WIN32
+#if defined(FITD_UNITY_COMMANDS)
+    files = fitdListMemoryFiles(dirPath);
+    std::error_code error;
+    for (std::filesystem::directory_iterator item(std::filesystem::u8path(fitdReadPath(dirPath)), error), end;
+         !error && item != end; item.increment(error))
+    {
+        if (!item->is_regular_file(error)) continue;
+        auto extension = item->path().extension().string();
+        std::transform(extension.begin(), extension.end(), extension.begin(),
+                       [](unsigned char c) { return static_cast<char>(std::tolower(c)); });
+        if (extension == ".png" || extension == ".tga" || extension == ".bmp")
+            files.push_back(item->path().filename().string());
+    }
+#elif defined(_WIN32)
     WIN32_FIND_DATAA findData;
     char searchPath[512];
     snprintf(searchPath, sizeof(searchPath), "%s/*.*", dirPath);
@@ -169,6 +187,7 @@ static std::vector<std::string> scanAnimationDirectory(const char* dirPath)
 
     // Sort files alphabetically to ensure consistent frame order
     std::sort(files.begin(), files.end());
+    files.erase(std::unique(files.begin(), files.end()), files.end());
 
     return files;
 }
@@ -178,7 +197,7 @@ static unsigned char* loadSingleFrame(const char* filePath, int* width, int* hei
 {
     unsigned char* imageData = nullptr;
 
-#ifdef _WIN32
+#if defined(_WIN32) && !defined(FITD_UNITY_COMMANDS)
     // Use memory-mapped file for faster loading (Windows) - ~2x faster
     HANDLE hFile = INVALID_HANDLE_VALUE;
     HANDLE hMapping = NULL;
@@ -219,7 +238,7 @@ static unsigned char* loadSingleFrame(const char* filePath, int* width, int* hei
 #else
     // Fallback to regular file loading (Linux/Mac)
     PROTECTED_CALL({
-        imageData = stbi_load(filePath, width, height, channels, 0);
+        imageData = fitdLoadImage(filePath, width, height, channels, 0);
         if (imageData)
         {
             TRACK_ALLOCATION(imageData, (*width) * (*height) * (*channels), "stbi_load");
@@ -250,7 +269,7 @@ unsigned char* loadHDImageFile(const char* filename, int* width, int* height, in
     snprintf(filePath, sizeof(filePath), "%s/%s", getHDBackgroundFolder(), filename);
 
     FILE* testFile = nullptr;
-    fopen_s(&testFile, filePath, "rb");
+    fitdFopen_s(&testFile, filePath, "rb");
     if (!testFile)
         return nullptr;
     fclose(testFile);
@@ -269,7 +288,7 @@ unsigned char* loadSharedHDImageFile(const char* filename, int* width, int* heig
     char filePath[512];
     snprintf(filePath, sizeof(filePath), "backgrounds_hd/%s", filename);
     FILE* testFile = nullptr;
-    fopen_s(&testFile, filePath, "rb");
+    fitdFopen_s(&testFile, filePath, "rb");
     if (testFile)
     {
         fclose(testFile);
@@ -649,7 +668,7 @@ HDBackgroundInfo* loadHDBackground(const char* backgroundName, int cameraIdx, co
         }
 
         FILE* testFile = nullptr;
-        fopen_s(&testFile, filePath, "rb");
+        fitdFopen_s(&testFile, filePath, "rb");
         if (!testFile)
         {
             continue;
@@ -861,12 +880,12 @@ bool loadHDFrameBorders()
         
         // Check if file exists
         FILE* testFile = nullptr;
-        fopen_s(&testFile, filePath, "rb");
+        fitdFopen_s(&testFile, filePath, "rb");
         if (!testFile)
         {
             // Try in backgrounds_hd folder
             snprintf(filePath, sizeof(filePath), "%s/%s", getHDBackgroundFolder(), g_frameBorderFileNames[i]);
-            fopen_s(&testFile, filePath, "rb");
+            fitdFopen_s(&testFile, filePath, "rb");
             if (!testFile)
             {
                 continue;
@@ -879,7 +898,7 @@ bool loadHDFrameBorders()
         unsigned char* imageData = nullptr;
 
         PROTECTED_CALL({
-            imageData = stbi_load(filePath, &width, &height, &channels, 4); // Force RGBA
+            imageData = fitdLoadImage(filePath, &width, &height, &channels, 4); // Force RGBA
             if (imageData)
             {
                 // Track this allocation for debugging

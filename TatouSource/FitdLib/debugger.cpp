@@ -1,3 +1,4 @@
+#include "filePaths.h"
 ///////////////////////////////////////////////////////////////////////////////
 // Alone In The Dark Re-Haunted
 // Copyright (C) 2026 Infogrames / Spacefarer Retro Remasters LLC
@@ -94,7 +95,7 @@ void SaveScene()
         }
     }
 
-    FILE* fhandle = fopen("output.obj", "w+");
+    FILE* fhandle = fitdFopen("output.obj", "w+");
 
     for (int i = 0; i < vertices.size(); i += 3)
     {

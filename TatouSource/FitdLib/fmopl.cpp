@@ -1,3 +1,4 @@
+#include "filePaths.h"
 /*
 **
 ** File: fmopl.c - software implementation of FM sound generator
@@ -1260,7 +1261,7 @@ static int init_tables(void)
 
 
 #ifdef SAVE_SAMPLE
-	sample[0]=fopen("sampsum.pcm","wb");
+	sample[0]=fitdFopen("sampsum.pcm","wb");
 #endif
 
 	return 1;
@@ -1764,7 +1765,7 @@ static int OPL_LockTable(void)
 	}
 
 #ifdef LOG_CYM_FILE
-	cymfile = fopen("3812_.cym","wb");
+	cymfile = fitdFopen("3812_.cym","wb");
 	if (cymfile)
 		timer_pulse ( TIME_IN_HZ(110), 0, cymfile_callback); /*110 Hz pulse timer*/
 	else

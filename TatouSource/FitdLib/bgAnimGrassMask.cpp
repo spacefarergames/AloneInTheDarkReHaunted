@@ -1,3 +1,4 @@
+#include "filePaths.h"
 ///////////////////////////////////////////////////////////////////////////////
 // Animated Background Grass-Mask Generator - Implementation
 //
@@ -216,7 +217,7 @@ namespace
         /*
         std::string path = makeCacheFilePath(frameIdx);
         int w = 0, hh = 0, ch = 0;
-        unsigned char* pixels = stbi_load(path.c_str(), &w, &hh, &ch, 1);
+        unsigned char* pixels = fitdLoadImage(path.c_str(), &w, &hh, &ch, 1);
         if (!pixels)
             return false;
         if (w != expectedW || hh != expectedH)
@@ -239,7 +240,7 @@ namespace
         ensureCacheDirExists();
         std::string path = makeCacheFilePath(frameIdx);
         // 1-channel PNG.
-        int rc = stbi_write_png(path.c_str(), w, h, 1, mask.data(), w);
+        int rc = fitdWritePng(path.c_str(), w, h, 1, mask.data(), w);
         if (rc == 0)
         {
             printf(LIFE_WARN "Grass-mask: stbi_write_png FAILED for '%s' (%dx%d, errno=%d)" CON_RESET "\n",

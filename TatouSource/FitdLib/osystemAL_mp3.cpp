@@ -1,3 +1,4 @@
+#include "filePaths.h"
 ///////////////////////////////////////////////////////////////////////////////
 // Alone In The Dark Re-Haunted
 // Copyright (C) 2026 Infogrames / Spacefarer Retro Remasters LLC
@@ -117,18 +118,18 @@ int osystem_playTrack(int trackId)
 	char musicFileName[256];
 	sprintf_s(musicFileName, sizeof(musicFileName), "%d.mp3", trackId);
 
-	FILE* fHandle = nullptr;
-	fopen_s(&fHandle, musicFileName, "rb");
+	FitdReadFile* fHandle = nullptr;
+	fitdOpenRead_s(&fHandle, musicFileName, "rb");
 	if(fHandle == NULL)
 		return false;
 
-	fseek(fHandle, 0, SEEK_END);
-	mp3DataSize = ftell(fHandle);
-	fseek(fHandle, 0, SEEK_SET);
+	fitdSeek(fHandle, 0, SEEK_END);
+	mp3DataSize = fitdTell(fHandle);
+	fitdSeek(fHandle, 0, SEEK_SET);
 
 	pMp3Data = new unsigned char[mp3DataSize];
-	fread(pMp3Data, mp3DataSize, 1, fHandle);
-	fclose(fHandle);
+	fitdRead(pMp3Data, mp3DataSize, 1, fHandle);
+	fitdClose(fHandle);
 
 	alGenSources(1, &mp3_source);
 	alGenBuffers(NUM_MUSIC_BUFFER, mp3_buffers);

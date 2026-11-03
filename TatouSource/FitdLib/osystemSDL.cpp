@@ -1,3 +1,6 @@
+#include "filePaths.h"
+#ifndef FITD_UNITY
+#include "processExit.h"
 ///////////////////////////////////////////////////////////////////////////////
 // Alone In The Dark Re-Haunted
 // Copyright (C) 2026 Infogrames / Spacefarer Retro Remasters LLC
@@ -175,7 +178,7 @@ int FitdInit(int argc, char* argv[])
         if (steamOverlay_ShouldRelaunch())
         {
             // Steam needs to relaunch us through the Steam client — exit now.
-            exit(0);
+            fitdExit(0);
         }
     }
 
@@ -407,7 +410,7 @@ bool fileExists(const char* name)
 
     FILE* fHandle;
 
-    fopen_s(&fHandle, name, "rb");
+    fitdFopen_s(&fHandle, name, "rb");
 
     if (fHandle)
     {
@@ -464,3 +467,5 @@ volatile bool deviceStatus = false;
 
 
 
+
+#endif // FITD_UNITY

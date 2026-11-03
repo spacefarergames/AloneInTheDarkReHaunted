@@ -1,3 +1,4 @@
+#include "processExit.h"
 ///////////////////////////////////////////////////////////////////////////////
 // Alone In The Dark Re-Haunted
 // Copyright (C) 2026 Infogrames / Spacefarer Retro Remasters LLC
@@ -10,6 +11,7 @@
 // seg 4
 
 #include "common.h"
+#include "remasterOptions.h"
 
 #ifdef PCLIKE
 #include "SDL.h"
@@ -94,7 +96,7 @@ void process_events( void )
             break;
         case SDL_QUIT:
             /* Handle quit requests (like Ctrl-c). */
-            exit( 0 );
+            fitdExit(0 );
             break;
         }
 
@@ -115,6 +117,9 @@ void process_events( void )
 	else
 #endif
 	{
+#ifdef FITD_UNITY_COMMANDS
+        if(!remasterOptionsIsOpen())
+#endif
         timeGlobal += timeIncrease;
 	}
 	timer=timeGlobal;
