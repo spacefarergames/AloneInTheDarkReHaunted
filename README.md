@@ -4,6 +4,8 @@
 
 **A faithful remaster of the original 1992 survival horror classic.**
 
+[![Get it on RecompLauncher](https://recomplauncher.com/assets/press/launcher/badge-dark.svg)](https://recomplauncher.com/game/aloneinthedarkrehaunted)
+
 *Copyright © 2026 Infogrames / Spacefarer Retro Remasters LLC*
 *Author: Jake Jackson (jake@spacefarergames.com)*
 
